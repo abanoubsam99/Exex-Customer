@@ -1,0 +1,122 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../app/constants/app_images.dart';
+import '../../../app/widgets/custom_image_handler.dart';
+
+class TransactionItem extends StatelessWidget {
+  // const TransactionItem({super.key, required this.transaction});
+  //
+  // final TransactionModel transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: 40.r,
+              height: 40.r,
+              decoration: ShapeDecoration(
+                // color: transaction.paymentType == 0 ? const Color(0x19EE6163) : const Color(0x1979E2B2),
+                shape: OvalBorder(),
+              ),
+              alignment: Alignment.center,
+              child: CustomImageHandler(
+                 AppImages.iconsIncome,
+                // transaction.paymentType == 0 ? AppImages.iconsOutcome : AppImages.iconsIncome,
+                width: 15.r,
+                height: 15.r,
+              ),
+            ),
+            Positioned(
+              bottom: -6.r,
+              left: -6.r,
+              child: Container(
+                width: 22.r,
+                height: 22.r,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFF4F4F4),
+                  shape: OvalBorder(
+                    side: BorderSide(width: 1.5, color: Colors.white),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: CustomImageHandler(
+                  // transaction.paymentMethodImage,
+                  "",
+                  width: 15.r,
+                  height: 10.r,
+                ),
+              ),
+            ),
+          ],
+        ),
+        10.horizontalSpace,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "portName",
+              // transaction.portName,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.24,
+              ),
+            ),
+            Text(
+              '6 اكتوبر 2026  -  مساءا  12:21',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: const Color(0xFF6F767E),
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w400,
+                height: 1.67,
+                letterSpacing: -0.24,
+              ),
+            ),
+          ],
+        ),
+        Spacer(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              '55',
+              // '${transaction.paymentType == 0 ? '-' : '+'}${transaction.paymentAmount}',
+              textAlign: TextAlign.right,
+              textDirection: TextDirection.ltr,
+              style: TextStyle(
+                color:const Color(0xFF79E2B2),
+                // color: transaction.paymentType == 0 ? const Color(0xFFEF6164) : const Color(0xFF79E2B2),
+                fontSize: 18.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.24,
+              ),
+            ),
+            Text(
+              'مقدم الحجز',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: const Color(0xFF6F767E),
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w400,
+                letterSpacing: -0.24,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
