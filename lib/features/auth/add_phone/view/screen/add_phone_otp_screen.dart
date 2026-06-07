@@ -15,10 +15,13 @@ class AddPhoneOtpScreen extends StatefulWidget {
 
 class _AddPhoneOtpScreenState extends State<AddPhoneOtpScreen> {
   String _phone = '';
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return;
+    _initialized = true;
     _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
     context.read<AddPhoneCubit>().initOtpScreen(_phone);
   }

@@ -1,14 +1,23 @@
 import 'package:alice/alice.dart';
+import 'package:alice/model/alice_configuration.dart';
 import 'package:alice_dio/alice_dio_adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/cash_keys.dart';
-import 'package:flutter/foundation.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 
 import 'cache_helper.dart';
+import 'curl_logger_interceptor.dart';
 
-final Alice alice = Alice();
-// final Alice alice = Alice(showNotification: true);
+// Alice يستخدم نفس الـ navigatorKey بتاع التطبيق، والإشعار مقفول
+// عشان ميعملش crash (AliceCore._onCallsChanged null check).
+final Alice alice = Alice(
+  configuration: AliceConfiguration(
+    navigatorKey: NavigationHelper.navigatorKey,
+    showNotification: false,
+  ),
+);
 
 class DioHelper {
   static late final Dio _dio;
@@ -28,6 +37,7 @@ class DioHelper {
       ),
     );
 
+    // 1) إضافة التوكن تلقائياً + عرض رسالة الخطأ من السيرفر
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -35,24 +45,93 @@ class DioHelper {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          if (kDebugMode) {
-            debugPrint('→ [${options.method}] ${options.uri}');
-          }
           handler.next(options);
         },
         onError: (error, handler) {
-          if (kDebugMode) {
-            debugPrint('✗ Dio error: ${error.message}');
+          final message = extractServerMessage(error);
+          if (message != null && message.isNotEmpty) {
+            ToastManager.showError(message);
           }
           handler.next(error);
         },
       ),
     );
 
-    // Alice (HTTP inspector)
+    // 2) طباعة cURL + Response/Error في الـ terminal (debug فقط)
+    _dio.interceptors.add(CurlLoggerInterceptor());
+
+    // 3) Alice (HTTP inspector)
     final aliceAdapter = AliceDioAdapter();
     alice.addAdapter(aliceAdapter);
     _dio.interceptors.add(aliceAdapter);
+  }
+
+  /// بيستخرج رسالة الخطأ من رد السيرفر، بيغطي كذا احتمال للشكل اللي بيرجع به الباك:
+  ///   1) {"message": "..."} أو {"Message": "..."} أو {"error": "..."}
+  ///   2) ASP.NET validation: {"errors": {"Name": ["..."], "City": ["..."]}}
+  ///   3) {"errors": ["...", "..."]} أو {"errors": "..."}
+  ///   4) {"title": "..."} (fallback)
+  ///   5) الرد نفسه String
+  /// وبيرجّع رسالة مناسبة لأخطاء الاتصال/التايم آوت.
+  static String? extractServerMessage(DioException error) {
+    final data = error.response?.data;
+
+    if (data is String && data.trim().isNotEmpty) return data.trim();
+
+    if (data is Map) {
+      // 1) رسالة مباشرة
+      final direct = data['message'] ?? data['Message'] ?? data['error'];
+      if (direct is String && direct.isNotEmpty) return direct;
+
+      // 2 + 3) حقل errors بأشكاله المختلفة
+      final errors = data['errors'] ?? data['Errors'];
+      final fromErrors = _messageFromErrors(errors);
+      if (fromErrors != null) return fromErrors;
+
+      // 4) العنوان كحل أخير
+      final title = data['title'] ?? data['Title'];
+      if (title is String && title.isNotEmpty) return title;
+    }
+
+    // 5) أخطاء الاتصال / التايم آوت
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return 'انتهت مهلة الاتصال، حاول مرة أخرى';
+      case DioExceptionType.connectionError:
+        return 'تعذّر الاتصال بالخادم، تأكد من الإنترنت';
+      default:
+        return null;
+    }
+  }
+
+  /// بيجمع رسائل الـ validation من حقل errors مهما كان شكله.
+  static String? _messageFromErrors(dynamic errors) {
+    if (errors == null) return null;
+
+    // Map<field, List<msg>> (شكل ASP.NET) أو Map<field, String>
+    if (errors is Map) {
+      final messages = <String>[];
+      for (final value in errors.values) {
+        if (value is List) {
+          messages.addAll(value.map((e) => e.toString()));
+        } else if (value != null) {
+          messages.add(value.toString());
+        }
+      }
+      if (messages.isNotEmpty) return messages.join('\n');
+    }
+
+    // List<msg>
+    if (errors is List && errors.isNotEmpty) {
+      return errors.map((e) => e.toString()).join('\n');
+    }
+
+    // String
+    if (errors is String && errors.isNotEmpty) return errors;
+
+    return null;
   }
 
   // ── Static network helpers used directly by repositories ──

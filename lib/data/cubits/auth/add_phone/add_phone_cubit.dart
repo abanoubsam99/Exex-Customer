@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,8 +40,7 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
       emit(AddPhoneSent(_sentPhone));
       NavigationHelper.pushNamed(Routes.addPhoneOptScreen, arguments: _sentPhone);
     } else {
-      emit(AddPhoneError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(AddPhoneError('فشل إرسال رقم الهاتف'));
     }
   }
 
@@ -88,8 +86,7 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
       emit(OtpConfirmSuccess());
       NavigationHelper.pushNamedAndRemoveUntil(Routes.addClientScreen);
     } else {
-      emit(OtpConfirmError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(OtpConfirmError('فشل تأكيد الكود'));
     }
   }
 

@@ -48,8 +48,7 @@ class LoginCubit extends Cubit<LoginState> {
         NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);
       }
     } else {
-      emit(LoginError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(LoginError('فشل تسجيل الدخول'));
     }
   }
 

@@ -1,4 +1,3 @@
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +26,6 @@ class HomeCubit extends Cubit<HomeState> {
       ));
     } else {
       emit(state.copyWith(isLoadingPorts: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل البيانات');
     }
   }
 

@@ -1,4 +1,3 @@
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -27,7 +26,6 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
       emit(state.copyWith(isLoading: false, portsModel: model));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل الموانئ');
     }
   }
 

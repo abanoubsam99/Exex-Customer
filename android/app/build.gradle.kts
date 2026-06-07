@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.evex_user"
+    namespace = "com.evex.evexuser"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

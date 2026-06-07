@@ -42,8 +42,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
       ToastManager.showSuccess(response.message ?? '');
       NavigationHelper.pushNamed(Routes.forgetPasswordOtpScreen, arguments: phone);
     } else {
-      emit(ForgetPasswordError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(ForgetPasswordError('فشل إرسال رمز التحقق'));
     }
   }
 
@@ -93,8 +92,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
       ToastManager.showSuccess(message);
       NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
     } else {
-      emit(ResetPasswordError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(ResetPasswordError('فشل تغيير كلمة المرور'));
     }
   }
 

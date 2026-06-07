@@ -36,7 +36,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(state.copyWith(isLoading: false, profile: profile));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل الملف الشخصي');
     }
   }
 
@@ -56,7 +55,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       }
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل المحافظات');
     }
   }
 
@@ -66,8 +64,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     final cities = await _locationRepo.getCities(gov.first.id);
     if (cities != null) {
       emit(state.copyWith(cities: cities));
-    } else {
-      ToastManager.showError('حدث خطأ في تحميل المدن');
     }
   }
 
@@ -106,7 +102,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       ToastManager.showSuccess('تم التعديل بنجاح');
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
     }
   }
 
@@ -119,7 +114,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
     }
   }
 

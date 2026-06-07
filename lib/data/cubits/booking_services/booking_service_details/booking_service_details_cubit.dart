@@ -1,4 +1,3 @@
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
@@ -33,7 +32,6 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       emit(state.copyWith(isLoading: false, services: services));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل الخدمات');
     }
   }
 
@@ -69,7 +67,6 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       _recalcTotal();
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل تفاصيل الخدمة');
     }
   }
 

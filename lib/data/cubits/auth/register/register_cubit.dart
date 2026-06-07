@@ -29,8 +29,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       ToastManager.showSuccess(message);
       NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
     } else {
-      emit(RegisterError('حدث خطأ، يرجى المحاولة مرة أخرى'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+      emit(RegisterError('فشل إنشاء الحساب'));
     }
   }
 

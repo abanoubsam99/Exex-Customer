@@ -16,10 +16,13 @@ class ForgetPasswordOtpScreen extends StatefulWidget {
 
 class _ForgetPasswordOtpScreenState extends State<ForgetPasswordOtpScreen> {
   String _phone = '';
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return;
+    _initialized = true;
     _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
     context.read<ForgetPasswordCubit>().initOtpScreen(_phone);
   }

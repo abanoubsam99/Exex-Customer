@@ -28,7 +28,6 @@ class AddClientCubit extends Cubit<AddClientState> {
       emit(state.copyWith(isLoading: false, governorates: result));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل المحافظات');
     }
   }
 
@@ -48,7 +47,6 @@ class AddClientCubit extends Cubit<AddClientState> {
       emit(state.copyWith(isLoading: false, cities: result));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ في تحميل المدن');
     }
   }
 
@@ -83,7 +81,6 @@ class AddClientCubit extends Cubit<AddClientState> {
       NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
     }
   }
 
