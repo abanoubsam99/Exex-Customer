@@ -7,7 +7,6 @@ import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 // ignore: must_be_immutable
 class PhoneFieldComponent extends StatefulWidget {
@@ -263,11 +262,11 @@ class _PhoneFieldComponentState extends State<PhoneFieldComponent> {
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           countries: customCountries,
           dropdownIconPosition: IconPosition.trailing,
-          style: Get.textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium,
           pickerDialogStyle: PickerDialogStyle(
             backgroundColor: AppColors.whiteColor,
-            countryNameStyle: Get.textTheme.labelSmall!,
-            countryCodeStyle: Get.textTheme.labelSmall!,
+            countryNameStyle: Theme.of(context).textTheme.labelSmall!,
+            countryCodeStyle: Theme.of(context).textTheme.labelSmall!,
           ),
           onCountryChanged: (value) {
             widget.countryController?.text = '+${value.dialCode}';

@@ -1,0 +1,163 @@
+class UserModel {
+  UserViewModel? userViewModel;
+  String? token;
+  String? message;
+  bool? isSuccess;
+  dynamic errors;
+  String? expireDate;
+  int? modelId;
+
+  UserModel({
+    this.userViewModel,
+    this.token,
+    this.message,
+    this.isSuccess,
+    this.errors,
+    this.expireDate,
+    this.modelId,
+  });
+
+  UserModel.fromJson(Map<String, dynamic> json) {
+    userViewModel = json['userViewModel'] != null
+        ? UserViewModel.fromJson(json['userViewModel'])
+        : null;
+    token = json['token'];
+    message = json['message'];
+    isSuccess = json['isSuccess'];
+    errors = json['errors'];
+    expireDate = json['expireDate'];
+    modelId = json['modelId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (userViewModel != null) {
+      data['userViewModel'] = userViewModel!.toJson();
+    }
+    data['token'] = token;
+    data['message'] = message;
+    data['isSuccess'] = isSuccess;
+    data['errors'] = errors;
+    data['expireDate'] = expireDate;
+    data['modelId'] = modelId;
+    return data;
+  }
+}
+
+class UserViewModel {
+  String? userId;
+  List<dynamic>? roles;
+  String? phoneNumber;
+  bool? emailVerified;
+  bool? phoneVerified;
+  bool? isAcceptedAsVendor;
+  bool? isAllowedForUploadFiles;
+  String? userName;
+  String? email;
+  dynamic password;
+  dynamic confirmPassword;
+  bool? agree;
+  final String? governorate;
+  final String? city;
+  final String? imageName;
+  final PlanDto? planDto;
+
+  UserViewModel({
+    this.userId,
+    this.roles,
+    this.phoneNumber,
+    this.emailVerified,
+    this.phoneVerified,
+    this.isAcceptedAsVendor,
+    this.isAllowedForUploadFiles,
+    this.userName,
+    this.email,
+    this.password,
+    this.confirmPassword,
+    this.agree,
+    this.governorate,
+    this.city,
+    this.planDto,
+    this.imageName,
+  });
+
+  UserViewModel.fromJson(Map<String, dynamic> json)
+      : governorate = json['governorate'],
+        city = json['city'],
+        imageName = json['imageName'],
+        planDto =
+            json['planDto'] != null ? PlanDto.fromJson(json['planDto']) : null {
+    userId = json['userId'];
+    roles = json['roles'];
+    phoneNumber = json['phoneNumber'];
+    emailVerified = json['emailVerified'];
+    phoneVerified = json['phoneVerified'];
+    isAcceptedAsVendor = json['isAcceptedAsVendor'];
+    isAllowedForUploadFiles = json['isAllowedForUploadFiles'];
+    userName = json['userName'];
+    email = json['email'];
+    password = json['password'];
+    confirmPassword = json['confirmPassword'];
+    agree = json['agree'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['userId'] = userId;
+    data['roles'] = roles;
+    data['phoneNumber'] = phoneNumber;
+    data['emailVerified'] = emailVerified;
+    data['phoneVerified'] = phoneVerified;
+    data['isAcceptedAsVendor'] = isAcceptedAsVendor;
+    data['isAllowedForUploadFiles'] = isAllowedForUploadFiles;
+    data['userName'] = userName;
+    data['email'] = email;
+    data['password'] = password;
+    data['confirmPassword'] = confirmPassword;
+    data['agree'] = agree;
+    data['governorate'] = governorate;
+    data['city'] = city;
+    data['imageName'] = imageName;
+    if (planDto != null) {
+      data['planDto'] = planDto!.toJson();
+    }
+    return data;
+  }
+}
+
+class PlanDto {
+  final int? id;
+  final String? name;
+  final dynamic details;
+  final dynamic benefits;
+  final int? price;
+  final int? period;
+
+  PlanDto({
+    this.id,
+    this.name,
+    this.details,
+    this.benefits,
+    this.price,
+    this.period,
+  });
+
+  PlanDto.fromJson(Map<String, dynamic> json)
+      : id = (json['id'] as num?)?.toInt(),
+        name = json['name'],
+        details = json['details'],
+        benefits = json['benefits'],
+        price = (json['price'] as num?)?.toInt(),
+        period = (json['period'] as num?)?.toInt();
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['details'] = details;
+    data['benefits'] = benefits;
+    data['price'] = price;
+    data['period'] = period;
+    return data;
+  }
+}

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:evex_user/features/auth/reset_password/data/model/forget_password_response.dart';
+import 'package:evex_user/data/models/forget_password_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../core/constants/app_endpoints.dart';

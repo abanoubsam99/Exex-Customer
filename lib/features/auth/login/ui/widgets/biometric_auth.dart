@@ -1,11 +1,9 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/auth/login/logic/login_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BiometricAuthWidget extends GetView<LoginController> {
+class BiometricAuthWidget extends StatelessWidget {
   const BiometricAuthWidget({super.key});
 
   @override
@@ -16,7 +14,7 @@ class BiometricAuthWidget extends GetView<LoginController> {
         children: [
           GestureDetector(
             onTap: () {
-              // controller.biometricLogin();
+              // biometric login not yet implemented
             },
             child: Column(
               children: [

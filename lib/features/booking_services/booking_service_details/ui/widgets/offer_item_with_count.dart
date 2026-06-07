@@ -3,7 +3,6 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class OfferItemWithCount extends StatefulWidget {
   final String title, trilling;
@@ -138,7 +137,7 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: RichText(
-                      softWrap: T,
+                      softWrap: true,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(children: <TextSpan>[
                         TextSpan(

@@ -1,13 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/core/networking/api_error_handler.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/features/auth/add_phone/data/data_sources/add_phone_data_source.dart';
 
 class AddPhoneRepo {
   final AddPhoneRemoteDataSource addPhoneRemoteDataSource;
-  AddPhoneRepo(this.addPhoneRemoteDataSource);
+  final UserService userService;
+  AddPhoneRepo(this.addPhoneRemoteDataSource, this.userService);
 
   Future<Either<ErrorModel, String>> addPhone({
     required String phoneNumber,
@@ -33,7 +34,7 @@ class AddPhoneRepo {
     try {
       var response = await addPhoneRemoteDataSource.confirmPhone(
         FormData.fromMap({
-          'email': UserService.to.currentUser.value!.userViewModel!.email,
+          'email': userService.currentUser?.userViewModel?.email,
           'code': code,
         }),
       );

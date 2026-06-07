@@ -1,12 +1,12 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/main/logic/main_controller.dart';
+import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 
-class MoreScreen extends GetView<MainController> {
+class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
 
   @override
@@ -21,7 +21,7 @@ class MoreScreen extends GetView<MainController> {
                 children: [
                   CustomBackButtonWidget(
                     onTap: () {
-                      controller.goToTab(0);
+                      context.read<MainCubit>().goToTab(0);
                     },
                   ),
                   12.horizontalSpace,

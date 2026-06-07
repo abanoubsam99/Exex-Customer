@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:evex_user/features/booking_services/instant_booking_services/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../../../core/constants/app_endpoints.dart';

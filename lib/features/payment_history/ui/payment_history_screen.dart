@@ -3,8 +3,6 @@ import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/features/payment_history/ui/widgets/all_transactions_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-
 class PaymentHistoryScreen extends StatelessWidget {
   const PaymentHistoryScreen({super.key});
 

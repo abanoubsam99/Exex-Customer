@@ -1,13 +1,13 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_images.dart';
 import '../../../../../core/ui/widgets/custom_image_handler.dart';
-import '../../logic/controller/forget_password_otp_controller.dart';
 
-class ForgetPasswordOtpTopPart extends GetView<ForgetPasswordOtpController> {
-  const ForgetPasswordOtpTopPart({super.key});
+class ForgetPasswordOtpTopPart extends StatelessWidget {
+  final String phone;
+  const ForgetPasswordOtpTopPart({super.key, required this.phone});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class ForgetPasswordOtpTopPart extends GetView<ForgetPasswordOtpController> {
               ),
             ),
             Text(
-              controller.phone.value,
+              phone,
               textAlign: TextAlign.center,
               textDirection: TextDirection.ltr,
               style: TextStyle(
@@ -62,9 +62,7 @@ class ForgetPasswordOtpTopPart extends GetView<ForgetPasswordOtpController> {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 minimumSize: Size.zero,
               ),
-              onPressed: () async {
-                Get.back();
-              },
+              onPressed: () => NavigationHelper.pop(),
               child: Text(
                 'تعديل',
                 style: TextStyle(

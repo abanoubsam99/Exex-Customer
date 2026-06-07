@@ -1,26 +1,38 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/main/logic/main_controller.dart';
+import 'package:evex_user/data/cubits/main/main_cubit.dart';
+import 'package:evex_user/data/cubits/main/main_state.dart';
+import 'package:evex_user/features/home/ui/home_screen.dart';
+import 'package:evex_user/features/more/ui/more_screen.dart';
+import 'package:evex_user/features/my_bookings/ui/my_bookings_screen.dart';
+import 'package:evex_user/features/wallet/ui/wallet_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:get/get.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class MainScreen extends GetView<MainController> {
+class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
+
+  static const List<Widget> _pages = [
+    HomeScreen(),
+    MyBookingsScreen(),
+    WalletScreen(),
+    MoreScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<MainCubit>();
     return Scaffold(
       body: Stack(
         children: [
           PageView(
-            controller: controller.pageController,
+            controller: cubit.pageController,
             physics: const BouncingScrollPhysics(),
-            onPageChanged: controller.animateToTab,
-            children: controller.pages.map((page) {
+            onPageChanged: cubit.animateToTab,
+            children: _pages.map((page) {
               return Padding(
                 padding: EdgeInsets.only(bottom: 74.h),
                 child: page,
@@ -28,14 +40,10 @@ class MainScreen extends GetView<MainController> {
             }).toList(),
           ),
           Positioned(
-            // left: 22.r,
-            // right: 22.r,
-            // bottom: 22.r,
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              // width: 335,
               height: 74.r,
               margin: EdgeInsets.all(22.r),
               padding: EdgeInsets.symmetric(horizontal: 35.r, vertical: 12.r),
@@ -44,7 +52,7 @@ class MainScreen extends GetView<MainController> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(45),
                 ),
-                shadows: [
+                shadows: const [
                   BoxShadow(
                     color: Color(0x19000000),
                     blurRadius: 22,
@@ -53,34 +61,37 @@ class MainScreen extends GetView<MainController> {
                   ),
                 ],
               ),
-
-              child: Obx(
-                () => Row(
+              child: BlocBuilder<MainCubit, MainState>(
+                builder: (context, state) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _bottomAppBarItem(
+                    _NavItem(
                       icon: AppImages.iconsHouse,
+                      label: 'الرئيسيه',
                       page: 0,
-                      context,
-                      label: "الرئيسيه",
+                      currentPage: state.currentPage,
+                      onTap: () => cubit.goToTab(0),
                     ),
-                    _bottomAppBarItem(
+                    _NavItem(
                       icon: AppImages.iconsReceipt,
+                      label: 'حجوزاتى',
                       page: 1,
-                      context,
-                      label: "حجوزاتى",
+                      currentPage: state.currentPage,
+                      onTap: () => cubit.goToTab(1),
                     ),
-                    _bottomAppBarItem(
+                    _NavItem(
                       icon: AppImages.iconsWallet,
+                      label: 'المحفظه',
                       page: 2,
-                      context,
-                      label: "المحفظه",
+                      currentPage: state.currentPage,
+                      onTap: () => cubit.goToTab(2),
                     ),
-                    _bottomAppBarItem(
+                    _NavItem(
                       icon: AppImages.iconsMenu,
+                      label: 'المزيد',
                       page: 3,
-                      context,
-                      label: "المزيد",
+                      currentPage: state.currentPage,
+                      onTap: () => cubit.goToTab(3),
                     ),
                   ],
                 ),
@@ -91,15 +102,28 @@ class MainScreen extends GetView<MainController> {
       ),
     );
   }
+}
 
-  Widget _bottomAppBarItem(
-    BuildContext context, {
-    required icon,
-    required page,
-    required label,
-  }) {
+class _NavItem extends StatelessWidget {
+  final String icon;
+  final String label;
+  final int page;
+  final int currentPage;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.page,
+    required this.currentPage,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = currentPage == page;
     return ZoomTapAnimation(
-      onTap: () => controller.goToTab(page),
+      onTap: onTap,
       child: Container(
         color: Colors.transparent,
         child: Column(
@@ -107,9 +131,7 @@ class MainScreen extends GetView<MainController> {
           children: [
             CustomImageHandler(
               icon,
-              color: controller.currentPage == page
-                  ? AppColors.primaryColor
-                  : AppColors.grey,
+              color: isActive ? AppColors.primaryColor : AppColors.grey,
               height: 24.r,
               width: 24.r,
             ),
@@ -117,13 +139,9 @@ class MainScreen extends GetView<MainController> {
             Text(
               label,
               style: TextStyle(
-                color: controller.currentPage == page
-                    ? AppColors.primaryColor
-                    : AppColors.grey,
+                color: isActive ? AppColors.primaryColor : AppColors.grey,
                 fontSize: 12.r,
                 fontWeight: FontWeight.w700,
-                // fontWeight:
-                //     controller.currentPage == page ? FontWeight.w600 : null,
               ),
             ),
           ],

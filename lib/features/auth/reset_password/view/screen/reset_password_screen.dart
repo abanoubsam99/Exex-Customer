@@ -1,17 +1,11 @@
-import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
-import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
-import 'package:evex_user/core/ui/widgets/custom_button.dart';
-import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/core/ui/widgets/top_backround.dart';
-import 'package:evex_user/features/auth/reset_password/logic/controller/forget_password_controller.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/reset_password_body.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/reset_password_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class ResetPasswordScreen extends GetView<ForgetPasswordController> {
+class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({super.key});
 
   @override
@@ -29,8 +23,6 @@ class ResetPasswordScreen extends GetView<ForgetPasswordController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      // color: Colors.red,
-                      // height: 200.h,
                       width: double.infinity,
                       alignment: Alignment.center,
                       child: ResetPasswordTopPart(),
@@ -46,7 +38,7 @@ class ResetPasswordScreen extends GetView<ForgetPasswordController> {
                             topRight: Radius.circular(40.r),
                           ),
                         ),
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                             color: Color(0x19000000),
                             blurRadius: 54,
@@ -55,7 +47,7 @@ class ResetPasswordScreen extends GetView<ForgetPasswordController> {
                           ),
                         ],
                       ),
-                      child: ResetPasswordBody(),
+                      child: const ResetPasswordBody(),
                     ),
                   ],
                 ),

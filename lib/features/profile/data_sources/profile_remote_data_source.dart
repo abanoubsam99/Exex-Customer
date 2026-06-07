@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:evex_user/core/models/user_model.dart';
-import 'package:evex_user/features/profile/data/models/profile.dart';
+import 'package:evex_user/data/models/user_model.dart';
+import 'package:evex_user/data/models/profile.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../core/constants/app_endpoints.dart';

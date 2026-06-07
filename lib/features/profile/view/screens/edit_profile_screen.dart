@@ -1,27 +1,29 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/app_validation_functions.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
+import 'package:evex_user/core/localization/app_localizations.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
-import 'package:evex_user/features/profile/logic/profile_controller.dart';
+import 'package:evex_user/data/cubits/profile/profile_cubit.dart';
+import 'package:evex_user/data/cubits/profile/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
-class EditProfileScreen extends GetView<ProfileController> {
+class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ProfileCubit>();
     return Scaffold(
-      body: Obx(
-        () => Container(
+      body: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) => Container(
           height: 1.sh,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -41,7 +43,7 @@ class EditProfileScreen extends GetView<ProfileController> {
                     const CustomBackButtonWidget(),
                     Center(
                       child: GestureDetector(
-                        onTap: () => controller.pickImage(),
+                        onTap: () => cubit.pickImage(),
                         child: Container(
                           height: 100.r,
                           width: 100.r,
@@ -61,13 +63,13 @@ class EditProfileScreen extends GetView<ProfileController> {
                     ),
                     8.verticalSpace,
                     Form(
-                      key: controller.editProfileFormKey,
+                      key: cubit.editProfileFormKey,
                       child: Column(
                         children: [
                           TextFieldBuilder(
                             radius: 16,
                             title: 'الاسم الثلاثى',
-                            controller: controller.nameController,
+                            controller: cubit.nameController,
                             validator: (p0) {
                               return AppValidationFunctions.fullNameValidation(
                                 p0,
@@ -76,39 +78,14 @@ class EditProfileScreen extends GetView<ProfileController> {
                             },
                             fillColor: AppColors.buttonSecondaryColor,
                           ),
-                          // 16.verticalSpace,
-                          // TextFieldBuilder(
-                          //   validator:
-                          //       (email) =>
-                          //           AppValidationFunctions.emailValidationFunction(
-                          //             email,
-                          //           ),
-                          //   title: "البريد الالكترونى",
-                          //   controller: controller.emailController,
-                          //   fillColor: AppColors.buttonSecondaryColor,
-                          //   bgColor: AppColors.buttonSecondaryColor,
-                          // ),
-                          // 16.verticalSpace,
-                          // TextFieldBuilder(
-                          //   radius: 16,
-                          //   controller: controller.addressController,
-                          //   title: 'العنوان',
-                          //   validator: (p0) {
-                          //     return null;
-                          //   },
-                          //   // validator: (p0) {
-                          //   //   return AppValidationFunctions
-                          //   //       .stringValidationFunction(p0, 'العنوان');
-                          //   // },
-                          //   fillColor: AppColors.buttonSecondaryColor,
-                          // ),
                           16.verticalSpace,
                           Row(
                             children: [
                               Expanded(
                                 flex: 9,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
                                     Text(AppStrings.governnorate.tr),
                                     SizedBox(height: 6.h),
@@ -118,25 +95,21 @@ class EditProfileScreen extends GetView<ProfileController> {
                                         AppImages.iconsArrowDown,
                                         width: 16,
                                       ),
-                                      items:
-                                          controller.governates.value
-                                              .map(
-                                                (g) => DropdownMenuItem(
-                                                  value: g.governorateNameAr,
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    g.governorateNameAr ?? "",
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
+                                      items: state.governorates
+                                          .map(
+                                            (g) => DropdownMenuItem(
+                                              value: g.governorateNameAr,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                g.governorateNameAr ?? '',
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
                                       onChanged: (value) {
-                                        controller.selectedGovernate.value =
-                                            value;
-                                        controller.selectedCity.value = null;
-                                        controller.getCities(value);
+                                        cubit.selectGovernorate(value);
                                       },
-                                      value: controller.selectedGovernate.value,
+                                      value: state.selectedGovernorate,
                                       validator: (value) {
                                         if (value == null) {
                                           return 'يرجي اختيار محافظة';
@@ -151,33 +124,30 @@ class EditProfileScreen extends GetView<ProfileController> {
                               Expanded(
                                 flex: 11,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
                                     Text(AppStrings.city.tr),
                                     SizedBox(height: 6.h),
                                     CustomDropDownFormField(
-                                      // size: 30,
                                       icon: CustomImageHandler(
                                         AppImages.iconsArrowDown,
                                         width: 16,
                                       ),
                                       hintText: 'المدينة',
-                                      items:
-                                          controller.cities.value
-                                              .map(
-                                                (g) => DropdownMenuItem(
-                                                  value: g.cityNameAr,
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    g.cityNameAr ?? "",
-                                                  ),
-                                                ),
-                                              )
-                                              .toList(),
+                                      items: state.cities
+                                          .map(
+                                            (g) => DropdownMenuItem(
+                                              value: g.cityNameAr,
+                                              alignment: Alignment.center,
+                                              child: Text(g.cityNameAr ?? ''),
+                                            ),
+                                          )
+                                          .toList(),
                                       onChanged: (city) {
-                                        controller.selectedCity.value = city;
+                                        cubit.selectCity(city);
                                       },
-                                      value: controller.selectedCity.value,
+                                      value: state.selectedCity,
                                       validator: (value) {
                                         if (value == null) {
                                           return 'يرجي اختيار مدينة';
@@ -197,9 +167,8 @@ class EditProfileScreen extends GetView<ProfileController> {
                     CustomButton(
                       text: 'حفظ التغيرات',
                       onTap: () {
-                        if (controller.editProfileFormKey.currentState!
-                            .validate()) {
-                          controller.updateClient();
+                        if (cubit.editProfileFormKey.currentState!.validate()) {
+                          cubit.updateClient();
                         }
                       },
                     ),
@@ -209,9 +178,7 @@ class EditProfileScreen extends GetView<ProfileController> {
                       backgroundColor: Colors.white,
                       fontColor: const Color(0xff2C262C),
                       text: 'الغاء',
-                      onTap: () {
-                        Get.back();
-                      },
+                      onTap: () => NavigationHelper.pop(),
                     ),
                   ],
                 ),
@@ -222,8 +189,4 @@ class EditProfileScreen extends GetView<ProfileController> {
       ),
     );
   }
-
-  userRowData(String s, String t, profile) {}
-
-  divider() {}
 }

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:evex_user/features/auth/login/data/models/login_request.dart';
+import 'package:evex_user/data/models/login_request.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../core/constants/app_endpoints.dart';
-import '../../../../../core/models/user_model.dart';
+import 'package:evex_user/data/models/user_model.dart';
 
 part 'login_remote_data_source.g.dart';
 

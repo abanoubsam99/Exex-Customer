@@ -8,10 +8,9 @@ import 'package:evex_user/features/onboarding/ui/widgets/onboard_second_page.dar
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_third_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/get_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/app/helpers/cache_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vector_graphics/vector_graphics_compat.dart';
 
@@ -74,10 +73,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         );
                       } else {
                         // navigate to next screen after onboarding
-                        SharedPreferences.getInstance().then((prefs) {
-                          prefs.setBool('onboardingCompleted', true);
-                        });
-                        Get.offAllNamed(Routes.loginScreen);
+                        context.read<CacheHelper>().saveData(
+                          key: 'onboardingCompleted',
+                          value: true,
+                        );
+                        NavigationHelper.pushNamedAndRemoveUntil(
+                          Routes.loginScreen,
+                        );
                       }
                     },
                     child: Text(

@@ -1,58 +1,47 @@
-import 'dart:async';
 import 'dart:convert';
 
-import 'package:dartz/dartz.dart';
+import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:evex_user/core/constants/cash_keys.dart';
-import 'package:evex_user/core/helpers/cash_helper.dart';
-import 'package:evex_user/core/models/user_model.dart';
-import 'package:get/get.dart';
+import 'package:evex_user/data/models/user_model.dart';
 
-class UserService extends GetxService {
-  static UserService get to => Get.find();
+class UserService {
+  final CacheHelper _cacheHelper;
+  UserService(this._cacheHelper);
 
-  final currentUser = Rxn<UserModel>();
-  final isAcceptedAsVendor = false.obs;
+  UserModel? currentUser;
 
-  Future<UserService> init() async {
+  Future<void> init() async {
     await _loadUser();
-    return this;
-  }
-
-  void setAcceptedAsVendor(bool value) {
-    isAcceptedAsVendor.value = value;
   }
 
   Future<void> saveUser(UserModel user) async {
-    await CashHelper.to.saveData(key: CacheKeys.userModel, value: json.encode(user.toJson()));
-    currentUser.value = user;
+    await _cacheHelper.saveData(
+      key: CacheKeys.userModel,
+      value: json.encode(user.toJson()),
+    );
+    currentUser = user;
   }
 
   Future<void> _loadUser() async {
-    final userJson = await CashHelper.to.getData(CacheKeys.userModel);
-    
-    if (userJson == null || userJson == "null") {
-      currentUser.value = null;
+    final userJson = _cacheHelper.getData(CacheKeys.userModel) as String?;
+    if (userJson == null || userJson == 'null') {
+      currentUser = null;
       return;
     }
-
     try {
-      currentUser.value = UserModel.fromJson(json.decode(userJson));
-    } catch (e) {
-      currentUser.value = null;
+      currentUser = UserModel.fromJson(json.decode(userJson));
+    } catch (_) {
+      currentUser = null;
     }
   }
 
-  updateUser(UserViewModel user) async {
-    currentUser.value!.userViewModel = user;
-    await saveUser(currentUser.value!);
+  Future<void> updateUser(UserViewModel user) async {
+    currentUser!.userViewModel = user;
+    await saveUser(currentUser!);
   }
 
-  Future<bool> logout() async {
-    Get.deleteAll(force: true);
-    await CashHelper.to.clearAllData();
-    currentUser.value = null;
-    isAcceptedAsVendor.value = false;
-    await Get.putAsync(() => UserService().init());
-    return true;
+  Future<void> logout() async {
+    await _cacheHelper.clearAllData();
+    currentUser = null;
   }
 }

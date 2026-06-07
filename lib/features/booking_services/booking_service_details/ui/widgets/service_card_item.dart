@@ -8,7 +8,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ServiceCardItem extends StatelessWidget {
@@ -203,7 +202,7 @@ class ServiceCardItem extends StatelessWidget {
                   ),
                   Spacer(),
                   AnimatedContainer(
-                    duration: 0.3.seconds,
+                    duration: const Duration(milliseconds: 300),
                     width: 25.r,
                     height: 25.r,
                     decoration: ShapeDecoration(

@@ -7,7 +7,6 @@ import 'package:evex_user/core/ui/widgets/text_field_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_intl_phone_field/countries.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';

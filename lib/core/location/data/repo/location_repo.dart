@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:evex_user/core/location/data/datasource/location_remote_datasource.dart';
-import 'package:evex_user/core/location/data/models/city.dart';
-import 'package:evex_user/core/location/data/models/governate.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/city.dart';
+import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/core/networking/api_error_handler.dart';
 
 class LocationRepo {

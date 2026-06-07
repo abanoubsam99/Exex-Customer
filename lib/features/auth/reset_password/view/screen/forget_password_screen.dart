@@ -1,12 +1,10 @@
 import 'package:evex_user/core/ui/widgets/top_backround.dart';
-import 'package:evex_user/features/auth/reset_password/logic/controller/forget_password_controller.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/forget_password_body.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/forget_password_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
+class ForgetPasswordScreen extends StatelessWidget {
   const ForgetPasswordScreen({super.key});
 
   @override
@@ -23,8 +21,6 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      // color: Colors.red,
-                      // height: 200.h,
                       width: double.infinity,
                       alignment: Alignment.center,
                       child: ForgetPasswordTopPart(),
@@ -40,7 +36,7 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                             topRight: Radius.circular(40.r),
                           ),
                         ),
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                             color: Color(0x19000000),
                             blurRadius: 54,
@@ -49,7 +45,7 @@ class ForgetPasswordScreen extends GetView<ForgetPasswordController> {
                           ),
                         ],
                       ),
-                      child: ForgetPasswordBody(),
+                      child: const ForgetPasswordBody(),
                     ),
                   ],
                 ),

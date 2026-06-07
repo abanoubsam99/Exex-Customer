@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/constants/app_endpoints.dart' show AppEndpoints;
-import '../models/post.dart';
+import 'package:evex_user/data/models/post.dart';
 
 part 'post_remote_data_source.g.dart';
 

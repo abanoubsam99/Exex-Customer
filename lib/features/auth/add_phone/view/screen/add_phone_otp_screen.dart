@@ -1,17 +1,31 @@
 import 'package:evex_user/core/ui/widgets/top_backround.dart';
+import 'package:evex_user/data/cubits/auth/add_phone/add_phone_cubit.dart';
 import 'package:evex_user/features/auth/add_phone/view/widget/add_phone_otp_body.dart';
 import 'package:evex_user/features/auth/add_phone/view/widget/add_phone_otp_top_part.dart';
-import 'package:evex_user/features/auth/reset_password/logic/controller/forget_password_otp_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class AddPhoneOtpScreen extends GetView<ForgetPasswordOtpController> {
+class AddPhoneOtpScreen extends StatefulWidget {
   const AddPhoneOtpScreen({super.key});
 
   @override
+  State<AddPhoneOtpScreen> createState() => _AddPhoneOtpScreenState();
+}
+
+class _AddPhoneOtpScreenState extends State<AddPhoneOtpScreen> {
+  String _phone = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    context.read<AddPhoneCubit>().initOtpScreen(_phone);
+  }
+
+  @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       body: SafeArea(
         top: false,
         child: Stack(
@@ -23,11 +37,9 @@ class AddPhoneOtpScreen extends GetView<ForgetPasswordOtpController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      // color: Colors.red,
-                      // height: 200.h,
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: AddPhoneOtpTopPart(),
+                      child: AddPhoneOtpTopPart(phone: _phone),
                     ),
                     24.verticalSpace,
                     Container(
@@ -40,7 +52,7 @@ class AddPhoneOtpScreen extends GetView<ForgetPasswordOtpController> {
                             topRight: Radius.circular(40.r),
                           ),
                         ),
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                             color: Color(0x19000000),
                             blurRadius: 54,
@@ -49,7 +61,7 @@ class AddPhoneOtpScreen extends GetView<ForgetPasswordOtpController> {
                           ),
                         ],
                       ),
-                      child: AddPhoneOtpBody(),
+                      child: const AddPhoneOtpBody(),
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/localization/app_localizations.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
@@ -9,7 +10,6 @@ import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/core/ui/widgets/title_inbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class NewSuggestionScreen extends StatelessWidget {

@@ -1,25 +1,19 @@
-import 'dart:developer';
-
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
-import 'package:evex_user/core/ui/helpers/custom_loader.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/profile/logic/profile_controller.dart';
-
+import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
+import 'package:evex_user/data/cubits/profile/profile_cubit.dart';
+import 'package:evex_user/data/cubits/profile/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart' hide TextDirection;
 
-import '../../../../core/ui/widgets/text_field_builder_widget.dart';
-import 'revenue_card.dart';
-
-class ProfileScreenBody extends GetView<ProfileController> {
+class ProfileScreenBody extends StatelessWidget {
   const ProfileScreenBody({super.key});
 
   @override
@@ -37,7 +31,7 @@ class ProfileScreenBody extends GetView<ProfileController> {
       child: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            controller.getProfile();
+            context.read<ProfileCubit>().getProfile();
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -50,9 +44,11 @@ class ProfileScreenBody extends GetView<ProfileController> {
                     children: [
                       const CustomBackButtonWidget(),
                       InkWell(
-                        onTap: () {
-                          UserService().logout();
-                          Get.offAllNamed(Routes.loginScreen);
+                        onTap: () async {
+                          await context.read<UserService>().logout();
+                          NavigationHelper.pushNamedAndRemoveUntil(
+                            Routes.loginScreen,
+                          );
                         },
                         child: Container(
                           width: 40.r,
@@ -75,197 +71,145 @@ class ProfileScreenBody extends GetView<ProfileController> {
                       ),
                     ],
                   ),
-                  Obx(
-                    () => controller.isLoading.value
-                        ? const CustomLoader()
-                        : Column(
-                            children: [
-                              Center(
-                                child: Container(
-                                  height: 100.r,
-                                  width: 100.r,
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      255,
-                                      255,
-                                      255,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 3,
-                                    ),
-                                  ),
-                                  child: ClipOval(
-                                    child: CustomImageHandler(
-                                      controller.profile.value?.imageName !=
-                                              null
-                                          ? '${AppEndpoints.baseUrl}${controller.profile.value?.imageName}'
-                                          : AppImages.imagesNewLogo2,
-                                    ),
-                                  ),
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      if (state.isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      final profile = state.profile;
+                      return Column(
+                        children: [
+                          Center(
+                            child: Container(
+                              height: 100.r,
+                              width: 100.r,
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: Colors.white, width: 3),
+                              ),
+                              child: ClipOval(
+                                child: CustomImageHandler(
+                                  profile?.imageName != null
+                                      ? '${AppEndpoints.baseUrl}${profile!.imageName}'
+                                      : AppImages.imagesNewLogo2,
                                 ),
                               ),
-                              8.verticalSpace,
-                              Text(
-                                controller.profile.value?.userName ?? '',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.r,
-                                  fontFamily: 'Almarai',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.50,
-                                ),
-                              ),
-                              Text(
-                                '#${controller.profile.value?.userId!.substring(controller.profile.value!.userId!.length - 6)}',
-                                textAlign: TextAlign.right,
-                                textDirection: TextDirection.ltr,
-                                style: TextStyle(
-                                  color: const Color(0xFF99A2AC),
-                                  fontSize: 14.r,
-                                  fontFamily: 'Almarai',
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.50,
-                                ),
-                              ),
-                              12.verticalSpace,
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     RevenueCard(
-                              //       isShadow: true,
-                              //       title: "تكلفه الاشتراك الشهري",
-                              //       amount:
-                              //           controller
-                              //               .profile
-                              //               .value
-                              //               ?.planDto
-                              //               ?.price
-                              //               .toString() ??
-                              //           '0',
-                              //       currency: ' جنيه',
-                              //       backgroundColor: const Color(0xffE3F9FF),
-                              //       titleColor: const Color(0xff6F767E),
-                              //     ),
-                              //     RevenueCard(
-                              //       isShadow: true,
-                              //       title: "معاد تجديد الاشتراك",
-                              //       amount: DateFormat('d/M/yyyy').format(
-                              //         controller.profile.value?.renewDate ??
-                              //             DateTime.parse(
-                              //               '0001-01-01T00:00:00',
-                              //             ),
-                              //       ),
-                              //       backgroundColor: const Color(0xffF8E7FB),
-                              //       titleColor: const Color(0xff6F767E),
-                              //     ),
-                              //     RevenueCard(
-                              //       isShadow: true,
-                              //       title: "نظام الاشتراك الحالى",
-                              //       amount:
-                              //           controller
-                              //               .profile
-                              //               .value
-                              //               ?.planDto
-                              //               ?.name ??
-                              //           'NaN',
-                              //       backgroundColor: const Color(0xffFFFDC4),
-                              //       titleColor: const Color(0xff6F767E),
-                              //     ),
-                              //   ],
-                              // ),
-                              16.verticalSpace,
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 16.h,
-                                  horizontal: 12.w,
-                                ),
-                                decoration: ShapeDecoration(
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                      width: 1,
-                                      color: Color(0xFFF2F4F7),
-                                    ),
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    userRowData(
-                                      'الاسم الثلاثى',
-                                      controller.profile.value?.userName ?? '',
-                                      AppImages.iconsProfile2user,
-                                    ),
-                                    divider(),
-                                    userRowData(
-                                      'الهاتف',
-                                      controller.profile.value?.phoneNumber ??
-                                          'NaN',
-                                      AppImages.iconsPhone,
-                                    ),
-                                    divider(),
-                                    userRowData(
-                                      'الايميل',
-                                      controller.profile.value?.email ?? 'NaN',
-                                      AppImages.iconsEmail,
-                                    ),
-                                    divider(),
-                                    userRowData(
-                                      'صلاحيات المستخدم',
-                                      controller.profile.value?.roles?.join(
-                                            '/',
-                                          ) ??
-                                          'NAN',
-                                      AppImages.iconsLock,
-                                    ),
-                                    divider(),
-                                    userRowData(
-                                      'العنوان',
-                                      '${controller.profile.value?.governorate ?? ''} - ${controller.profile.value?.city ?? ''}',
-                                      AppImages.iconsLocation2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              72.verticalSpace,
-                              CustomButton(
-                                text: 'تعديل البيانات الشخصيه',
-                                onTap: () => {Get.toNamed(Routes.editProfile)},
-                              ),
-                              18.verticalSpace,
-                              CustomButton(
-                                bordereColor: const Color(0xff2C262C),
-                                backgroundColor: Colors.white,
-                                fontColor: const Color(0xff2C262C),
-                                text: 'تغير كلمه المرور',
-                                onTap: () => {
-                                  // Get.toNamed(Routes.changePassword)
-                                },
-                              ),
-                              18.verticalSpace,
-                              CustomButton(
-                                bordereColor: Colors.white,
-                                backgroundColor: Colors.white,
-                                fontColor: const Color(0xffD42D1C),
-                                isfilled: false,
-                                text: 'حذف الحساب',
-                                onTap: () {
-                                  {
-                                    Get.dialog(
-                                      barrierDismissible: true,
-                                      _DeleteAccountDialog(),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
+                            ),
                           ),
+                          8.verticalSpace,
+                          Text(
+                            profile?.userName ?? '',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w700,
+                              height: 1.50,
+                            ),
+                          ),
+                          if (profile?.userId != null)
+                            Text(
+                              '#${profile!.userId!.substring(profile.userId!.length - 6)}',
+                              textAlign: TextAlign.right,
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                color: const Color(0xFF99A2AC),
+                                fontSize: 14.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w400,
+                                height: 1.50,
+                              ),
+                            ),
+                          12.verticalSpace,
+                          16.verticalSpace,
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.h,
+                              horizontal: 12.w,
+                            ),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                  width: 1,
+                                  color: Color(0xFFF2F4F7),
+                                ),
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                _userRowData(
+                                  'الاسم الثلاثى',
+                                  profile?.userName ?? '',
+                                  AppImages.iconsProfile2user,
+                                ),
+                                _divider(),
+                                _userRowData(
+                                  'الهاتف',
+                                  profile?.phoneNumber ?? 'NaN',
+                                  AppImages.iconsPhone,
+                                ),
+                                _divider(),
+                                _userRowData(
+                                  'الايميل',
+                                  profile?.email ?? 'NaN',
+                                  AppImages.iconsEmail,
+                                ),
+                                _divider(),
+                                _userRowData(
+                                  'صلاحيات المستخدم',
+                                  profile?.roles?.join('/') ?? 'NAN',
+                                  AppImages.iconsLock,
+                                ),
+                                _divider(),
+                                _userRowData(
+                                  'العنوان',
+                                  '${profile?.governorate ?? ''} - ${profile?.city ?? ''}',
+                                  AppImages.iconsLocation2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          72.verticalSpace,
+                          CustomButton(
+                            text: 'تعديل البيانات الشخصيه',
+                            onTap: () =>
+                                NavigationHelper.pushNamed(Routes.editProfile),
+                          ),
+                          18.verticalSpace,
+                          CustomButton(
+                            bordereColor: const Color(0xff2C262C),
+                            backgroundColor: Colors.white,
+                            fontColor: const Color(0xff2C262C),
+                            text: 'تغير كلمه المرور',
+                            onTap: () {},
+                          ),
+                          18.verticalSpace,
+                          CustomButton(
+                            bordereColor: Colors.white,
+                            backgroundColor: Colors.white,
+                            fontColor: const Color(0xffD42D1C),
+                            isfilled: false,
+                            text: 'حذف الحساب',
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => _DeleteAccountDialog(
+                                  cubit: context.read<ProfileCubit>(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -276,7 +220,7 @@ class ProfileScreenBody extends GetView<ProfileController> {
     );
   }
 
-  Container divider() {
+  Widget _divider() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 12.h),
       width: double.infinity,
@@ -300,7 +244,7 @@ class ProfileScreenBody extends GetView<ProfileController> {
     );
   }
 
-  Row userRowData(String lable, String value, String icon) {
+  Widget _userRowData(String label, String value, String icon) {
     return Row(
       children: [
         CustomImageHandler(
@@ -311,7 +255,7 @@ class ProfileScreenBody extends GetView<ProfileController> {
         ),
         4.horizontalSpace,
         Text(
-          lable,
+          label,
           textAlign: TextAlign.right,
           style: TextStyle(
             color: const Color(0xFF2C262C),
@@ -320,7 +264,6 @@ class ProfileScreenBody extends GetView<ProfileController> {
             fontWeight: FontWeight.w400,
           ),
         ),
-        // const Spacer(),
         Expanded(
           child: Text(
             value,
@@ -340,7 +283,8 @@ class ProfileScreenBody extends GetView<ProfileController> {
 }
 
 class _DeleteAccountDialog extends StatefulWidget {
-  const _DeleteAccountDialog();
+  final ProfileCubit cubit;
+  const _DeleteAccountDialog({required this.cubit});
 
   @override
   State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
@@ -350,7 +294,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
   bool _showEmailField = false;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  ProfileController get controller => Get.find<ProfileController>();
 
   @override
   void dispose() {
@@ -371,7 +314,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Close button
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -387,7 +329,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                       color: Colors.transparent,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(50.r),
-                        onTap: () => Get.back(),
+                        onTap: () => NavigationHelper.pop(),
                         child: Center(
                           child: CustomImageHandler(
                             AppImages.iconsClose,
@@ -400,7 +342,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   ),
                 ],
               ),
-
               Container(
                 width: 68.r,
                 height: 68.r,
@@ -431,10 +372,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   ),
                 ),
               ),
-
               22.verticalSpace,
-
-              // Title
               Text(
                 'هل انت متأكد من انك تريد مسح الحساب الخاص بك نهائياً ؟',
                 textAlign: TextAlign.center,
@@ -457,9 +395,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     ),
                   ),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 13, horizontal: 12)
-                            .r,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 13,
+                      horizontal: 12,
+                    ).r,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -491,7 +430,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 ),
               ],
               16.verticalSpace,
-              // Email field — shown after pressing the first button
               if (_showEmailField) ...[
                 TextFieldBuilder(
                   controller: _emailController,
@@ -510,8 +448,6 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 ),
                 16.verticalSpace,
               ],
-
-              // First button: show email field / confirm delete
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -523,13 +459,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   ),
                   onPressed: () {
                     if (!_showEmailField) {
-                      // Step 1: reveal email field
                       setState(() => _showEmailField = true);
                     } else {
-                      // Step 2: validate and delete
                       if (_formKey.currentState!.validate()) {
-                        // log('Email confirmed: ${_emailController.text}');
-                        controller.deleteAccount(_emailController.text);
+                        widget.cubit.deleteAccount(_emailController.text);
                       }
                     }
                   },
@@ -543,14 +476,11 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   ),
                 ),
               ),
-
               8.verticalSpace,
-
-              // Cancel button
               SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => NavigationHelper.pop(),
                   child: Text(
                     'إلغاء',
                     style: TextStyle(

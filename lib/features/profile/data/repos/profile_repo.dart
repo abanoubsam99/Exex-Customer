@@ -2,10 +2,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-import 'package:evex_user/core/models/error_model.dart';
-import 'package:evex_user/core/models/user_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
+import 'package:evex_user/data/models/user_model.dart';
 import 'package:evex_user/core/networking/api_error_handler.dart';
-import 'package:evex_user/features/profile/data/models/profile.dart';
+import 'package:evex_user/data/models/profile.dart';
 import 'package:evex_user/features/profile/data_sources/profile_remote_data_source.dart';
 
 class ProfileRepo {

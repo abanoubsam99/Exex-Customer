@@ -5,7 +5,6 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_utils/get_utils.dart';
 
 class CountryPicker extends StatelessWidget {
   const CountryPicker({

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/core/networking/api_error_handler.dart';
 import 'package:evex_user/features/auth/add_client/data/datasources/add_client_remote_datasource.dart';
-import 'package:evex_user/features/auth/add_client/data/model/add_client_response.dart';
+import 'package:evex_user/data/models/add_client_response.dart';
 
 class AddClientRepo {
   final AddClientRemoteDataSource addClientRemoteDataSource;

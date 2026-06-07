@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../core/constants/app_endpoints.dart';
-import '../model/add_client_response.dart';
+import 'package:evex_user/data/models/add_client_response.dart';
 
 part 'add_client_remote_datasource.g.dart';
 

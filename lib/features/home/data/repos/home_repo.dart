@@ -1,10 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dartz/dartz.dart';
 
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/features/home/data/data_sources/home_remote_data_source.dart';
-import 'package:evex_user/features/home/data/models/port_category_with_port_types.dart';
-import 'package:evex_user/features/home/data/models/special_offer.dart';
+import 'package:evex_user/data/models/port_category_with_port_types.dart';
+import 'package:evex_user/data/models/special_offer.dart';
 
 import '../../../../core/networking/api_error_handler.dart';
 

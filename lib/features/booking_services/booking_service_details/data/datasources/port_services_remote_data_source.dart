@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/addition_model.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/service_details_model.dart';
+import 'package:evex_user/data/models/addition_model.dart';
+import 'package:evex_user/data/models/port_service.dart';
+import 'package:evex_user/data/models/service_details_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../../../core/constants/app_endpoints.dart';

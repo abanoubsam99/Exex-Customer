@@ -1,9 +1,9 @@
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
-import 'package:evex_user/features/main/logic/main_controller.dart';
+import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/discount_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class MyBookingTopSection extends StatelessWidget {
   const MyBookingTopSection({super.key});
@@ -16,7 +16,7 @@ class MyBookingTopSection extends StatelessWidget {
           children: [
             CustomBackButtonWidget(
               onTap: () {
-                Get.find<MainController>().goToTab(0);
+                context.read<MainCubit>().goToTab(0);
               },
             ),
             12.horizontalSpace,

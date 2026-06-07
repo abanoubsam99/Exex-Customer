@@ -1,28 +1,28 @@
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
+import 'package:evex_user/data/cubits/auth/forget_password/forget_password_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-import '../../logic/controller/forget_password_controller.dart';
-
-class ForgetPasswordBody extends GetView<ForgetPasswordController> {
+class ForgetPasswordBody extends StatelessWidget {
   const ForgetPasswordBody({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<ForgetPasswordCubit>();
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 38.0.w),
       child: Form(
-        key: controller.formKey,
+        key: cubit.formKey,
         child: Column(
           children: [
             TextFieldBuilder(
-              controller: controller.phoneController,
-              countryController: controller.countryCodeController,
+              controller: cubit.phoneController,
+              countryController: cubit.countryCodeController,
               title: 'رقم الهاتف',
-              fillColor: Color(0xFFF4F4F4),
+              fillColor: const Color(0xFFF4F4F4),
               bgColor: AppColors.whiteColor,
               keyboardType: TextInputType.phone,
               padding: const EdgeInsets.only(top: 8),
@@ -32,8 +32,8 @@ class ForgetPasswordBody extends GetView<ForgetPasswordController> {
             CustomButton(
               text: "إرسال الرمز",
               onTap: () {
-                if (controller.formKey.currentState!.validate()) {
-                  controller.forgetPassword();
+                if (cubit.formKey.currentState!.validate()) {
+                  cubit.forgetPassword();
                 }
               },
               backgroundColor: AppColors.lightPrimaryColor,

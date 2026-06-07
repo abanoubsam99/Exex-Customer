@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/customer_review.dart';
+import 'package:evex_user/data/models/customer_review.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReviewCardItem extends StatelessWidget {

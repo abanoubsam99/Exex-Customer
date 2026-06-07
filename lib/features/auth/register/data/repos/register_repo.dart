@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 
 import '../../../../../../core/networking/api_error_handler.dart';
 import '../data_sources/register_remote_data_source.dart';

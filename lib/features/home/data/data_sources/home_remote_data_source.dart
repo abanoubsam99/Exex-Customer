@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:evex_user/features/home/data/models/port_category_with_port_types.dart';
-import 'package:evex_user/features/home/data/models/special_offer.dart';
+import 'package:evex_user/data/models/port_category_with_port_types.dart';
+import 'package:evex_user/data/models/special_offer.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../../core/constants/app_endpoints.dart';

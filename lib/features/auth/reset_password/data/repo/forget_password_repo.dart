@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/core/networking/api_error_handler.dart';
 import 'package:evex_user/features/auth/reset_password/data/data_sources/forget_password_data_source.dart';
-import 'package:evex_user/features/auth/reset_password/data/model/forget_password_response.dart';
+import 'package:evex_user/data/models/forget_password_response.dart';
 
 class ForgetPasswordRepo {
   final ForgetPasswordRemoteDataSource forgetPasswordRemoteDataSource;

@@ -1,25 +1,32 @@
-import 'package:evex_user/core/theme/app_colors.dart';
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
-import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/top_backround.dart';
-import 'package:evex_user/features/auth/reset_password/logic/controller/forget_password_controller.dart';
-import 'package:evex_user/features/auth/reset_password/logic/controller/forget_password_otp_controller.dart';
+import 'package:evex_user/data/cubits/auth/forget_password/forget_password_cubit.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/forget_password_otp_body.dart';
 import 'package:evex_user/features/auth/reset_password/view/widget/forget_password_otp_top_part.dart';
-import 'package:evex_user/features/auth/reset_password/view/widget/obfuscated_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import '../../../../../core/localization/app_strings.dart';
 
-class ForgetPasswordOtpScreen extends GetView<ForgetPasswordOtpController> {
+class ForgetPasswordOtpScreen extends StatefulWidget {
   const ForgetPasswordOtpScreen({super.key});
 
   @override
+  State<ForgetPasswordOtpScreen> createState() =>
+      _ForgetPasswordOtpScreenState();
+}
+
+class _ForgetPasswordOtpScreenState extends State<ForgetPasswordOtpScreen> {
+  String _phone = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+    context.read<ForgetPasswordCubit>().initOtpScreen(_phone);
+  }
+
+  @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       body: SafeArea(
         top: false,
         child: Stack(
@@ -31,11 +38,9 @@ class ForgetPasswordOtpScreen extends GetView<ForgetPasswordOtpController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      // color: Colors.red,
-                      // height: 200.h,
                       width: double.infinity,
                       alignment: Alignment.center,
-                      child: ForgetPasswordOtpTopPart(),
+                      child: ForgetPasswordOtpTopPart(phone: _phone),
                     ),
                     24.verticalSpace,
                     Container(
@@ -48,7 +53,7 @@ class ForgetPasswordOtpScreen extends GetView<ForgetPasswordOtpController> {
                             topRight: Radius.circular(40.r),
                           ),
                         ),
-                        shadows: [
+                        shadows: const [
                           BoxShadow(
                             color: Color(0x19000000),
                             blurRadius: 54,
@@ -57,7 +62,7 @@ class ForgetPasswordOtpScreen extends GetView<ForgetPasswordOtpController> {
                           ),
                         ],
                       ),
-                      child: ForgetPasswordOtpBody(),
+                      child: const ForgetPasswordOtpBody(),
                     ),
                   ],
                 ),

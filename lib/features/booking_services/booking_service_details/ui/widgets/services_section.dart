@@ -1,11 +1,11 @@
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/logic/port_services_controller.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class ServicesSection extends GetView<PortServicesController> {
+class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
 
   @override
@@ -65,7 +65,7 @@ class ServicesSection extends GetView<PortServicesController> {
                 letterSpacing: -0.24,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Container(
               width: 13.r,
               height: 13.r,
@@ -92,33 +92,33 @@ class ServicesSection extends GetView<PortServicesController> {
           ],
         ),
         4.verticalSpace,
-        Obx(
-          () => SizedBox(
-            height: 180.h,
-            child: ListView.separated(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.services.value.length,
-              separatorBuilder: (context, index) => 16.horizontalSpace,
-              itemBuilder: (context, index) {
-                PortService service = controller.services.value[index];
-                return Obx(
-                  () => ServiceCardItem(
+        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          builder: (context, state) {
+            final cubit = context.read<BookingServiceDetailsCubit>();
+            return SizedBox(
+              height: 180.h,
+              child: ListView.separated(
+                clipBehavior: Clip.none,
+                scrollDirection: Axis.horizontal,
+                itemCount: state.services.length,
+                separatorBuilder: (context, index) => 16.horizontalSpace,
+                itemBuilder: (context, index) {
+                  final service = state.services[index];
+                  return ServiceCardItem(
                     images: service.serviceImages ?? [],
                     title: service.name ?? '',
-                    subtitle: service.details ?? "",
+                    subtitle: service.details ?? '',
                     price: service.price ?? 0,
-                    isSelected:
-                        controller.selectedService.value?.id == service.id,
+                    isSelected: state.selectedService?.id == service.id,
                     onSelectionChanged: () {
-                      controller.selectedService.value = service;
-                      controller.getServicedata();
+                      cubit.selectService(service);
+                      cubit.getServiceData();
                     },
-                  ),
-                );
-              },
-            ),
-          ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ],
     );

@@ -1,6 +1,6 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'widgets/posts_screen_body.dart';
 
@@ -11,17 +11,17 @@ class PostsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Posts screen"),
+        title: const Text("Posts screen"),
         actions: [
           IconButton(
             onPressed: () {
-              Get.offAllNamed(Routes.loginScreen);
+              NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
             },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
-      body: PostsScreenBody(),
+      body: const PostsScreenBody(),
     );
   }
 }

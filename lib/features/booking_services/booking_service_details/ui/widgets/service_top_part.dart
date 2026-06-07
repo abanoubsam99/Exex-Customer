@@ -2,9 +2,9 @@
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:evex_user/core/constants/app_images.dart';
@@ -140,7 +140,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                   width: 36.r,
                   icon: AppImages.iconsChevronRightSolid,
                   onTap: () {
-                    Get.back();
+                    NavigationHelper.pop();
                   },
                 ),
                 Spacer(),

@@ -1,18 +1,18 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/booking_services/instant_booking_services/data/models/hall.dart';
-import 'package:evex_user/features/booking_services/instant_booking_services/logic/booking_services_ports_controller.dart';
+import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_state.dart';
+import 'package:evex_user/data/models/hall.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 import '../../../home/ui/widgets/booking_services_type.dart';
 import 'widgets/custom_bottom_sheet.dart';
 
-class InstantBookingServicesScreen
-    extends GetView<BookingServicesPortsController> {
+class InstantBookingServicesScreen extends StatelessWidget {
   const InstantBookingServicesScreen({super.key});
 
   @override
@@ -22,11 +22,10 @@ class InstantBookingServicesScreen
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Obx(
-                () =>
-                    controller.isLoading.value
-                        ? const CircularProgressIndicator()
-                        : const SizedBox(),
+              BlocBuilder<InstantBookingCubit, InstantBookingState>(
+                builder: (context, state) => state.isLoading
+                    ? const CircularProgressIndicator()
+                    : const SizedBox(),
               ),
               60.verticalSpace,
               Padding(
@@ -68,9 +67,10 @@ class InstantBookingServicesScreen
                         12.horizontalSpace,
                         GestureDetector(
                           onTap: () {
-                            Get.bottomSheet(
+                            showModalBottomSheet(
+                              context: context,
                               isScrollControlled: true,
-                              CustomBottomSheet(),
+                              builder: (_) => const CustomBottomSheet(),
                             );
                           },
                           child: Container(

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'api_constans.dart';
 
 // TODO: wallahy I will refactor this .. Omar Ahmed

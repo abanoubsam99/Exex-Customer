@@ -1,13 +1,9 @@
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/customer_review.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/logic/port_services_controller.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
+import 'package:evex_user/data/models/customer_review.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/review_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class ReviewsSection extends GetView<PortServicesController> {
+class ReviewsSection extends StatelessWidget {
   const ReviewsSection({super.key});
 
   @override
@@ -49,9 +45,8 @@ class ReviewsSection extends GetView<PortServicesController> {
             scrollDirection: Axis.horizontal,
             itemCount: customerReviews.length,
             separatorBuilder: (context, index) => 10.horizontalSpace,
-            itemBuilder:
-                (context, index) =>
-                    ReviewCardItem(customerReview: customerReviews[index]),
+            itemBuilder: (context, index) =>
+                ReviewCardItem(customerReview: customerReviews[index]),
           ),
         ),
       ],

@@ -1,12 +1,14 @@
 import 'dart:async';
 
-import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,15 +25,19 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startDelay() {
+    final cacheHelper = context.read<CacheHelper>();
+    final userService = context.read<UserService>();
     Timer(const Duration(seconds: 3), () {
-      SharedPreferences sharedPreferences = Get.find();
-      bool isonboardingCompleted =
-          sharedPreferences.getBool('onboardingCompleted') ?? false;
+      if (!mounted) return;
+      final isOnboardingCompleted =
+          cacheHelper.getData('onboardingCompleted') as bool? ?? false;
 
-      if (!isonboardingCompleted) {
-        Get.offAllNamed(Routes.onboardingScreen);
+      if (!isOnboardingCompleted) {
+        NavigationHelper.pushNamedAndRemoveUntil(Routes.onboardingScreen);
       } else {
-        Get.offAllNamed(AppRouter.getInitialRoute());
+        NavigationHelper.pushNamedAndRemoveUntil(
+          AppRouter.getInitialRoute(userService),
+        );
       }
     });
   }
@@ -42,12 +48,12 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment(1.5, -1),
-            end: Alignment(-1, 0.2),
+            begin: const Alignment(1.5, -1),
+            end: const Alignment(-1, 0.2),
             colors: [Color(0xffF9C5A4).withValues(alpha: 0), Colors.white],
           ),
         ),
-        alignment: Alignment(0, -0.3),
+        alignment: const Alignment(0, -0.3),
         child: Image.asset(AppImages.imagesEvexFinalLogo, width: 0.9.sw),
       ),
     );

@@ -1,14 +1,11 @@
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/addition_model.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/logic/port_services_controller.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/addition_item.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/addition_item.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/offer_item_with_count.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/offfer_item_without_count.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class AdditionsSection extends GetView<PortServicesController> {
+class AdditionsSection extends StatelessWidget {
   const AdditionsSection({super.key});
 
   @override
@@ -42,121 +39,51 @@ class AdditionsSection extends GetView<PortServicesController> {
             ),
           ],
         ),
-
         8.verticalSpace,
-        Obx(
-          () => ListView.separated(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            clipBehavior: Clip.none,
-            itemCount: controller.addations.length,
-            separatorBuilder: (context, index) => 12.verticalSpace,
-            itemBuilder: (context, index) {
-              AdditionModel additionModel = controller.addations[index];
-
-              return Obx(
-                () => AdditionItem(
-                  title: additionModel.name ?? "",
+        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          builder: (context, state) {
+            final cubit = context.read<BookingServiceDetailsCubit>();
+            return ListView.separated(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              clipBehavior: Clip.none,
+              itemCount: state.additions.length,
+              separatorBuilder: (context, index) => 12.verticalSpace,
+              itemBuilder: (context, index) {
+                final additionModel = state.additions[index];
+                final selected = state.selectedAdditions
+                    .any((e) => e.id == additionModel.id);
+                final giftCount =
+                    (state.serviceDetails?.hasGift ?? false)
+                        ? state.serviceDetails?.oldGifts
+                            ?.firstWhere(
+                              (g) => g.additionId == additionModel.id,
+                              orElse: () =>
+                                  throw Exception('not found'),
+                            )
+                            .number
+                        : null;
+                return AdditionItem(
+                  title: additionModel.name ?? '',
                   price: (additionModel.price ?? 0).toString(),
-                  hasCount: (additionModel.displayNumber ?? false),
-                  initialCount:
-                      controller.selectedAddations
-                          .firstWhereOrNull((e) => e.id == additionModel.id)
-                          ?.count ??
+                  hasCount: additionModel.displayNumber ?? false,
+                  initialCount: state.selectedAdditions
+                          .firstWhere(
+                            (e) => e.id == additionModel.id,
+                            orElse: () => additionModel,
+                          )
+                          .count ??
                       0,
-                  giftCount:
-                      (controller.serviceDetailsModel.value?.hasGift ?? false)
-                          ? controller.serviceDetailsModel.value?.oldGifts
-                              ?.firstWhereOrNull(
-                                (g) => g.additionId == additionModel.id,
-                              )
-                              ?.number
-                          : null,
+                  giftCount: giftCount,
                   isSelected:
-                      controller.selectedAddations.contains(additionModel) ||
-                      controller.checkGift(additionModel.id ?? 0),
-                  onChanged: () {
-                    if (controller.selectedAddations.contains(additionModel)) {
-                      controller.selectedAddations.remove(additionModel);
-                    } else {
-                      controller.selectedAddations.add(additionModel);
-                    }
-                  },
-                  onChangeCount: (count) {
-                    controller.changeAdditionCount(additionModel, count);
-                  },
-                ),
-              );
-
-              // return AdditionItem(additionModel: additionModel);
-
-              // return (controller.addations[index].displayNumber ?? false)
-              //     ? OfferItemWithCount(
-              //       title: addationModel.name ?? "",
-              //       onChangeCount: (count) {
-              //         controller.changeAddCount(addationModel, count);
-              //       },
-              //       trilling: (addationModel.price ?? 0).toString(),
-              //       initialCount:
-              //           controller.selectedAddations
-              //               .firstWhereOrNull((e) => e.id == addationModel.id)
-              //               ?.count ??
-              //           0,
-              //       giftCount:
-              //           (controller.serviceDetailsModel.value?.hasGift ?? false)
-              //               ? controller.serviceDetailsModel.value?.oldGifts
-              //                   ?.firstWhereOrNull(
-              //                     (g) => g.additionId == addationModel.id,
-              //                   )
-              //                   ?.number
-              //               : null,
-              //       isSelected:
-              //           controller.selectedAddations.contains(addationModel) ||
-              //           controller.checkGift(addationModel.id ?? 0),
-              //       onChanged: (count) {
-              //         if (controller.selectedAddations.contains(
-              //           addationModel,
-              //         )) {
-              //           controller.selectedAddations.remove(addationModel);
-              //         } else {
-              //           controller.selectedAddations.add(
-              //             addationModel..count = count,
-              //           );
-              //         }
-              //         controller.selectedAddations.refresh();
-              //         controller.getTotalCost();
-              //       },
-              //     )
-              //     : OfferItemWithoutCount(
-              //       title: addationModel.name ?? "",
-              //       trilling: addationModel.price.toString(),
-              //       isSelected:
-              //           controller.selectedAddations.contains(addationModel) ||
-              //           controller.checkGift(addationModel.id ?? 0),
-              //       isGift:
-              //           ((controller.serviceDetailsModel.value?.hasGift ??
-              //                   false)
-              //               ? controller.serviceDetailsModel.value?.oldGifts
-              //                   ?.firstWhereOrNull(
-              //                     (g) => g.additionId == addationModel.id,
-              //                   )
-              //                   ?.number
-              //               : null) !=
-              //           null,
-              //       onChanged: () {
-              //         if (controller.selectedAddations.contains(
-              //           addationModel,
-              //         )) {
-              //           controller.selectedAddations.remove(addationModel);
-              //         } else {
-              //           controller.selectedAddations.add(addationModel);
-              //         }
-              //         controller.getTotalCost();
-              //         controller.selectedAddations.refresh();
-              //       },
-              //     );
-            },
-          ),
+                      selected || cubit.checkGift(additionModel.id ?? 0),
+                  onChanged: () => cubit.toggleAddition(additionModel),
+                  onChangeCount: (count) =>
+                      cubit.changeAdditionCount(additionModel, count),
+                );
+              },
+            );
+          },
         ),
       ],
     );

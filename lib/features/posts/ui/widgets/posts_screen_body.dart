@@ -1,27 +1,32 @@
 import 'package:evex_user/core/ui/helpers/custom_loader.dart';
+import 'package:evex_user/data/cubits/posts/post_cubit.dart';
+import 'package:evex_user/data/cubits/posts/post_state.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../logic/post_controller.dart';
-
-class PostsScreenBody extends GetView<PostController> {
+class PostsScreenBody extends StatelessWidget {
   const PostsScreenBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () =>
-          controller.isLoading.value
-              ? const Center(child: CustomLoader())
-              : ListView.builder(
-                itemCount: controller.posts.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(controller.posts[index].title ?? ''),
-                    subtitle: Text(controller.posts[index].body ?? ''),
-                  );
-                },
-              ),
+    return BlocBuilder<PostCubit, PostState>(
+      builder: (context, state) {
+        if (state is PostLoading) {
+          return const Center(child: CustomLoader());
+        }
+        if (state is PostSuccess) {
+          return ListView.builder(
+            itemCount: state.posts.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(state.posts[index].title ?? ''),
+                subtitle: Text(state.posts[index].body ?? ''),
+              );
+            },
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }

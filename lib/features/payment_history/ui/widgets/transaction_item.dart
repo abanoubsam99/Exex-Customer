@@ -1,6 +1,6 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/features/payment_history/data/models/transaction_model.dart';
+import 'package:evex_user/data/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,7 +1,7 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomBackButtonWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class CustomBackButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(10.r),
-      onTap: () => onTap == null ? Get.back() : onTap!(),
+      onTap: () => onTap == null ? NavigationHelper.pop() : onTap!(),
       child: Container(
         width: 36.r,
         height: 36.r,

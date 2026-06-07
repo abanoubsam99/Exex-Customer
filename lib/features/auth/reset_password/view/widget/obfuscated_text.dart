@@ -1,6 +1,5 @@
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ObfuscatedTextWidget extends StatelessWidget {
   final String text;
@@ -14,11 +13,11 @@ class ObfuscatedTextWidget extends StatelessWidget {
     return Text(
       obfuscatedText,
       textDirection: TextDirection.ltr,
-      style: Get.textTheme.labelSmall!.copyWith(
-        color: AppColors.lightGray2,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
+      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+            color: AppColors.lightGray2,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
     );
   }
 

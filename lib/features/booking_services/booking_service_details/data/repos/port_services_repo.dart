@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:evex_user/core/models/error_model.dart';
+import 'package:evex_user/data/models/error_model.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/data/datasources/port_services_remote_data_source.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/addition_model.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/service_details_model.dart';
+import 'package:evex_user/data/models/addition_model.dart';
+import 'package:evex_user/data/models/port_service.dart';
+import 'package:evex_user/data/models/service_details_model.dart';
 
 import '../../../../../../../core/networking/api_error_handler.dart';
 

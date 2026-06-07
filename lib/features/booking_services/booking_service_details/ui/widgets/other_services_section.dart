@@ -1,12 +1,11 @@
-import 'package:evex_user/features/booking_services/booking_service_details/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/logic/port_services_controller.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_service_card_item.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class OtherServicesSection extends GetView<PortServicesController> {
+class OtherServicesSection extends StatelessWidget {
   const OtherServicesSection({super.key});
 
   @override
@@ -53,25 +52,25 @@ class OtherServicesSection extends GetView<PortServicesController> {
           ),
         ),
         4.verticalSpace,
-        Obx(
-          () => SizedBox(
-            height: 140.h,
-            child: ListView.separated(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.services.value.length,
-              separatorBuilder: (context, index) => 16.horizontalSpace,
-              itemBuilder: (context, index) {
-                PortService service = controller.services.value[index];
-                return Obx(
-                  () => OtherServiceCardItem(
+        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          builder: (context, state) {
+            return SizedBox(
+              height: 140.h,
+              child: ListView.separated(
+                clipBehavior: Clip.none,
+                scrollDirection: Axis.horizontal,
+                itemCount: state.services.length,
+                separatorBuilder: (context, index) => 16.horizontalSpace,
+                itemBuilder: (context, index) {
+                  final service = state.services[index];
+                  return OtherServiceCardItem(
                     images: service.serviceImages ?? [],
                     title: service.name ?? '',
-                  ),
-                );
-              },
-            ),
-          ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ],
     );

@@ -3,23 +3,21 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
-import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/features/home/ui/widgets/join_us_section.dart';
 import 'package:evex_user/features/home/ui/widgets/new_suggestion_section.dart';
 import 'package:evex_user/features/home/ui/widgets/other_services_section.dart';
 import 'package:evex_user/features/home/ui/widgets/user_data_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../core/routing/routes.dart';
 import 'widgets/Instant_booking_services_section.dart';
 import 'widgets/instant_payment_services.dart';
 import 'widgets/special_offers_section.dart';
@@ -44,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SizedBox(
                 height: 340.h,
-                // height: 1.sh,
                 child: Stack(
                   children: [
                     Container(
@@ -58,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: -46.r,
                             child: CustomCircle(
                               radius: 107.r,
-                              color: Color(0xFF79E2B2),
+                              color: const Color(0xFF79E2B2),
                             ),
                           ),
                           Positioned(
@@ -66,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: 146.w,
                             child: CustomCircle(
                               radius: 163.r,
-                              color: Color(0xFFF38B4A),
+                              color: const Color(0xFFF38B4A),
                             ),
                           ),
                           Positioned(
@@ -74,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: 321.w,
                             child: CustomCircle(
                               radius: 107.r,
-                              color: Color(0xFFFFBC2B),
+                              color: const Color(0xFFFFBC2B),
                             ),
                           ),
                           BackdropFilter(
@@ -90,11 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: const Color(0xFFF8F8F8).withOpacity(0.5),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 24.w),
                                 child: Column(
                                   children: [
                                     40.verticalSpace,
-                                    UserDataSection(),
+                                    const UserDataSection(),
                                     14.verticalSpace,
                                     Row(
                                       children: [
@@ -107,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         IconButton(
                                           onPressed: () {
-                                            Get.toNamed(
+                                            NavigationHelper.pushNamed(
                                               Routes.paymentHistoryScreen,
                                             );
                                           },
@@ -169,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 child: Image.asset(
                                                   AppImages.imagesWedding0,
                                                   fit: BoxFit.cover,
-                                                  alignment: Alignment(
+                                                  alignment: const Alignment(
                                                     0,
                                                     -0.58,
                                                   ),
@@ -182,8 +180,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               gradient: LinearGradient(
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
-                                                stops: [0.39, 0.75, 1.0],
-                                                // stops: [0.0, 0.39, 0.75],
+                                                stops: const [
+                                                  0.39,
+                                                  0.75,
+                                                  1.0,
+                                                ],
                                                 colors: [
                                                   Colors.black.withValues(
                                                     alpha: 0.65,
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 16.verticalSpace,
                                                 CustomButton(
-                                                  backgroundColor: Color(
+                                                  backgroundColor: const Color(
                                                     0xFFF38B4A,
                                                   ),
                                                   fontSize: 14.r,
@@ -317,12 +318,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       enableInfiniteScroll: true,
                                       reverse: false,
                                       autoPlay: false,
-                                      autoPlayInterval: const Duration(
-                                        seconds: 7,
-                                      ),
-                                      autoPlayAnimationDuration: const Duration(
-                                        milliseconds: 800,
-                                      ),
+                                      autoPlayInterval:
+                                          const Duration(seconds: 7),
+                                      autoPlayAnimationDuration:
+                                          const Duration(milliseconds: 800),
                                       autoPlayCurve: Curves.fastOutSlowIn,
                                       enlargeCenterPage: true,
                                       scrollDirection: Axis.horizontal,
@@ -338,7 +337,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       effect: JumpingDotEffect(
                                         dotHeight: 8.r,
                                         dotWidth: 8.r,
-                                        activeDotColor: const Color(0xFFF38B4A),
+                                        activeDotColor:
+                                            const Color(0xFFF38B4A),
                                         dotColor: const Color(0xFFD9D9D9),
                                       ),
                                     ),
@@ -358,27 +358,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
                   children: [
-                    InstantBookingServicesSection(),
+                    const InstantBookingServicesSection(),
                     16.verticalSpace,
-                    InstantPaymentServices(),
+                    const InstantPaymentServices(),
                     16.verticalSpace,
-                    OtherServicesSection(),
+                    const OtherServicesSection(),
                     16.verticalSpace,
                   ],
                 ),
               ),
-              SpecialOffersSection(),
+              const SpecialOffersSection(),
               26.verticalSpace,
-              SectionSeperator(),
+              const SectionSeperator(),
               16.verticalSpace,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-
                 child: Column(
                   children: [
-                    JoinUsSection(),
+                    const JoinUsSection(),
                     16.verticalSpace,
-                    NewSuggestionSection(),
+                    const NewSuggestionSection(),
                   ],
                 ),
               ),

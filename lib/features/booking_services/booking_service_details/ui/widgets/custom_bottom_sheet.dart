@@ -1,5 +1,4 @@
-import 'dart:ui' as ui;
-
+import 'package:evex_user/core/localization/app_localizations.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
@@ -7,7 +6,6 @@ import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class CustomBottomSheet extends StatefulWidget {
   const CustomBottomSheet({super.key});

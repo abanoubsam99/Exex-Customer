@@ -4,7 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_circle.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/gradient_text.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/logic/port_services_controller.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
@@ -13,10 +13,10 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/w
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_top_part.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/services_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class BookingServiceDetailsScreen extends GetView<PortServicesController> {
+class BookingServiceDetailsScreen extends StatelessWidget {
   const BookingServiceDetailsScreen({super.key});
 
   @override
@@ -184,7 +184,9 @@ class BookingServiceDetailsScreen extends GetView<PortServicesController> {
                   CustomButton(
                     height: 52.h,
                     text: "إضافة لحجوزاتي",
-                    onTap: () => controller.prepareFinalAdditions(),
+                    onTap: () => context
+                        .read<BookingServiceDetailsCubit>()
+                        .prepareFinalAdditions(),
                   ),
                 ],
               ),
