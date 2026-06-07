@@ -50,10 +50,9 @@ class AppRouter {
   static String getInitialRoute(UserService userService) {
     final user = userService.currentUser;
     if (user == null) return Routes.loginScreen;
-    if (user.userViewModel?.phoneNumber == null) return Routes.addPhoneScreen;
-    if (user.modelId == null || user.modelId == 0) {
-      return Routes.addClientScreen;
-    }
+    if (!user.hasPhone) return Routes.addPhoneScreen;
+    if (!user.isPhoneVerified) return Routes.addPhoneOptScreen;
+    if (!user.isAccountComplete) return Routes.addClientScreen;
     return Routes.mainScreen;
   }
 

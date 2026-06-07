@@ -74,6 +74,9 @@ class AddClientCubit extends Cubit<AddClientState> {
       final user = _userService.currentUser;
       if (user != null) {
         user.modelId = response.modelId;
+        // مهم: نخزّن clientId عشان نعرف إن الحساب اكتمل عند إعادة الفتح
+        user.userViewModel?.clientId = response.modelId;
+        user.userViewModel?.name = nameController.text.trim();
         await _userService.saveUser(user);
       }
       emit(state.copyWith(isLoading: false, success: true));

@@ -38,11 +38,11 @@ class LoginCubit extends Cubit<LoginState> {
       await _userService.saveUser(user);
       emit(LoginSuccess());
       ToastManager.showSuccess(user.message ?? 'تم تسجيل الدخول بنجاح');
-      if (user.userViewModel?.phoneNumber == null) {
+      if (!user.hasPhone) {
         NavigationHelper.pushNamedAndRemoveUntil(Routes.addPhoneScreen);
-      } else if (!(user.userViewModel?.phoneVerified ?? true)) {
+      } else if (!user.isPhoneVerified) {
         NavigationHelper.pushNamed(Routes.addPhoneOptScreen);
-      } else if (user.modelId == null || user.modelId == 0) {
+      } else if (!user.isAccountComplete) {
         NavigationHelper.pushNamedAndRemoveUntil(Routes.addClientScreen);
       } else {
         NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);

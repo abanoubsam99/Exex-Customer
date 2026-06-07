@@ -42,6 +42,16 @@ class UserModel {
     data['modelId'] = modelId;
     return data;
   }
+
+  /// هل سجّل اليوزر رقم هاتف؟
+  bool get hasPhone => userViewModel?.phoneNumber != null;
+
+  /// هل اتأكد رقم الهاتف؟
+  bool get isPhoneVerified => userViewModel?.phoneVerified ?? false;
+
+  /// هل أكمل بيانات العميل (عنده clientId فعلي)؟
+  bool get isAccountComplete =>
+      (userViewModel?.clientId ?? 0) > 0;
 }
 
 class UserViewModel {
@@ -61,6 +71,9 @@ class UserViewModel {
   final String? city;
   final String? imageName;
   final PlanDto? planDto;
+  int? clientId;
+  String? name;
+  String? countryCode;
 
   UserViewModel({
     this.userId,
@@ -79,6 +92,9 @@ class UserViewModel {
     this.city,
     this.planDto,
     this.imageName,
+    this.clientId,
+    this.name,
+    this.countryCode,
   });
 
   UserViewModel.fromJson(Map<String, dynamic> json)
@@ -99,6 +115,9 @@ class UserViewModel {
     password = json['password'];
     confirmPassword = json['confirmPassword'];
     agree = json['agree'];
+    clientId = (json['clientId'] as num?)?.toInt();
+    name = json['name'];
+    countryCode = json['countryCode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +137,9 @@ class UserViewModel {
     data['governorate'] = governorate;
     data['city'] = city;
     data['imageName'] = imageName;
+    data['clientId'] = clientId;
+    data['name'] = name;
+    data['countryCode'] = countryCode;
     if (planDto != null) {
       data['planDto'] = planDto!.toJson();
     }
