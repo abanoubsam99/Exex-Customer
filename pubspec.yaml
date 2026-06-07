@@ -22,9 +22,6 @@ dependencies:
   # pretty_dio_logger: ^1.4.0
   alice: ^1.0.0
   alice_dio: ^1.0.7
-  json_annotation: ^4.9.0
-  retrofit: ^4.6.0
-  dartz: ^0.10.1
   flutter_screenutil: ^5.9.3
   cached_network_image: ^3.4.1
   flutter_svg: ^2.2.4
@@ -57,9 +54,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
-  retrofit_generator: ^9.2.0
   build_runner: ^2.4.15
-  json_serializable: ^6.9.5
 
 
 #use dart run build_runner build --delete-conflicting-outputs

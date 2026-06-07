@@ -1,6 +1,6 @@
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
-import 'package:evex_user/features/home/data/repos/home_repo.dart';
+import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_state.dart';
@@ -16,48 +16,38 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> getHomeUserAppInfo() async {
     emit(state.copyWith(isLoadingPorts: true));
-    final result = await _homeRepo.getHomeUserAppInfo();
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoadingPorts: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (ports) {
-        final booking = ports.where((p) => p.subscriptionType == 0).toList();
-        final payment = ports.where((p) => p.subscriptionType == 1).toList();
-        emit(
-          state.copyWith(
-            isLoadingPorts: false,
-            bookingPorts: booking,
-            paymentPorts: payment,
-          ),
-        );
-      },
-    );
+    final ports = await _homeRepo.getHomeUserAppInfo();
+    if (ports != null) {
+      final booking = ports.where((p) => p.subscriptionType == 0).toList();
+      final payment = ports.where((p) => p.subscriptionType == 1).toList();
+      emit(state.copyWith(
+        isLoadingPorts: false,
+        bookingPorts: booking,
+        paymentPorts: payment,
+      ));
+    } else {
+      emit(state.copyWith(isLoadingPorts: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل البيانات');
+    }
   }
 
   Future<void> getSpecialOffers() async {
     emit(state.copyWith(isLoadingOffers: true));
-    final result = await _homeRepo.getSpecialOffers();
-    result.fold(
-      (error) => emit(
-        state.copyWith(isLoadingOffers: false, errorMessage: error.message),
-      ),
-      (offers) => emit(
-        state.copyWith(isLoadingOffers: false, specialOffers: offers),
-      ),
-    );
+    final offers = await _homeRepo.getSpecialOffers();
+    if (offers != null) {
+      emit(state.copyWith(isLoadingOffers: false, specialOffers: offers));
+    } else {
+      emit(state.copyWith(isLoadingOffers: false, errorMessage: 'حدث خطأ'));
+    }
   }
 
   void selectBookingPort(PortCategoryWithPortTypes port) {
     final firstType =
         port.portTypeDtos?.isNotEmpty == true ? port.portTypeDtos!.first : null;
-    emit(
-      state.copyWith(
-        selectedBookingPort: port,
-        selectedBookingPortType: firstType,
-      ),
-    );
+    emit(state.copyWith(
+      selectedBookingPort: port,
+      selectedBookingPortType: firstType,
+    ));
   }
 
   void selectBookingPortType(PortTypeDto type) {
@@ -67,12 +57,10 @@ class HomeCubit extends Cubit<HomeState> {
   void selectPaymentPort(PortCategoryWithPortTypes port) {
     final firstType =
         port.portTypeDtos?.isNotEmpty == true ? port.portTypeDtos!.first : null;
-    emit(
-      state.copyWith(
-        selectedPaymentPort: port,
-        selectedPaymentPortType: firstType,
-      ),
-    );
+    emit(state.copyWith(
+      selectedPaymentPort: port,
+      selectedPaymentPortType: firstType,
+    ));
   }
 
   void selectPaymentPortType(PortTypeDto type) {

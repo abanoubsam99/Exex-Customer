@@ -4,7 +4,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/features/auth/add_phone/data/repo/add_phone_repo.dart';
+import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,22 +34,16 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
       phoneNumber: phoneController.text.trim(),
       countryCode: countryCodeController.text.trim(),
     );
-    result.fold(
-      (error) {
-        emit(AddPhoneError(error.message));
-        ToastManager.showError(error.message);
-      },
-      (_) {
-        _sentPhone =
-            countryCodeController.text.trim() +
-            phoneController.text.substring(1).trim();
-        emit(AddPhoneSent(_sentPhone));
-        NavigationHelper.pushNamed(
-          Routes.addPhoneOptScreen,
-          arguments: _sentPhone,
-        );
-      },
-    );
+    if (result != null) {
+      _sentPhone =
+          countryCodeController.text.trim() +
+          phoneController.text.substring(1).trim();
+      emit(AddPhoneSent(_sentPhone));
+      NavigationHelper.pushNamed(Routes.addPhoneOptScreen, arguments: _sentPhone);
+    } else {
+      emit(AddPhoneError('حدث خطأ، يرجى المحاولة مرة أخرى'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   // ── OTP Screen ─────────────────────────────────────────────
@@ -87,19 +81,16 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
     final result = await _addPhoneRepo.confirmPhone(
       code: codeController.text.trim(),
     );
-    result.fold(
-      (error) {
-        emit(OtpConfirmError(error.message));
-        ToastManager.showError(error.message);
-      },
-      (_) async {
-        final user = _userService.currentUser!;
-        user.userViewModel?.phoneNumber = _sentPhone;
-        await _userService.saveUser(user);
-        emit(OtpConfirmSuccess());
-        NavigationHelper.pushNamedAndRemoveUntil(Routes.addClientScreen);
-      },
-    );
+    if (result != null) {
+      final user = _userService.currentUser!;
+      user.userViewModel?.phoneNumber = _sentPhone;
+      await _userService.saveUser(user);
+      emit(OtpConfirmSuccess());
+      NavigationHelper.pushNamedAndRemoveUntil(Routes.addClientScreen);
+    } else {
+      emit(OtpConfirmError('حدث خطأ، يرجى المحاولة مرة أخرى'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   @override

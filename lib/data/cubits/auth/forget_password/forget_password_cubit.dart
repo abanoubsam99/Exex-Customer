@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/features/auth/reset_password/data/repo/forget_password_repo.dart';
+import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,27 +30,21 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   // ── Forget Password ───────────────────────────────────────
   Future<void> forgetPassword() async {
     emit(ForgetPasswordLoading());
-    final result = await _repo.forgetPassword(
+    final response = await _repo.forgetPassword(
       phoneNumber: phoneController.text.trim(),
       countryCode: countryCodeController.text.trim(),
     );
-    result.fold(
-      (error) {
-        emit(ForgetPasswordError(error.message));
-        ToastManager.showError(error.message);
-      },
-      (response) {
-        final phone =
-            countryCodeController.text.trim() +
-            phoneController.text.substring(1).trim();
-        emit(ForgetPasswordSent(phone));
-        ToastManager.showSuccess(response.message ?? '');
-        NavigationHelper.pushNamed(
-          Routes.forgetPasswordOtpScreen,
-          arguments: phone,
-        );
-      },
-    );
+    if (response != null) {
+      final phone =
+          countryCodeController.text.trim() +
+          phoneController.text.substring(1).trim();
+      emit(ForgetPasswordSent(phone));
+      ToastManager.showSuccess(response.message ?? '');
+      NavigationHelper.pushNamed(Routes.forgetPasswordOtpScreen, arguments: phone);
+    } else {
+      emit(ForgetPasswordError('حدث خطأ، يرجى المحاولة مرة أخرى'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   // ── OTP Screen ────────────────────────────────────────────
@@ -87,24 +81,21 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   // ── Reset Password ────────────────────────────────────────
   Future<void> resetPassword() async {
     emit(ResetPasswordLoading());
-    final result = await _repo.resetPassword(
+    final message = await _repo.resetPassword(
       phoneNumber: phoneController.text.trim(),
       countryCode: countryCodeController.text.trim(),
       code: _otpCode.isNotEmpty ? _otpCode : codeController.text.trim(),
       newPassword: passwordController.text.trim(),
       confirmPassword: confirmPasswordController.text.trim(),
     );
-    result.fold(
-      (error) {
-        emit(ResetPasswordError(error.message));
-        ToastManager.showError(error.message);
-      },
-      (message) {
-        emit(ResetPasswordSuccess());
-        ToastManager.showSuccess(message);
-        NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
-      },
-    );
+    if (message != null) {
+      emit(ResetPasswordSuccess());
+      ToastManager.showSuccess(message);
+      NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
+    } else {
+      emit(ResetPasswordError('حدث خطأ، يرجى المحاولة مرة أخرى'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   @override

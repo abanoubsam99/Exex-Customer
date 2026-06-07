@@ -1,11 +1,11 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
-import 'package:evex_user/data/models/city.dart';
-import 'package:evex_user/data/models/governate.dart';
-import 'package:evex_user/core/location/data/repo/location_repo.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/features/auth/add_client/data/repo/add_client_repo.dart';
+import 'package:evex_user/data/models/city.dart';
+import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/repos/add_client_repo.dart';
+import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,15 +24,12 @@ class AddClientCubit extends Cubit<AddClientState> {
   Future<void> loadGovernorates() async {
     emit(state.copyWith(isLoading: true));
     final result = await _locationRepo.getGovernorates();
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (governorates) => emit(
-        state.copyWith(isLoading: false, governorates: governorates),
-      ),
-    );
+    if (result != null) {
+      emit(state.copyWith(isLoading: false, governorates: result));
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل المحافظات');
+    }
   }
 
   void selectGovernorate(Governate? gov) {
@@ -47,13 +44,12 @@ class AddClientCubit extends Cubit<AddClientState> {
   Future<void> _loadCities(int govId) async {
     emit(state.copyWith(isLoading: true));
     final result = await _locationRepo.getCities(govId);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (cities) => emit(state.copyWith(isLoading: false, cities: cities)),
-    );
+    if (result != null) {
+      emit(state.copyWith(isLoading: false, cities: result));
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل المدن');
+    }
   }
 
   Future<void> addClient() async {
@@ -71,27 +67,24 @@ class AddClientCubit extends Cubit<AddClientState> {
     }
 
     emit(state.copyWith(isLoading: true));
-    final result = await _addClientRepo.addClient(
+    final response = await _addClientRepo.addClient(
       name: nameController.text.trim(),
       governorate: state.selectedGovernorate!.governorateNameAr,
       city: state.selectedCity!.cityNameAr,
     );
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (response) async {
-        final user = _userService.currentUser;
-        if (user != null) {
-          user.modelId = response.modelId;
-          await _userService.saveUser(user);
-        }
-        emit(state.copyWith(isLoading: false, success: true));
-        ToastManager.showSuccess(response.message ?? 'تم التسجيل بنجاح');
-        NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);
-      },
-    );
+    if (response != null) {
+      final user = _userService.currentUser;
+      if (user != null) {
+        user.modelId = response.modelId;
+        await _userService.saveUser(user);
+      }
+      emit(state.copyWith(isLoading: false, success: true));
+      ToastManager.showSuccess(response.message);
+      NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   @override

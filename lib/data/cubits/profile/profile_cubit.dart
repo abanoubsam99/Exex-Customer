@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
-import 'package:evex_user/core/location/data/repo/location_repo.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/features/profile/data/repos/profile_repo.dart';
+import 'package:evex_user/data/repos/location_repo.dart';
+import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,49 +31,44 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> getProfile() async {
     emit(state.copyWith(isLoading: true));
-    final result = await _profileRepo.getProfile();
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (profile) => emit(state.copyWith(isLoading: false, profile: profile)),
-    );
+    final profile = await _profileRepo.getProfile();
+    if (profile != null) {
+      emit(state.copyWith(isLoading: false, profile: profile));
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل الملف الشخصي');
+    }
   }
 
   Future<void> prepareEditProfile() async {
     emit(state.copyWith(isLoading: true));
-    final result = await _locationRepo.getGovernorates();
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (govs) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            governorates: govs,
-            selectedGovernorate: state.profile?.governorate,
-            selectedCity: state.profile?.city,
-          ),
-        );
-        _loadProfileToControllers();
-        if (state.profile?.governorate != null) {
-          loadCities(state.profile!.governorate!);
-        }
-      },
-    );
+    final govs = await _locationRepo.getGovernorates();
+    if (govs != null) {
+      emit(state.copyWith(
+        isLoading: false,
+        governorates: govs,
+        selectedGovernorate: state.profile?.governorate,
+        selectedCity: state.profile?.city,
+      ));
+      _loadProfileToControllers();
+      if (state.profile?.governorate != null) {
+        loadCities(state.profile!.governorate!);
+      }
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل المحافظات');
+    }
   }
 
   Future<void> loadCities(String govName) async {
     final gov = state.governorates.where((g) => g.governorateNameAr == govName);
     if (gov.isEmpty) return;
-    final result = await _locationRepo.getCities(gov.first.id);
-    result.fold(
-      (error) => ToastManager.showError(error.message),
-      (cities) => emit(state.copyWith(cities: cities)),
-    );
+    final cities = await _locationRepo.getCities(gov.first.id);
+    if (cities != null) {
+      emit(state.copyWith(cities: cities));
+    } else {
+      ToastManager.showError('حدث خطأ في تحميل المدن');
+    }
   }
 
   void selectGovernorate(String? gov) {
@@ -106,32 +101,26 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
     });
     final result = await _profileRepo.updateClient(formData: formData);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (_) {
-        emit(state.copyWith(isLoading: false, updateSuccess: true));
-        ToastManager.showSuccess('تم التعديل بنجاح');
-      },
-    );
+    if (result != null) {
+      emit(state.copyWith(isLoading: false, updateSuccess: true));
+      ToastManager.showSuccess('تم التعديل بنجاح');
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   Future<void> deleteAccount(String email) async {
     emit(state.copyWith(isLoading: true));
-    final result = await _profileRepo.deleteAccount(email);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (message) {
-        emit(state.copyWith(isLoading: false));
-        ToastManager.showSuccess(message);
-        NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
-      },
-    );
+    final message = await _profileRepo.deleteAccount(email);
+    if (message != null) {
+      emit(state.copyWith(isLoading: false));
+      ToastManager.showSuccess(message);
+      NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ، يرجى المحاولة مرة أخرى');
+    }
   }
 
   void _loadProfileToControllers() {

@@ -3,7 +3,7 @@ import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/port_service.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/data/repos/port_services_repo.dart';
+import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,39 +28,31 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
 
   Future<void> getAllPortServices() async {
     emit(state.copyWith(isLoading: true, services: []));
-    final result = await _repo.getAllPortServices(_portId);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (services) => emit(state.copyWith(isLoading: false, services: services)),
-    );
+    final services = await _repo.getAllPortServices(_portId);
+    if (services != null) {
+      emit(state.copyWith(isLoading: false, services: services));
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل الخدمات');
+    }
   }
 
   Future<void> getAdditions() async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        additions: [],
-        buffets: [],
-        selectedAdditions: [],
-        selectedBuffets: [],
-      ),
-    );
-    final result = await _repo.getAdditions(_portId);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-      },
-      (all) {
-        final additions = all.where((a) => a.specificToBuffet != true).toList();
-        final buffets = all.where((a) => a.specificToBuffet == true).toList();
-        emit(
-          state.copyWith(isLoading: false, additions: additions, buffets: buffets),
-        );
-      },
-    );
+    emit(state.copyWith(
+      isLoading: true,
+      additions: [],
+      buffets: [],
+      selectedAdditions: [],
+      selectedBuffets: [],
+    ));
+    final all = await _repo.getAdditions(_portId);
+    if (all != null) {
+      final additions = all.where((a) => a.specificToBuffet != true).toList();
+      final buffets = all.where((a) => a.specificToBuffet == true).toList();
+      emit(state.copyWith(isLoading: false, additions: additions, buffets: buffets));
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+    }
   }
 
   void selectService(PortService service) {
@@ -71,17 +63,14 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   Future<void> getServiceData() async {
     if (state.selectedService == null) return;
     emit(state.copyWith(isLoading: true));
-    final result = await _repo.getServiceData(state.selectedService!.id);
-    result.fold(
-      (error) {
-        emit(state.copyWith(isLoading: false, errorMessage: error.message));
-        ToastManager.showError(error.message);
-      },
-      (details) {
-        emit(state.copyWith(isLoading: false, serviceDetails: details));
-        _recalcTotal();
-      },
-    );
+    final details = await _repo.getServiceData(state.selectedService!.id);
+    if (details != null) {
+      emit(state.copyWith(isLoading: false, serviceDetails: details));
+      _recalcTotal();
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('حدث خطأ في تحميل تفاصيل الخدمة');
+    }
   }
 
   void toggleAddition(AdditionModel model) {
