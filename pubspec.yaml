@@ -1,0 +1,108 @@
+name: evex_user
+description: "A new Flutter project."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0' 
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  get: ^4.7.3
+  dio: ^5.8.0+1
+  carousel_slider: ^5.0.0
+  smooth_page_indicator: ^1.2.1
+  dotted_line: ^3.2.3
+  # pretty_dio_logger: ^1.4.0
+  alice: ^1.0.0
+  alice_dio: ^1.0.7
+  json_annotation: ^4.9.0
+  retrofit: ^4.6.0
+  dartz: ^0.10.1
+  flutter_screenutil: ^5.9.3
+  cached_network_image: ^3.4.1
+  flutter_svg: ^2.2.4
+  pattern_formatter: ^4.0.0
+  animate_do: ^4.2.0
+  dropdown_search: ^6.0.2
+  pin_code_fields: ^8.0.1
+  expandable: ^5.0.1
+  shared_preferences: ^2.5.3
+  intl: ^0.20.2
+  # flutter_intl_phone_field: ^0.0.7
+  flutter_intl_phone_field:
+    path: packages\flutter_intl_phone_field-main
+  intl_phone_number_input: ^0.7.5
+  flutter_localizations:
+    sdk: flutter
+  dropdown_button2: ^2.3.9
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.2.4
+  zoom_tap_animation: ^1.1.0
+  shimmer: ^3.0.0
+  image_picker: ^1.1.2
+
+
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  retrofit_generator: ^9.2.0
+  build_runner: ^2.4.15
+  json_serializable: ^6.9.5
+
+
+#use dart run build_runner build --delete-conflicting-outputs
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+
+
+  fonts:
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/Almarai-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Almarai-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Almarai-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Almarai-ExtraBold.ttf
+          weight: 800
+            
+  #   - family: Almarai
+  #     fonts:
+  #       - asset: assets/fonts/Almarai-Regular.ttf
+  #         weight: 400
+  #       - asset: assets/fonts/Almarai-Bold.ttf
+  #         weight: 700
+
+# flutter_assets:
+#   assets_path: assets/
+#   output_path: lib/core/constants/
+#   filename: app_assets.dart
+#   classname: AppAssets
+
+flutter_assets:
+  assets_path:
+    - assets/images/
+    - assets/icons/
+  output_path: lib/core/constants/
+  filename: app_images.dart
+  classname: AppImages
+  field_prefix:
