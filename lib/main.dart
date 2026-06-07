@@ -1,16 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/app/bloc_providers.dart';
 import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
-import 'package:evex_user/core/localization/app_localizations.dart';
 import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_theme.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/data/cubits/language/language_cubit.dart';
-import 'package:evex_user/data/cubits/language/language_state.dart';
 import 'package:evex_user/features/auth/add_client/data/datasources/add_client_remote_datasource.dart';
 import 'package:evex_user/features/auth/add_client/data/repo/add_client_repo.dart';
 import 'package:evex_user/features/auth/add_phone/data/data_sources/add_phone_data_source.dart';
@@ -36,12 +34,12 @@ import 'package:evex_user/core/location/data/repo/location_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   // ── Core services (constructed once, injected explicitly) ──
   final prefs = await SharedPreferences.getInstance();
@@ -58,10 +56,16 @@ void main() async {
   ]);
 
   runApp(
-    MyApp(
-      cacheHelper: cacheHelper,
-      userService: userService,
-      localAuthService: localAuthService,
+    EasyLocalization(
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('ar'),
+      startLocale: const Locale('ar'),
+      child: MyApp(
+        cacheHelper: cacheHelper,
+        userService: userService,
+        localAuthService: localAuthService,
+      ),
     ),
   );
 }
@@ -128,38 +132,30 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: BlocProviders.providers,
-        child: BlocBuilder<LanguageCubit, LanguageState>(
-          builder: (context, langState) {
-            AppLocalizations.setLocale(langState.locale.languageCode);
-            return ScreenUtilInit(
-              designSize: const Size(375, 812),
-              minTextAdapt: true,
-              splitScreenMode: true,
-              ensureScreenSize: true,
-              builder: (_, __) {
-                return MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  navigatorKey: NavigationHelper.navigatorKey,
-                  scaffoldMessengerKey: ToastManager.messengerKey,
-                  locale: langState.locale,
-                  supportedLocales: const [Locale('ar'), Locale('en')],
-                  localizationsDelegates: const [
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  title: 'Evex',
-                  theme: theme,
-                  initialRoute: Routes.splashScreen,
-                  onGenerateRoute: AppRouter.onGenerateRoute,
-                  builder: (context, child) => MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      textScaler: const TextScaler.linear(0.974),
-                    ),
-                    child: child!,
-                  ),
-                );
-              },
+        child: ScreenUtilInit(
+          designSize: const Size(375, 812),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          ensureScreenSize: true,
+          builder: (_, __) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              navigatorKey: NavigationHelper.navigatorKey,
+              scaffoldMessengerKey: ToastManager.messengerKey,
+              // easy_localization drives locale, delegates & supported locales
+              locale: context.locale,
+              supportedLocales: context.supportedLocales,
+              localizationsDelegates: context.localizationDelegates,
+              title: 'Evex',
+              theme: theme,
+              initialRoute: Routes.splashScreen,
+              onGenerateRoute: AppRouter.onGenerateRoute,
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: const TextScaler.linear(0.974),
+                ),
+                child: child!,
+              ),
             );
           },
         ),

@@ -2,7 +2,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/app_validation_functions.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
@@ -87,7 +87,7 @@ class EditProfileScreen extends StatelessWidget {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                   children: [
-                                    Text(AppStrings.governnorate.tr),
+                                    Text(AppStrings.governnorate.tr()),
                                     SizedBox(height: 6.h),
                                     CustomDropDownFormField(
                                       hintText: 'المحافظة',
@@ -127,7 +127,7 @@ class EditProfileScreen extends StatelessWidget {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                   children: [
-                                    Text(AppStrings.city.tr),
+                                    Text(AppStrings.city.tr()),
                                     SizedBox(height: 6.h),
                                     CustomDropDownFormField(
                                       icon: CustomImageHandler(

@@ -1,4 +1,4 @@
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class RetryWidget extends StatelessWidget {
             await onRetry();
           },
           label: Text(
-            AppStrings.retry.tr,
+            AppStrings.retry.tr(),
             style: TextStyle(color: AppColors.whiteColor, fontSize: 18.sp),
           ),
           style: ButtonStyle(

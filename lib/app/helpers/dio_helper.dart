@@ -54,4 +54,46 @@ class DioHelper {
     alice.addAdapter(aliceAdapter);
     _dio.interceptors.add(aliceAdapter);
   }
+
+  // ── Static network helpers used directly by repositories ──
+  // The auth token is injected automatically by the request interceptor.
+  static Future<Response> getData({
+    required String url,
+    Map<String, dynamic>? query,
+    Options? options,
+  }) {
+    return _dio.get(url, queryParameters: query, options: options);
+  }
+
+  static Future<Response> postData({
+    required String url,
+    dynamic data,
+    Map<String, dynamic>? query,
+    Options? options,
+  }) {
+    return _dio.post(url, data: data, queryParameters: query, options: options);
+  }
+
+  static Future<Response> putData({
+    required String url,
+    dynamic data,
+    Map<String, dynamic>? query,
+    Options? options,
+  }) {
+    return _dio.put(url, data: data, queryParameters: query, options: options);
+  }
+
+  static Future<Response> deleteData({
+    required String url,
+    dynamic data,
+    Map<String, dynamic>? query,
+    Options? options,
+  }) {
+    return _dio.delete(
+      url,
+      data: data,
+      queryParameters: query,
+      options: options,
+    );
+  }
 }

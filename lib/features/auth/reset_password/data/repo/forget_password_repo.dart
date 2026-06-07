@@ -82,7 +82,7 @@ class ForgetPasswordRepo {
   //     return Left(ResponseMessage(message: _.message, status: false));
   //   } catch (e) {
   //     return Left(
-  //       ResponseMessage(message: AppStrings.processFailed.tr, status: false),
+  //       ResponseMessage(message: AppStrings.processFailed.tr(), status: false),
   //     );
   //   }
   // }

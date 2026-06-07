@@ -1,5 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
@@ -70,7 +70,7 @@ class NewSuggestionScreen extends StatelessWidget {
                               8.verticalSpace,
 
                               CustomDropDownFormField(
-                                title: AppStrings.governnorate.tr,
+                                title: AppStrings.governnorate.tr(),
                                 hintText: 'المحافظة',
                                 icon: CustomImageHandler(
                                   AppImages.iconsArrowDown,
@@ -102,7 +102,7 @@ class NewSuggestionScreen extends StatelessWidget {
                               ),
                               8.verticalSpace,
                               CustomDropDownFormField(
-                                title: AppStrings.city.tr,
+                                title: AppStrings.city.tr(),
                                 icon: CustomImageHandler(
                                   AppImages.iconsArrowDown,
                                   width: 18,

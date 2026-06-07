@@ -1,4 +1,4 @@
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/evex_filled_button.dart';
@@ -25,23 +25,23 @@ class RegisterBodyWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFieldBuilder(
-              title: AppStrings.email.tr,
-              hintText: AppStrings.email.tr,
+              title: AppStrings.email.tr(),
+              hintText: AppStrings.email.tr(),
               controller: cubit.emailController,
               fillColor: const Color(0xFFF4F4F4),
             ),
             16.verticalSpace,
             TextFieldBuilder(
               isPassword: true,
-              title: AppStrings.password.tr,
-              hintText: AppStrings.password.tr,
+              title: AppStrings.password.tr(),
+              hintText: AppStrings.password.tr(),
               controller: cubit.passwordController,
               fillColor: const Color(0xFFF4F4F4),
             ),
             16.verticalSpace,
             TextFieldBuilder(
               isPassword: true,
-              title: AppStrings.confirmPassword.tr,
+              title: AppStrings.confirmPassword.tr(),
               controller: cubit.confirmPasswordController,
               validator: (value) {
                 if (value != cubit.passwordController.text) {
@@ -54,7 +54,7 @@ class RegisterBodyWidget extends StatelessWidget {
             BlocBuilder<RegisterCubit, RegisterState>(
               builder: (context, state) {
                 return EvexFilledButton(
-                  text: AppStrings.signUp.tr,
+                  text: AppStrings.signUp.tr(),
                   onPressed: state is RegisterLoading
                       ? null
                       : () {

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../core/localization/app_strings.dart';
 import 'all_scoial_media_widget.dart';
 
@@ -26,16 +26,16 @@ class LoginBodyWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFieldBuilder(
-              title: AppStrings.email.tr,
-              hintText: AppStrings.email.tr,
+              title: AppStrings.email.tr(),
+              hintText: AppStrings.email.tr(),
               controller: cubit.emailController,
               fillColor: const Color(0xFFF4F4F4),
             ),
             16.verticalSpace,
             TextFieldBuilder(
               isPassword: true,
-              title: AppStrings.password.tr,
-              hintText: AppStrings.password.tr,
+              title: AppStrings.password.tr(),
+              hintText: AppStrings.password.tr(),
               controller: cubit.passwordController,
               fillColor: const Color(0xFFF4F4F4),
             ),
@@ -50,7 +50,7 @@ class LoginBodyWidget extends StatelessWidget {
                 Navigator.pushNamed(context, Routes.forgetPasswordScreen);
               },
               child: Text(
-                AppStrings.forgotPassword.tr,
+                AppStrings.forgotPassword.tr(),
                 style: TextStyle(
                   color: const Color(0xFFF38B4A),
                   fontSize: 14.r,
@@ -64,7 +64,7 @@ class LoginBodyWidget extends StatelessWidget {
             BlocBuilder<LoginCubit, LoginState>(
               builder: (context, state) {
                 return EvexFilledButton(
-                  text: AppStrings.signIn.tr,
+                  text: AppStrings.signIn.tr(),
                   onPressed: state is LoginLoading
                       ? null
                       : () {

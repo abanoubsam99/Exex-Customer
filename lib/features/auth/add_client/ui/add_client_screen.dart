@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
@@ -217,7 +217,7 @@ class AddClientScreen extends StatelessWidget {
                                     child: DropdownButtonFormField<Governate>(
                                       isExpanded: true,
                                       hint: Text(
-                                        AppStrings.governnorate.tr,
+                                        AppStrings.governnorate.tr(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14.r,
@@ -263,7 +263,7 @@ class AddClientScreen extends StatelessWidget {
                                     child: DropdownButtonFormField<City>(
                                       isExpanded: true,
                                       hint: Text(
-                                        AppStrings.city.tr,
+                                        AppStrings.city.tr(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14.r,

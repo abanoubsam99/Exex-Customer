@@ -1,4 +1,4 @@
-import 'package:evex_user/core/localization/app_localizations.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
@@ -152,8 +152,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               children: [
                 Expanded(
                   child: CustomDropDownFormField(
-                    // title: AppStrings.governnorate.tr,
-                    hintText: AppStrings.governnorate.tr,
+                    // title: AppStrings.governnorate.tr(),
+                    hintText: AppStrings.governnorate.tr(),
 
                     items: [],
                     // items: controller.governates.value
@@ -183,8 +183,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 11.horizontalSpace,
                 Expanded(
                   child: CustomDropDownFormField(
-                    // title: AppStrings.city.tr,
-                    hintText: AppStrings.city.tr,
+                    // title: AppStrings.city.tr(),
+                    hintText: AppStrings.city.tr(),
                     // value: controller.selectedCity.value,
                     items: [],
                     // items: controller.cities.value
