@@ -224,5 +224,26 @@ class AppImages {
   /// Assets for imagesWedding5
   /// assets/images/wedding5.jpg
   static const String imagesWedding5 = "assets/images/wedding5.jpg";
+  /// Assets for iconsWhatsapp
+  /// assets/icons/whatsapp.png
+  static const String iconsWhatsapp = "assets/icons/whatsapp.png";
+  /// Assets for iconsSocialTelegram
+  /// assets/icons/social_telegram.png
+  static const String iconsSocialTelegram = "assets/icons/social_telegram.png";
+  /// Assets for iconsSocialYoutube
+  /// assets/icons/social_youtube.png
+  static const String iconsSocialYoutube = "assets/icons/social_youtube.png";
+  /// Assets for iconsSocialTiktok
+  /// assets/icons/social_tiktok.png
+  static const String iconsSocialTiktok = "assets/icons/social_tiktok.png";
+  /// Assets for iconsSocialFacebook
+  /// assets/icons/social_facebook.png
+  static const String iconsSocialFacebook = "assets/icons/social_facebook.png";
+  /// Assets for iconsSocialInstagramBg
+  /// assets/icons/social_instagram_bg.png
+  static const String iconsSocialInstagramBg = "assets/icons/social_instagram_bg.png";
+  /// Assets for iconsSocialInstagramGlyph
+  /// assets/icons/social_instagram_glyph.png
+  static const String iconsSocialInstagramGlyph = "assets/icons/social_instagram_glyph.png";
 }
 

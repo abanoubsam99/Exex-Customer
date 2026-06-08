@@ -1,13 +1,14 @@
 import 'package:evex_user/core/ui/helpers/custom_loader.dart';
-import 'package:evex_user/core/ui/widgets/retry_widget.dart';
 import 'package:evex_user/data/cubits/payment_history/payment_history_cubit.dart';
 import 'package:evex_user/data/cubits/payment_history/payment_history_state.dart';
 import 'package:evex_user/features/payment_history/ui/widgets/transaction_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AllTransactionsTab extends StatelessWidget {
-  const AllTransactionsTab({super.key});
+/// تاب واحد في سجل المدفوعات — بيفلتر المعاملات حسب [filter].
+class TransactionsTab extends StatelessWidget {
+  final PaymentFilter filter;
+  const TransactionsTab({super.key, this.filter = PaymentFilter.all});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,9 @@ class AllTransactionsTab extends StatelessWidget {
       builder: (context, state) {
         if (state.isLoading) return const CustomLoader();
 
-        if (state.transactions.isEmpty) {
+        final items = state.filtered(filter);
+
+        if (items.isEmpty) {
           return LayoutBuilder(
             builder: (context, constraints) {
               return RefreshIndicator(
@@ -45,12 +48,11 @@ class AllTransactionsTab extends StatelessWidget {
               context.read<PaymentHistoryCubit>().loadTransactions();
             },
             child: ListView.separated(
-              itemCount: state.transactions.length,
+              itemCount: items.length,
               separatorBuilder: (context, index) =>
                   const Divider(color: Color(0xFFD9D9D9)),
               itemBuilder: (context, index) {
-                return TransactionItem(
-                    transaction: state.transactions[index]);
+                return TransactionItem(transaction: items[index]);
               },
             ),
           ),

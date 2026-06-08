@@ -21,4 +21,7 @@ class Governate {
     data['governorate_name_ar'] = governorateNameAr;
     return data;
   }
+
+  @override
+  String toString() => governorateNameAr;
 }

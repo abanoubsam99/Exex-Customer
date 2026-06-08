@@ -25,4 +25,7 @@ class City {
     data['city_name_ar'] = cityNameAr;
     return data;
   }
+
+  @override
+  String toString() => cityNameAr;
 }

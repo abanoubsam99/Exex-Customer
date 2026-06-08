@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../app/helpers/navigation_helper.dart';
+import '../../../core/routing/routes.dart';
+
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
 
@@ -42,43 +45,57 @@ class MoreScreen extends StatelessWidget {
               buildMoreItem(
                 title: 'الصفحة الشخصية',
                 image: AppImages.iconsUser,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.profileScreen);
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'المفضله',
                 image: AppImages.iconsHeart,
-                onTap: () {},
+                onTap: () {
+
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'سجل المدفوعات',
                 image: AppImages.iconsMoneyTransfer,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.paymentHistoryScreen);
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'الإشعارات',
                 image: AppImages.iconsBell,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.notificationsScreen);
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'انضم الينا',
                 image: AppImages.iconsPuzzle,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.requestToJoinScreen);
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'إقتراح جديد',
                 image: AppImages.iconsThoughtBubble,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.newSuggestionScreen);
+                },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
                 title: 'اتصل بنا',
                 image: AppImages.iconsPhonePlus,
-                onTap: () {},
+                onTap: () {
+                  NavigationHelper.pushNamed(Routes.contactUsScreen);
+                },
               ),
             ],
           ),

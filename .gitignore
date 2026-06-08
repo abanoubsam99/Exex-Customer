@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Figma MCP token (do not commit secrets)
+.mcp.json
+# Temp Figma reference dumps / fetch scripts (contain secrets)
+.figma_ref/

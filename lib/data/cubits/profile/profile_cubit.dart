@@ -105,6 +105,25 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  Future<void> changePassword() async {
+    emit(state.copyWith(isLoading: true));
+    final ok = await _profileRepo.changePassword(
+      currentPassword: currentPasswordController.text.trim(),
+      newPassword: newPasswordController.text.trim(),
+    );
+    if (ok) {
+      emit(state.copyWith(isLoading: false));
+      ToastManager.showSuccess('تم تغيير كلمة المرور بنجاح');
+      currentPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+      NavigationHelper.pop();
+    } else {
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      ToastManager.showError('تعذّر تغيير كلمة المرور، حاول مرة أخرى');
+    }
+  }
+
   Future<void> deleteAccount(String email) async {
     emit(state.copyWith(isLoading: true));
     final message = await _profileRepo.deleteAccount(email);

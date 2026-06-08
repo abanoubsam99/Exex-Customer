@@ -31,6 +31,26 @@ class ProfileRepo {
     }
   }
 
+  /// تغيير كلمة المرور. بيرجّع `true` لو نجح.
+  /// ملحوظة: [AppEndpoints.changePassword] لسه placeholder — أكّد المسار مع الـ backend.
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.changePassword,
+        data: FormData.fromMap({
+          'oldPassword': currentPassword,
+          'newPassword': newPassword,
+        }),
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<String?> deleteAccount(String email) async {
     try {
       final response = await DioHelper.postData(

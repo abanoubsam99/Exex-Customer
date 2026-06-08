@@ -7,10 +7,14 @@ import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
+import 'package:evex_user/data/repos/new_suggestion_repo.dart';
+import 'package:evex_user/data/repos/notifications_repo.dart';
+import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:evex_user/data/repos/post_repo.dart';
 import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:evex_user/data/repos/register_repo.dart';
+import 'package:evex_user/data/repos/request_to_join_repo.dart';
 import 'package:evex_user/features/auth/add_client/ui/add_client_screen.dart';
 import 'package:evex_user/features/auth/add_phone/view/screen/add_phone_otp_screen.dart';
 import 'package:evex_user/features/auth/add_phone/view/screen/add_phone_screen.dart';
@@ -22,14 +26,19 @@ import 'package:evex_user/features/auth/reset_password/view/screen/reset_passwor
 import 'package:evex_user/features/booking_services/booking_service_details/ui/booking_service_details_screen.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/complete_booking_screen.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/instant_booking_services_screen.dart';
+import 'package:evex_user/features/contact_us/ui/contact_us_screen.dart';
 import 'package:evex_user/features/main/ui/main_screen.dart';
+import 'package:evex_user/features/notifications/ui/notification_screen.dart';
+import 'package:evex_user/features/order_details/ui/order_details_screen.dart';
 import 'package:evex_user/features/onboarding/ui/onboarding_screen.dart';
 import 'package:evex_user/features/payment_history/ui/payment_history_screen.dart';
 import 'package:evex_user/features/posts/ui/posts_screen.dart';
+import 'package:evex_user/features/profile/view/screens/change_password_screen.dart';
 import 'package:evex_user/features/profile/view/screens/edit_profile_screen.dart';
 import 'package:evex_user/features/profile/view/screens/profile_screen.dart';
+import 'package:evex_user/features/request_to_join/ui/request_to_join_screen.dart';
 import 'package:evex_user/features/splash/splash_screen.dart';
-import 'package:evex_user/new_suggestion_screen.dart';
+import 'package:evex_user/features/new_suggestion_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,9 +50,13 @@ import '../../data/cubits/auth/register/register_cubit.dart';
 import '../../data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import '../../data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import '../../data/cubits/home/home_cubit.dart';
+import '../../data/cubits/new_suggestion/new_suggestion_cubit.dart';
+import '../../data/cubits/notifications/notifications_cubit.dart';
+import '../../data/cubits/order_details/order_details_cubit.dart';
 import '../../data/cubits/payment_history/payment_history_cubit.dart';
 import '../../data/cubits/posts/post_cubit.dart';
 import '../../data/cubits/profile/profile_cubit.dart';
+import '../../data/cubits/request_to_join/request_to_join_cubit.dart';
 
 class AppRouter {
   /// Decides where to land on startup based on the cached user.
@@ -190,6 +203,18 @@ class AppRouter {
           settings,
         );
 
+      case Routes.changePassword:
+        return _page(
+          BlocProvider(
+            create: (context) => ProfileCubit(
+              context.read<ProfileRepo>(),
+              context.read<LocationRepo>(),
+            ),
+            child: const ChangePasswordScreen(),
+          ),
+          settings,
+        );
+
       case Routes.instantBookingServicesScreen:
         return _page(
           BlocProvider(
@@ -227,7 +252,53 @@ class AppRouter {
         );
 
       case Routes.newSuggestionScreen:
-        return _page(const NewSuggestionScreen(), settings);
+        return _page(
+          BlocProvider(
+            create: (context) => NewSuggestionCubit(
+              context.read<NewSuggestionRepo>(),
+              context.read<LocationRepo>(),
+            )..loadGovernorates(),
+            child: const NewSuggestionScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.notificationsScreen:
+        return _page(
+          BlocProvider(
+            create: (context) =>
+                NotificationsCubit(context.read<NotificationsRepo>())
+                  ..getNotifications(),
+            child: const NotificationScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.requestToJoinScreen:
+        return _page(
+          BlocProvider(
+            create: (context) => RequestToJoinCubit(
+              context.read<RequestToJoinRepo>(),
+              context.read<LocationRepo>(),
+            )..loadGovernorates(),
+            child: const RequestToJoinScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.contactUsScreen:
+        return _page(const ContactUsScreen(), settings);
+
+      case Routes.orderDetailsScreen:
+        return _page(
+          BlocProvider(
+            create: (context) =>
+                OrderDetailsCubit(context.read<OrderDetailsRepo>())
+                  ..getOrderDetails(),
+            child: const OrderDetailsScreen(),
+          ),
+          settings,
+        );
 
       default:
         return _page(

@@ -1,4 +1,6 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
@@ -216,7 +218,11 @@ class InstantBookingServicesScreen extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: halls.length,
                   itemBuilder: (context, index) {
-                    return Directionality(
+                    return GestureDetector(
+                      onTap: () => NavigationHelper.pushNamed(
+                        Routes.bookingServiceDetailsScreen,
+                      ),
+                      child: Directionality(
                       textDirection:
                           index % 2 == 1
                               ? TextDirection.ltr
@@ -373,6 +379,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                      ),
                       ),
                     );
                   },

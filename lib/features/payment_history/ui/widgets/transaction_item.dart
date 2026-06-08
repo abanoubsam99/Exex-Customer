@@ -106,7 +106,7 @@ class TransactionItem extends StatelessWidget {
               ),
             ),
             Text(
-              'مقدم الحجز',
+              transaction.paymentReasson,
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: const Color(0xFF6F767E),

@@ -244,7 +244,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   height: 30.h,
                                                   width: 112.w,
                                                   text: "اقتراح جديد",
-                                                  onTap: () {},
+                                                  onTap: () =>
+                                                      NavigationHelper.pushNamed(
+                                                        Routes.newSuggestionScreen,
+                                                      ),
                                                 ),
                                               ],
                                             ),

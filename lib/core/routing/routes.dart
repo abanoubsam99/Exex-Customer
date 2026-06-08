@@ -32,4 +32,9 @@ class Routes {
   static const String newSuggestionScreen = '/NewSuggestionScreen';
   static const String screen2 = 'screen2';
   static const String screen3 = 'screen3';
+
+  static const String notificationsScreen = '/notificationsScreen';
+  static const String requestToJoinScreen = '/requestToJoinScreen';
+  static const String contactUsScreen = '/contactUsScreen';
+  static const String orderDetailsScreen = '/orderDetailsScreen';
 }

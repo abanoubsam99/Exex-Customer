@@ -1,0 +1,199 @@
+import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/theme/app_text_styles.dart';
+import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/notifications/notifications_cubit.dart';
+import 'package:evex_user/data/cubits/notifications/notifications_state.dart';
+import 'package:evex_user/data/models/app_notification.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class NotificationScreen extends StatelessWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 8.h),
+              child: Row(
+                children: [
+                  const CustomBackButtonWidget(),
+                  12.horizontalSpace,
+                  Text('الاشعارات',
+                      style: AppTextStyles.font18BlackExtraBoldHeader),
+                ],
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<NotificationsCubit, NotificationsState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.orangeColor,
+                      ),
+                    );
+                  }
+                  final recent = state.recent;
+                  final others = state.others;
+                  return ListView(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    children: [
+                      if (recent.isNotEmpty) ...[
+                        _sectionLabel('مؤخراً'),
+                        for (int i = 0; i < recent.length; i++) ...[
+                          _NotificationTile(item: recent[i]),
+                          if (i != recent.length - 1)
+                            Divider(
+                                color: const Color(0xFFF0F0F0), height: 1.h),
+                        ],
+                      ],
+                      if (others.isNotEmpty) ...[
+                        16.verticalSpace,
+                        _sectionLabel('اخري'),
+                        for (int i = 0; i < others.length; i++) ...[
+                          _NotificationTile(item: others[i], highlighted: true),
+                          if (i != others.length - 1) 4.verticalSpace,
+                        ],
+                      ],
+                      24.verticalSpace,
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _sectionLabel(String text) => Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: const Color(0xFF777175),
+            fontSize: 13.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+}
+
+class _NotificationTile extends StatelessWidget {
+  final AppNotification item;
+  final bool highlighted;
+  const _NotificationTile({required this.item, this.highlighted = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: highlighted ? const Color(0xFFF7F7F7) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: highlighted ? 8.w : 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _StatusIcon(type: item.type),
+          12.horizontalSpace,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                4.verticalSpace,
+                Text(
+                  item.body,
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.font12greyRegular,
+                ),
+              ],
+            ),
+          ),
+          8.horizontalSpace,
+          Text(
+            item.time,
+            style: TextStyle(
+              color: AppColors.grey,
+              fontSize: 11.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusIcon extends StatelessWidget {
+  final NotificationType type;
+  const _StatusIcon({required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    late final Color bg;
+    late final Widget icon;
+    switch (type) {
+      case NotificationType.confirmed:
+        bg = const Color(0xFFE7F7EE);
+        icon = Icon(Icons.check_rounded,
+            size: 20.r, color: const Color(0xFF27AE60));
+        break;
+      case NotificationType.canceled:
+        bg = const Color(0xFFFDECEC);
+        icon =
+            Icon(Icons.close_rounded, size: 20.r, color: const Color(0xFFEB5757));
+        break;
+      case NotificationType.trash:
+        bg = const Color(0xFFFFF6D9);
+        icon = Icon(Icons.delete_outline_rounded,
+            size: 20.r, color: const Color(0xFFC19600));
+        break;
+      case NotificationType.team:
+        bg = const Color(0xFFEDEBFB);
+        icon = CustomImageHandler(
+          AppImages.iconsProfile2user,
+          width: 20.r,
+          height: 20.r,
+          color: const Color(0xFF6C5CE7),
+        );
+        break;
+      case NotificationType.offer:
+        bg = const Color(0xFFE8F0FE);
+        icon = Icon(Icons.local_offer_outlined,
+            size: 18.r, color: const Color(0xFF2F80ED));
+        break;
+    }
+    return Container(
+      width: 40.r,
+      height: 40.r,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+      child: icon,
+    );
+  }
+}

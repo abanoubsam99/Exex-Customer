@@ -1,0 +1,625 @@
+import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/theme/app_text_styles.dart';
+import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
+import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/order_details/order_details_cubit.dart';
+import 'package:evex_user/data/cubits/order_details/order_details_state.dart';
+import 'package:evex_user/data/models/order_details_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+class OrderDetailsScreen extends StatelessWidget {
+  const OrderDetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      body: SafeArea(
+        child: BlocBuilder<OrderDetailsCubit, OrderDetailsState>(
+          builder: (context, state) {
+            if (state.isLoading || state.order == null) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.orangeColor),
+              );
+            }
+            final order = state.order!;
+            return Column(
+              children: [
+                // ── Header ──
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 8.h),
+                  child: Row(
+                    children: [
+                      const CustomBackButtonWidget(),
+                      12.horizontalSpace,
+                      Text('تفاصيل الحجز',
+                          style: AppTextStyles.font18BlackExtraBoldHeader),
+                      const Spacer(),
+                      Icon(Icons.more_horiz,
+                          color: AppColors.blacksoft, size: 24.r),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        12.verticalSpace,
+                        _CustomerCard(order: order),
+                        16.verticalSpace,
+                        _BookingSummaryCard(order: order),
+                        20.verticalSpace,
+
+                        _SectionHeader('الخدمات الأساسية'),
+                        10.verticalSpace,
+                        _BasicServiceCard(item: order.basicService),
+                        20.verticalSpace,
+
+                        _SectionHeader('الإضافات'),
+                        10.verticalSpace,
+                        ...order.additions
+                            .map((a) => _AdditionCard(item: a)),
+                        20.verticalSpace,
+
+                        _SectionHeader('البوفيه'),
+                        10.verticalSpace,
+                        ...order.buffet.map((a) => _AdditionCard(item: a)),
+                        20.verticalSpace,
+
+                        _SectionHeader('تفاصيل التكلفة'),
+                        10.verticalSpace,
+                        _CostBreakdownCard(rows: order.costBreakdown),
+                        20.verticalSpace,
+
+                        _TotalCard(order: order),
+                        20.verticalSpace,
+
+                        _SectionHeader('إضافة ملاحظات'),
+                        10.verticalSpace,
+                        const _NotesField(),
+                        20.verticalSpace,
+                      ],
+                    ),
+                  ),
+                ),
+                // ── Bottom action buttons ──
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 12.h),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: 'الغاء الحجز',
+                          isfilled: false,
+                          height: 52.h,
+                          onTap: () {},
+                        ),
+                      ),
+                      12.horizontalSpace,
+                      Expanded(
+                        child: CustomButton(
+                          text: 'تعديل الحجز',
+                          height: 52.h,
+                          onTap: () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Customer card
+// ─────────────────────────────────────────────────────────────────────────
+class _CustomerCard extends StatelessWidget {
+  final OrderDetailsModel order;
+  const _CustomerCard({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = order.customer;
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: ShapeDecoration(
+        color: AppColors.lightestPrimaryColor,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color(0xFFF6DCC9)),
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(c.name, style: AppTextStyles.font16BlackBold),
+                    2.verticalSpace,
+                    Text(c.email, style: AppTextStyles.font12greyRegular),
+                  ],
+                ),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.whiteColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: const Border.fromBorderSide(
+                      BorderSide(color: Color(0xFFF6DCC9))),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(order.bookingNumber,
+                        style: TextStyle(
+                          color: AppColors.orangeColor,
+                          fontSize: 13.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w700,
+                        )),
+                    4.horizontalSpace,
+                    Icon(Icons.confirmation_number_outlined,
+                        size: 14.r, color: AppColors.orangeColor),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          12.verticalSpace,
+          const Divider(color: Color(0xFFF0E2D6), height: 1),
+          12.verticalSpace,
+          _infoRow(AppImages.iconsPhone, 'رقم الهاتف', c.phone),
+          12.verticalSpace,
+          _infoRow(AppImages.iconsLocation2, 'العنوان', c.address),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String icon, String label, String value) {
+    return Row(
+      children: [
+        CustomImageHandler(icon,
+            width: 18.r, height: 18.r, color: AppColors.orangeColor),
+        10.horizontalSpace,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppTextStyles.font12greyRegular),
+              2.verticalSpace,
+              Text(value,
+                  style: TextStyle(
+                    color: AppColors.blacksoft,
+                    fontSize: 13.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w600,
+                  )),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Booking summary card
+// ─────────────────────────────────────────────────────────────────────────
+class _BookingSummaryCard extends StatelessWidget {
+  final OrderDetailsModel order;
+  const _BookingSummaryCard({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: ShapeDecoration(
+        color: AppColors.whiteColor,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color(0xFFEDEDED)),
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE7F7EE),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Text(order.status,
+                    style: TextStyle(
+                      color: const Color(0xFF1F9D55),
+                      fontSize: 12.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w700,
+                    )),
+              ),
+              const Spacer(),
+              Text('${order.createdDate}  ${order.createdTime}',
+                  style: AppTextStyles.font12greyRegular),
+              6.horizontalSpace,
+              CustomImageHandler(AppImages.iconsCalendar,
+                  width: 16.r, height: 16.r, color: AppColors.grey),
+            ],
+          ),
+          14.verticalSpace,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // venue (right)
+              Expanded(
+                child: _miniBlock(
+                  icon: AppImages.iconsBuildings,
+                  line1: '${order.hallName}  -  ${order.eventType}',
+                  line2: order.venueLocation,
+                ),
+              ),
+              Container(width: 1, height: 36.h, color: const Color(0xFFEDEDED)),
+              12.horizontalSpace,
+              // date (left)
+              Expanded(
+                child: _miniBlock(
+                  icon: AppImages.iconsCalendar2,
+                  line1: order.eventDay,
+                  line2: order.eventDate,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _miniBlock({
+    required String icon,
+    required String line1,
+    required String line2,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomImageHandler(icon,
+            width: 18.r, height: 18.r, color: AppColors.orangeColor),
+        8.horizontalSpace,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(line1,
+                  style: TextStyle(
+                    color: AppColors.blacksoft,
+                    fontSize: 13.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                  )),
+              2.verticalSpace,
+              Text(line2, style: AppTextStyles.font12greyRegular),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Section header (orange marker + title)
+// ─────────────────────────────────────────────────────────────────────────
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 4.w,
+          height: 18.h,
+          decoration: BoxDecoration(
+            color: AppColors.orangeColor,
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+        ),
+        8.horizontalSpace,
+        Text(title, style: AppTextStyles.font16BlackBold),
+      ],
+    );
+  }
+}
+
+Widget _sectionCard({required Widget child}) {
+  return Builder(
+    builder: (context) => Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: ShapeDecoration(
+        color: const Color(0xFFF8F8F8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+      ),
+      child: child,
+    ),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Basic service card
+// ─────────────────────────────────────────────────────────────────────────
+class _BasicServiceCard extends StatelessWidget {
+  final OrderLineItem item;
+  const _BasicServiceCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return _sectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(item.name,
+                    style: TextStyle(
+                      color: AppColors.blacksoft,
+                      fontSize: 14.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w700,
+                    )),
+              ),
+              Text('${item.price} جينه', style: _priceStyle()),
+            ],
+          ),
+          if (item.description != null) ...[
+            6.verticalSpace,
+            Text(item.description!, style: AppTextStyles.font12greyRegular),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Addition / buffet card
+// ─────────────────────────────────────────────────────────────────────────
+class _AdditionCard extends StatelessWidget {
+  final OrderLineItem item;
+  const _AdditionCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.h),
+      child: _sectionCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(item.name,
+                      style: TextStyle(
+                        color: AppColors.blacksoft,
+                        fontSize: 14.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                      )),
+                ),
+                Text('${item.price} جينه', style: _priceStyle()),
+              ],
+            ),
+            if (item.count != null) ...[
+              4.verticalSpace,
+              Text('عدد ${item.count}',
+                  style: AppTextStyles.font12greyRegular),
+            ],
+            if (item.subName != null) ...[
+              10.verticalSpace,
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightestPrimaryColor,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Text(item.subName!,
+                        style: TextStyle(
+                          color: AppColors.orangeColor,
+                          fontSize: 12.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  const Spacer(),
+                  Text('${item.subPrice ?? 0} جينه', style: _priceStyle()),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Cost breakdown card
+// ─────────────────────────────────────────────────────────────────────────
+class _CostBreakdownCard extends StatelessWidget {
+  final List<CostRow> rows;
+  const _CostBreakdownCard({required this.rows});
+
+  @override
+  Widget build(BuildContext context) {
+    return _sectionCard(
+      child: Column(
+        children: [
+          for (int i = 0; i < rows.length; i++) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(rows[i].label,
+                          style: AppTextStyles.font14BlacksoftRegular),
+                      if (rows[i].subtitle != null)
+                        Text(rows[i].subtitle!,
+                            style: AppTextStyles.font12greyRegular),
+                    ],
+                  ),
+                ),
+                Text('${rows[i].value} ${rows[i].unit}',
+                    style: AppTextStyles.font14BlacksoftRegular),
+              ],
+            ),
+            if (i != rows.length - 1) 10.verticalSpace,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Total card
+// ─────────────────────────────────────────────────────────────────────────
+class _TotalCard extends StatelessWidget {
+  final OrderDetailsModel order;
+  const _TotalCard({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+      decoration: ShapeDecoration(
+        color: AppColors.lightestPrimaryColor,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color(0xFFF6DCC9)),
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text('إجمالي التكلفة',
+                    style: AppTextStyles.font16BlackBold),
+              ),
+              Text('${order.totalCost} جنيه',
+                  style: TextStyle(
+                    color: AppColors.orangeColor,
+                    fontSize: 22.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w800,
+                  )),
+            ],
+          ),
+          12.verticalSpace,
+          _totalRow('المدفوع', order.paid),
+          8.verticalSpace,
+          _totalRow('المتبقي', order.remaining),
+          8.verticalSpace,
+          _totalRow('المسترد', order.refunded),
+        ],
+      ),
+    );
+  }
+
+  Widget _totalRow(String label, num value) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(label, style: AppTextStyles.font14BlacksoftRegular),
+        ),
+        Text('$value جنيه', style: AppTextStyles.font14BlacksoftRegular),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+//  Notes field
+// ─────────────────────────────────────────────────────────────────────────
+class _NotesField extends StatefulWidget {
+  const _NotesField();
+
+  @override
+  State<_NotesField> createState() => _NotesFieldState();
+}
+
+class _NotesFieldState extends State<_NotesField> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      maxLines: 3,
+      textAlign: TextAlign.start,
+      textDirection: TextDirection.rtl,
+      style: AppTextStyles.font14BlacksoftRegular,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: const Color(0xFFF8F8F8),
+        hintText: 'في حال وجود ملاحظات .. اكتب ملاحظتك هنا باختصار شديد',
+        hintStyle: AppTextStyles.font12greyRegular,
+        contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.orangeColor),
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+      ),
+    );
+  }
+}
+
+TextStyle _priceStyle() => TextStyle(
+      color: AppColors.orangeColor,
+      fontSize: 14.r,
+      fontFamily: 'Almarai',
+      fontWeight: FontWeight.w700,
+    );

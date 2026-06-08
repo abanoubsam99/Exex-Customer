@@ -189,7 +189,9 @@ class ProfileScreenBody extends StatelessWidget {
                             backgroundColor: Colors.white,
                             fontColor: const Color(0xff2C262C),
                             text: 'تغير كلمه المرور',
-                            onTap: () {},
+                            onTap: () => NavigationHelper.pushNamed(
+                              Routes.changePassword,
+                            ),
                           ),
                           18.verticalSpace,
                           CustomButton(

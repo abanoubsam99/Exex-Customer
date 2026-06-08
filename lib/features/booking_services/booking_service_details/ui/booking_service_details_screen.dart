@@ -1,4 +1,6 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -184,9 +186,12 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                   CustomButton(
                     height: 52.h,
                     text: "إضافة لحجوزاتي",
-                    onTap: () => context
-                        .read<BookingServiceDetailsCubit>()
-                        .prepareFinalAdditions(),
+                    onTap: () {
+                      context
+                          .read<BookingServiceDetailsCubit>()
+                          .prepareFinalAdditions();
+                      NavigationHelper.pushNamed(Routes.completeBookingScreen);
+                    },
                   ),
                 ],
               ),

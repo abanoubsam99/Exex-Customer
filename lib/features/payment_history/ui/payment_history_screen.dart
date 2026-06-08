@@ -1,6 +1,7 @@
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
-import 'package:evex_user/features/payment_history/ui/widgets/all_transactions_tab.dart';
+import 'package:evex_user/data/cubits/payment_history/payment_history_state.dart';
+import 'package:evex_user/features/payment_history/ui/widgets/transactions_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 class PaymentHistoryScreen extends StatelessWidget {
@@ -14,7 +15,7 @@ class PaymentHistoryScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: DefaultTabController(
             length: 3,
-            initialIndex: 1,
+            initialIndex: 0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -43,26 +44,6 @@ class PaymentHistoryScreen extends StatelessWidget {
                     color: const Color(0xFFF2F4F7),
                   ),
                   child: TabBar(
-                    onTap: (v) {
-                      // controller.index.value = v;
-                      // if (v == 0) {
-                      //   controller.getInstantPays();
-                      // }
-                      // if (v == 1) {
-                      //   controller.getResPaysData();
-                      // }
-                      // if (v == 2) {
-                      //   controller.getTransfers(
-                      //     request: GetAllFinanceilasRequestModel(
-                      //       companyId: UserService.to.currentUser!.value!.modelId!,
-                      //       type: 'transfer',
-                      //       index: 0,
-                      //       from: controller.startDateController.text,
-                      //       to: controller.endDateController.text,
-                      //     ),
-                      //   );
-                      // }
-                    },
                     padding: EdgeInsets.all(4.r),
                     labelPadding: EdgeInsets.zero,
                     labelColor: AppColors.secondaryColor,
@@ -131,35 +112,12 @@ class PaymentHistoryScreen extends StatelessWidget {
                   child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
                     children: [
-                      AllTransactionsTab(),
-                      // SizedBox(),
-                      SizedBox(),
-                      SizedBox(),
-                      // TabBarInstantPay(),
-                      // TabBarReceivingAndDisbursing(),
-                      // TabBarTransfers(),
+                      TransactionsTab(filter: PaymentFilter.all),
+                      TransactionsTab(filter: PaymentFilter.payments),
+                      TransactionsTab(filter: PaymentFilter.refunds),
                     ],
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                //   child: Obx(
-                //     () => CustomButton(
-                //       text: controller.index.value == 0
-                //           ? "اضافه دفع مباشر"
-                //           : controller.index.value == 1
-                //               ? 'اضافه استلام/صرف'
-                //               : 'اضافه تحويل',
-                //       onTap: () {
-                //         controller.index.value == 0
-                //             ? Get.toNamed(Routes.addInstantPay)
-                //             : controller.index.value == 1
-                //                 ? Get.toNamed(Routes.addResPay)
-                //                 : Get.toNamed(Routes.addTransfer);
-                //       },
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

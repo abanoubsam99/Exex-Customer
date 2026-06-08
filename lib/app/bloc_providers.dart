@@ -8,10 +8,14 @@ import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
+import 'package:evex_user/data/repos/new_suggestion_repo.dart';
+import 'package:evex_user/data/repos/notifications_repo.dart';
+import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:evex_user/data/repos/post_repo.dart';
 import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:evex_user/data/repos/register_repo.dart';
+import 'package:evex_user/data/repos/request_to_join_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/cubits/home/home_cubit.dart';
@@ -53,6 +57,18 @@ class BlocProviders {
         ),
         RepositoryProvider<BookingServicesPortsRepo>(
           create: (_) => BookingServicesPortsRepo(),
+        ),
+        RepositoryProvider<NotificationsRepo>(
+          create: (_) => NotificationsRepo(),
+        ),
+        RepositoryProvider<RequestToJoinRepo>(
+          create: (_) => RequestToJoinRepo(),
+        ),
+        RepositoryProvider<OrderDetailsRepo>(
+          create: (_) => OrderDetailsRepo(),
+        ),
+        RepositoryProvider<NewSuggestionRepo>(
+          create: (_) => NewSuggestionRepo(),
         ),
       ];
 
