@@ -1,3 +1,5 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
@@ -151,8 +153,9 @@ class CompleteBookingScreen extends StatelessWidget {
                       CustomButton(
                         height: 52.h,
                         text: "إضافة لحجوزاتي",
-                        onTap: () {},
-                        // onTap: () => controller.prepareFinalAdditions(),
+                        onTap: () => NavigationHelper.pushNamed(
+                          Routes.confirmBookingScreen,
+                        ),
                       ),
                     ],
                   ),

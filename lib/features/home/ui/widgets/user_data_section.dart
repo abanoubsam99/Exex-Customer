@@ -1,6 +1,9 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,9 +31,17 @@ class UserDataSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.r),
               ),
             ),
+            child: CustomImageHandler(
+              user?.imageName != null
+                  ? '${AppEndpoints.baseUrl}${user!.imageName}'
+                  : AppImages.imagesNewLogo2,
+              fit: BoxFit.cover,
+              width: 40.r,
+              height: 40.r,
+            ),
           ),
         ),
-        2.horizontalSpace,
+        8.horizontalSpace,
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +63,8 @@ class UserDataSection extends StatelessWidget {
               style: TextStyle(
                 color: const Color(0xFF2C262C),
                 fontSize: 18.r,
-                fontWeight: FontWeight.w400,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
                 height: 1.50,
               ),
             ),

@@ -32,6 +32,8 @@ class AppEndpoints {
   static const joinRequest = "/api/Merchants/JoinRequest";
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
   static const newSuggestion = "/api/Suggestions/AddSuggestion";
+  // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
+  static const confirmBooking = "/api/Bookings/ConfirmPayment";
 
   //Services
   static const services = "api/Services/GetAllServices";

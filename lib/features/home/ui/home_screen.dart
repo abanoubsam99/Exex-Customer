@@ -115,7 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           iconSize: 22.r,
                                         ),
                                         IconButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            NavigationHelper.pushNamed(
+                                              Routes.notificationsScreen,
+                                            );
+                                          },
                                           icon: const Icon(
                                             Icons.notifications_outlined,
                                           ),

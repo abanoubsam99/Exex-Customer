@@ -6,6 +6,7 @@ import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
+import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -27,6 +28,7 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/b
 import 'package:evex_user/features/booking_services/booking_service_details/ui/complete_booking_screen.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/instant_booking_services_screen.dart';
 import 'package:evex_user/features/contact_us/ui/contact_us_screen.dart';
+import 'package:evex_user/features/confirm_booking/ui/confirm_booking_screen.dart';
 import 'package:evex_user/features/main/ui/main_screen.dart';
 import 'package:evex_user/features/notifications/ui/notification_screen.dart';
 import 'package:evex_user/features/order_details/ui/order_details_screen.dart';
@@ -49,6 +51,7 @@ import '../../data/cubits/auth/login/login_cubit.dart';
 import '../../data/cubits/auth/register/register_cubit.dart';
 import '../../data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import '../../data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
+import '../../data/cubits/confirm_booking/confirm_booking_cubit.dart';
 import '../../data/cubits/home/home_cubit.dart';
 import '../../data/cubits/new_suggestion/new_suggestion_cubit.dart';
 import '../../data/cubits/notifications/notifications_cubit.dart';
@@ -296,6 +299,16 @@ class AppRouter {
                 OrderDetailsCubit(context.read<OrderDetailsRepo>())
                   ..getOrderDetails(),
             child: const OrderDetailsScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.confirmBookingScreen:
+        return _page(
+          BlocProvider(
+            create: (context) =>
+                ConfirmBookingCubit(context.read<ConfirmBookingRepo>())..init(),
+            child: const ConfirmBookingScreen(),
           ),
           settings,
         );

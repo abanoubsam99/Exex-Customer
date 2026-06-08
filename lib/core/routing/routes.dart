@@ -37,4 +37,5 @@ class Routes {
   static const String requestToJoinScreen = '/requestToJoinScreen';
   static const String contactUsScreen = '/contactUsScreen';
   static const String orderDetailsScreen = '/orderDetailsScreen';
+  static const String confirmBookingScreen = '/confirmBookingScreen';
 }
