@@ -9,6 +9,7 @@ class ProfileState {
   final List<City> cities;
   final String? selectedGovernorate;
   final String? selectedCity;
+  final String? selectedGender;
   final String? errorMessage;
   final bool updateSuccess;
 
@@ -19,6 +20,7 @@ class ProfileState {
     this.cities = const [],
     this.selectedGovernorate,
     this.selectedCity,
+    this.selectedGender,
     this.errorMessage,
     this.updateSuccess = false,
   });
@@ -30,6 +32,7 @@ class ProfileState {
     List<City>? cities,
     String? selectedGovernorate,
     String? selectedCity,
+    String? selectedGender,
     String? errorMessage,
     bool? updateSuccess,
   }) {
@@ -40,6 +43,7 @@ class ProfileState {
       cities: cities ?? this.cities,
       selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
       selectedCity: selectedCity ?? this.selectedCity,
+      selectedGender: selectedGender ?? this.selectedGender,
       errorMessage: errorMessage ?? this.errorMessage,
       updateSuccess: updateSuccess ?? this.updateSuccess,
     );

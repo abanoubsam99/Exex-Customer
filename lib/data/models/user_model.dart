@@ -74,6 +74,10 @@ class UserViewModel {
   int? clientId;
   String? name;
   String? countryCode;
+  String? address;
+  String? gender;
+  String? dateOfBirth;
+  int? bookingsCount;
 
   UserViewModel({
     this.userId,
@@ -95,6 +99,10 @@ class UserViewModel {
     this.clientId,
     this.name,
     this.countryCode,
+    this.address,
+    this.gender,
+    this.dateOfBirth,
+    this.bookingsCount,
   });
 
   UserViewModel.fromJson(Map<String, dynamic> json)
@@ -118,6 +126,10 @@ class UserViewModel {
     clientId = (json['clientId'] as num?)?.toInt();
     name = json['name'];
     countryCode = json['countryCode'];
+    address = json['address'];
+    gender = json['gender'];
+    dateOfBirth = json['dateOfBirth'];
+    bookingsCount = (json['bookingsCount'] as num?)?.toInt();
   }
 
   Map<String, dynamic> toJson() {
@@ -140,6 +152,10 @@ class UserViewModel {
     data['clientId'] = clientId;
     data['name'] = name;
     data['countryCode'] = countryCode;
+    data['address'] = address;
+    data['gender'] = gender;
+    data['dateOfBirth'] = dateOfBirth;
+    data['bookingsCount'] = bookingsCount;
     if (planDto != null) {
       data['planDto'] = planDto!.toJson();
     }

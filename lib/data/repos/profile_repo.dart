@@ -1,9 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/models/user_model.dart';
 
 class ProfileRepo {
+  final UserService _userService;
+  ProfileRepo(this._userService);
+
   Future<UserViewModel?> getProfile() async {
     try {
       final response = await DioHelper.getData(url: AppEndpoints.getUserData);
@@ -16,11 +20,39 @@ class ProfileRepo {
     }
   }
 
-  Future<UserViewModel?> updateClient({required FormData formData}) async {
+  /// تعديل بيانات العميل. البيانات بتتبعت كـ query params،
+  /// والصورة بس (لو موجودة) بتتبعت في الـ multipart/form-data body.
+  /// PUT /api/Clients/UpdateClient
+  Future<UserViewModel?> updateClient({
+    int? id,
+    required String name,
+    String? governorate,
+    String? city,
+    String? address,
+    String? gender,
+    String? dateOfBirth,
+    String? imagePath,
+    MultipartFile? image,
+  }) async {
     try {
-      final response = await DioHelper.postData(
+      final query = <String, dynamic>{
+        if (id != null) 'Id': id,
+        'Name': name,
+        if (governorate != null && governorate.isNotEmpty)
+          'Governorate': governorate,
+        if (city != null && city.isNotEmpty) 'City': city,
+        if (imagePath != null && imagePath.isNotEmpty) 'ImagePath': imagePath,
+        if (address != null && address.isNotEmpty) 'Address': address,
+        if (gender != null && gender.isNotEmpty) 'Gender': gender,
+        if (dateOfBirth != null && dateOfBirth.isNotEmpty)
+          'DateOfBirth': dateOfBirth,
+      };
+      final response = await DioHelper.putData(
         url: AppEndpoints.updateClient,
-        data: formData,
+        query: query,
+        data: FormData.fromMap({
+          if (image != null) 'Image': image,
+        }),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return UserViewModel.fromJson(response.data);
@@ -32,18 +64,21 @@ class ProfileRepo {
   }
 
   /// تغيير كلمة المرور. بيرجّع `true` لو نجح.
-  /// ملحوظة: [AppEndpoints.changePassword] لسه placeholder — أكّد المسار مع الـ backend.
+  /// POST /EVEX/Account/ChangePassword
   Future<bool> changePassword({
     required String currentPassword,
     required String newPassword,
+    required String confirmPassword,
   }) async {
     try {
       final response = await DioHelper.postData(
         url: AppEndpoints.changePassword,
-        data: FormData.fromMap({
-          'oldPassword': currentPassword,
+        data: {
+          'userId': _userService.currentUser?.userViewModel?.userId ?? '',
+          'currentPassword': currentPassword,
           'newPassword': newPassword,
-        }),
+          'confirmPassword': confirmPassword,
+        },
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {
@@ -55,7 +90,7 @@ class ProfileRepo {
     try {
       final response = await DioHelper.postData(
         url: AppEndpoints.deleteAccount,
-        data: '"$email"',
+        data: {'email': email},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return response.data['message'] as String?;

@@ -15,6 +15,10 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final double? width;
   final bool isDisabled;
+
+  /// When true the button shows a spinner and ignores taps,
+  /// preventing duplicate API calls.
+  final bool isLoading;
   final String? icon;
   final bool isfilled;
 
@@ -30,12 +34,15 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.width,
     this.isDisabled = false,
+    this.isLoading = false,
     this.icon,
     this.isfilled = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Loading also disables the button to block duplicate taps.
+    final bool disabled = isDisabled || isLoading;
     return SizedBox(
       height: height ?? 46.h,
       width: width,
@@ -51,26 +58,8 @@ class CustomButton extends StatelessWidget {
                   side: BorderSide(color: bordereColor!, width: 1.5),
                 ),
               ),
-              onPressed: isDisabled ? null : onTap,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    text,
-                    style: TextStyle(
-                      color: fontColor ?? Colors.white,
-                      fontSize: fontSize ?? 16.r,
-                      fontFamily: 'Almarai',
-                      height: 0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (icon != null) ...[
-                    SizedBox(width: 4.w),
-                    CustomImageHandler(icon, width: 24),
-                  ],
-                ],
-              ),
+              onPressed: disabled ? null : onTap,
+              child: _buildContent(fontColor ?? Colors.white),
             )
           : OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -87,27 +76,42 @@ class CustomButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(borderRadius ?? 16.r),
                 ),
               ),
-              onPressed: isDisabled ? null : onTap,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    text,
-                    style: TextStyle(
-                      color: fontColor ?? AppColors.blacksoft,
-                      fontSize: fontSize ?? 16.r,
-                      fontFamily: 'Almarai',
-                      height: 0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (icon != null) ...[
-                    SizedBox(width: 4.w),
-                    CustomImageHandler(icon, width: 24),
-                  ],
-                ],
-              ),
+              onPressed: disabled ? null : onTap,
+              child: _buildContent(fontColor ?? AppColors.blacksoft),
             ),
+    );
+  }
+
+  /// Shows a spinner while [isLoading], otherwise the label (and optional icon).
+  Widget _buildContent(Color contentColor) {
+    if (isLoading) {
+      return SizedBox(
+        width: 22.r,
+        height: 22.r,
+        child: CircularProgressIndicator(
+          strokeWidth: 2.5,
+          color: contentColor,
+        ),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          text,
+          style: TextStyle(
+            color: contentColor,
+            fontSize: fontSize ?? 16.r,
+            fontFamily: 'Almarai',
+            height: 0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (icon != null) ...[
+          SizedBox(width: 4.w),
+          CustomImageHandler(icon, width: 24),
+        ],
+      ],
     );
   }
 }

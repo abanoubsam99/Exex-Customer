@@ -21,11 +21,19 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final addressController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
   final currentPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final editProfileFormKey = GlobalKey<FormState>();
   final changePasswordFormKey = GlobalKey<FormState>();
+
+  /// أنواع النوع (Gender) المعروضة في الـ dropdown.
+  static const List<String> genderOptions = ['ذكر', 'أنثى'];
+
+  void selectGender(String? gender) =>
+      emit(state.copyWith(selectedGender: gender));
 
   File? selectedImage;
 
@@ -41,17 +49,20 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> prepareEditProfile() async {
     emit(state.copyWith(isLoading: true));
+    final profile = state.profile ?? await _profileRepo.getProfile();
     final govs = await _locationRepo.getGovernorates();
-    if (govs != null) {
+    if (profile != null && govs != null) {
       emit(state.copyWith(
         isLoading: false,
+        profile: profile,
         governorates: govs,
-        selectedGovernorate: state.profile?.governorate,
-        selectedCity: state.profile?.city,
+        selectedGovernorate: profile.governorate,
+        selectedCity: profile.city,
+        selectedGender: _normalizeGender(profile.gender),
       ));
       _loadProfileToControllers();
-      if (state.profile?.governorate != null) {
-        loadCities(state.profile!.governorate!);
+      if (profile.governorate != null) {
+        loadCities(profile.governorate!);
       }
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
@@ -86,17 +97,23 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> updateClient() async {
     emit(state.copyWith(isLoading: true));
-    final formData = FormData.fromMap({
-      'Name': nameController.text.trim(),
-      'Governorate': state.selectedGovernorate,
-      'City': state.selectedCity,
-      if (selectedImage != null)
-        'image': await MultipartFile.fromFile(
-          selectedImage!.path,
-          filename: selectedImage!.uri.pathSegments.last,
-        ),
-    });
-    final result = await _profileRepo.updateClient(formData: formData);
+    MultipartFile? image;
+    if (selectedImage != null) {
+      image = await MultipartFile.fromFile(
+        selectedImage!.path,
+        filename: selectedImage!.uri.pathSegments.last,
+      );
+    }
+    final result = await _profileRepo.updateClient(
+      id: state.profile?.clientId,
+      name: nameController.text.trim(),
+      governorate: state.selectedGovernorate,
+      city: state.selectedCity,
+      address: addressController.text.trim(),
+      gender: state.selectedGender,
+      dateOfBirth: _dateToIso(dateOfBirthController.text.trim()),
+      image: image,
+    );
     if (result != null) {
       emit(state.copyWith(isLoading: false, updateSuccess: true));
       ToastManager.showSuccess('تم التعديل بنجاح');
@@ -110,6 +127,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     final ok = await _profileRepo.changePassword(
       currentPassword: currentPasswordController.text.trim(),
       newPassword: newPasswordController.text.trim(),
+      confirmPassword: confirmPasswordController.text.trim(),
     );
     if (ok) {
       emit(state.copyWith(isLoading: false));
@@ -139,12 +157,52 @@ class ProfileCubit extends Cubit<ProfileState> {
   void _loadProfileToControllers() {
     nameController.text = state.profile?.userName ?? '';
     emailController.text = state.profile?.email ?? '';
+    addressController.text = state.profile?.address ?? '';
+    dateOfBirthController.text = _isoToDate(state.profile?.dateOfBirth);
+  }
+
+  /// بيوحّد قيمة النوع الجاية من الـ API مع خيارات الـ dropdown (ذكر/أنثى).
+  String? _normalizeGender(String? g) {
+    if (g == null || g.trim().isEmpty) return null;
+    final raw = g.trim();
+    final v = raw.toLowerCase();
+    if (v == 'male' || v == 'm' || raw == 'ذكر') return 'ذكر';
+    if (v == 'female' || v == 'f' || raw == 'أنثى' || raw == 'انثى') {
+      return 'أنثى';
+    }
+    return genderOptions.contains(raw) ? raw : null;
+  }
+
+  /// بيحوّل تاريخ الميلاد (ISO من الـ API) لصيغة yyyy-MM-dd لعرضه في الحقل.
+  String _isoToDate(String? iso) {
+    if (iso == null || iso.isEmpty) return '';
+    try {
+      final d = DateTime.parse(iso);
+      final m = d.month.toString().padLeft(2, '0');
+      final day = d.day.toString().padLeft(2, '0');
+      return '${d.year}-$m-$day';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  /// بيحوّل تاريخ الميلاد (yyyy-MM-dd من الـ date picker) لـ ISO 8601.
+  /// بيرجّع null لو الحقل فاضي عشان مايتبعتش للـ API.
+  String? _dateToIso(String date) {
+    if (date.isEmpty) return null;
+    try {
+      return DateTime.parse(date).toUtc().toIso8601String();
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
   Future<void> close() {
     nameController.dispose();
     emailController.dispose();
+    addressController.dispose();
+    dateOfBirthController.dispose();
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmPasswordController.dispose();

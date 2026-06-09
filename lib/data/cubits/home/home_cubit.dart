@@ -41,7 +41,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   void selectBookingPort(PortCategoryWithPortTypes port) {
     final firstType =
-        port.portTypeDtos?.isNotEmpty == true ? port.portTypeDtos!.first : null;
+        port.portTypeDtos.isNotEmpty ? port.portTypeDtos.first : null;
     emit(state.copyWith(
       selectedBookingPort: port,
       selectedBookingPortType: firstType,
@@ -54,7 +54,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   void selectPaymentPort(PortCategoryWithPortTypes port) {
     final firstType =
-        port.portTypeDtos?.isNotEmpty == true ? port.portTypeDtos!.first : null;
+        port.portTypeDtos.isNotEmpty ? port.portTypeDtos.first : null;
     emit(state.copyWith(
       selectedPaymentPort: port,
       selectedPaymentPortType: firstType,

@@ -3,6 +3,7 @@ import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -126,7 +127,35 @@ class ProfileScreenBody extends StatelessWidget {
                                 height: 1.50,
                               ),
                             ),
-                          12.verticalSpace,
+                          16.verticalSpace,
+                          // ── كروت الإحصائيات ──
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _statCard(
+                                  'لايوجد',
+                                  'كود الدعوة',
+                                  const Color(0xFF4A7CF7),
+                                ),
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: _statCard(
+                                  '${profile?.bookingsCount ?? 0} حجز',
+                                  'عدد الحجوزات',
+                                  AppColors.blacksoft,
+                                ),
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: _statCard(
+                                  profile?.planDto?.name ?? 'مجاني',
+                                  'نظام الإشتراك',
+                                  AppColors.primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
                           16.verticalSpace,
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -164,22 +193,24 @@ class ProfileScreenBody extends StatelessWidget {
                                 ),
                                 _divider(),
                                 _userRowData(
-                                  'صلاحيات المستخدم',
-                                  profile?.roles?.join('/') ?? 'NAN',
-                                  AppImages.iconsLock,
-                                ),
-                                _divider(),
-                                _userRowData(
-                                  'العنوان',
-                                  '${profile?.governorate ?? ''} - ${profile?.city ?? ''}',
+                                  'المنطقة',
+                                  [
+                                    profile?.address,
+                                    profile?.governorate,
+                                    profile?.city,
+                                  ]
+                                      .where((e) =>
+                                          e != null && e.isNotEmpty)
+                                      .join('، '),
                                   AppImages.iconsLocation2,
+                                  ltrValue: false,
                                 ),
                               ],
                             ),
                           ),
                           72.verticalSpace,
                           CustomButton(
-                            text: 'تعديل البيانات الشخصيه',
+                            text: 'تعديل البيانات الشخصية',
                             onTap: () =>
                                 NavigationHelper.pushNamed(Routes.editProfile),
                           ),
@@ -188,7 +219,7 @@ class ProfileScreenBody extends StatelessWidget {
                             bordereColor: const Color(0xff2C262C),
                             backgroundColor: Colors.white,
                             fontColor: const Color(0xff2C262C),
-                            text: 'تغير كلمه المرور',
+                            text: 'تغيير كلمة المرور',
                             onTap: () => NavigationHelper.pushNamed(
                               Routes.changePassword,
                             ),
@@ -246,7 +277,12 @@ class ProfileScreenBody extends StatelessWidget {
     );
   }
 
-  Widget _userRowData(String label, String value, String icon) {
+  Widget _userRowData(
+    String label,
+    String value,
+    String icon, {
+    bool ltrValue = true,
+  }) {
     return Row(
       children: [
         CustomImageHandler(
@@ -270,7 +306,7 @@ class ProfileScreenBody extends StatelessWidget {
           child: Text(
             value,
             textAlign: TextAlign.left,
-            textDirection: TextDirection.ltr,
+            textDirection: ltrValue ? TextDirection.ltr : TextDirection.rtl,
             style: TextStyle(
               color: const Color(0xFF99A2AC),
               fontSize: 14.r,
@@ -280,6 +316,49 @@ class ProfileScreenBody extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// كارت إحصائية صغير: قيمة فوق + عنوان تحت.
+  Widget _statCard(String value, String label, Color valueColor) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 6.w),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(width: 1, color: Color(0xFFF2F4F7)),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: valueColor,
+              fontSize: 14.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          4.verticalSpace,
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: const Color(0xFF99A2AC),
+              fontSize: 12.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

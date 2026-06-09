@@ -51,7 +51,9 @@ class BlocProviders {
         ),
         RepositoryProvider<HomeRepo>(create: (_) => HomeRepo()),
         RepositoryProvider<PostRepo>(create: (_) => PostRepo()),
-        RepositoryProvider<ProfileRepo>(create: (_) => ProfileRepo()),
+        RepositoryProvider<ProfileRepo>(
+          create: (_) => ProfileRepo(userService),
+        ),
         RepositoryProvider<LocationRepo>(create: (_) => LocationRepo()),
         RepositoryProvider<PortServicesRepo>(
           create: (_) => PortServicesRepo(),
@@ -69,7 +71,7 @@ class BlocProviders {
           create: (_) => OrderDetailsRepo(),
         ),
         RepositoryProvider<NewSuggestionRepo>(
-          create: (_) => NewSuggestionRepo(),
+          create: (_) => NewSuggestionRepo(userService),
         ),
         RepositoryProvider<ConfirmBookingRepo>(
           create: (_) => ConfirmBookingRepo(),

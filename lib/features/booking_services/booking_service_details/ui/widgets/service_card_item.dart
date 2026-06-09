@@ -1,16 +1,11 @@
-import 'dart:math' as math;
-
-import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class ServiceCardItem extends StatelessWidget {
+class ServiceCardItem extends StatefulWidget {
   final String title;
   final int price;
   final String subtitle;
@@ -29,19 +24,31 @@ class ServiceCardItem extends StatelessWidget {
   });
 
   @override
+  State<ServiceCardItem> createState() => _ServiceCardItemState();
+}
+
+class _ServiceCardItemState extends State<ServiceCardItem> {
+  final PageController _pageController = PageController();
+  int _activeImage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onSelectionChanged(),
+      onTap: () => widget.onSelectionChanged(),
       child: Container(
         width: 141.w,
-        // height: 180.h,
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
           color: Colors.white,
-      
           shadows: [
             BoxShadow(
-              color: Color(0x19000000),
+              color: const Color(0x19000000),
               blurRadius: 16.r,
               offset: Offset(0, 4.r),
               spreadRadius: -2,
@@ -50,7 +57,8 @@ class ServiceCardItem extends StatelessWidget {
           shape: RoundedRectangleBorder(
             side: BorderSide(
               width: 2.r,
-              color: isSelected ? const Color(0xFFF38B4A) : Colors.transparent,
+              color:
+                  widget.isSelected ? const Color(0xFFF38B4A) : Colors.transparent,
             ),
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -68,10 +76,7 @@ class ServiceCardItem extends StatelessWidget {
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.r),
-                        child: CustomImageHandler(
-                          images.isEmpty ? AppImages.imagesWedding2 : images[0],
-                          fit: BoxFit.fill,
-                        ),
+                        child: _buildImages(),
                       ),
                     ),
                     Positioned(
@@ -80,8 +85,7 @@ class ServiceCardItem extends StatelessWidget {
                       child: Container(
                         width: 21.r,
                         height: 21.r,
-                        // padding: EdgeInsets.all(4.r),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                         ),
@@ -89,20 +93,40 @@ class ServiceCardItem extends StatelessWidget {
                         child: Container(
                           width: 13.r,
                           height: 13.r,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Color(0xFF79E2B2),
                           ),
                         ),
                       ),
                     ),
+                    if (widget.images.length > 1)
+                      Positioned(
+                        bottom: 4.h,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: AnimatedSmoothIndicator(
+                            activeIndex: _activeImage,
+                            count: widget.images.length,
+                            effect: JumpingDotEffect(
+                              dotHeight: 5.r,
+                              dotWidth: 5.r,
+                              activeDotColor: const Color(0xFFF38B4A),
+                              dotColor: Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
               3.verticalSpace,
               Text(
-                'عرض تورته',
+                widget.title,
                 textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: const Color(0xFF2C262C),
                   fontSize: 14.r,
@@ -113,7 +137,7 @@ class ServiceCardItem extends StatelessWidget {
                 ),
               ),
               Text(
-                'تفاصيل اكتر عن عرض الت...',
+                widget.subtitle,
                 textAlign: TextAlign.right,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -126,7 +150,7 @@ class ServiceCardItem extends StatelessWidget {
                   letterSpacing: -0.24,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Row(
                 children: [
                   Text.rich(
@@ -134,7 +158,7 @@ class ServiceCardItem extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: '100',
+                          text: '${widget.price}',
                           style: TextStyle(
                             color: const Color(0xFFF38B4A),
                             fontSize: 16.r,
@@ -158,58 +182,15 @@ class ServiceCardItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  3.horizontalSpace,
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        '125 LE',
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: const Color(0xFFFF928E),
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                          letterSpacing: -0.24,
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 2.25.h,
-                        child: CustomPaint(
-                          size: Size(32.w, 10.h),
-                          painter: StrikethroughPainter(),
-                        ),
-                      ),
-                      // Transform.rotate(
-                      //   angle: 170 * math.pi / 180,
-                      //   child: Container(
-                      //     width: 33,
-                      //     decoration: ShapeDecoration(
-                      //       shape: RoundedRectangleBorder(
-                      //         side: BorderSide(
-                      //           width: 0.50,
-                      //           strokeAlign: BorderSide.strokeAlignCenter,
-                      //           color: const Color(0xFFFF928E),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  Spacer(),
+                  const Spacer(),
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     width: 25.r,
                     height: 25.r,
                     decoration: ShapeDecoration(
-                      color:
-                          isSelected
-                              ? const Color(0xFFF38B4A)
-                              : const Color(0x33F38B4A),
+                      color: widget.isSelected
+                          ? const Color(0xFFF38B4A)
+                          : const Color(0x33F38B4A),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -218,7 +199,9 @@ class ServiceCardItem extends StatelessWidget {
                       child: CustomImageHandler(
                         width: 17.r,
                         height: 17.r,
-                        isSelected ? AppImages.iconsMinus : AppImages.iconsPlus,
+                        widget.isSelected
+                            ? AppImages.iconsMinus
+                            : AppImages.iconsPlus,
                       ),
                     ),
                   ),
@@ -230,16 +213,33 @@ class ServiceCardItem extends StatelessWidget {
       ),
     );
   }
+
+  /// بيعرض كل صور الخدمة في PageView قابل للتمرير.
+  /// لو مفيش صور بيعرض صورة افتراضية.
+  Widget _buildImages() {
+    if (widget.images.isEmpty) {
+      return CustomImageHandler(AppImages.imagesWedding2, fit: BoxFit.fill);
+    }
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: widget.images.length,
+      onPageChanged: (i) => setState(() => _activeImage = i),
+      itemBuilder: (context, i) => CustomImageHandler(
+        ImageUrlHelper.full(widget.images[i]) ?? AppImages.imagesWedding2,
+        fit: BoxFit.fill,
+        errorIcon: const Icon(Icons.broken_image_outlined),
+      ),
+    );
+  }
 }
 
 class StrikethroughPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint0Stroke =
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = size.width * 0.01562500;
-    paint0Stroke.color = Color(0xffFF928E).withOpacity(1.0);
+    Paint paint0Stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width * 0.01562500;
+    paint0Stroke.color = const Color(0xffFF928E).withValues(alpha: 1.0);
     canvas.drawLine(
       Offset(size.width * 0.002021556, size.height * 0.8782440),
       Offset(size.width * 0.9981313, size.height * 0.02414160),

@@ -103,19 +103,17 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
 
     emit(state.copyWith(isLoading: true));
     final ok = await _repo.submitSuggestion(
-      merchantName: nameController.text.trim(),
-      serviceType: state.selectedServiceType!,
-      merchantGovernorate:
-          state.selectedMerchantGov?.governorateNameAr ?? '',
-      merchantCity: state.selectedMerchantCity?.cityNameAr ?? '',
-      countryCode: countryController.text.trim(),
-      phone: phoneController.text.trim(),
+      vendorName: nameController.text.trim(),
+      serviceType: serviceTypes.indexOf(state.selectedServiceType!) + 1,
+      vendorGovernorate: state.selectedMerchantGov?.governorateNameAr ?? '',
+      vendorCity: state.selectedMerchantCity?.cityNameAr ?? '',
+      phoneNumber:
+          '${countryController.text.trim()}${phoneController.text.trim()}',
       address: addressController.text.trim(),
-      pageLink: pageLinkController.text.trim(),
+      link: pageLinkController.text.trim(),
       occasionType: state.selectedOccasionType ?? '',
+      occasionGovernorate: state.selectedEventGov?.governorateNameAr ?? '',
       occasionDate: occasionDateController.text.trim(),
-      eventGovernorate: state.selectedEventGov?.governorateNameAr ?? '',
-      eventCity: state.selectedEventCity?.cityNameAr ?? '',
     );
 
     if (ok) {

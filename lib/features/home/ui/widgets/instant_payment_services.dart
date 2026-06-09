@@ -1,4 +1,5 @@
-import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
 import 'package:evex_user/core/ui/widgets/speech_bubble_border.dart';
@@ -85,7 +86,7 @@ class InstantPaymentServices extends StatelessWidget {
                                 ),
                                 shadows: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 8.r,
                                     offset: Offset(0, 4.r),
                                   ),
@@ -106,10 +107,12 @@ class InstantPaymentServices extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomImageHandler(
-                              '${AppEndpoints.baseUrl}${port.iconePath ?? ''}',
-                              fit: BoxFit.fill,
+                              ImageUrlHelper.full(port.iconePath) ??
+                                  AppImages.imagesNewLogo2,
+                              fit: BoxFit.contain,
                               height: 40.r,
                               width: 40.r,
+                              errorIcon: const Icon(Icons.image_not_supported),
                             ),
                             Text(
                               port.nameAr,

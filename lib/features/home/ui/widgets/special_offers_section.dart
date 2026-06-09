@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
@@ -90,7 +90,10 @@ class SpecialOffersSection extends StatelessWidget {
                               scale: 1.1,
                               child: CustomImageHandler(
                                 offer.serviceImages.isNotEmpty
-                                    ? '${AppEndpoints.baseUrl}${offer.serviceImages.first}'
+                                    ? (ImageUrlHelper.full(
+                                          offer.serviceImages.first,
+                                        ) ??
+                                        AppImages.imagesWedding0)
                                     : AppImages.imagesWedding0,
                                 fit: BoxFit.cover,
                                 alignment: const Alignment(0, -0.58),

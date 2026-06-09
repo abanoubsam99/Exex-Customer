@@ -48,7 +48,7 @@ class PaymentServicesType extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      type.nameAr ?? '',
+                      type.nameAr,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color:
