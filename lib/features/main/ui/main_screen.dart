@@ -73,7 +73,7 @@ class MainScreen extends StatelessWidget {
                       onTap: () => cubit.goToTab(0),
                     ),
                     _NavItem(
-                      icon: AppImages.iconsReceipt,
+                      materialIcon: Icons.shopping_cart_outlined,
                       label: 'حجوزاتى',
                       page: 1,
                       currentPage: state.currentPage,
@@ -105,14 +105,19 @@ class MainScreen extends StatelessWidget {
 }
 
 class _NavItem extends StatelessWidget {
-  final String icon;
+  /// Asset path for an SVG/PNG icon. Use either [icon] or [materialIcon].
+  final String? icon;
+
+  /// A built-in Material icon, rendered when [icon] is not provided.
+  final IconData? materialIcon;
   final String label;
   final int page;
   final int currentPage;
   final VoidCallback onTap;
 
   const _NavItem({
-    required this.icon,
+    this.icon,
+    this.materialIcon,
     required this.label,
     required this.page,
     required this.currentPage,
@@ -122,6 +127,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isActive = currentPage == page;
+    final color = isActive ? AppColors.primaryColor : AppColors.grey;
     return ZoomTapAnimation(
       onTap: onTap,
       child: Container(
@@ -129,12 +135,14 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CustomImageHandler(
-              icon,
-              color: isActive ? AppColors.primaryColor : AppColors.grey,
-              height: 24.r,
-              width: 24.r,
-            ),
+            materialIcon != null
+                ? Icon(materialIcon, color: color, size: 24.r)
+                : CustomImageHandler(
+                    icon!,
+                    color: color,
+                    height: 24.r,
+                    width: 24.r,
+                  ),
             4.verticalSpace,
             Text(
               label,

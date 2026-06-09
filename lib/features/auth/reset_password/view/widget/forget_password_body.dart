@@ -2,6 +2,7 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/data/cubits/auth/forget_password/forget_password_cubit.dart';
+import 'package:evex_user/data/cubits/auth/forget_password/forget_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,14 +30,17 @@ class ForgetPasswordBody extends StatelessWidget {
               isPhone: true,
             ),
             34.verticalSpace,
-            CustomButton(
-              text: "إرسال الرمز",
-              onTap: () {
-                if (cubit.formKey.currentState!.validate()) {
-                  cubit.forgetPassword();
-                }
-              },
-              backgroundColor: AppColors.lightPrimaryColor,
+            BlocBuilder<ForgetPasswordCubit, ForgetPasswordState>(
+              builder: (context, state) => CustomButton(
+                text: "إرسال الرمز",
+                isLoading: state is ForgetPasswordLoading,
+                onTap: () {
+                  if (cubit.formKey.currentState!.validate()) {
+                    cubit.forgetPassword();
+                  }
+                },
+                backgroundColor: AppColors.lightPrimaryColor,
+              ),
             ),
           ],
         ),

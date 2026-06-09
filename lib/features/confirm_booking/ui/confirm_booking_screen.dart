@@ -122,7 +122,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                     child: CustomButton(
                       text: 'تأكيد الدفع',
                       height: 54.h,
-                      isDisabled: state.isLoading,
+                      isLoading: state.isLoading,
                       onTap: cubit.confirmPayment,
                     ),
                   ),

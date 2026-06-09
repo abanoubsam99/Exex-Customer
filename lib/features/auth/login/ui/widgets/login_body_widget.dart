@@ -65,13 +65,12 @@ class LoginBodyWidget extends StatelessWidget {
               builder: (context, state) {
                 return EvexFilledButton(
                   text: AppStrings.signIn.tr(),
-                  onPressed: state is LoginLoading
-                      ? null
-                      : () {
-                          if (cubit.formKey.currentState!.validate()) {
-                            cubit.login();
-                          }
-                        },
+                  isLoading: state is LoginLoading,
+                  onPressed: () {
+                    if (cubit.formKey.currentState!.validate()) {
+                      cubit.login();
+                    }
+                  },
                 );
               },
             ),

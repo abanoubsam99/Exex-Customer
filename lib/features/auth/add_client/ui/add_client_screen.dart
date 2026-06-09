@@ -303,6 +303,7 @@ class AddClientScreen extends StatelessWidget {
                           29.verticalSpace,
                           CustomButton(
                             text: 'اكتمال التسجيل',
+                            isLoading: state.isLoading,
                             onTap: cubit.addClient,
                           ),
                           40.verticalSpace,

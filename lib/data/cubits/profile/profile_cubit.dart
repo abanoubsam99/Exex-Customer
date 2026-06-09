@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/profile_repo.dart';
@@ -15,8 +16,9 @@ import 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo _profileRepo;
   final LocationRepo _locationRepo;
+  final UserService _userService;
 
-  ProfileCubit(this._profileRepo, this._locationRepo)
+  ProfileCubit(this._profileRepo, this._locationRepo, this._userService)
       : super(const ProfileState());
 
   final nameController = TextEditingController();
@@ -48,8 +50,20 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> prepareEditProfile() async {
+    // Seed instantly from the cached user so fields aren't empty while the
+    // API request is still in flight. Gov/city are only selected after the
+    // governorates list loads (to keep the dropdown values valid).
+    final cached = _userService.currentUser?.userViewModel;
+    if (state.profile == null && cached != null) {
+      emit(state.copyWith(
+        profile: cached,
+        selectedGender: _normalizeGender(cached.gender),
+      ));
+      _loadProfileToControllers();
+    }
+
     emit(state.copyWith(isLoading: true));
-    final profile = state.profile ?? await _profileRepo.getProfile();
+    final profile = await _profileRepo.getProfile() ?? state.profile;
     final govs = await _locationRepo.getGovernorates();
     if (profile != null && govs != null) {
       emit(state.copyWith(

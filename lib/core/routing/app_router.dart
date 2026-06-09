@@ -188,6 +188,7 @@ class AppRouter {
             create: (context) => ProfileCubit(
               context.read<ProfileRepo>(),
               context.read<LocationRepo>(),
+              context.read<UserService>(),
             )..getProfile(),
             child: const ProfileScreen(),
           ),
@@ -200,6 +201,7 @@ class AppRouter {
             create: (context) => ProfileCubit(
               context.read<ProfileRepo>(),
               context.read<LocationRepo>(),
+              context.read<UserService>(),
             )..prepareEditProfile(),
             child: const EditProfileScreen(),
           ),
@@ -212,6 +214,7 @@ class AppRouter {
             create: (context) => ProfileCubit(
               context.read<ProfileRepo>(),
               context.read<LocationRepo>(),
+              context.read<UserService>(),
             ),
             child: const ChangePasswordScreen(),
           ),

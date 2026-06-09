@@ -80,7 +80,7 @@ class WalletScreen extends StatelessWidget {
                             ),
                             12.verticalSpace,
                             Text(
-                              'دلوقتي تقدر تستفيد من قيمة نقاطك لما تدفع كاش لأى منتج أو خدمة من خدمات الدفع المباشر',
+                              'دلوقتي تقدر تستفيد من نقاطك لما تدفع كاش لأى منتج أو خدمة من الخدمات المباشرة',
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                 color: Colors.white,
@@ -177,7 +177,7 @@ class WalletScreen extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: 'جنيه',
+                                text: 'نقطة',
                                 style: TextStyle(
                                   color: const Color(0xFF99A2AC),
                                   fontSize: 14.r,
@@ -342,32 +342,32 @@ class WalletScreen extends StatelessWidget {
                 ),
               ),
               16.verticalSpace,
-              Text.rich(
-                TextSpan(
-                  children: [
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.top,
-                      child: CustomImageHandler(
-                        AppImages.iconsInfo,
-                        width: 16.r,
-                        height: 16.r,
-                      ),
-                    ),
-                    TextSpan(
-                      text:
-                          '  يمكنك اسخدام الرصيد النقدي فقط في خدمات الحجز الفوري ويمكنك استخدام قيمة النقاط فقط في خدمات الدفع المباشر',
-                      style: TextStyle(
-                        color: const Color(0xFF6F767E),
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.69,
-                        letterSpacing: -0.24,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Text.rich(
+              //   TextSpan(
+              //     children: [
+              //       WidgetSpan(
+              //         alignment: PlaceholderAlignment.top,
+              //         child: CustomImageHandler(
+              //           AppImages.iconsInfo,
+              //           width: 16.r,
+              //           height: 16.r,
+              //         ),
+              //       ),
+              //       TextSpan(
+              //         text:
+              //             '  يمكنك اسخدام الرصيد النقدي فقط في خدمات الحجز الفوري ويمكنك استخدام قيمة النقاط فقط في خدمات الدفع المباشر',
+              //         style: TextStyle(
+              //           color: const Color(0xFF6F767E),
+              //           fontSize: 13.r,
+              //           fontFamily: 'Almarai',
+              //           fontWeight: FontWeight.w400,
+              //           height: 1.69,
+              //           letterSpacing: -0.24,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),

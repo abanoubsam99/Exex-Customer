@@ -106,7 +106,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         BlocBuilder<ProfileCubit, ProfileState>(
                           builder: (context, state) => CustomButton(
                             text: 'حفظ كلمه المرور',
-                            isDisabled: state.isLoading,
+                            isLoading: state.isLoading,
                             onTap: () {
                               if (cubit.changePasswordFormKey.currentState!
                                   .validate()) {

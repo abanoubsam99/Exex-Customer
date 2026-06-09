@@ -31,7 +31,7 @@ class InstantPaymentServices extends StatelessWidget {
             ),
             8.horizontalSpace,
             Text(
-              'خدمات الدفع المباشر',
+              'الخدمات المباشرة',
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Colors.black,

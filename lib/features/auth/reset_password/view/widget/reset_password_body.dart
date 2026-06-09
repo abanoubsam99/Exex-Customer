@@ -2,6 +2,7 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/data/cubits/auth/forget_password/forget_password_cubit.dart';
+import 'package:evex_user/data/cubits/auth/forget_password/forget_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,14 +43,17 @@ class ResetPasswordBody extends StatelessWidget {
               },
             ),
             60.verticalSpace,
-            CustomButton(
-              backgroundColor: AppColors.lightPrimaryColor,
-              text: 'حفظ',
-              onTap: () async {
-                if (cubit.newPasswordFormKey.currentState!.validate()) {
-                  await cubit.resetPassword();
-                }
-              },
+            BlocBuilder<ForgetPasswordCubit, ForgetPasswordState>(
+              builder: (context, state) => CustomButton(
+                backgroundColor: AppColors.lightPrimaryColor,
+                text: 'حفظ',
+                isLoading: state is ResetPasswordLoading,
+                onTap: () async {
+                  if (cubit.newPasswordFormKey.currentState!.validate()) {
+                    await cubit.resetPassword();
+                  }
+                },
+              ),
             ),
             20.verticalSpace,
           ],

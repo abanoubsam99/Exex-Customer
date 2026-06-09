@@ -6,6 +6,7 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
@@ -108,10 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Routes.paymentHistoryScreen,
                                             );
                                           },
-                                          icon: const Icon(
-                                            Icons.shopping_cart_outlined,
+                                          icon: CustomImageHandler(
+                                            AppImages.iconsReceipt,
+                                            width: 22.r,
+                                            height: 22.r,
                                           ),
-                                          iconSize: 22.r,
                                         ),
                                         IconButton(
                                           onPressed: () {
@@ -368,8 +370,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     16.verticalSpace,
                     const InstantPaymentServices(),
                     16.verticalSpace,
-                    const OtherServicesSection(),
-                    16.verticalSpace,
+                    // const OtherServicesSection(),
+                    // 16.verticalSpace,
                   ],
                 ),
               ),

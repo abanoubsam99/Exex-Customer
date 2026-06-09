@@ -55,13 +55,12 @@ class RegisterBodyWidget extends StatelessWidget {
               builder: (context, state) {
                 return EvexFilledButton(
                   text: AppStrings.signUp.tr(),
-                  onPressed: state is RegisterLoading
-                      ? null
-                      : () {
-                          if (cubit.formKey.currentState!.validate()) {
-                            cubit.register();
-                          }
-                        },
+                  isLoading: state is RegisterLoading,
+                  onPressed: () {
+                    if (cubit.formKey.currentState!.validate()) {
+                      cubit.register();
+                    }
+                  },
                 );
               },
             ),

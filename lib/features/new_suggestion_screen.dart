@@ -165,7 +165,7 @@ class NewSuggestionScreen extends StatelessWidget {
                     text: 'إرسال الإقتراح',
                     width: double.infinity,
                     height: 54.h,
-                    isDisabled: state.isLoading,
+                    isLoading: state.isLoading,
                     onTap: cubit.submit,
                   ),
                 ),

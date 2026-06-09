@@ -35,14 +35,18 @@ class EditProfileScreen extends StatelessWidget {
             ),
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
+            // Show a loader only when there is nothing to display yet
+            // (no cached data and the first fetch is still running).
+            child: state.isLoading && state.profile == null
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Align(
-                      alignment: Alignment.center,
+                      alignment: Alignment.centerRight,
                       child: const CustomBackButtonWidget(),
                     ),
                     8.verticalSpace,
@@ -201,6 +205,7 @@ class EditProfileScreen extends StatelessWidget {
                     40.verticalSpace,
                     CustomButton(
                       text: 'حفظ التغييرات',
+                      isLoading: state.isLoading,
                       onTap: () {
                         if (cubit.editProfileFormKey.currentState!.validate()) {
                           cubit.updateClient();

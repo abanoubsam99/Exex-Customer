@@ -191,7 +191,7 @@ class RequestToJoinScreen extends StatelessWidget {
                     text: 'إرسال الطلب',
                     width: double.infinity,
                     height: 54.h,
-                    isDisabled: state.isLoading,
+                    isLoading: state.isLoading,
                     onTap: cubit.submit,
                   ),
                   24.verticalSpace,

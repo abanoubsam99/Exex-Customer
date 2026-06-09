@@ -531,30 +531,51 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
               ],
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD92D20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    if (!_showEmailField) {
-                      setState(() => _showEmailField = true);
-                    } else {
-                      if (_formKey.currentState!.validate()) {
-                        widget.cubit.deleteAccount(_emailController.text);
-                      }
-                    }
+                child: BlocBuilder<ProfileCubit, ProfileState>(
+                  bloc: widget.cubit,
+                  builder: (context, state) {
+                    final isLoading = _showEmailField && state.isLoading;
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFD92D20),
+                        disabledBackgroundColor: const Color(0xFFD92D20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              if (!_showEmailField) {
+                                setState(() => _showEmailField = true);
+                              } else {
+                                if (_formKey.currentState!.validate()) {
+                                  widget.cubit
+                                      .deleteAccount(_emailController.text);
+                                }
+                              }
+                            },
+                      child: isLoading
+                          ? SizedBox(
+                              width: 20.r,
+                              height: 20.r,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              _showEmailField
+                                  ? 'حذف الحساب نهائياً'
+                                  : 'نعم، احذف حسابي',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.r,
+                                fontFamily: 'Almarai',
+                              ),
+                            ),
+                    );
                   },
-                  child: Text(
-                    _showEmailField ? 'حذف الحساب نهائياً' : 'نعم، احذف حسابي',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.r,
-                      fontFamily: 'Almarai',
-                    ),
-                  ),
                 ),
               ),
               8.verticalSpace,

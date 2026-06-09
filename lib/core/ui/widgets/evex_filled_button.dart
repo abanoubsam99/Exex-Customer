@@ -7,10 +7,15 @@ class EvexFilledButton extends StatelessWidget {
   final String text;
   final void Function()? onPressed;
 
+  /// When true the button shows a spinner and ignores taps,
+  /// preventing duplicate API calls.
+  final bool isLoading;
+
   const EvexFilledButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -19,15 +24,25 @@ class EvexFilledButton extends StatelessWidget {
       width: double.infinity,
       height: 52.h,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF2C262C),
+          backgroundColor: const Color(0xFF2C262C),
           foregroundColor: Colors.white,
+          disabledBackgroundColor: const Color(0xFF2C262C),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
         ),
-        child: Text(text, style: AppTextStyles.font16WhiteBoldButton),
+        child: isLoading
+            ? SizedBox(
+                width: 22.r,
+                height: 22.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            : Text(text, style: AppTextStyles.font16WhiteBoldButton),
       ),
     );
   }

@@ -107,6 +107,7 @@ class AddPhoneOtpBody extends StatelessWidget {
               return CustomButton(
                 text: 'تأكيد',
                 isDisabled: !isValid,
+                isLoading: state is OtpConfirmLoading,
                 onTap: cubit.confirmCode,
               );
             },
