@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- image_picker: access the photo library to pick a profile image -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>نحتاج الوصول إلى صورك لاختيار صورة الملف الشخصي.</string>
+	<!-- image_picker: needed if you later capture a photo with the camera -->
+	<key>NSCameraUsageDescription</key>
+	<string>نحتاج الوصول إلى الكاميرا لالتقاط صورة الملف الشخصي.</string>
+	<!-- local_auth: Face ID for biometric login -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>نستخدم Face ID لتسجيل دخولك بسرعة وأمان.</string>
 </dict>
 </plist>

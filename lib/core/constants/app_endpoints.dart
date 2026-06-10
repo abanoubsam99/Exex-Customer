@@ -13,27 +13,25 @@ class AppEndpoints {
   static const getUserData = "/api/Manage/GetUserData";
   static const updateClient = "/api/Clients/UpdateClient";
   static const changePassword = "/EVEX/Account/ChangePassword";
-
-
-
   static const deleteAccount = "api/Manage/DeleteUserAccount";
   static const confirmPhoneNumber = "api/Manage/ConfirmPhoneNumber";
   static const forgetPassword = "EVEX/Account/ForgetPassword";
   static const resetPassword = "/EVEX/Account/ResetPassword";
-
   static const governorates = "/api/GovernoratesAndCities/GetAllGovernorates";
   static const cities = "/api/GovernoratesAndCities/{govId}";
   static const addClient = "/api/Clients/AddClient";
-
   //Home & profile
   static const getHomeUserAppInfo = "/api/Home/GetHomeUserAppInfo";
-  static const sepcialOffers =
-      "/api/Services/GetAllServicesByClient?specialOffer=true";
+  static const sepcialOffers = "/api/Services/GetAllServicesByClient?specialOffer=true";
   static const ports = "/api/Ports/Filter";
+  static const newSuggestion = "/api/Suggestions";
+
+
+
+
 
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
   static const joinRequest = "/api/Merchants/JoinRequest";
-  static const newSuggestion = "/api/Suggestions";
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
   static const confirmBooking = "/api/Bookings/ConfirmPayment";
 
