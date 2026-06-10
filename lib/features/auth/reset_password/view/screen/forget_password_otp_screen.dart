@@ -23,8 +23,13 @@ class _ForgetPasswordOtpScreenState extends State<ForgetPasswordOtpScreen> {
     super.didChangeDependencies();
     if (_initialized) return;
     _initialized = true;
-    _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
-    context.read<ForgetPasswordCubit>().initOtpScreen(_phone);
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final cubit = context.read<ForgetPasswordCubit>();
+    if (args is ForgetPasswordArgs) {
+      _phone = args.displayPhone;
+      cubit.initFromArgs(args);
+    }
+    cubit.initOtpScreen(_phone);
   }
 
   @override

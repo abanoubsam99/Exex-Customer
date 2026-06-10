@@ -82,35 +82,43 @@ class CustomButton extends StatelessWidget {
     );
   }
 
-  /// Shows a spinner while [isLoading], otherwise the label (and optional icon).
+  /// Keeps the button at its normal size while loading by leaving the label in
+  /// the layout (just invisible) and overlaying a centered spinner on top.
   Widget _buildContent(Color contentColor) {
-    if (isLoading) {
-      return SizedBox(
-        width: 22.r,
-        height: 22.r,
-        child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-          color: contentColor,
-        ),
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Text(
-          text,
-          style: TextStyle(
-            color: contentColor,
-            fontSize: fontSize ?? 16.r,
-            fontFamily: 'Almarai',
-            height: 0,
-            fontWeight: FontWeight.bold,
+        Opacity(
+          opacity: isLoading ? 0 : 1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: TextStyle(
+                  color: contentColor,
+                  fontSize: fontSize ?? 16.r,
+                  fontFamily: 'Almarai',
+                  height: 0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (icon != null) ...[
+                SizedBox(width: 4.w),
+                CustomImageHandler(icon, width: 24),
+              ],
+            ],
           ),
         ),
-        if (icon != null) ...[
-          SizedBox(width: 4.w),
-          CustomImageHandler(icon, width: 24),
-        ],
+        if (isLoading)
+          SizedBox(
+            width: 22.r,
+            height: 22.r,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: contentColor,
+            ),
+          ),
       ],
     );
   }

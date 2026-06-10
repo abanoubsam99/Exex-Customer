@@ -3,98 +3,96 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
+import 'package:evex_user/data/cubits/contact_us/contact_us_state.dart';
+import 'package:evex_user/data/models/branch.dart';
+import 'package:evex_user/data/models/contact_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// شاشة "اتصل بنا" — محتوى ثابت (مكاتب + قنوات تواصل + سوشيال ميديا).
-/// مفيش cubit/repo لأنها معلومات ثابتة (زي more_screen).
+/// "Contact us" screen — offices + contact channels + social media,
+/// fed from the contact-us APIs.
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
-
-  // بيانات ثابتة — لو اتغيّرت بعدين تتنقل لمصدر مركزي / API.
-  static const List<_Office> _offices = [
-    _Office(
-      name: 'مكتب قنا - فرع نجع حمادى',
-      address: 'حى شبرا  امام محطه مترو روض الفرج - شارع الفسطاط',
-      phones: ['(+20) 1220789797', '(+20) 1220789797'],
-    ),
-    _Office(
-      name: 'مكتب قنا - فرع نجع حمادى',
-      address: 'حى شبرا  امام محطه مترو روض الفرج - شارع الفسطاط',
-      phones: ['(+20) 1220789797', '(+20) 1220789797'],
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              16.verticalSpace,
-              Row(
+        child: BlocBuilder<ContactUsCubit, ContactUsState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CustomBackButtonWidget(),
-                  12.horizontalSpace,
-                  Text('اتصل بنا', style: AppTextStyles.font18BlackExtraBoldHeader),
+                  16.verticalSpace,
+                  Row(
+                    children: [
+                      const CustomBackButtonWidget(),
+                      12.horizontalSpace,
+                      Text('اتصل بنا',
+                          style: AppTextStyles.font18BlackExtraBoldHeader),
+                    ],
+                  ),
+                  12.verticalSpace,
+                  Text(
+                    'ماتترددش انك تكلمنا في أي وقت على أرقامنا أو تشرفنا في مكاتبنا',
+                    style: AppTextStyles.font12greyRegular,
+                  ),
+                  24.verticalSpace,
+                  if (state.isLoading && state.contactInfo == null)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 80.h),
+                      child: const Center(child: CircularProgressIndicator()),
+                    )
+                  else ...[
+                    // ── مكاتبنا في مصر ──
+                    if (state.branches.isNotEmpty) ...[
+                      Text('مكاتبنا في مصر',
+                          style: AppTextStyles.font16BlackBold),
+                      16.verticalSpace,
+                      ...state.branches.map((b) => Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: _OfficeCard(branch: b),
+                          )),
+                      12.verticalSpace,
+                    ],
+
+                    // ── تواصل معنا على ──
+                    Text('تواصل معنا على', style: AppTextStyles.font16BlackBold),
+                    16.verticalSpace,
+                    _ContactChannelsCard(info: state.contactInfo),
+
+                    28.verticalSpace,
+                    // ── تابعنا على ──
+                    Text('تابعنا على', style: AppTextStyles.font16BlackBold),
+                    16.verticalSpace,
+                    const _SocialRow(),
+                    24.verticalSpace,
+                  ],
                 ],
               ),
-              12.verticalSpace,
-              Text(
-                'ماتترددش انك تكلمنا في أي وقت على أرقامنا أو تشرفنا في مكاتبنا',
-                style: AppTextStyles.font12greyRegular,
-              ),
-              24.verticalSpace,
-
-              // ── مكاتبنا في مصر ──
-              Text('مكاتبنا في مصر', style: AppTextStyles.font16BlackBold),
-              16.verticalSpace,
-              ..._offices.map((o) => Padding(
-                    padding: EdgeInsets.only(bottom: 12.h),
-                    child: _OfficeCard(office: o),
-                  )),
-
-              12.verticalSpace,
-              // ── تواصل معنا على ──
-              Text('تواصل معنا على', style: AppTextStyles.font16BlackBold),
-              16.verticalSpace,
-              _ContactChannelsCard(),
-
-              28.verticalSpace,
-              // ── تابعنا على ──
-              Text('تابعنا على', style: AppTextStyles.font16BlackBold),
-              16.verticalSpace,
-              const _SocialRow(),
-              24.verticalSpace,
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class _Office {
-  final String name;
-  final String address;
-  final List<String> phones;
-  const _Office({
-    required this.name,
-    required this.address,
-    required this.phones,
-  });
-}
-
 class _OfficeCard extends StatelessWidget {
-  final _Office office;
-  const _OfficeCard({required this.office});
+  final Branch branch;
+  const _OfficeCard({required this.branch});
 
   @override
   Widget build(BuildContext context) {
+    // The address is sometimes empty or just ".", fall back to the governorate.
+    final addr = branch.address?.trim();
+    final displayAddress =
+        (addr == null || addr.isEmpty || addr == '.') ? (branch.governorate ?? '') : addr;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
@@ -142,7 +140,7 @@ class _OfficeCard extends StatelessWidget {
               // اسم المكتب + علامة الموقع (يمين)
               Flexible(
                 child: Text(
-                  office.name,
+                  branch.name ?? '',
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     color: AppColors.blacksoft,
@@ -163,20 +161,24 @@ class _OfficeCard extends StatelessWidget {
           ),
           8.verticalSpace,
           Text(
-            office.address,
+            displayAddress,
             textAlign: TextAlign.right,
             style: AppTextStyles.font12greyRegular,
           ),
-          8.verticalSpace,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              for (final p in office.phones) ...[
-                Text(p, style: AppTextStyles.font12greyRegular),
-                16.horizontalSpace,
+          if (branch.phones.isNotEmpty) ...[
+            8.verticalSpace,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                for (final p in branch.phones) ...[
+                  Text(p,
+                      textDirection: TextDirection.ltr,
+                      style: AppTextStyles.font12greyRegular),
+                  16.horizontalSpace,
+                ],
               ],
-            ],
-          ),
+            ),
+          ],
         ],
       ),
     );
@@ -184,6 +186,9 @@ class _OfficeCard extends StatelessWidget {
 }
 
 class _ContactChannelsCard extends StatelessWidget {
+  final ContactInfo? info;
+  const _ContactChannelsCard({required this.info});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -206,15 +211,16 @@ class _ContactChannelsCard extends StatelessWidget {
       child: Column(
         children: [
           _ContactRow(
-            title: 'الموقع الرسمي',
-            value: 'www.evex-eg.com/eg',
+            title: 'الهاتف',
+            value: info?.phoneNumber ?? '-',
             iconBg: const Color(0xFFEAF4FF),
-            icon: Icon(Icons.link, size: 18.r, color: const Color(0xFF2F80ED)),
+            icon: Icon(Icons.phone_outlined,
+                size: 18.r, color: const Color(0xFF2F80ED)),
           ),
           Divider(color: const Color(0xFFF0F0F0), height: 1.h),
           _ContactRow(
             title: 'البريد الالكتروني',
-            value: 'evex-eg@evex.com',
+            value: info?.email ?? '-',
             iconBg: const Color(0xFFFDECEC),
             icon: CustomImageHandler(
               AppImages.iconsEmail,
@@ -226,7 +232,7 @@ class _ContactChannelsCard extends StatelessWidget {
           Divider(color: const Color(0xFFF0F0F0), height: 1.h),
           _ContactRow(
             title: 'الواتساب',
-            value: '(+20) 1220789797',
+            value: info?.whatsappNumber ?? '-',
             iconBg: const Color(0xFFE7F7EE),
             icon: CustomImageHandler(
               AppImages.iconsWhatsapp,
@@ -283,7 +289,12 @@ class _ContactRow extends StatelessWidget {
                   ),
                 ),
                 2.verticalSpace,
-                Text(value, style: AppTextStyles.font12greyRegular),
+                Text(
+                  value,
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.left,
+                  style: AppTextStyles.font12greyRegular,
+                ),
               ],
             ),
           ),

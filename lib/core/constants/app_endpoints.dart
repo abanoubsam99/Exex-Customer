@@ -30,6 +30,8 @@ class AppEndpoints {
 
 
 
+
+
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
   static const joinRequest = "/api/Merchants/JoinRequest";
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
@@ -39,4 +41,8 @@ class AppEndpoints {
   static const services = "api/Services/GetAllServices";
   static const addition = "api/Additions/GetAllAdditions";
   static const serviceData = "api/Services/GetServiceData";
+
+  // Contact us
+  static const contactInfo = "/api/Home/GetEVEXContactInfoAndSocialMedia";
+  static const branches = "/api/Home/GetAllBranchs";
 }

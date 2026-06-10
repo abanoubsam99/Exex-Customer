@@ -10,7 +10,7 @@ class DiscountProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 1.sw,
-      height: 122.h,
+      height: 125.h,
       padding: EdgeInsets.all(12.r),
       decoration: ShapeDecoration(
         color: const Color(0x19F38B4A),

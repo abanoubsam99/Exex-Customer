@@ -8,6 +8,7 @@ import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
+import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -75,6 +76,9 @@ class BlocProviders {
         ),
         RepositoryProvider<ConfirmBookingRepo>(
           create: (_) => ConfirmBookingRepo(),
+        ),
+        RepositoryProvider<ContactUsRepo>(
+          create: (_) => ContactUsRepo(),
         ),
       ];
 

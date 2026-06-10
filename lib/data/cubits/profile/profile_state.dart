@@ -35,14 +35,20 @@ class ProfileState {
     String? selectedGender,
     String? errorMessage,
     bool? updateSuccess,
+    // copyWith can't normally reset a value to null; these flags allow it.
+    bool clearSelectedCity = false,
+    bool clearSelectedGovernorate = false,
   }) {
     return ProfileState(
       isLoading: isLoading ?? this.isLoading,
       profile: profile ?? this.profile,
       governorates: governorates ?? this.governorates,
       cities: cities ?? this.cities,
-      selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
-      selectedCity: selectedCity ?? this.selectedCity,
+      selectedGovernorate: clearSelectedGovernorate
+          ? null
+          : selectedGovernorate ?? this.selectedGovernorate,
+      selectedCity:
+          clearSelectedCity ? null : selectedCity ?? this.selectedCity,
       selectedGender: selectedGender ?? this.selectedGender,
       errorMessage: errorMessage ?? this.errorMessage,
       updateSuccess: updateSuccess ?? this.updateSuccess,

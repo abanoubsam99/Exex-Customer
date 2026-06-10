@@ -76,7 +76,7 @@ class EditProfileScreen extends StatelessWidget {
                             validator: (p0) {
                               return AppValidationFunctions.fullNameValidation(
                                 p0,
-                                ' اسم الموظف',
+                                ' اسم العميل',
                               );
                             },
                             fillColor: AppColors.buttonSecondaryColor,

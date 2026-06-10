@@ -6,7 +6,9 @@ import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
+import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
+import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -293,7 +295,14 @@ class AppRouter {
         );
 
       case Routes.contactUsScreen:
-        return _page(const ContactUsScreen(), settings);
+        return _page(
+          BlocProvider(
+            create: (context) =>
+                ContactUsCubit(context.read<ContactUsRepo>())..init(),
+            child: const ContactUsScreen(),
+          ),
+          settings,
+        );
 
       case Routes.orderDetailsScreen:
         return _page(

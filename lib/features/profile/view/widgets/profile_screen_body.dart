@@ -176,7 +176,7 @@ class ProfileScreenBody extends StatelessWidget {
                               children: [
                                 _userRowData(
                                   'الاسم الثلاثى',
-                                  profile?.userName ?? '',
+                                  profile?.name ?? '',
                                   AppImages.iconsProfile2user,
                                 ),
                                 _divider(),
@@ -211,8 +211,16 @@ class ProfileScreenBody extends StatelessWidget {
                           72.verticalSpace,
                           CustomButton(
                             text: 'تعديل البيانات الشخصية',
-                            onTap: () =>
-                                NavigationHelper.pushNamed(Routes.editProfile),
+                            onTap: () async {
+                              // Refresh from GetUserData after returning so the
+                              // profile reflects any saved changes.
+                              await NavigationHelper.pushNamed(
+                                Routes.editProfile,
+                              );
+                              if (context.mounted) {
+                                context.read<ProfileCubit>().getProfile();
+                              }
+                            },
                           ),
                           18.verticalSpace,
                           CustomButton(

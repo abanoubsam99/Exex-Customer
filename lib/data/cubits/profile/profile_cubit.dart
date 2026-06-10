@@ -93,7 +93,11 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void selectGovernorate(String? gov) {
-    emit(state.copyWith(selectedGovernorate: gov, selectedCity: null, cities: []));
+    emit(state.copyWith(
+      selectedGovernorate: gov,
+      clearSelectedCity: true,
+      cities: [],
+    ));
     if (gov != null) loadCities(gov);
   }
 
@@ -129,10 +133,30 @@ class ProfileCubit extends Cubit<ProfileState> {
       image: image,
     );
     if (result != null) {
+      // Refresh from GetUserData so the latest values are reflected here,
+      // in the cached user, and across the rest of the app.
+      await _refreshUserData();
       emit(state.copyWith(isLoading: false, updateSuccess: true));
       ToastManager.showSuccess('تم التعديل بنجاح');
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+    }
+  }
+
+  /// Re-fetches the user from GetUserData and updates the screen state, the
+  /// form controllers, and the cached user. Governorate/city selections are
+  /// left untouched (they're already valid against the loaded dropdown items).
+  Future<void> _refreshUserData() async {
+    final fresh = await _profileRepo.getProfile();
+    if (fresh == null) return;
+    emit(state.copyWith(
+      profile: fresh,
+      selectedGender: _normalizeGender(fresh.gender),
+    ));
+    _loadProfileToControllers();
+    selectedImage = null;
+    if (_userService.currentUser != null) {
+      await _userService.updateUser(fresh);
     }
   }
 
@@ -169,7 +193,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void _loadProfileToControllers() {
-    nameController.text = state.profile?.userName ?? '';
+    nameController.text = state.profile?.name ?? '';
     emailController.text = state.profile?.email ?? '';
     addressController.text = state.profile?.address ?? '';
     dateOfBirthController.text = _isoToDate(state.profile?.dateOfBirth);
