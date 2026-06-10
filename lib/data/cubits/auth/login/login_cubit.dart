@@ -22,6 +22,31 @@ class LoginCubit extends Cubit<LoginState> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  /// Logs in using the locally stored credentials after a successful
+  /// biometric check. Used by the fingerprint / Face ID button.
+  Future<void> loginWithBiometrics() async {
+    if (!await _localAuthService.canUseBiometric()) {
+      ToastManager.showError('البصمة غير متاحة على هذا الجهاز');
+      return;
+    }
+    final creds = await _localAuthService.getCredentials();
+    final email = creds['email'];
+    final password = creds['password'];
+    if (email == null ||
+        email.isEmpty ||
+        password == null ||
+        password.isEmpty) {
+      ToastManager.showError('سجّل دخولك مرة أولاً لتفعيل البصمة');
+      return;
+    }
+    final authenticated = await _localAuthService.authenticateWithBiometrics();
+    if (!authenticated) return;
+    // Reuse the normal login flow with the cached credentials.
+    emailController.text = email;
+    passwordController.text = password;
+    await login();
+  }
+
   Future<void> login() async {
     emit(LoginLoading());
     final user = await _loginRepo.login(

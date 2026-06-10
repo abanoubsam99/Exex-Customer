@@ -1,6 +1,8 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BiometricAuthWidget extends StatelessWidget {
@@ -13,9 +15,7 @@ class BiometricAuthWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {
-              // biometric login not yet implemented
-            },
+            onTap: () => context.read<LoginCubit>().loginWithBiometrics(),
             child: Column(
               children: [
                 const CustomImageHandler(AppImages.iconsLocalAuth),

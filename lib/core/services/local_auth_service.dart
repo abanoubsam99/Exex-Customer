@@ -25,15 +25,17 @@ class LocalAuthService {
     return canCheck && isSupported;
   }
 
-  // Authenticate using biometrics
+  // Authenticate using biometrics (fingerprint on Android, Face ID on iOS)
   Future<bool> authenticateWithBiometrics() async {
     try {
       return await _auth.authenticate(
-        localizedReason: 'Authenticate to access your account',
-        options: const AuthenticationOptions(biometricOnly: true),
+        localizedReason: 'استخدم البصمة لتسجيل الدخول',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+        ),
       );
-    } catch (e) {
-      print('Biometric auth error: $e');
+    } catch (_) {
       return false;
     }
   }

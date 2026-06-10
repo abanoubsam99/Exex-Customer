@@ -58,5 +58,14 @@
 	<!-- local_auth: Face ID for biometric login -->
 	<key>NSFaceIDUsageDescription</key>
 	<string>نستخدم Face ID لتسجيل دخولك بسرعة وأمان.</string>
+	<!-- url_launcher: schemes the app needs to open (calls, mail, whatsapp, links) -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>https</string>
+		<string>http</string>
+		<string>whatsapp</string>
+	</array>
 </dict>
 </plist>

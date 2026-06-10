@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
@@ -70,7 +71,7 @@ class ContactUsScreen extends StatelessWidget {
                     // ── تابعنا على ──
                     Text('تابعنا على', style: AppTextStyles.font16BlackBold),
                     16.verticalSpace,
-                    const _SocialRow(),
+                    _SocialRow(info: state.contactInfo),
                     24.verticalSpace,
                   ],
                 ],
@@ -116,38 +117,38 @@ class _OfficeCard extends StatelessWidget {
           Row(
             children: [
               // عرض ↗ (يسار)
-              InkWell(
-                onTap: () {},
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.open_in_new,
-                        size: 13.r, color: AppColors.orangeColor),
-                    4.horizontalSpace,
-                    Text(
-                      'عرض',
-                      style: TextStyle(
-                        color: AppColors.orangeColor,
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w700,
+              Expanded(
+                child: InkWell(
+                  onTap: () {},
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.open_in_new,
+                          size: 13.r, color: AppColors.orangeColor),
+                      4.horizontalSpace,
+                      Text(
+                        'عرض',
+                        style: TextStyle(
+                          color: AppColors.orangeColor,
+                          fontSize: 13.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const Spacer(),
               // اسم المكتب + علامة الموقع (يمين)
-              Flexible(
-                child: Text(
-                  branch.name ?? '',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: AppColors.blacksoft,
-                    fontSize: 13.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
-                  ),
+              Text(
+                branch.name ?? '',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: AppColors.blacksoft,
+                  fontSize: 13.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               6.horizontalSpace,
@@ -160,7 +161,7 @@ class _OfficeCard extends StatelessWidget {
             ],
           ),
           8.verticalSpace,
-          Text(
+          Text( 
             displayAddress,
             textAlign: TextAlign.right,
             style: AppTextStyles.font12greyRegular,
@@ -216,6 +217,7 @@ class _ContactChannelsCard extends StatelessWidget {
             iconBg: const Color(0xFFEAF4FF),
             icon: Icon(Icons.phone_outlined,
                 size: 18.r, color: const Color(0xFF2F80ED)),
+            onTap: () => LauncherHelper.call(info?.phoneNumber),
           ),
           Divider(color: const Color(0xFFF0F0F0), height: 1.h),
           _ContactRow(
@@ -228,6 +230,7 @@ class _ContactChannelsCard extends StatelessWidget {
               height: 18.r,
               color: const Color(0xFFEB5757),
             ),
+            onTap: () => LauncherHelper.email(info?.email),
           ),
           Divider(color: const Color(0xFFF0F0F0), height: 1.h),
           _ContactRow(
@@ -239,6 +242,7 @@ class _ContactChannelsCard extends StatelessWidget {
               width: 20.r,
               height: 20.r,
             ),
+            onTap: () => LauncherHelper.whatsApp(info?.whatsappNumber),
           ),
         ],
       ),
@@ -251,16 +255,21 @@ class _ContactRow extends StatelessWidget {
   final String value;
   final Color iconBg;
   final Widget icon;
+  final VoidCallback? onTap;
   const _ContactRow({
     required this.title,
     required this.value,
     required this.iconBg,
     required this.icon,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10.r),
+      child: Padding(
       padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         children: [
@@ -300,24 +309,36 @@ class _ContactRow extends StatelessWidget {
           ),
         ],
       ),
+      ),
     );
   }
 }
 
 class _SocialRow extends StatelessWidget {
-  const _SocialRow();
+  final ContactInfo? info;
+  const _SocialRow({required this.info});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _social(CustomImageHandler(AppImages.iconsSocialTelegram,
-            width: 44.r, height: 44.r)),
-        _social(CustomImageHandler(AppImages.iconsSocialYoutube,
-            width: 44.r, height: 44.r)),
-        _social(CustomImageHandler(AppImages.iconsSocialTiktok,
-            width: 44.r, height: 44.r)),
+        // No telegram link in the API; falls back to the X account.
+        _social(
+          CustomImageHandler(AppImages.iconsSocialTelegram,
+              width: 44.r, height: 44.r),
+          info?.xAccount,
+        ),
+        _social(
+          CustomImageHandler(AppImages.iconsSocialYoutube,
+              width: 44.r, height: 44.r),
+          info?.youtube,
+        ),
+        _social(
+          CustomImageHandler(AppImages.iconsSocialTiktok,
+              width: 44.r, height: 44.r),
+          info?.tiktok,
+        ),
         _social(
           SizedBox(
             width: 44.r,
@@ -332,17 +353,21 @@ class _SocialRow extends StatelessWidget {
               ],
             ),
           ),
+          info?.instagram,
         ),
-        _social(CustomImageHandler(AppImages.iconsSocialFacebook,
-            width: 44.r, height: 44.r)),
+        _social(
+          CustomImageHandler(AppImages.iconsSocialFacebook,
+              width: 44.r, height: 44.r),
+          info?.facebook,
+        ),
       ],
     );
   }
 
-  Widget _social(Widget child) => Padding(
+  Widget _social(Widget child, String? url) => Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: InkWell(
-          onTap: () {},
+          onTap: () => LauncherHelper.openUrl(url),
           borderRadius: BorderRadius.circular(22.r),
           child: child,
         ),

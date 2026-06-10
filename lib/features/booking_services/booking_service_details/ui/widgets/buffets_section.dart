@@ -53,15 +53,12 @@ class BuffetsSection extends StatelessWidget {
                 final additionModel = state.buffets[index];
                 final selected =
                     state.selectedBuffets.any((e) => e.id == additionModel.id);
+                final giftMatches = (state.serviceDetails?.oldGifts ?? [])
+                    .where((g) => g.additionId == additionModel.id);
                 final giftCount =
-                    (state.serviceDetails?.hasGift ?? false)
-                        ? state.serviceDetails?.oldGifts
-                            ?.firstWhere(
-                              (g) => g.additionId == additionModel.id,
-                              orElse: () =>
-                                  throw Exception('not found'),
-                            )
-                            .number
+                    (state.serviceDetails?.hasGift ?? false) &&
+                            giftMatches.isNotEmpty
+                        ? giftMatches.first.number
                         : null;
                 return AdditionItem(
                   title: additionModel.name ?? '',
