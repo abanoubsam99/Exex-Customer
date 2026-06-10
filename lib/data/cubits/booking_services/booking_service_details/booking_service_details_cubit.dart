@@ -2,6 +2,8 @@ import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/port_service.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,20 +12,42 @@ import 'booking_service_details_state.dart';
 
 class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final PortServicesRepo _repo;
+  final FavoritesRepo _favoritesRepo;
   final HomeCubit _homeCubit;
 
-  BookingServiceDetailsCubit(this._repo, this._homeCubit)
-      : super(const BookingServiceDetailsState()) {
+  /// [port] is the port selected on the previous screen. Its id drives the
+  /// services/additions/reviews requests; the object feeds the header UI.
+  BookingServiceDetailsCubit(
+    this._repo,
+    this._favoritesRepo,
+    this._homeCubit, {
+    Item? port,
+  }) : super(BookingServiceDetailsState(port: port)) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getAllPortServices();
       await getAdditions();
+      await getReviews();
     });
   }
 
   static const int _defaultPortId = 3;
 
   int get _portId =>
-      _homeCubit.state.selectedBookingPortType?.id ?? _defaultPortId;
+      state.port?.id ??
+      _homeCubit.state.selectedBookingPortType?.id ??
+      _defaultPortId;
+
+  /// Toggles the favorite state of this port (optimistic; reverts on failure).
+  Future<void> toggleFavorite() async {
+    final id = state.port?.id;
+    if (id == null) return;
+    final wasFavorite = state.isFavorite;
+    emit(state.copyWith(isFavorite: !wasFavorite));
+    final ok = wasFavorite
+        ? await _favoritesRepo.removeFavorite(id)
+        : await _favoritesRepo.addFavorite(id);
+    if (!ok) emit(state.copyWith(isFavorite: wasFavorite));
+  }
 
   Future<void> getAllPortServices() async {
     emit(state.copyWith(isLoading: true, services: []));
@@ -50,6 +74,13 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       emit(state.copyWith(isLoading: false, additions: additions, buffets: buffets));
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+    }
+  }
+
+  Future<void> getReviews() async {
+    final reviews = await _repo.getReviews(_portId);
+    if (reviews != null) {
+      emit(state.copyWith(reviews: reviews));
     }
   }
 

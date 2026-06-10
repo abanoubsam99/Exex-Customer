@@ -2,6 +2,7 @@ import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/port_service.dart';
+import 'package:evex_user/data/models/review.dart';
 import 'package:evex_user/data/models/service_details_model.dart';
 
 class PortServicesRepo {
@@ -32,6 +33,24 @@ class PortServicesRepo {
         return (response.data as List)
             .map((e) => AdditionModel.fromJson(e))
             .toList();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// GET /api/Reviews/{portId}?index=0&size=20 — returns the review items.
+  Future<List<Review>?> getReviews(int portId,
+      {int index = 0, int size = 20}) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.reviews}/$portId',
+        query: {'index': index, 'size': size},
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final items = response.data['items'] as List?;
+        return items?.map((e) => Review.fromJson(e)).toList() ?? [];
       }
       return null;
     } catch (_) {

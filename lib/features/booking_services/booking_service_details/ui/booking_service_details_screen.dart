@@ -1,12 +1,9 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
-import 'package:evex_user/core/ui/widgets/custom_circle.dart';
-import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/core/ui/widgets/gradient_text.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
@@ -61,17 +58,27 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Column(
                       children: [
-                        Text(
-                          'قاعه الؤلؤه تمتاز بالمساحه الواسعه وقد تسع الى +500 فرد وخدمه المتواصله . . .',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: const Color(0xFF787878),
-                            fontSize: 13.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.54,
-                            letterSpacing: -0.24,
-                          ),
+                        BlocBuilder<BookingServiceDetailsCubit,
+                            BookingServiceDetailsState>(
+                          buildWhen: (p, c) => p.port != c.port,
+                          builder: (context, state) {
+                            final desc =
+                                state.port?.portDescription?.toString().trim();
+                            return Text(
+                              (desc != null && desc.isNotEmpty)
+                                  ? desc
+                                  : 'لا يوجد وصف متاح لهذه الخدمة',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: const Color(0xFF787878),
+                                fontSize: 13.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w400,
+                                height: 1.54,
+                                letterSpacing: -0.24,
+                              ),
+                            );
+                          },
                         ),
                         20.verticalSpace,
                         ChangeOccasion(),
@@ -112,6 +119,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
+          45.verticalSpace,
+
           Container(
             width: 1.sw,
             height: 154.h,
@@ -144,40 +153,45 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '9999.99',
-                              style: TextStyle(
-                                color: const Color(0xFFF38B4A),
-                                fontSize: 20.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w800,
-                                height: 1.50,
+                      BlocBuilder<BookingServiceDetailsCubit,
+                          BookingServiceDetailsState>(
+                        buildWhen: (p, c) => p.totalCost != c.totalCost,
+                        builder: (context, state) => Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: state.totalCost
+                                    .toStringAsFixed(2),
+                                style: TextStyle(
+                                  color: const Color(0xFFF38B4A),
+                                  fontSize: 20.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.50,
+                                ),
                               ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 20.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
+                              TextSpan(
+                                text: ' ',
+                                style: TextStyle(
+                                  color: const Color(0xFF6F767E),
+                                  fontSize: 20.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.50,
+                                ),
                               ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
+                              TextSpan(
+                                text: 'جنيه',
+                                style: TextStyle(
+                                  color: const Color(0xFFA5B7C6),
+                                  fontSize: 14.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.50,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],

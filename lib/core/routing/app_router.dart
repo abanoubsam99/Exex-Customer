@@ -7,8 +7,10 @@ import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
+import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -240,7 +242,11 @@ class AppRouter {
           BlocProvider(
             create: (context) => BookingServiceDetailsCubit(
               context.read<PortServicesRepo>(),
+              context.read<FavoritesRepo>(),
               context.read<HomeCubit>(),
+              port: settings.arguments is Item
+                  ? settings.arguments as Item
+                  : null,
             ),
             child: const BookingServiceDetailsScreen(),
           ),

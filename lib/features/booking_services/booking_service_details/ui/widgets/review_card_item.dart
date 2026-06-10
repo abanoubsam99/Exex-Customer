@@ -1,22 +1,25 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-import 'package:evex_user/data/models/customer_review.dart';
+import 'package:evex_user/data/models/review.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReviewCardItem extends StatelessWidget {
-  final CustomerReview customerReview;
-  const ReviewCardItem({super.key, required this.customerReview});
+  final Review review;
+  const ReviewCardItem({super.key, required this.review});
 
   @override
   Widget build(BuildContext context) {
+    final name = (review.clientName?.trim().isNotEmpty == true)
+        ? review.clientName!.trim()
+        : 'عميل';
+    final initial = name.characters.isNotEmpty ? name.characters.first : 'ع';
     return Container(
       width: 280.w,
       height: 115.h,
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: const Color(0xFFF2F4F7)),
+          side: const BorderSide(width: 1, color: Color(0xFFF2F4F7)),
           borderRadius: BorderRadius.circular(16.r),
         ),
       ),
@@ -30,8 +33,8 @@ class ReviewCardItem extends StatelessWidget {
                 Container(
                   width: 36.r,
                   height: 36.r,
-                  decoration: ShapeDecoration(
-                    color: const Color(0x28F38B4A),
+                  decoration: const ShapeDecoration(
+                    color: Color(0x28F38B4A),
                     shape: OvalBorder(),
                   ),
                   alignment: Alignment.center,
@@ -46,25 +49,23 @@ class ReviewCardItem extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      'م',
+                      initial,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: const Color(0xFFF38B4A),
                         fontSize: 14.r,
-                        // fontFamily: 'Amita',
                         fontWeight: FontWeight.w700,
-                        // height: 1.50,
                         height: -0.4,
                       ),
                     ),
                   ),
                 ),
                 6.horizontalSpace,
-
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'مينا نبيل',
+                      name,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: const Color(0xFF2C262C),
@@ -76,7 +77,7 @@ class ReviewCardItem extends StatelessWidget {
                     ),
                     6.verticalSpace,
                     Text(
-                      '12/10/2026',
+                      _formatDate(review.createdAt),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: const Color(0xFF99A2AC),
@@ -88,7 +89,7 @@ class ReviewCardItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 Container(
                   margin: EdgeInsets.only(top: 2.h),
                   width: 36.r,
@@ -109,7 +110,7 @@ class ReviewCardItem extends StatelessWidget {
                     children: [
                       Icon(Icons.star, color: Colors.white, size: 14.r),
                       Text(
-                        '5.0',
+                        '${review.stars ?? 0}',
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           color: Colors.white,
@@ -126,22 +127,33 @@ class ReviewCardItem extends StatelessWidget {
               ],
             ),
             6.verticalSpace,
-            Text(
-              'القاعه كانت حلوه جدا وكنت مبسوط وانا هناك والدى جى كان حلو ورايق بس كان زحمه اوى بس فى الاخر جابولنا كراسي وترابيزات ف كان الجو لذيذ اوى ',
-              textAlign: TextAlign.right,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: const Color(0xFF6F767E),
-                fontSize: 12.r,
-                fontFamily: 'Almarai',
-                fontWeight: FontWeight.w400,
-                height: 1.50,
+            Expanded(
+              child: Text(
+                review.comment ?? '',
+                textAlign: TextAlign.right,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: const Color(0xFF6F767E),
+                  fontSize: 12.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// Formats the review date as dd/MM/yyyy. Returns '' for the .NET default
+  /// (0001-01-01) or a null date.
+  String _formatDate(DateTime? date) {
+    if (date == null || date.year < 2000) return '';
+    final d = date.day.toString().padLeft(2, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    return '$d/$m/${date.year}';
   }
 }

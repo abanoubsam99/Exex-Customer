@@ -3,12 +3,14 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 
 class ServiceTopPart extends StatefulWidget {
@@ -144,7 +146,18 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                   },
                 ),
                 Spacer(),
-                SocialNavButton(icon: AppImages.iconsHeart, onTap: () {}),
+                BlocBuilder<BookingServiceDetailsCubit,
+                    BookingServiceDetailsState>(
+                  buildWhen: (p, c) => p.isFavorite != c.isFavorite,
+                  builder: (context, state) => SocialNavButton(
+                    icon: AppImages.iconsHeart,
+                    iconColor:
+                        state.isFavorite ? const Color(0xFFFE2B2C) : null,
+                    onTap: () => context
+                        .read<BookingServiceDetailsCubit>()
+                        .toggleFavorite(),
+                  ),
+                ),
                 6.horizontalSpace,
                 SocialNavButton(icon: AppImages.iconsMarker, onTap: () {}),
                 6.horizontalSpace,
@@ -178,42 +191,49 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
           right: 0,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Row(
-              children: [
-                Text(
-                  'قاعه الؤلؤه',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: const Color(0xFF2C262C),
-                    fontSize: 20.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.24,
+            child: BlocBuilder<BookingServiceDetailsCubit,
+                BookingServiceDetailsState>(
+              buildWhen: (p, c) => p.port != c.port,
+              builder: (context, state) => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      state.port?.portName ?? '',
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: const Color(0xFF2C262C),
+                        fontSize: 20.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.24,
+                      ),
+                    ),
                   ),
-                ),
-                Spacer(),
-                Transform.translate(
-                  offset: Offset(0, -1.5.h),
-                  child: CustomImageHandler(
-                    AppImages.iconsStar,
-                    height: 30.r,
-                    width: 30.r,
-                    fit: BoxFit.cover,
+                  Transform.translate(
+                    offset: Offset(0, -1.5.h),
+                    child: CustomImageHandler(
+                      AppImages.iconsStar,
+                      height: 30.r,
+                      width: 30.r,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                4.horizontalSpace,
-                Text(
-                  '4.6',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: const Color(0xFF2C262C),
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.24,
+                  4.horizontalSpace,
+                  Text(
+                    '${state.port?.rate ?? 0}',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: const Color(0xFF2C262C),
+                      fontSize: 14.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.24,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -227,6 +247,7 @@ class SocialNavButton extends StatelessWidget {
   final double? width;
 
   final String icon;
+  final Color? iconColor;
   final void Function()? onTap;
   const SocialNavButton({
     super.key,
@@ -234,6 +255,7 @@ class SocialNavButton extends StatelessWidget {
     this.onTap,
     this.height,
     this.width,
+    this.iconColor,
   });
 
   @override
@@ -254,7 +276,12 @@ class SocialNavButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
               ),
               alignment: Alignment.center,
-              child: CustomImageHandler(icon, height: 18.r, width: 18.r),
+              child: CustomImageHandler(
+                icon,
+                height: 18.r,
+                width: 18.r,
+                color: iconColor,
+              ),
             ),
           ),
         ),

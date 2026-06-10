@@ -55,7 +55,7 @@ class OtherServicesSection extends StatelessWidget {
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             return SizedBox(
-              height: 140.h,
+              height: 150.h,
               child: ListView.separated(
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,

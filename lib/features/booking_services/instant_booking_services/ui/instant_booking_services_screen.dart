@@ -3,9 +3,10 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_state.dart';
-import 'package:evex_user/data/models/hall.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -213,177 +214,209 @@ class InstantBookingServicesScreen extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: halls.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => NavigationHelper.pushNamed(
-                        Routes.bookingServiceDetailsScreen,
-                      ),
-                      child: Directionality(
-                      textDirection:
-                          index % 2 == 1
-                              ? TextDirection.ltr
-                              : TextDirection.rtl,
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16.r),
-                            child: CustomImageHandler(
-                              halls[index].images.first,
-                              fit: BoxFit.cover,
-                              width: 113.w,
-                              height: 137.h,
-                            ),
+                child: BlocBuilder<InstantBookingCubit, InstantBookingState>(
+                  builder: (context, state) {
+                    final items = state.portsModel?.items ?? const [];
+                    if (state.isLoading && items.isEmpty) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40.h),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    if (items.isEmpty) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40.h),
+                        child: Text(
+                          'لا توجد نتائج متاحة',
+                          style: TextStyle(
+                            color: const Color(0xFF6F767E),
+                            fontSize: 14.r,
+                            fontFamily: 'Almarai',
                           ),
-                          Expanded(
-                            child: Container(
-                              height: 89.h,
-                              decoration: ShapeDecoration(
-                                color: const Color(0x33D9D9D9),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      index % 2 == 1
-                                          ? BorderRadius.only(
-                                            topRight: Radius.circular(16.r),
-                                            bottomRight: Radius.circular(16.r),
-                                          )
-                                          : BorderRadius.only(
-                                            topLeft: Radius.circular(16.r),
-                                            bottomLeft: Radius.circular(16.r),
-                                          ),
+                        ),
+                      );
+                    }
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return GestureDetector(
+                          onTap: () => NavigationHelper.pushNamed(
+                            Routes.bookingServiceDetailsScreen,
+                            arguments: item,
+                          ),
+                          child: Directionality(
+                            textDirection: index % 2 == 1
+                                ? TextDirection.ltr
+                                : TextDirection.rtl,
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: CustomImageHandler(
+                                    _portImageUrl(item) ??
+                                        AppImages.imagesWedding5,
+                                    fit: BoxFit.cover,
+                                    width: 113.w,
+                                    height: 137.h,
+                                  ),
                                 ),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 4.h,
-                                ),
-                                child: Directionality(
-                                  textDirection: TextDirection.rtl,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'قاعه الؤلؤه',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: const Color(0xFF2C262C),
-                                              fontSize: 15.r,
-                                              fontFamily: 'Almarai',
-                                              fontWeight: FontWeight.w700,
-                                              letterSpacing: -0.24,
-                                            ),
-                                          ),
-                                          Spacer(),
-                                          CustomImageHandler(
-                                            AppImages.iconsStar,
-                                            height: 24.r,
-                                            width: 24.r,
-                                          ),
-                                          Text(
-                                            '4.6',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: const Color(0xFF2C262C),
-                                              fontSize: 12.r,
-                                              fontFamily: 'Almarai',
-                                              fontWeight: FontWeight.w400,
-                                              height: 1.33,
-                                              letterSpacing: -0.24,
-                                            ),
-                                          ),
-                                        ],
+                                Expanded(
+                                  child: Container(
+                                    height: 89.h,
+                                    decoration: ShapeDecoration(
+                                      color: const Color(0x33D9D9D9),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: index % 2 == 1
+                                            ? BorderRadius.only(
+                                                topRight: Radius.circular(16.r),
+                                                bottomRight:
+                                                    Radius.circular(16.r),
+                                              )
+                                            : BorderRadius.only(
+                                                topLeft: Radius.circular(16.r),
+                                                bottomLeft:
+                                                    Radius.circular(16.r),
+                                              ),
                                       ),
-                                      Text(
-                                        'قاعه الؤلؤه تمتاز بالمساحه الواسعه وقد تسع الى +500 فرد وخدمه المتواصله . . .',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          color: const Color(0xFF787878),
-                                          fontSize: 12.r,
-                                          fontFamily: 'Almarai',
-                                          fontWeight: FontWeight.w400,
-                                          height: 1.33,
-                                          letterSpacing: -0.24.w,
-                                        ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 4.h,
                                       ),
-                                      Row(
-                                        children: [
-                                          Spacer(),
-                                          Text.rich(
-                                            TextSpan(
+                                      child: Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
                                               children: [
-                                                TextSpan(
-                                                  text: 'يبدأ بـ ',
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xFF2C262C,
+                                                Expanded(
+                                                  child: Text(
+                                                    item.portName ?? '',
+                                                    textAlign: TextAlign.right,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color(0xFF2C262C),
+                                                      fontSize: 15.r,
+                                                      fontFamily: 'Almarai',
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      letterSpacing: -0.24,
                                                     ),
+                                                  ),
+                                                ),
+                                                CustomImageHandler(
+                                                  AppImages.iconsStar,
+                                                  height: 24.r,
+                                                  width: 24.r,
+                                                ),
+                                                Text(
+                                                  '${item.rate ?? 0}',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color:
+                                                        const Color(0xFF2C262C),
                                                     fontSize: 12.r,
                                                     fontFamily: 'Almarai',
                                                     fontWeight: FontWeight.w400,
-                                                    height: 1.25,
+                                                    height: 1.33,
                                                     letterSpacing: -0.24,
-                                                  ),
-                                                ),
-                                                TextSpan(
-                                                  text: '1100',
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xFFF38B4A,
-                                                    ),
-                                                    fontSize: 16.r,
-                                                    fontFamily: 'Almarai',
-                                                    fontWeight: FontWeight.w800,
-                                                    height: 1.50,
-                                                  ),
-                                                ),
-                                                TextSpan(
-                                                  text: ' ',
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xFF2C262C,
-                                                    ),
-                                                    fontSize: 16.r,
-                                                    fontFamily: 'Almarai',
-                                                    fontWeight: FontWeight.w800,
-                                                    height: 1.50,
-                                                  ),
-                                                ),
-                                                TextSpan(
-                                                  text: 'جنيه',
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xFF6F767E,
-                                                    ),
-                                                    fontSize: 11.r,
-                                                    fontFamily: 'Almarai',
-                                                    fontWeight: FontWeight.w400,
-                                                    height: 1.50,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+                                            Expanded(
+                                              child: Text(
+                                                _portSubtitle(item),
+                                                textAlign: TextAlign.right,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: const Color(0xFF787878),
+                                                  fontSize: 12.r,
+                                                  fontFamily: 'Almarai',
+                                                  fontWeight: FontWeight.w400,
+                                                  height: 1.33,
+                                                  letterSpacing: -0.24.w,
+                                                ),
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                const Spacer(),
+                                                Text.rich(
+                                                  TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: 'يبدأ بـ ',
+                                                        style: TextStyle(
+                                                          color: const Color(
+                                                            0xFF2C262C,
+                                                          ),
+                                                          fontSize: 12.r,
+                                                          fontFamily: 'Almarai',
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          height: 1.25,
+                                                          letterSpacing: -0.24,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text:
+                                                            '${item.cheapestServicePrice ?? '—'}',
+                                                        style: TextStyle(
+                                                          color: const Color(
+                                                            0xFFF38B4A,
+                                                          ),
+                                                          fontSize: 16.r,
+                                                          fontFamily: 'Almarai',
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                          height: 1.50,
+                                                        ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: ' جنيه',
+                                                        style: TextStyle(
+                                                          color: const Color(
+                                                            0xFF6F767E,
+                                                          ),
+                                                          fontSize: 11.r,
+                                                          fontFamily: 'Almarai',
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          height: 1.50,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                      ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => 8.verticalSpace,
                     );
                   },
-                  separatorBuilder: (context, index) => 8.verticalSpace,
                 ),
               ),
             ],
@@ -392,6 +425,25 @@ class InstantBookingServicesScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Builds a full image URL for a port if it has any images, otherwise null
+/// (the caller falls back to a placeholder asset).
+String? _portImageUrl(Item item) {
+  final imgs = item.portImages;
+  if (imgs is List && imgs.isNotEmpty) {
+    return ImageUrlHelper.full(imgs.first.toString());
+  }
+  return null;
+}
+
+/// Subtitle line for a port card: its description, or its location as a fallback.
+String _portSubtitle(Item item) {
+  final desc = item.portDescription?.toString().trim();
+  if (desc != null && desc.isNotEmpty) return desc;
+  return [item.governorate, item.city]
+      .where((e) => e != null && e.isNotEmpty)
+      .join('، ');
 }
 
 //Copy this CustomPainter code to the Bottom of the File

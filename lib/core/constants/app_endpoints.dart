@@ -25,8 +25,16 @@ class AppEndpoints {
   static const sepcialOffers = "/api/Services/GetAllServicesByClient?specialOffer=true";
   static const ports = "/api/Ports/Filter";
   static const newSuggestion = "/api/Suggestions";
-
-
+  // Contact us
+  static const contactInfo = "/api/Home/GetEVEXContactInfoAndSocialMedia";
+  static const branches = "/api/Home/GetAllBranchs";
+  //Services
+  static const services = "api/Services/GetAllServices";
+  static const addition = "api/Additions/GetAllAdditions";
+  static const serviceData = "api/Services/GetServiceData";
+  static const reviews = "/api/Reviews";
+  static const favorites = "/api/Favorites";
+  static const walletData = "/api/Clients/GetMyClientWalletData";
 
 
 
@@ -37,12 +45,6 @@ class AppEndpoints {
   // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
   static const confirmBooking = "/api/Bookings/ConfirmPayment";
 
-  //Services
-  static const services = "api/Services/GetAllServices";
-  static const addition = "api/Additions/GetAllAdditions";
-  static const serviceData = "api/Services/GetServiceData";
 
-  // Contact us
-  static const contactInfo = "/api/Home/GetEVEXContactInfoAndSocialMedia";
-  static const branches = "/api/Home/GetAllBranchs";
+
 }

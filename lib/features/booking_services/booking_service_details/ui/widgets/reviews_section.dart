@@ -1,6 +1,8 @@
-import 'package:evex_user/data/models/customer_review.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/review_card_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReviewsSection extends StatelessWidget {
@@ -38,16 +40,34 @@ class ReviewsSection extends StatelessWidget {
           ],
         ),
         12.verticalSpace,
-        SizedBox(
-          height: 115.h,
-          child: ListView.separated(
-            clipBehavior: Clip.none,
-            scrollDirection: Axis.horizontal,
-            itemCount: customerReviews.length,
-            separatorBuilder: (context, index) => 10.horizontalSpace,
-            itemBuilder: (context, index) =>
-                ReviewCardItem(customerReview: customerReviews[index]),
-          ),
+        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          buildWhen: (p, c) => p.reviews != c.reviews,
+          builder: (context, state) {
+            if (state.reviews.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Text(
+                  'لا توجد تقييمات بعد',
+                  style: TextStyle(
+                    color: const Color(0xFF6F767E),
+                    fontSize: 13.r,
+                    fontFamily: 'Almarai',
+                  ),
+                ),
+              );
+            }
+            return SizedBox(
+              height: 115.h,
+              child: ListView.separated(
+                clipBehavior: Clip.none,
+                scrollDirection: Axis.horizontal,
+                itemCount: state.reviews.length,
+                separatorBuilder: (context, index) => 10.horizontalSpace,
+                itemBuilder: (context, index) =>
+                    ReviewCardItem(review: state.reviews[index]),
+              ),
+            );
+          },
         ),
       ],
     );

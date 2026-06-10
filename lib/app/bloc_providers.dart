@@ -9,6 +9,7 @@ import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
+import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -18,6 +19,7 @@ import 'package:evex_user/data/repos/post_repo.dart';
 import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:evex_user/data/repos/register_repo.dart';
 import 'package:evex_user/data/repos/request_to_join_repo.dart';
+import 'package:evex_user/data/repos/wallet_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/cubits/home/home_cubit.dart';
@@ -79,6 +81,12 @@ class BlocProviders {
         ),
         RepositoryProvider<ContactUsRepo>(
           create: (_) => ContactUsRepo(),
+        ),
+        RepositoryProvider<FavoritesRepo>(
+          create: (_) => FavoritesRepo(),
+        ),
+        RepositoryProvider<WalletRepo>(
+          create: (_) => WalletRepo(),
         ),
       ];
 

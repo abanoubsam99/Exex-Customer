@@ -2,6 +2,9 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
+import 'package:evex_user/data/cubits/wallet/wallet_cubit.dart';
+import 'package:evex_user/data/cubits/wallet/wallet_state.dart';
+import 'package:evex_user/data/repos/wallet_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +15,10 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(
+      create: (context) =>
+          WalletCubit(context.read<WalletRepo>())..getWalletData(),
+      child: Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -138,7 +144,8 @@ class WalletScreen extends StatelessWidget {
                 ],
               ),
               16.verticalSpace,
-              Row(
+              BlocBuilder<WalletCubit, WalletState>(
+                builder: (context, state) => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
@@ -157,7 +164,7 @@ class WalletScreen extends StatelessWidget {
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: '120',
+                                text: '${state.data?.numberOfPoints ?? 0}',
                                 style: TextStyle(
                                   color: const Color(0xFF2CAC61),
                                   fontSize: 18.r,
@@ -221,7 +228,7 @@ class WalletScreen extends StatelessWidget {
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: '201',
+                                text: '${state.data?.pointsValue ?? 0}',
                                 style: TextStyle(
                                   color: const Color(0xFF879DFF),
                                   fontSize: 18.r,
@@ -269,6 +276,7 @@ class WalletScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
               ),
               32.verticalSpace,
 
@@ -371,6 +379,7 @@ class WalletScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
