@@ -394,7 +394,7 @@ class _BasicServiceCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     )),
               ),
-              Text('${item.price} جينه', style: _priceStyle()),
+              _priceText(item.price),
             ],
           ),
           if (item.description != null) ...[
@@ -433,7 +433,7 @@ class _AdditionCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       )),
                 ),
-                Text('${item.price} جينه', style: _priceStyle()),
+                _priceText(item.price),
               ],
             ),
             if (item.count != null) ...[
@@ -461,7 +461,7 @@ class _AdditionCard extends StatelessWidget {
                         )),
                   ),
                   const Spacer(),
-                  Text('${item.subPrice ?? 0} جينه', style: _priceStyle()),
+                  _priceText(item.subPrice ?? 0),
                 ],
               ),
             ],
@@ -539,13 +539,7 @@ class _TotalCard extends StatelessWidget {
                 child: Text('إجمالي التكلفة',
                     style: AppTextStyles.font16BlackBold),
               ),
-              Text('${order.totalCost} جنيه',
-                  style: TextStyle(
-                    color: AppColors.orangeColor,
-                    fontSize: 22.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w800,
-                  )),
+              _priceText(order.totalCost, numberSize: 22, unitSize: 14),
             ],
           ),
           12.verticalSpace,
@@ -617,9 +611,31 @@ class _NotesFieldState extends State<_NotesField> {
   }
 }
 
-TextStyle _priceStyle() => TextStyle(
-      color: AppColors.orangeColor,
-      fontSize: 14.r,
-      fontFamily: 'Almarai',
-      fontWeight: FontWeight.w700,
-    );
+/// سعر بنفس convention باقي التطبيق: الرقم برتقالي بارز + "جنيه" أفتح وأصغر.
+Widget _priceText(num value, {double numberSize = 16, double unitSize = 12}) {
+  return Text.rich(
+    textDirection: TextDirection.rtl,
+    TextSpan(
+      children: [
+        TextSpan(
+          text: '$value ',
+          style: TextStyle(
+            color: AppColors.orangeColor,
+            fontSize: numberSize.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        TextSpan(
+          text: 'جنيه',
+          style: TextStyle(
+            color: const Color(0xFFA5B7C6),
+            fontSize: unitSize.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    ),
+  );
+}

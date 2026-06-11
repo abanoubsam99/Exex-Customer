@@ -29,7 +29,7 @@ class PaymentServicesType extends StatelessWidget {
                   onTap: () {
                     context.read<HomeCubit>().selectPaymentPortType(type);
                     NavigationHelper.pushNamed(
-                      Routes.instantBookingServicesScreen,
+                      Routes.directServicesListScreen,
                     );
                   },
                   child: Container(

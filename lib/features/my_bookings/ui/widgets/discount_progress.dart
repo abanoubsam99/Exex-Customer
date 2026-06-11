@@ -30,7 +30,7 @@ class DiscountProgress extends StatelessWidget {
               ),
               4.horizontalSpace,
               Text(
-                'لفترة محدودة تقدر تستفيد بخصم إضافي 2 %  ',
+                'لفترة محدودة تقدر تستفيد بخصم إضافي ',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: const Color(0xFF2C262C),

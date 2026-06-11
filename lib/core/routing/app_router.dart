@@ -17,6 +17,7 @@ import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
 import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
+import 'package:evex_user/data/repos/wallet_repo.dart';
 import 'package:evex_user/data/repos/post_repo.dart';
 import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:evex_user/data/repos/register_repo.dart';
@@ -34,6 +35,9 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/c
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/instant_booking_services_screen.dart';
 import 'package:evex_user/features/contact_us/ui/contact_us_screen.dart';
 import 'package:evex_user/features/confirm_booking/ui/confirm_booking_screen.dart';
+import 'package:evex_user/features/direct_services/ui/contact_info_screen.dart';
+import 'package:evex_user/features/direct_services/ui/direct_service_details_screen.dart';
+import 'package:evex_user/features/direct_services/ui/direct_services_list_screen.dart';
 import 'package:evex_user/features/main/ui/main_screen.dart';
 import 'package:evex_user/features/notifications/ui/notification_screen.dart';
 import 'package:evex_user/features/order_details/ui/order_details_screen.dart';
@@ -60,6 +64,8 @@ import '../../data/cubits/complete_booking/complete_booking_cubit.dart';
 import '../../data/cubits/complete_booking/complete_booking_state.dart';
 import '../../data/cubits/confirm_booking/confirm_booking_cubit.dart';
 import '../../data/cubits/confirm_booking/confirm_booking_state.dart';
+import '../../data/cubits/direct_services/direct_service_details_cubit.dart';
+import '../../data/cubits/direct_services/direct_services_list_cubit.dart';
 import '../../data/cubits/home/home_cubit.dart';
 import '../../data/cubits/new_suggestion/new_suggestion_cubit.dart';
 import '../../data/cubits/notifications/notifications_cubit.dart';
@@ -348,6 +354,43 @@ class AppRouter {
                         : null,
                   ),
             child: const ConfirmBookingScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.directServicesListScreen:
+        return _page(
+          BlocProvider(
+            create: (context) => DirectServicesListCubit(
+              context.read<BookingServicesPortsRepo>(),
+              context.read<HomeCubit>(),
+            )..loadPorts(),
+            child: const DirectServicesListScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.directServiceDetailsScreen:
+        return _page(
+          BlocProvider(
+            create: (context) => DirectServiceDetailsCubit(
+              context.read<PortServicesRepo>(),
+              context.read<WalletRepo>(),
+              port: settings.arguments is Item
+                  ? settings.arguments as Item
+                  : null,
+            ),
+            child: const DirectServiceDetailsScreen(),
+          ),
+          settings,
+        );
+
+      case Routes.contactInfoScreen:
+        return _page(
+          ContactInfoScreen(
+            port: settings.arguments is Item
+                ? settings.arguments as Item
+                : null,
           ),
           settings,
         );

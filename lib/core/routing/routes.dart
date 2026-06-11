@@ -38,4 +38,10 @@ class Routes {
   static const String contactUsScreen = '/contactUsScreen';
   static const String orderDetailsScreen = '/orderDetailsScreen';
   static const String confirmBookingScreen = '/confirmBookingScreen';
+
+  // مسار الدفع المباشر (خدمات الدفع المباشر)
+  static const String directServicesListScreen = '/directServicesListScreen';
+  static const String directServiceDetailsScreen =
+      '/directServiceDetailsScreen';
+  static const String contactInfoScreen = '/contactInfoScreen';
 }
