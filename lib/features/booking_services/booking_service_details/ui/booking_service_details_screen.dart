@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/data/cubits/complete_booking/complete_booking_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
@@ -201,10 +202,17 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                     height: 52.h,
                     text: "إضافة لحجوزاتي",
                     onTap: () {
-                      context
-                          .read<BookingServiceDetailsCubit>()
-                          .prepareFinalAdditions();
-                      NavigationHelper.pushNamed(Routes.completeBookingScreen);
+                      final cubit = context.read<BookingServiceDetailsCubit>();
+                      final st = cubit.state;
+                      NavigationHelper.pushNamed(
+                        Routes.completeBookingScreen,
+                        arguments: CompleteBookingArgs(
+                          port: st.port,
+                          service: st.selectedService,
+                          additions: cubit.prepareFinalAdditions(),
+                          totalCost: st.totalCost,
+                        ),
+                      );
                     },
                   ),
                 ],

@@ -2,6 +2,9 @@ import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../app/helpers/navigation_helper.dart';
+import '../../../../core/routing/routes.dart';
+
 class NewSuggestionSection extends StatelessWidget {
   const NewSuggestionSection({super.key});
 
@@ -111,7 +114,9 @@ class NewSuggestionSection extends StatelessWidget {
                   fontColor: Color(0xFF6681AF),
                   bordereColor: Color(0xFFB6DAEE),
                   text: 'اقترح الآن',
-                  onTap: () {},
+                  onTap: () {
+                    NavigationHelper.pushNamed(Routes.newSuggestionScreen);
+                  },
                 ),
               ),
             ),

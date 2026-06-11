@@ -20,14 +20,16 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
 
   Timer? _timer;
 
-  /// تهيئة الشاشة بالمبلغ + رصيد المحفظة + بدء العدّاد التنازلي.
+  /// تهيئة الشاشة بمقدم الحجز + رقم الطلب + رصيد المحفظة + بدء العدّاد التنازلي.
   void init({
-    num totalAmount = 2989.99,
+    ConfirmBookingArgs? args,
     num walletBalance = 201,
     int countdownSeconds = 15 * 60,
   }) {
     emit(state.copyWith(
-      totalAmount: totalAmount,
+      totalAmount: args?.totalAmount ?? 0,
+      depositAmount: args?.depositAmount ?? 0,
+      reservationRequestId: args?.reservationRequestId ?? 0,
       walletBalance: walletBalance,
       remainingSeconds: countdownSeconds,
     ));
@@ -60,21 +62,22 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
     }
+    if (state.reservationRequestId <= 0) {
+      ToastManager.showError('رقم طلب الحجز غير صالح');
+      return;
+    }
     emit(state.copyWith(isLoading: true));
-    final ok = await _repo.confirmPayment(
-      method: state.selectedMethod,
-      cardName: cardNameController.text.trim(),
-      cardNumber: cardNumberController.text.trim(),
-      expiryDate: expiryController.text.trim(),
-      cvv: cvvController.text.trim(),
+    final ok = await _repo.confirmClientReservation(
+      depositAmount: state.depositAmount,
+      reservationRequestId: state.reservationRequestId,
     );
     if (ok) {
       emit(state.copyWith(isLoading: false, success: true));
-      ToastManager.showSuccess('تم تأكيد الدفع بنجاح');
+      ToastManager.showSuccess('تم تأكيد الحجز بنجاح');
       NavigationHelper.pop();
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
-      ToastManager.showError('تعذّر تأكيد الدفع، حاول مرة أخرى');
+      ToastManager.showError('تعذّر تأكيد الحجز، حاول مرة أخرى');
     }
   }
 

@@ -74,26 +74,29 @@ class LoginBodyWidget extends StatelessWidget {
                 );
               },
             ),
-            // 25.verticalSpace,
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Expanded(child: _Divider()),
-            //     Text(
-            //       'أو تسجيل سريع بـ',
-            //       style: TextStyle(
-            //         color: const Color(0xFF6F767E),
-            //         fontSize: 14.r,
-            //         fontFamily: 'Almarai',
-            //         fontWeight: FontWeight.w400,
-            //         height: 1.50,
-            //       ),
-            //     ),
-            //     Expanded(child: _Divider()),
-            //   ],
-            // ),
-            // 16.verticalSpace,
-            // const AllSocalMediaWidget(),
+            25.verticalSpace,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: _Divider()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  child: Text(
+                    'أو تسجيل سريع بـ',
+                    style: TextStyle(
+                      color: const Color(0xFF6F767E),
+                      fontSize: 14.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w400,
+                      height: 1.50,
+                    ),
+                  ),
+                ),
+                Expanded(child: _Divider()),
+              ],
+            ),
+            16.verticalSpace,
+            const AllSocalMediaWidget(),
             24.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -3,6 +3,9 @@ import 'dart:math' as Math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../app/helpers/navigation_helper.dart';
+import '../../../../core/routing/routes.dart';
+
 class JoinUsSection extends StatelessWidget {
   const JoinUsSection({super.key});
 
@@ -94,22 +97,27 @@ class JoinUsSection extends StatelessWidget {
                         letterSpacing: -0.24,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Spacer(),
-                        Text(
-                          'عرض المزيد',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 13.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w700,
-                            height: -0.0002,
-                            letterSpacing: -0.24,
+                    InkWell(
+                      onTap: (){
+                        NavigationHelper.pushNamed(Routes.requestToJoinScreen);
+                      },
+                      child: Row(
+                        children: [
+                          Spacer(),
+                          Text(
+                            'عرض المزيد',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: const Color(0xFFF38B4A),
+                              fontSize: 13.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w700,
+                              height: -0.0002,
+                              letterSpacing: -0.24,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

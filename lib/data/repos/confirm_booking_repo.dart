@@ -1,30 +1,61 @@
-import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
-import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
+import 'package:evex_user/data/models/port_policy.dart';
+import 'package:evex_user/data/models/reservation_models.dart';
 
+/// Repo بتاع مسار "استكمال الحجز → تأكيد الحجز":
+/// جلب سياسات التاجر + إنشاء طلب الحجز + تأكيده.
 class ConfirmBookingRepo {
-  /// تأكيد الدفع للحجز. بيرجّع `true` لو نجح.
-  /// ملحوظة: [AppEndpoints.confirmBooking] لسه placeholder — أكّد المسار مع الـ backend.
-  Future<bool> confirmPayment({
-    required BookingPaymentMethod method,
-    String? cardName,
-    String? cardNumber,
-    String? expiryDate,
-    String? cvv,
+  /// GET /api/Ports/GetPortPolicy/{portId} — سياسات التاجر.
+  Future<PortPolicy?> getPortPolicy(int portId) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.portPolicy}/$portId',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return PortPolicy.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// POST /api/Reservations/AddClientReservation — بينشئ طلب الحجز ويرجّع
+  /// رقمه + المقدم عشان نأكّده بعد كده.
+  /// TODO: أكّد شكل الـ request/response مع الـ backend (curl) وعدّل
+  /// [AddReservationRequest.toJson] / [AddReservationResult.fromJson] لو لزم.
+  Future<AddReservationResult?> addClientReservation(
+    AddReservationRequest request,
+  ) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.addClientReservation,
+        data: request.toJson(),
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return AddReservationResult.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// POST /api/Reservations/ConfirmClientReservation_2
+  /// body: { "depositAmount": ..., "reservationRequestIds": ... }
+  /// بيرجّع `true` لو نجح.
+  Future<bool> confirmClientReservation({
+    required num depositAmount,
+    required int reservationRequestId,
   }) async {
     try {
       final response = await DioHelper.postData(
-        url: AppEndpoints.confirmBooking,
-        data: FormData.fromMap({
-          'paymentMethod': method.name,
-          if (method == BookingPaymentMethod.card) ...{
-            'cardName': cardName,
-            'cardNumber': cardNumber,
-            'expiryDate': expiryDate,
-            'cvv': cvv,
-          },
-        }),
+        url: AppEndpoints.confirmClientReservation2,
+        data: {
+          'depositAmount': depositAmount,
+          'reservationRequestIds': reservationRequestId,
+        },
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {

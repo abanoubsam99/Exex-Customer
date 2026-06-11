@@ -17,6 +17,7 @@ import 'package:evex_user/features/home/ui/widgets/user_data_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'widgets/Instant_booking_services_section.dart';
 import 'widgets/instant_payment_services.dart';
@@ -34,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return UpgradeAlert(
+      child: Scaffold(
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
@@ -393,6 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:evex_user/features/auth/login/ui/widgets/login_body_widget.dart'
 import 'package:evex_user/features/auth/login/ui/widgets/login_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:upgrader/upgrader.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -11,7 +12,8 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(375, 899),
-      child: Scaffold(
+      child: UpgradeAlert(
+        child: Scaffold(
         body: SafeArea(
           top: false,
           child: Stack(
@@ -98,6 +100,7 @@ class LoginScreen extends StatelessWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

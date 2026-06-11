@@ -36,6 +36,49 @@ class AppEndpoints {
   static const favorites = "/api/Favorites";
   static const walletData = "/api/Clients/GetMyClientWalletData";
 
+  // Auth — external (Google) login
+  static const externalLogin = "/EVEX/Account/ExternalLogin";
+
+  // Offices / branches
+  static const allOffices = "/api/Home/GetAllOffices";
+
+  // Ports
+  static const portPolicy = "/api/Ports/GetPortPolicy"; // + /{portId}
+
+  // Reservations
+  static const myReservations = "/api/Reservations/GetMyReservations";
+  static const myRequestReservations =
+      "/api/Reservations/GetMyRequestReservations";
+  static const billDetailsByClient =
+      "/api/Reservations/GetBillDetailsByClient"; // + /{id}
+  static const checkReservationAvailability =
+      "/api/Reservations/CheckReservationAvailabilityByClient"; // + /{portId}?date=
+  static const addClientReservation = "/api/Reservations/AddClientReservation";
+  static const confirmClientReservation =
+      "/api/Reservations/ConfirmClientReservation";
+  static const confirmClientReservation2 =
+      "/api/Reservations/ConfirmClientReservation_2";
+  static const verifyPayment = "/api/Reservations/VerifyPayment";
+  static const calculatePendingDeposit =
+      "/api/Reservations/CalculatePendingDeposit";
+  static const calculateNetCost =
+      "/api/Reservations/Client/CalculateNetCost"; // + /{id}?servicePrice=...
+  static const reservationUserNote =
+      "/api/Reservations/GetReservationUserNote"; // + /{id}
+  static const editReservationUserNote =
+      "/api/Reservations/EditReservationUserNote";
+  static const updateReservationRequest =
+      "/api/Reservations/UpdateReservationRequest"; // + /{id}
+  static const updateReservationByClient =
+      "/api/Reservations/UpdateReservationByClient"; // + /{id}
+
+  // Accounts
+  static const myFinancialOperations =
+      "/api/Accounts/GetMyFinancialOperations";
+
+  // Vendor requests
+  static const vendorRequests = "/api/VendorRequests";
+
 
 
 

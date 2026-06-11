@@ -1,8 +1,19 @@
+import 'package:evex_user/data/models/port_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ServiceCostDetailsSection extends StatelessWidget {
-  const ServiceCostDetailsSection({super.key});
+  /// سياسات التاجر — منها بنجيب مبلغ التأمين.
+  final PortPolicy? policy;
+
+  /// إجمالي التكلفة الجاي من الشاشة السابقة (سعر الخدمة + الإضافات).
+  final num totalCost;
+
+  const ServiceCostDetailsSection({
+    super.key,
+    this.policy,
+    this.totalCost = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,322 +58,19 @@ class ServiceCostDetailsSection extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'عمولة evex',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                        ),
-                      ),
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '0',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  _costRow('عمولة evex', '0'),
                   6.verticalSpace,
-                  Row(
-                    children: [
-                      Text(
-                        'رسوم إدارية',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                        ),
-                      ),
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '0',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  _costRow('رسوم إدارية', '0'),
                   6.verticalSpace,
-                  Row(
-                    children: [
-                      Text(
-                        'ضريبة',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                        ),
-                      ),
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '0',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  _costRow('ضريبة', '0'),
                   6.verticalSpace,
-                  Row(
-                    children: [
-                      Text(
-                        'مبلغ التأمين',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                        ),
-                      ),
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '0',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'مقدم الحجز',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                        ),
-                      ),
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '1000',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'إجمالى التكلفة',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color(0xFF6F767E),
-                          fontSize: 16.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w700,
-                          height: 1.50,
-                        ),
-                      ),
-
-                      Spacer(),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '9999.99',
-                              style: TextStyle(
-                                color: const Color(0xFFF38B4A),
-                                fontSize: 18.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w800,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' ',
-                              style: TextStyle(
-                                color: const Color(0xFF6F767E),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'جنيه',
-                              style: TextStyle(
-                                color: const Color(0xFFA5B7C6),
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  _costRow('مبلغ التأمين', _fmt(policy?.insuranceAmount)),
+                  const Spacer(),
+                  _costRow('مقدم الحجز', '1000'),
+                  _costRow(
+                    'إجمالى التكلفة',
+                    totalCost.toStringAsFixed(2),
+                    isTotal: true,
                   ),
                 ],
               ),
@@ -371,6 +79,70 @@ class ServiceCostDetailsSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _costRow(String title, String value, {bool isTotal = false}) {
+    return Row(
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: const Color(0xFF6F767E),
+            fontSize: isTotal ? 16.r : 14.r,
+            fontFamily: 'Almarai',
+            fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
+            height: 1.50,
+          ),
+        ),
+        const Spacer(),
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: value,
+                style: TextStyle(
+                  color: isTotal
+                      ? const Color(0xFFF38B4A)
+                      : const Color(0xFF6F767E),
+                  fontSize: isTotal ? 18.r : 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: isTotal ? FontWeight.w800 : FontWeight.w700,
+                  height: 1.50,
+                ),
+              ),
+              TextSpan(
+                text: ' ',
+                style: TextStyle(
+                  color: const Color(0xFF6F767E),
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
+              ),
+              TextSpan(
+                text: 'جنيه',
+                style: TextStyle(
+                  color: const Color(0xFFA5B7C6),
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// بيعرض الرقم من غير الكسر الزايد (100.0 → "100")، و null → "0".
+  String _fmt(num? value) {
+    if (value == null) return '0';
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toString();
   }
 }
 
@@ -399,23 +171,20 @@ class TicketPainter extends CustomPainter {
     const double dashWidth = 8.5;
     const double dashSpace = 4;
 
-    final paintBg =
-        Paint()
-          ..style = PaintingStyle.fill
-          ..strokeCap = StrokeCap.round
-          ..color = bgColor;
+    final paintBg = Paint()
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.round
+      ..color = bgColor;
 
-    final paintBorder =
-        Paint()
-          ..strokeWidth = 1
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..color = borderColor;
+    final paintBorder = Paint()
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..color = borderColor;
 
-    final paintDottedLine =
-        Paint()
-          ..color = borderColor
-          ..strokeWidth = 1;
+    final paintDottedLine = Paint()
+      ..color = borderColor
+      ..strokeWidth = 1;
 
     var path = Path();
 
@@ -446,7 +215,7 @@ class TicketPainter extends CustomPainter {
     }
   }
 
-  _drawCutout(Path path, double startX, double endY) {
+  void _drawCutout(Path path, double startX, double endY) {
     path.arcToPoint(
       Offset(startX, endY),
       radius: Radius.circular(_cutoutRadius),
@@ -454,7 +223,7 @@ class TicketPainter extends CustomPainter {
     );
   }
 
-  _drawCornerArc(Path path, double endPointX, double endPointY) {
+  void _drawCornerArc(Path path, double endPointX, double endPointY) {
     path.arcToPoint(
       Offset(endPointX, endPointY),
       radius: Radius.circular(_cornerGap),

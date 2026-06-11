@@ -1,12 +1,24 @@
-import 'package:evex_user/core/ui/widgets/custom_checkbox.dart';
+import 'package:evex_user/data/models/port_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// قسم "سياسات التاجر" — بيعرض بيانات GetPortPolicy.
 class VendorPoliciesSection extends StatelessWidget {
-  const VendorPoliciesSection({super.key});
+  final PortPolicy? policy;
+  final bool accepted;
+  final ValueChanged<bool> onTermsChanged;
+
+  const VendorPoliciesSection({
+    super.key,
+    required this.policy,
+    required this.accepted,
+    required this.onTermsChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final lastUpdated = policy?.lastUpdatedLabel;
+    final otherPolicies = policy?.otherPolicies?.trim();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,593 +60,90 @@ class VendorPoliciesSection extends StatelessWidget {
             height: 1.50,
           ),
         ),
-        Text(
-          'اخر تحديث في 11/11/2025',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            color: const Color(0xFF6F767E),
-            fontSize: 11.r,
-            fontFamily: 'Almarai',
-            fontWeight: FontWeight.w400,
-            height: 1.50,
+        if (lastUpdated != null)
+          Text(
+            'اخر تحديث في $lastUpdated',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: const Color(0xFF6F767E),
+              fontSize: 11.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+              height: 1.50,
+            ),
           ),
-        ),
         12.verticalSpace,
         ExpandableContainer(
           height: 427.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(
-                    'فترة السماح بالتعديل في الخدمات',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF2C262C),
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'يوم قبل المناسبة',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              // ── التعديل في الخدمات ──
+              _row(
+                'فترة السماح بالتعديل في الخدمات',
+                _num(policy?.periodEditingServices),
+                'يوم قبل المناسبة',
+                boldTitle: true,
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة التعديل في فترة السماح / لكل مرة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'جنيه',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة التعديل في فترة السماح / لكل مرة',
+                _num(policy?.costOfModifyingServicesBeforePeriod),
+                'جنيه',
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة التعديل بعد فترة السماح / لكل مرة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'جنيه',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة التعديل بعد فترة السماح / لكل مرة',
+                _num(policy?.costOfModifyingServicesAfterPeriod),
+                'جنيه',
               ),
-              8.verticalSpace,
-              Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                    side: BorderSide(
-                      width: 0.5.r,
-                      strokeAlign: BorderSide.strokeAlignCenter,
-                      color: const Color(0xFFF4F4F4),
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'فترة السماح بالتعديل في التاريخ والمكان',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF2C262C),
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'يوم قبل المناسبة',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _divider(),
+              // ── التعديل في التاريخ والمكان ──
+              _row(
+                'فترة السماح بالتعديل في التاريخ والمكان',
+                _num(policy?.periodEditingDateAndLocaltion),
+                'يوم قبل المناسبة',
+                boldTitle: true,
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة التعديل في فترة السماح / لكل مرة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'جنيه',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة التعديل في فترة السماح / لكل مرة',
+                _num(policy?.costOfModifyingDateAndLocationBeforePeriod),
+                'جنيه',
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة التعديل بعد فترة السماح / لكل مرة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'جنيه',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة التعديل بعد فترة السماح / لكل مرة',
+                _num(policy?.costOfModifyingDateAndLocationAfterPeriod),
+                'جنيه',
               ),
-              8.verticalSpace,
-              Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                    side: BorderSide(
-                      width: 0.5.r,
-                      strokeAlign: BorderSide.strokeAlignCenter,
-                      color: const Color(0xFFF4F4F4),
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'فترة السماح بإلغاء الحجز',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF2C262C),
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'يوم قبل المناسبة',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _divider(),
+              // ── إلغاء الحجز ──
+              _row(
+                'فترة السماح بإلغاء الحجز',
+                _num(policy?.cancellationPeriod),
+                'يوم قبل المناسبة',
+                boldTitle: true,
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة الإلغاء في فترة السماح',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0%',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'من مقدم الحجز',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة الإلغاء في فترة السماح',
+                '${_num(policy?.costOfCancellationBeforePeriod)}%',
+                'من مقدم الحجز',
               ),
               4.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'تكلفة الإلغاء بعد فترة السماح',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF6F767E),
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w300,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0%',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'من مقدم الحجز',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _row(
+                'تكلفة الإلغاء بعد فترة السماح',
+                '${_num(policy?.costOfCancellationAfterPeriod)}%',
+                'من مقدم الحجز',
               ),
-              8.verticalSpace,
-              Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                    side: BorderSide(
-                      width: 0.5.r,
-                      strokeAlign: BorderSide.strokeAlignCenter,
-                      color: const Color(0xFFF4F4F4),
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    'مبلغ التأمين',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: const Color(0xFF2C262C),
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      height: 1.50,
-                    ),
-                  ),
-                  Spacer(),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '0',
-                          style: TextStyle(
-                            color: const Color(0xFFF38B4A),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' ',
-                          style: TextStyle(
-                            color: const Color(0xFF6F767E),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'جنيه',
-                          style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              _divider(),
+              // ── التأمين ──
+              _row(
+                'مبلغ التأمين',
+                _num(policy?.insuranceAmount),
+                'جنيه',
+                boldTitle: true,
               ),
               Text(
                 'يلتزم التاجر برد مبلغ التأمين كاملاً للعميل\nبعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من قبل العميل',
@@ -647,21 +156,8 @@ class VendorPoliciesSection extends StatelessWidget {
                   height: 1.82,
                 ),
               ),
-              8.verticalSpace,
-              Container(
-                width: double.infinity,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
-                    side: BorderSide(
-                      width: 0.5.r,
-                      strokeAlign: BorderSide.strokeAlignCenter,
-                      color: const Color(0xFFF4F4F4),
-                    ),
-                  ),
-                ),
-              ),
-              8.verticalSpace,
+              _divider(),
+              // ── سياسات أخرى ──
               Text(
                 'سياسات أخرى',
                 textAlign: TextAlign.right,
@@ -674,7 +170,9 @@ class VendorPoliciesSection extends StatelessWidget {
                 ),
               ),
               Text(
-                'نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظ',
+                (otherPolicies != null && otherPolicies.isNotEmpty)
+                    ? otherPolicies
+                    : 'لا توجد سياسات أخرى',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: const Color(0xFF6F767E),
@@ -690,46 +188,28 @@ class VendorPoliciesSection extends StatelessWidget {
         18.verticalSpace,
         Row(
           children: [
-            Builder(
-              builder: (context) {
-                bool isChecked = false;
-                return StatefulBuilder(
-                  builder: (context, setState) {
-                    return Transform.scale(
-                      scale: 1.1,
-                      child: Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: isChecked, // your boolean variable
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-
-                        side: BorderSide(
-                          color: Color(0xFFF38B4A).withValues(alpha: 0.6),
-                          width: 1.1.r,
-                        ),
-
-                        fillColor: WidgetStateProperty.resolveWith<Color>((
-                          states,
-                        ) {
-                          if (states.contains(WidgetState.selected)) {
-                            return Color(0xFFF38B4A);
-                          }
-                          return Colors.transparent;
-                        }),
-                        checkColor: Colors.white,
-                      ),
-                    );
-                  },
-                );
-              },
+            Transform.scale(
+              scale: 1.1,
+              child: Checkbox(
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                value: accepted,
+                onChanged: (value) => onTermsChanged(value ?? false),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+                side: BorderSide(
+                  color: const Color(0xFFF38B4A).withValues(alpha: 0.6),
+                  width: 1.1.r,
+                ),
+                fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return const Color(0xFFF38B4A);
+                  }
+                  return Colors.transparent;
+                }),
+                checkColor: Colors.white,
+              ),
             ),
-            // 6.horizontalSpace,
             Text(
               'قرأت جميع الشروط والسياسات وأوافق عليها',
               textAlign: TextAlign.right,
@@ -745,6 +225,85 @@ class VendorPoliciesSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// صف "عنوان ... قيمة + وحدة". في RTL العنوان على اليمين والقيمة على الشمال.
+  Widget _row(String title, String value, String unit, {bool boldTitle = false}) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color:
+                  boldTitle ? const Color(0xFF2C262C) : const Color(0xFF6F767E),
+              fontSize: boldTitle ? 12.r : 11.r,
+              fontFamily: 'Almarai',
+              fontWeight: boldTitle ? FontWeight.w700 : FontWeight.w300,
+              height: 1.50,
+            ),
+          ),
+        ),
+        8.horizontalSpace,
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: value,
+                style: TextStyle(
+                  color: const Color(0xFFF38B4A),
+                  fontSize: 12.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
+              ),
+              TextSpan(
+                text: ' ',
+                style: TextStyle(fontSize: 11.r, fontFamily: 'Almarai'),
+              ),
+              TextSpan(
+                text: unit,
+                style: TextStyle(
+                  color: const Color(0xFFA5B7C6),
+                  fontSize: 11.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _divider() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.r),
+      child: Container(
+        width: double.infinity,
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.r),
+            side: BorderSide(
+              width: 0.5.r,
+              strokeAlign: BorderSide.strokeAlignCenter,
+              color: const Color(0xFFF4F4F4),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// بيعرض الرقم من غير الكسر الزايد (10.0 → "10")، و null → "0".
+  String _num(num? value) {
+    if (value == null) return '0';
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toString();
   }
 }
 
@@ -778,24 +337,20 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
         ),
         child: AnimatedSize(
           duration: const Duration(milliseconds: 300),
-          // curve: Curves.easeInOut,
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight:
-                  isExpanded
-                      ? double.infinity
-                      : widget.height ?? double.infinity,
+                  isExpanded ? double.infinity : widget.height ?? double.infinity,
             ),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 12.r, horizontal: 12.r),
               child: Stack(
                 children: [
                   SingleChildScrollView(
-                    physics:
-                        isExpanded
-                            ? const ClampingScrollPhysics()
-                            : const NeverScrollableScrollPhysics(),
+                    physics: isExpanded
+                        ? const ClampingScrollPhysics()
+                        : const NeverScrollableScrollPhysics(),
                     child: widget.child,
                   ),
                   if (!isExpanded)
@@ -814,10 +369,6 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
                               Colors.white,
                             ],
                           ),
-                          // borderRadius: BorderRadius.only(
-                          //   bottomLeft: Radius.circular(16.r),
-                          //   bottomRight: Radius.circular(16.r),
-                          // ),
                         ),
                       ),
                     ),

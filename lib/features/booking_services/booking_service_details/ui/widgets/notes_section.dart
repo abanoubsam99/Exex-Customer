@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NotesSection extends StatelessWidget {
-  const NotesSection({super.key});
+  final TextEditingController? controller;
+  const NotesSection({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class NotesSection extends StatelessWidget {
         TextFieldBuilder(
           title: 'ملاحظات',
           hintText: 'في حال وجود ملاحظات .. اكتب ملاحظتك هنا',
-          controller: TextEditingController(),
+          controller: controller ?? TextEditingController(),
           maxLines: 3,
         ),
       ],

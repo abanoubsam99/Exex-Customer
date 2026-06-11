@@ -1,6 +1,7 @@
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
+import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_details_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -111,8 +112,10 @@ class ServicesSection extends StatelessWidget {
                     price: service.price ?? 0,
                     isSelected: state.selectedService?.id == service.id,
                     onSelectionChanged: () {
+                      // اختيار الخدمة (بيجيب بياناتها للحساب) + فتح bottom sheet
+                      // بتفاصيلها (صور/اسم/سعر/وصف).
                       cubit.selectService(service);
-                      cubit.getServiceData();
+                      ServiceDetailsBottomSheet.show(context, service);
                     },
                   );
                 },

@@ -55,7 +55,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                                 _timerPill(state),
                                 20.verticalSpace,
                                 Text(
-                                  '${state.totalAmount} جنيه',
+                                  '${state.depositAmount} جنيه',
                                   textDirection: TextDirection.ltr,
                                   style: TextStyle(
                                     color: Colors.white,

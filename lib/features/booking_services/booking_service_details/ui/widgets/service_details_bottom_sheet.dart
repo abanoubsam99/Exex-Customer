@@ -1,0 +1,195 @@
+import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
+import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/models/port_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+/// Bottom sheet عرض تفاصيل خدمة واحدة (صور + اسم + سعر + الوصف الكامل).
+/// بيتفتح لما المستخدم يضغط على كارت خدمة من قائمة "الخدمات الأساسية".
+class ServiceDetailsBottomSheet extends StatefulWidget {
+  final PortService service;
+  const ServiceDetailsBottomSheet({super.key, required this.service});
+
+  /// Helper لعرض الـ sheet بالشكل المتعارف عليه في المشروع.
+  static Future<void> show(BuildContext context, PortService service) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ServiceDetailsBottomSheet(service: service),
+    );
+  }
+
+  @override
+  State<ServiceDetailsBottomSheet> createState() =>
+      _ServiceDetailsBottomSheetState();
+}
+
+class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
+  final PageController _pageController = PageController();
+  int _activeImage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final images = widget.service.serviceImages ?? const <String>[];
+    final details = widget.service.details?.trim();
+    return Container(
+      width: 1.sw,
+      constraints: BoxConstraints(maxHeight: 0.85.sh),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(40.r)),
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 80.w,
+                  height: 4.r,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE4E7EC),
+                    borderRadius: BorderRadius.circular(100.r),
+                  ),
+                ),
+              ),
+              16.verticalSpace,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16.r),
+                child: SizedBox(
+                  height: 220.h,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(child: _buildImages(images)),
+                      if (images.length > 1)
+                        Positioned(
+                          bottom: 10.h,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: AnimatedSmoothIndicator(
+                              activeIndex: _activeImage,
+                              count: images.length,
+                              textDirection: TextDirection.ltr,
+                              effect: ExpandingDotsEffect(
+                                dotHeight: 7.r,
+                                dotWidth: 7.r,
+                                expansionFactor: 2,
+                                activeDotColor: const Color(0xFFF38B4A),
+                                dotColor: Colors.white.withValues(alpha: 0.7),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              18.verticalSpace,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text.rich(
+                    textDirection: TextDirection.ltr,
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '${widget.service.price ?? 0}',
+                          style: TextStyle(
+                            color: const Color(0xFFF38B4A),
+                            fontSize: 20.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' جنيه',
+                          style: TextStyle(
+                            color: const Color(0xFFA5B7C6),
+                            fontSize: 13.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  12.horizontalSpace,
+                  Expanded(
+                    child: Text(
+                      widget.service.name ?? '',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: const Color(0xFF2C262C),
+                        fontSize: 18.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w800,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              16.verticalSpace,
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Text(
+                    (details != null && details.isNotEmpty)
+                        ? details
+                        : 'لا يوجد وصف متاح لهذه الخدمة',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: const Color(0xFF6F767E),
+                      fontSize: 13.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w400,
+                      height: 1.7,
+                    ),
+                  ),
+                ),
+              ),
+              16.verticalSpace,
+              CustomButton(
+                text: 'اغلاق',
+                isfilled: false,
+                height: 52.h,
+                onTap: () => Navigator.pop(context),
+              ),
+              8.verticalSpace,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImages(List<String> images) {
+    if (images.isEmpty) {
+      return CustomImageHandler(AppImages.imagesWedding2, fit: BoxFit.cover);
+    }
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: images.length,
+      onPageChanged: (i) => setState(() => _activeImage = i),
+      itemBuilder: (context, i) => CustomImageHandler(
+        ImageUrlHelper.full(images[i]) ?? AppImages.imagesWedding2,
+        fit: BoxFit.cover,
+        errorIcon: const Icon(Icons.broken_image_outlined),
+      ),
+    );
+  }
+}

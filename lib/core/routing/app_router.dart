@@ -6,6 +6,7 @@ import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
+import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -55,7 +56,10 @@ import '../../data/cubits/auth/login/login_cubit.dart';
 import '../../data/cubits/auth/register/register_cubit.dart';
 import '../../data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import '../../data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
+import '../../data/cubits/complete_booking/complete_booking_cubit.dart';
+import '../../data/cubits/complete_booking/complete_booking_state.dart';
 import '../../data/cubits/confirm_booking/confirm_booking_cubit.dart';
+import '../../data/cubits/confirm_booking/confirm_booking_state.dart';
 import '../../data/cubits/home/home_cubit.dart';
 import '../../data/cubits/new_suggestion/new_suggestion_cubit.dart';
 import '../../data/cubits/notifications/notifications_cubit.dart';
@@ -91,6 +95,7 @@ class AppRouter {
               context.read<LoginRepo>(),
               context.read<UserService>(),
               context.read<LocalAuthService>(),
+              GoogleAuthService(),
             ),
             child: const LoginScreen(),
           ),
@@ -254,7 +259,18 @@ class AppRouter {
         );
 
       case Routes.completeBookingScreen:
-        return _page(const CompleteBookingScreen(), settings);
+        return _page(
+          BlocProvider(
+            create: (context) => CompleteBookingCubit(
+              context.read<ConfirmBookingRepo>(),
+              args: settings.arguments is CompleteBookingArgs
+                  ? settings.arguments as CompleteBookingArgs
+                  : const CompleteBookingArgs(),
+            ),
+            child: const CompleteBookingScreen(),
+          ),
+          settings,
+        );
 
       case Routes.paymentHistoryScreen:
         return _page(
@@ -325,7 +341,12 @@ class AppRouter {
         return _page(
           BlocProvider(
             create: (context) =>
-                ConfirmBookingCubit(context.read<ConfirmBookingRepo>())..init(),
+                ConfirmBookingCubit(context.read<ConfirmBookingRepo>())
+                  ..init(
+                    args: settings.arguments is ConfirmBookingArgs
+                        ? settings.arguments as ConfirmBookingArgs
+                        : null,
+                  ),
             child: const ConfirmBookingScreen(),
           ),
           settings,
