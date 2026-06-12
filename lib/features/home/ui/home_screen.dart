@@ -10,11 +10,13 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/features/home/ui/widgets/join_us_section.dart';
 import 'package:evex_user/features/home/ui/widgets/new_suggestion_section.dart';
 import 'package:evex_user/features/home/ui/widgets/other_services_section.dart';
 import 'package:evex_user/features/home/ui/widgets/user_data_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:upgrader/upgrader.dart';
@@ -32,6 +34,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int activeIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch fresh home data each time a new MainScreen mounts (app start or
+    // re-login) so a previous account's data never lingers.
+    context.read<HomeCubit>().init();
+  }
 
   @override
   Widget build(BuildContext context) {

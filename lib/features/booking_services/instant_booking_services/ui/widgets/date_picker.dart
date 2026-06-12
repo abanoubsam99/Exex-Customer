@@ -2,13 +2,15 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class DatePicker extends StatefulWidget {
-  const DatePicker({super.key, required this.title});
+  const DatePicker({super.key, required this.title, this.onChanged});
 
   final String title;
+
+  /// Called when the user picks a date.
+  final ValueChanged<DateTime>? onChanged;
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -27,9 +29,11 @@ class _DatePickerState extends State<DatePicker> {
           firstDate: DateTime.now(),
           lastDate: DateTime.now().add(const Duration(days: 365)),
         );
+        if (picked == null) return;
         setState(() {
           selectedDate = picked;
         });
+        widget.onChanged?.call(picked);
       },
       child: Container(
         height: 46.h,

@@ -1,3 +1,5 @@
+import 'package:evex_user/core/helpers/date_format_helper.dart';
+
 class OrderDetailsModel {
   final String bookingNumber;
   final OrderCustomer customer;
@@ -65,6 +67,93 @@ class OrderDetailsModel {
       paid: json['paid'] ?? 0,
       remaining: json['remaining'] ?? 0,
       refunded: json['refunded'] ?? 0,
+    );
+  }
+
+  /// بيحوّل رد GET /api/Reservations/GetBillDetailsByClient/{id} لشكل الشاشة.
+  factory OrderDetailsModel.fromBillJson(Map<String, dynamic> json) {
+    num n(String key) => (json[key] as num?) ?? 0;
+    String s(String key) => (json[key]?.toString() ?? '').trim();
+
+    final additions = <OrderLineItem>[];
+    final buffet = <OrderLineItem>[];
+    for (final a in (json['additions'] as List?) ?? const []) {
+      final item = OrderLineItem(
+        name: a['name']?.toString() ?? '',
+        price: ((a['additionTotalPrice'] as num?) ?? 0).round(),
+        count: (a['number'] as num?)?.toInt(),
+      );
+      (a['isBuft'] == true ? buffet : additions).add(item);
+    }
+
+    final address = [s('governorate'), s('city'), s('address')]
+        .where((e) => e.isNotEmpty)
+        .join(' , ');
+    final venue = [s('governorate'), s('city')]
+        .where((e) => e.isNotEmpty)
+        .join(' , ');
+    final serviceDetails = s('serviceDetails');
+
+    return OrderDetailsModel(
+      bookingNumber: (json['reservationId'] as num?)?.toInt().toString() ?? '',
+      customer: OrderCustomer(
+        name: s('clientName'),
+        email: s('email'),
+        phone: s('clientPhoneNumber'),
+        address: address,
+      ),
+      status: s('reservationStatus') == 'Confirmed'
+          ? 'حجز مؤكد'
+          : s('reservationStatus'),
+      createdDate:
+          DateFormatHelper.arabicDate(s('reservationDate'), fallback: ''),
+      createdTime: DateFormatHelper.arabicTime(s('reservationDate')),
+      hallName: s('portName'),
+      eventType: s('occasionType'),
+      venueLocation: venue,
+      eventDay: DateFormatHelper.arabicWeekday(s('occasionDate')),
+      eventDate: DateFormatHelper.arabicDate(s('occasionDate'), fallback: ''),
+      basicService: OrderLineItem(
+        name: s('serviceName'),
+        price: n('servicePrice').round(),
+        description: serviceDetails.isEmpty ? null : serviceDetails,
+      ),
+      additions: additions,
+      buffet: buffet,
+      costBreakdown: [
+        CostRow(label: 'عموله evex', value: n('evexCommission').round()),
+        CostRow(label: 'رسوم إدارية', value: n('administrativeFees').round()),
+        CostRow(label: 'ضريبة', value: n('tax').round()),
+        CostRow(label: 'مبلغ التأمين', value: n('insuranceAmount').round()),
+        CostRow(label: 'مقدم الحجز', value: n('deposit').round()),
+        CostRow(
+          label: 'كاش باك',
+          value: n('cashbackPointsValue').round(),
+          unit: 'نقطة',
+        ),
+        CostRow(
+          label: 'خصم إضافي من التاجر',
+          value: n('additionalDiscountFromVendor').round(),
+        ),
+        CostRow(
+          label: 'خصم إضافي من evex',
+          value: n('additionalDiscountFromEVEX').round(),
+        ),
+        CostRow(
+          label: 'تكلفة إضافية من التاجر',
+          value: n('additionalCostFromVendor').round(),
+          subtitle: json['detailsAdditionalCostFromVendor']?.toString(),
+        ),
+        CostRow(
+          label: 'تكلفة إضافية من evex',
+          value: n('additionalCostFromEVEX').round(),
+          subtitle: json['detailsAdditionalCostFromEVEX']?.toString(),
+        ),
+      ],
+      totalCost: n('totalCost').round(),
+      paid: n('totalAmountReceivedFromCustomer').round(),
+      remaining: n('remainingAmount').round(),
+      refunded: n('totalAmountRefundedToCustomer').round(),
     );
   }
 }

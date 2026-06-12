@@ -102,8 +102,49 @@ class DioHelper {
       case DioExceptionType.connectionError:
         return 'تعذّر الاتصال بالخادم، تأكد من الإنترنت';
       default:
-        return null;
+        break;
     }
+
+    // Fallback for responses with no readable message (e.g. 404/500 with an
+    // empty or unexpected body): surface the status code + a snippet of the
+    // raw body so the problem is visible to the user.
+    final statusCode = error.response?.statusCode;
+    if (statusCode != null) return _messageForStatus(statusCode, data);
+
+    return 'حدث خطأ غير متوقع، حاول مرة أخرى';
+  }
+
+  /// A friendly Arabic message for an HTTP status code, with the code and a
+  /// short snippet of the raw body appended when present.
+  static String _messageForStatus(int code, dynamic data) {
+    String base;
+    if (code == 400) {
+      base = 'طلب غير صحيح';
+    } else if (code == 401) {
+      base = 'انتهت الجلسة، سجّل الدخول مرة أخرى';
+    } else if (code == 403) {
+      base = 'غير مسموح بهذا الإجراء';
+    } else if (code == 404) {
+      base = 'الخدمة غير متاحة';
+    } else if (code == 408) {
+      base = 'انتهت مهلة الطلب';
+    } else if (code == 422) {
+      base = 'بيانات غير صالحة';
+    } else if (code >= 500) {
+      base = 'مشكلة في السيرفر';
+    } else {
+      base = 'حدث خطأ';
+    }
+    final snippet = _shortBody(data);
+    return snippet == null ? '$base ($code)' : '$base ($code): $snippet';
+  }
+
+  /// A trimmed, length-capped string view of the raw response body.
+  static String? _shortBody(dynamic data) {
+    if (data == null) return null;
+    final s = data.toString().trim();
+    if (s.isEmpty || s == '{}' || s == '[]') return null;
+    return s.length > 200 ? '${s.substring(0, 200)}…' : s;
   }
 
   /// بيجمع رسائل الـ validation من حقل errors مهما كان شكله.

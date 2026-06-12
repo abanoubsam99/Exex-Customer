@@ -11,6 +11,8 @@ import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
+import 'package:evex_user/data/repos/my_bookings_repo.dart';
+import 'package:evex_user/data/repos/payment_history_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
 import 'package:evex_user/data/repos/order_details_repo.dart';
@@ -88,6 +90,12 @@ class BlocProviders {
         RepositoryProvider<WalletRepo>(
           create: (_) => WalletRepo(),
         ),
+        RepositoryProvider<MyBookingsRepo>(
+          create: (_) => MyBookingsRepo(),
+        ),
+        RepositoryProvider<PaymentHistoryRepo>(
+          create: (_) => PaymentHistoryRepo(),
+        ),
       ];
 
   /// App-wide cubits, available to the whole widget tree.
@@ -95,7 +103,7 @@ class BlocProviders {
   static List<BlocProvider> get providers => [
         BlocProvider<MainCubit>(create: (_) => MainCubit()),
         BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(context.read<HomeRepo>())..init(),
+          create: (context) => HomeCubit(context.read<HomeRepo>()),
         ),
       ];
 }

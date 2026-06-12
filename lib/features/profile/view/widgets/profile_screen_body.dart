@@ -2,12 +2,15 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/data/cubits/profile/profile_cubit.dart';
 import 'package:evex_user/data/cubits/profile/profile_state.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +49,17 @@ class ProfileScreenBody extends StatelessWidget {
                       const CustomBackButtonWidget(),
                       InkWell(
                         onTap: () async {
-                          await context.read<UserService>().logout();
+                          // Capture cubits/services before the async gap, then
+                          // wipe everything tied to the old account so the next
+                          // sign-in starts clean.
+                          final home = context.read<HomeCubit>();
+                          final main = context.read<MainCubit>();
+                          final userService = context.read<UserService>();
+                          final localAuth = context.read<LocalAuthService>();
+                          await userService.logout();
+                          await localAuth.clearCredentials();
+                          home.reset();
+                          main.reset();
                           NavigationHelper.pushNamedAndRemoveUntil(
                             Routes.loginScreen,
                           );
@@ -463,7 +476,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
               ),
               22.verticalSpace,
               Text(
-                'هل انت متأكد من انك تريد مسح الحساب الخاص بك نهائياً ؟',
+                'هل انت متأكد من أنك تريد حذف الحساب الخاص بك نهائياً ؟',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: const Color(0xFF2C262C),
@@ -502,7 +515,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                         8.horizontalSpace,
                         Expanded(
                           child: Text(
-                            'سيؤدى مسح الحساب الى مسح جميع الانشطه اللى قمت فيها طوال فتره الحساب ومسح جميع الحجوزات المتاحه والعملاء ولا يمكن نهائياً استرجاع اياً منهما لاحقاً',
+                            'سيؤدى حذف الحساب الى إلغاء اشتراكك بالكامل ومسح جميع الأنشطة التى قمت بها طوال الفترة السابقة والغاء جميع الحجوزات الحالية ولا يمكن نهائياً استرجاع ايأ منها لاحقأ',
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color: const Color(0xFF6F767E),
@@ -537,69 +550,87 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 ),
                 16.verticalSpace,
               ],
-              SizedBox(
-                width: double.infinity,
-                child: BlocBuilder<ProfileCubit, ProfileState>(
-                  bloc: widget.cubit,
-                  builder: (context, state) {
-                    final isLoading = _showEmailField && state.isLoading;
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFD92D20),
-                        disabledBackgroundColor: const Color(0xFFD92D20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+              Row(
+                children: [
+                  // Cancel — dark filled (right in RTL).
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2C262C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () => NavigationHelper.pop(),
+                        child: Text(
+                          'الغاء',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              if (!_showEmailField) {
-                                setState(() => _showEmailField = true);
-                              } else {
-                                if (_formKey.currentState!.validate()) {
-                                  widget.cubit
-                                      .deleteAccount(_emailController.text);
-                                }
-                              }
-                            },
-                      child: isLoading
-                          ? SizedBox(
-                              width: 20.r,
-                              height: 20.r,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              _showEmailField
-                                  ? 'حذف الحساب نهائياً'
-                                  : 'نعم، احذف حسابي',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                              ),
-                            ),
-                    );
-                  },
-                ),
-              ),
-              8.verticalSpace,
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () => NavigationHelper.pop(),
-                  child: Text(
-                    'إلغاء',
-                    style: TextStyle(
-                      color: const Color(0xFF2C262C),
-                      fontSize: 14.r,
-                      fontFamily: 'Almarai',
                     ),
                   ),
-                ),
+                  12.horizontalSpace,
+                  // Delete — red outline (left in RTL). Reveals the email field
+                  // first, then confirms the deletion.
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: BlocBuilder<ProfileCubit, ProfileState>(
+                        bloc: widget.cubit,
+                        builder: (context, state) {
+                          final isLoading = _showEmailField && state.isLoading;
+                          return OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xFFD92D20)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    if (!_showEmailField) {
+                                      setState(() => _showEmailField = true);
+                                    } else if (_formKey.currentState!
+                                        .validate()) {
+                                      widget.cubit.deleteAccount(
+                                        _emailController.text,
+                                      );
+                                    }
+                                  },
+                            child: isLoading
+                                ? SizedBox(
+                                    width: 20.r,
+                                    height: 20.r,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Color(0xFFD92D20),
+                                    ),
+                                  )
+                                : Text(
+                                    _showEmailField
+                                        ? 'تأكيد الحذف'
+                                        : 'حذف الحساب',
+                                    style: TextStyle(
+                                      color: const Color(0xFFD92D20),
+                                      fontSize: 14.r,
+                                      fontFamily: 'Almarai',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

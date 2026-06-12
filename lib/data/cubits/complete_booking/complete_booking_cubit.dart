@@ -20,7 +20,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
 
   final notesController = TextEditingController();
 
-  /// سياسات التاجر للبوابة المختارة في الشاشة السابقة.
+  /// Vendor policy for the port chosen on the previous screen.
   Future<void> getPortPolicy() async {
     final portId = args.port?.id;
     if (portId == null) return;
@@ -31,22 +31,38 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
 
   void toggleTerms(bool value) => emit(state.copyWith(termsAccepted: value));
 
-  /// "إضافة لحجوزاتي": بينشئ طلب الحجز (AddClientReservation) وبعدين يروح
-  /// لشاشة تأكيد الحجز ومعاه رقم الطلب + المقدم.
+  /// "إضافة لحجوزاتي" → creates the reservation request (AddClientReservation),
+  /// then navigates to the confirm screen with the request id + deposit.
   Future<void> submit() async {
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
     }
+    final port = args.port;
+    final occasionDate = _formatDate(port?.checkReservationResponse?.date);
+    final governorate = port?.governorate;
+    final city = port?.city;
+    // Backend requires governorate, city and occasionDate.
+    if (occasionDate == null ||
+        (governorate ?? '').isEmpty ||
+        (city ?? '').isEmpty) {
+      ToastManager.showError(
+        'بيانات المناسبة غير مكتملة (التاريخ/المحافظة/المدينة)',
+      );
+      return;
+    }
+
     emit(state.copyWith(isSubmitting: true));
     final note = notesController.text.trim();
     final result = await _repo.addClientReservation(
       AddReservationRequest(
-        portId: args.port?.id,
+        portId: port?.id,
         serviceId: args.service?.id,
+        governorate: governorate,
+        city: city,
+        occasionDate: occasionDate,
+        userNotes: note.isEmpty ? null : note,
         additions: args.additions,
-        note: note.isEmpty ? null : note,
-        totalCost: args.totalCost,
       ),
     );
     emit(state.copyWith(isSubmitting: false));
@@ -62,6 +78,13 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     } else {
       emit(state.copyWith(errorMessage: 'تعذّر إضافة الحجز، حاول مرة أخرى'));
     }
+  }
+
+  /// Formats a [DateTime] as yyyy-MM-dd (the API's expected occasion date).
+  static String? _formatDate(DateTime? date) {
+    if (date == null || date.year <= 1) return null;
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${date.year}-${two(date.month)}-${two(date.day)}';
   }
 
   @override

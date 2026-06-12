@@ -73,7 +73,7 @@ class TransactionItem extends StatelessWidget {
               ),
             ),
             Text(
-              '6 اكتوبر 2026  -  مساءا  12:21',
+              transaction.dateText,
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: const Color(0xFF6F767E),

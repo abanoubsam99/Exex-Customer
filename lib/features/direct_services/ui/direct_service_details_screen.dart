@@ -29,11 +29,14 @@ class DirectServiceDetailsScreen extends StatelessWidget {
     final desc = port?.portDescription?.toString().trim();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DirectDetailsHeader(port: port),
+      body: RefreshIndicator(
+        onRefresh: () => context.read<DirectServiceDetailsCubit>().loadData(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DirectDetailsHeader(port: port),
             16.verticalSpace,
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -83,6 +86,7 @@ class DirectServiceDetailsScreen extends StatelessWidget {
             32.verticalSpace,
           ],
         ),
+      ),
       ),
     );
   }

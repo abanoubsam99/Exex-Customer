@@ -16,13 +16,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // testab@gmail.com
-// 1234
+// 123456
 // 01227120517
 
 // menaatefdesigner2@gmail.com
 // 1234
 
-// "email": "testclient@gmail.com",
+// "email": testclient@gmail.com
 // "pass": test
 
 

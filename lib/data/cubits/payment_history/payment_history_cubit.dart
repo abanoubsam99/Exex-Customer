@@ -1,13 +1,20 @@
-import 'package:evex_user/data/models/transaction_model.dart';
+import 'package:evex_user/data/repos/payment_history_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'payment_history_state.dart';
 
 class PaymentHistoryCubit extends Cubit<PaymentHistoryState> {
-  PaymentHistoryCubit() : super(const PaymentHistoryState());
+  final PaymentHistoryRepo _repo;
 
-  void loadTransactions() {
-    // Using local mock data until a real API endpoint is provided
-    emit(state.copyWith(transactions: myTransactions));
+  PaymentHistoryCubit(this._repo) : super(const PaymentHistoryState());
+
+  Future<void> loadTransactions() async {
+    emit(state.copyWith(isLoading: true));
+    final list = await _repo.getMyFinancialOperations();
+    if (list != null) {
+      emit(state.copyWith(isLoading: false, transactions: list));
+    } else {
+      emit(state.copyWith(isLoading: false));
+    }
   }
 }

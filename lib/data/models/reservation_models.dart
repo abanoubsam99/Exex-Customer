@@ -1,36 +1,58 @@
 import 'package:evex_user/data/models/addition.dart';
 
-/// Request body لـ POST /api/Reservations/AddClientReservation.
-///
-/// ⚠️ أسماء الحقول دي مبدئية لحد ما نأكّد الـ curl الرسمي بتاع AddClientReservation
-/// من الـ backend — عدّل [toJson] لما يوصل الشكل النهائي.
+/// Request body for POST /api/Reservations/AddClientReservation.
+/// Required by the backend: governorate, city and occasionDate.
 class AddReservationRequest {
   final int? portId;
   final int? serviceId;
+  final int? occasionId;
+  final int? nationalId;
+  final String? governorate;
+  final String? city;
+
+  /// Event date, formatted as yyyy-MM-dd.
+  final String? occasionDate;
+  final String? userNotes;
+  final bool acceptPolicy;
   final List<Addition> additions;
-  final String? note;
-  final num? totalCost;
 
   AddReservationRequest({
     this.portId,
     this.serviceId,
+    this.occasionId,
+    this.nationalId,
+    this.governorate,
+    this.city,
+    this.occasionDate,
+    this.userNotes,
+    this.acceptPolicy = true,
     this.additions = const [],
-    this.note,
-    this.totalCost,
   });
 
-  Map<String, dynamic> toJson() => {
-        'portId': portId,
-        'serviceId': serviceId,
-        'note': note,
-        'totalCost': totalCost,
-        'additions': additions.map((e) => e.toJson()).toList(),
-      };
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{
+      'occasionDate': occasionDate,
+      'governorate': governorate,
+      'city': city,
+      'serviceId': serviceId,
+      'portId': portId,
+      'userNotes': userNotes ?? '',
+      'AcceptPolicy': acceptPolicy,
+      // The API only needs the addition id for each item.
+      'additions': additions
+          .where((a) => a.additionId != null)
+          .map((a) => {'additionId': a.additionId})
+          .toList(),
+    };
+    if (occasionId != null) map['occasionId'] = occasionId;
+    if (nationalId != null) map['NationalId'] = nationalId;
+    return map;
+  }
 }
 
-/// Response بتاع AddClientReservation. بنقرأ منه رقم طلب الحجز + المقدم
-/// عشان نمرّرهم لـ ConfirmClientReservation_2. القراءة دفاعية (أكتر من اسم
-/// محتمل) لحد ما نأكّد الشكل الرسمي.
+/// Response of AddClientReservation. We read the reservation-request id +
+/// deposit from it to pass them to ConfirmClientReservation_2. Parsing is
+/// defensive (tries several possible key names).
 class AddReservationResult {
   final int? reservationRequestId;
   final num? depositAmount;

@@ -16,6 +16,7 @@ import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
 import 'package:evex_user/data/repos/order_details_repo.dart';
+import 'package:evex_user/data/repos/payment_history_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:evex_user/data/repos/wallet_repo.dart';
 import 'package:evex_user/data/repos/post_repo.dart';
@@ -281,7 +282,9 @@ class AppRouter {
       case Routes.paymentHistoryScreen:
         return _page(
           BlocProvider(
-            create: (_) => PaymentHistoryCubit()..loadTransactions(),
+            create: (context) =>
+                PaymentHistoryCubit(context.read<PaymentHistoryRepo>())
+                  ..loadTransactions(),
             child: const PaymentHistoryScreen(),
           ),
           settings,
@@ -337,7 +340,11 @@ class AppRouter {
           BlocProvider(
             create: (context) =>
                 OrderDetailsCubit(context.read<OrderDetailsRepo>())
-                  ..getOrderDetails(),
+                  ..getOrderDetails(
+                    id: settings.arguments is int
+                        ? settings.arguments as int
+                        : null,
+                  ),
             child: const OrderDetailsScreen(),
           ),
           settings,

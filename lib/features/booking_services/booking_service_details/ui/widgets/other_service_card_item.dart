@@ -43,7 +43,7 @@ class OtherServiceCardItem extends StatelessWidget {
             ),
             3.verticalSpace,
             Text(
-              'قاعة اللؤلؤة',
+              '${title}',
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: const Color(0xFF2C262C),

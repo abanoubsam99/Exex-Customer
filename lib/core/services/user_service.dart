@@ -41,7 +41,13 @@ class UserService {
   }
 
   Future<void> logout() async {
+    // Preserve device-level flags (first-install onboarding) across logout so
+    // the onboarding / location step only ever appears on first install.
+    final onboardingDone = _cacheHelper.getData('onboardingCompleted');
     await _cacheHelper.clearAllData();
+    if (onboardingDone == true) {
+      await _cacheHelper.saveData(key: 'onboardingCompleted', value: true);
+    }
     currentUser = null;
   }
 }

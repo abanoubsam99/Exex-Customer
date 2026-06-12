@@ -71,9 +71,7 @@ class AppImages {
   /// Assets for iconsLock
   /// assets/icons/lock.svg
   static const String iconsLock = "assets/icons/lock.svg";
-  /// Assets for iconsLogo
-  /// assets/icons/logo.svg
-  static const String iconsLogo = "assets/icons/logo.svg";
+
   /// Assets for iconsLogout
   /// assets/icons/logout.svg
   static const String iconsLogout = "assets/icons/logout.svg";

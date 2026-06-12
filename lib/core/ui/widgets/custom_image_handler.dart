@@ -65,7 +65,7 @@ class CustomImageHandler extends StatelessWidget {
             child: SizedBox(
               height: 32,
               width: 32,
-              child: SvgPicture.asset(AppImages.imagesNewLogo),
+              child: Image.asset(AppImages.imagesNewLogo),
             ),
           );
         },
@@ -95,14 +95,15 @@ class CustomImageHandler extends StatelessWidget {
       width: width,
       // cacheHeight: height?.toInt(),
       // cacheWidth: width?.toInt(),
-      errorBuilder:
-          (context, error, stackTrace) => SvgPicture.asset(
-            AppImages.iconsLogo,
-            colorFilter:
-                color == null
-                    ? null
-                    : ColorFilter.mode(color!, BlendMode.srcIn),
-          ),
+      // new_logo.png is a PNG, so it must be loaded with Image.asset, not
+      // SvgPicture.asset (which only renders SVG and silently fails on a PNG).
+      errorBuilder: (context, error, stackTrace) => Center(
+        child: SizedBox(
+          height: 32,
+          width: 32,
+          child: Image.asset(AppImages.imagesNewLogo),
+        ),
+      ),
     );
   }
 }

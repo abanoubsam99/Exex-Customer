@@ -33,4 +33,12 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request = request;
     _fetchPorts();
   }
+
+  /// Sets the occasion date filter and re-fetches. The returned ports then
+  /// carry this date in their checkReservationResponse, which the booking flow
+  /// uses as the reservation's occasionDate.
+  Future<void> setDate(DateTime date) async {
+    _request.date = date;
+    await _fetchPorts();
+  }
 }

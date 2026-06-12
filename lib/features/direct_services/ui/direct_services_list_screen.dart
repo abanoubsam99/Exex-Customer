@@ -23,11 +23,15 @@ class DirectServicesListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              16.verticalSpace,
+        child: RefreshIndicator(
+          onRefresh: () =>
+              context.read<DirectServicesListCubit>().loadPorts(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                16.verticalSpace,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
@@ -109,6 +113,7 @@ class DirectServicesListScreen extends StatelessWidget {
               ),
               24.verticalSpace,
             ],
+          ),
           ),
         ),
       ),

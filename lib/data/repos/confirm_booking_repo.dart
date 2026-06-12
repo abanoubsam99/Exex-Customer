@@ -62,4 +62,18 @@ class ConfirmBookingRepo {
       return false;
     }
   }
+
+  /// POST /api/Reservations/VerifyPayment — verifies a Paymob card payment.
+  /// body: { "paymobOrderId": ... }
+  Future<bool> verifyPayment(int paymobOrderId) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.verifyPayment,
+        data: {'paymobOrderId': paymobOrderId},
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
 }

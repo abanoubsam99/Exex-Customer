@@ -8,9 +8,9 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
   OrderDetailsCubit(this._repo) : super(const OrderDetailsState());
 
-  Future<void> getOrderDetails({String? bookingId}) async {
+  Future<void> getOrderDetails({int? id}) async {
     emit(state.copyWith(isLoading: true));
-    final result = await _repo.getOrderDetails(bookingId: bookingId);
+    final result = await _repo.getOrderDetails(id: id);
     if (result != null) {
       emit(state.copyWith(isLoading: false, order: result));
     } else {

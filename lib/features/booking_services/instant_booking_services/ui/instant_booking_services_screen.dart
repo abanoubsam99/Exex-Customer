@@ -66,7 +66,14 @@ class InstantBookingServicesScreen extends StatelessWidget {
                     16.verticalSpace,
                     Row(
                       children: [
-                        Expanded(child: DatePicker(title: 'تاريخ المناسبة')),
+                        Expanded(
+                          child: DatePicker(
+                            title: 'تاريخ المناسبة',
+                            onChanged: (date) => context
+                                .read<InstantBookingCubit>()
+                                .setDate(date),
+                          ),
+                        ),
                         12.horizontalSpace,
                         GestureDetector(
                           onTap: () {

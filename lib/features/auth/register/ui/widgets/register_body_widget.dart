@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'all_scoial_media_widget.dart';
+// import 'all_scoial_media_widget.dart';
 
 class RegisterBodyWidget extends StatelessWidget {
   const RegisterBodyWidget({super.key});
@@ -82,8 +82,8 @@ class RegisterBodyWidget extends StatelessWidget {
                 Expanded(child: _Divider()),
               ],
             ),
-            16.verticalSpace,
-            const AllSocalMediaWidget(),
+            // 16.verticalSpace,
+            // const AllSocalMediaWidget(),
             24.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

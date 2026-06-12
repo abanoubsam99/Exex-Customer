@@ -9,6 +9,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   HomeCubit(this._homeRepo) : super(const HomeState());
 
+  /// Clears all home state so the next signed-in account starts fresh.
+  void reset() => emit(const HomeState());
+
   Future<void> init() async {
     await Future.wait([getHomeUserAppInfo(), getSpecialOffers()]);
   }

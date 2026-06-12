@@ -1,11 +1,17 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/date_format_helper.dart';
 
 class TransactionModel {
   final String portName;
-  final int paymentType; //0 outcome 1 income
+
+  /// 0 = outcome (money paid by the client), 1 = income (refund to the client).
+  final int paymentType;
   final num paymentAmount;
   final String paymentMethod;
   final String paymentReasson;
+
+  /// Pre-formatted Arabic date/time line (e.g. "26 مايو 2026  -  مساءا 9:27").
+  final String dateText;
 
   TransactionModel({
     required this.portName,
@@ -13,27 +19,47 @@ class TransactionModel {
     required this.paymentAmount,
     required this.paymentMethod,
     required this.paymentReasson,
+    this.dateText = '',
   });
 
-  TransactionModel.fromJson(Map<String, dynamic> json)
-      : portName = json['portName'] as String,
-        paymentType = (json['paymentType'] as num).toInt(),
-        paymentAmount = json['paymentAmount'] as num,
-        paymentMethod = json['paymentMethod'] as String,
-        paymentReasson = json['paymentReasson'] as String;
+  /// Maps one item of GET /api/Accounts/GetMyFinancialOperations.
+  factory TransactionModel.fromFinancialOperation(Map<String, dynamic> json) {
+    final operationType = json['operationType']?.toString() ?? '';
+    final details = (json['details']?.toString() ?? '').trim();
+    final date = json['dateAndTime']?.toString();
+    return TransactionModel(
+      portName: json['portName']?.toString() ?? '',
+      paymentType: _isRefund(operationType) ? 1 : 0,
+      paymentAmount: ((json['amount'] as num?) ?? 0).round(),
+      paymentMethod: json['paymentMethod']?.toString() ?? '',
+      paymentReasson: details.isNotEmpty ? details : _reasonFor(operationType),
+      dateText:
+          '${DateFormatHelper.arabicDate(date, fallback: '')}  -  ${DateFormatHelper.arabicClock(date)}',
+    );
+  }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['portName'] = portName;
-    data['paymentType'] = paymentType;
-    data['paymentAmount'] = paymentAmount;
-    data['paymentMethod'] = paymentMethod;
-    data['paymentReasson'] = paymentReasson;
-    return data;
+  // Refund/return operations are treated as income; everything else as outcome.
+  static bool _isRefund(String operationType) {
+    final t = operationType.toLowerCase();
+    return t.contains('refund') ||
+        t.contains('return') ||
+        operationType.contains('استرداد');
+  }
+
+  static String _reasonFor(String operationType) {
+    switch (operationType.toLowerCase()) {
+      case 'deposit':
+        return 'مقدم الحجز';
+      case 'paying':
+        return 'دفعات الحجز';
+      default:
+        return _isRefund(operationType) ? 'استرداد' : operationType;
+    }
   }
 
   String get paymentMethodImage {
     switch (paymentMethod.toLowerCase()) {
+      case 'paymob':
       case 'mastercard':
         return AppImages.imagesMasterCard2;
       case 'visa':
@@ -47,55 +73,3 @@ class TransactionModel {
     }
   }
 }
-
-List<TransactionModel> myTransactions = [
-  TransactionModel(
-    portName: 'قاعة البارون',
-    paymentType: 0,
-    paymentAmount: 1000,
-    paymentMethod: 'mastercard',
-    paymentReasson: 'مقدم الحجز',
-  ),
-  TransactionModel(
-    portName: 'قاعة البارون',
-    paymentType: 1,
-    paymentAmount: 1000,
-    paymentMethod: 'cash',
-    paymentReasson: 'دفعات الحجز',
-  ),
-  TransactionModel(
-    portName: 'محمود فوتوجرافر',
-    paymentType: 0,
-    paymentAmount: 1000,
-    paymentMethod: 'mastercard',
-    paymentReasson: 'دفعات الحجز',
-  ),
-  TransactionModel(
-    portName: 'محمود فوتوجرافر',
-    paymentType: 0,
-    paymentAmount: 1000,
-    paymentMethod: 'evex',
-    paymentReasson: 'دفعات الحجز',
-  ),
-  TransactionModel(
-    portName: 'محمود فوتوجرافر',
-    paymentType: 1,
-    paymentAmount: 1000,
-    paymentMethod: 'cash',
-    paymentReasson: 'دفعات الحجز',
-  ),
-  TransactionModel(
-    portName: 'امنية ميكاب ارتيست',
-    paymentType: 0,
-    paymentAmount: 1000,
-    paymentMethod: 'mastercard',
-    paymentReasson: 'دفعات الحجز',
-  ),
-  TransactionModel(
-    portName: 'امنية ميكاب ارتيست',
-    paymentType: 0,
-    paymentAmount: 1000,
-    paymentMethod: 'evex',
-    paymentReasson: 'دفعات الحجز',
-  ),
-];

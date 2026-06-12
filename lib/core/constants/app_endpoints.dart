@@ -47,46 +47,31 @@ class AppEndpoints {
 
   // Reservations
   static const myReservations = "/api/Reservations/GetMyReservations";
-  static const myRequestReservations =
-      "/api/Reservations/GetMyRequestReservations";
-  static const billDetailsByClient =
-      "/api/Reservations/GetBillDetailsByClient"; // + /{id}
-  static const checkReservationAvailability =
-      "/api/Reservations/CheckReservationAvailabilityByClient"; // + /{portId}?date=
+  static const myRequestReservations = "/api/Reservations/GetMyRequestReservations";
+  static const billDetailsByClient = "/api/Reservations/GetBillDetailsByClient"; // + /{id}
+  static const checkReservationAvailability = "/api/Reservations/CheckReservationAvailabilityByClient"; // + /{portId}?date=
   static const addClientReservation = "/api/Reservations/AddClientReservation";
-  static const confirmClientReservation =
-      "/api/Reservations/ConfirmClientReservation";
-  static const confirmClientReservation2 =
-      "/api/Reservations/ConfirmClientReservation_2";
+  static const confirmClientReservation = "/api/Reservations/ConfirmClientReservation";
+  static const confirmClientReservation2 = "/api/Reservations/ConfirmClientReservation_2";
   static const verifyPayment = "/api/Reservations/VerifyPayment";
-  static const calculatePendingDeposit =
-      "/api/Reservations/CalculatePendingDeposit";
-  static const calculateNetCost =
-      "/api/Reservations/Client/CalculateNetCost"; // + /{id}?servicePrice=...
-  static const reservationUserNote =
-      "/api/Reservations/GetReservationUserNote"; // + /{id}
-  static const editReservationUserNote =
-      "/api/Reservations/EditReservationUserNote";
-  static const updateReservationRequest =
-      "/api/Reservations/UpdateReservationRequest"; // + /{id}
-  static const updateReservationByClient =
-      "/api/Reservations/UpdateReservationByClient"; // + /{id}
+  static const calculatePendingDeposit = "/api/Reservations/CalculatePendingDeposit";
+  static const calculateNetCost = "/api/Reservations/Client/CalculateNetCost"; // + /{id}?servicePrice=...
+  static const reservationUserNote = "/api/Reservations/GetReservationUserNote"; // + /{id}
+  static const editReservationUserNote = "/api/Reservations/EditReservationUserNote";
+  static const updateReservationRequest = "/api/Reservations/UpdateReservationRequest"; // + /{id}
+  static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
 
   // Accounts
-  static const myFinancialOperations =
-      "/api/Accounts/GetMyFinancialOperations";
+  static const myFinancialOperations = "/api/Accounts/GetMyFinancialOperations";
 
   // Vendor requests
   static const vendorRequests = "/api/VendorRequests";
 
 
 
-
-
-  // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
-  static const joinRequest = "/api/Merchants/JoinRequest";
-  // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
-  static const confirmBooking = "/api/Bookings/ConfirmPayment";
+  //
+  // // TODO: أكّد المسار ده مع الـ backend (لسه placeholder).
+  // static const confirmBooking = "/api/Bookings/ConfirmPayment";
 
 
 

@@ -5,36 +5,60 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/w
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../app/helpers/navigation_helper.dart';
-import '../../../../core/routing/routes.dart';
-
 class MyBookingItem extends StatelessWidget {
-  const MyBookingItem({super.key});
+  final String portName;
+  final String statusText;
+  final Color statusColor;
+  final String serviceName;
+  final String serviceDetails;
+  final String location;
+  final String dateText;
+
+  /// مقدم الحجز.
+  final num deposit;
+
+  /// الإجمالي بعد الخصم (الرقم البرتقالي).
+  final num finalCost;
+
+  /// السعر الظاهر قبل الخصم (المشطوب). بيتعرض بس لو مختلف عن [finalCost].
+  final num apparentPrice;
+
+  final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  const MyBookingItem({
+    super.key,
+    required this.portName,
+    required this.statusText,
+    required this.statusColor,
+    required this.serviceName,
+    required this.serviceDetails,
+    required this.location,
+    required this.dateText,
+    required this.deposit,
+    required this.finalCost,
+    required this.apparentPrice,
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+  });
+
+  static String _money(num v) => v.round().toString();
 
   @override
   Widget build(BuildContext context) {
+    final hasDiscount = apparentPrice > 0 && apparentPrice != finalCost;
     return InkWell(
-      onTap: (){
-        NavigationHelper.pushNamed(Routes.orderDetailsScreen);
-      },
+      onTap: onTap,
       child: Container(
         height: 210.h,
         width: double.infinity,
-
         clipBehavior: Clip.none,
         margin: EdgeInsets.symmetric(horizontal: 24.w),
         alignment: Alignment.center,
-
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withValues(alpha: 0.1),
-          //     blurRadius: 0.r,
-          //     offset: Offset(0, 4.h),
-          //     spreadRadius: 0,
-          //   ),
-          // ],
         ),
         child: CustomPaint(
           painter: TicketPainter(
@@ -57,41 +81,47 @@ class MyBookingItem extends StatelessWidget {
                       height: 20.r,
                     ),
                     5.horizontalSpace,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'قاعه الماس البارون',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.24,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            portName,
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.24,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'متاح للحجز الفوري في هذا الميعاد',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: const Color(0xFF4CD195),
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.64,
-                            letterSpacing: -0.24,
+                          Text(
+                            statusText,
+                            textAlign: TextAlign.right,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: 11.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w400,
+                              height: 1.64,
+                              letterSpacing: -0.24,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Spacer(),
-
+                    5.horizontalSpace,
                     ClipRRect(
                       borderRadius: BorderRadius.circular(50),
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
+                          onTap: onEdit,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: CustomImageHandler(
@@ -100,7 +130,6 @@ class MyBookingItem extends StatelessWidget {
                               height: 17.r,
                             ),
                           ),
-                          onTap: () {},
                         ),
                       ),
                     ),
@@ -109,6 +138,7 @@ class MyBookingItem extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
+                          onTap: onDelete,
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: CustomImageHandler(
@@ -117,13 +147,12 @@ class MyBookingItem extends StatelessWidget {
                               height: 18.r,
                             ),
                           ),
-                          onTap: () {},
                         ),
                       ),
                     ),
                   ],
                 ),
-                Divider(color: Color(0xFFF2F4F7), thickness: 1.r),
+                Divider(color: const Color(0xFFF2F4F7), thickness: 1.r),
                 Row(
                   children: [
                     Expanded(
@@ -143,8 +172,10 @@ class MyBookingItem extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'حفل الزفاف الشامل',
+                                      serviceName,
                                       textAlign: TextAlign.right,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: const Color(0xFF6F767E),
                                         fontSize: 12.r,
@@ -155,9 +186,10 @@ class MyBookingItem extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'يكفى ل 400 فرد فى اكبر النوادى فى القاهره العظمى ويشمل جميع الخدمات المطلوبة وال...',
+                                      serviceDetails,
                                       textAlign: TextAlign.right,
                                       maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: const Color(0xFF99A2AC),
                                         fontSize: 11.r,
@@ -181,16 +213,20 @@ class MyBookingItem extends StatelessWidget {
                                 color: AppColors.primaryColor,
                               ),
                               6.horizontalSpace,
-                              Text(
-                                'الشرطه, مصر الجديده, هليوبلس, القاهره',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: const Color(0xFF6F767E),
-                                  fontSize: 12.r,
-                                  fontFamily: 'Almarai',
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.67,
-                                  letterSpacing: -0.24,
+                              Expanded(
+                                child: Text(
+                                  location,
+                                  textAlign: TextAlign.right,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: const Color(0xFF6F767E),
+                                    fontSize: 12.r,
+                                    fontFamily: 'Almarai',
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.67,
+                                    letterSpacing: -0.24,
+                                  ),
                                 ),
                               ),
                             ],
@@ -204,7 +240,7 @@ class MyBookingItem extends StatelessWidget {
                               ),
                               6.horizontalSpace,
                               Text(
-                                '20 اكتوبر 2025',
+                                dateText,
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                   color: const Color(0xFF6F767E),
@@ -232,7 +268,7 @@ class MyBookingItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                 Row(
                   children: [
                     Text(
@@ -247,23 +283,13 @@ class MyBookingItem extends StatelessWidget {
                         letterSpacing: -0.24,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Text.rich(
+                      textDirection: TextDirection.ltr,
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: ' ',
-                            style: TextStyle(
-                              color: const Color(0xFF99A2AC),
-                              fontSize: 12,
-                              fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w700,
-                              height: 1.67,
-                              letterSpacing: -0.24,
-                            ),
-                          ),
-                          TextSpan(
-                            text: '1000',
+                            text: '${_money(deposit)} ',
                             style: TextStyle(
                               color: const Color(0xFF79E2B2),
                               fontSize: 16.r,
@@ -274,28 +300,17 @@ class MyBookingItem extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' ',
+                            text: 'جنيه',
                             style: TextStyle(
                               color: const Color(0xFF99A2AC),
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w400,
                               height: 1.67,
                               letterSpacing: -0.24,
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    Text(
-                      'جنيه',
-                      style: TextStyle(
-                        color: const Color(0xFF99A2AC),
-                        fontSize: 12.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.67,
-                        letterSpacing: -0.24,
                       ),
                     ),
                   ],
@@ -314,50 +329,42 @@ class MyBookingItem extends StatelessWidget {
                         letterSpacing: -0.24,
                       ),
                     ),
-                    Spacer(),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Text(
-                          '125000',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            color: const Color(0xFFFF928E),
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                            height: 1.50,
-                            letterSpacing: -0.24,
-                          ),
-                        ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 2.25.h,
-                          child: CustomPaint(
-                            size: Size(32.w, 10.h),
-                            painter: StrikethroughPainter(),
-                          ),
-                        ),
-                      ],
-                    ),
-                    7.horizontalSpace,
-                    Text.rich(
-                      TextSpan(
+                    const Spacer(),
+                    if (hasDiscount) ...[
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
-                          TextSpan(
-                            text: ' ',
+                          Text(
+                            _money(apparentPrice),
+                            textDirection: TextDirection.ltr,
                             style: TextStyle(
-                              color: const Color(0xFF99A2AC),
-                              fontSize: 12,
+                              color: const Color(0xFFFF928E),
+                              fontSize: 12.r,
                               fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w700,
-                              height: 1.67,
+                              fontWeight: FontWeight.w400,
+                              height: 1.50,
                               letterSpacing: -0.24,
                             ),
                           ),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 2.25.h,
+                            child: CustomPaint(
+                              size: Size(32.w, 10.h),
+                              painter: StrikethroughPainter(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      7.horizontalSpace,
+                    ],
+                    Text.rich(
+                      textDirection: TextDirection.ltr,
+                      TextSpan(
+                        children: [
                           TextSpan(
-                            text: '12000',
+                            text: '${_money(finalCost)} ',
                             style: TextStyle(
                               color: const Color(0xFFFE7062),
                               fontSize: 12.r,
@@ -368,28 +375,17 @@ class MyBookingItem extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' ',
+                            text: 'جنيه',
                             style: TextStyle(
                               color: const Color(0xFF99A2AC),
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w400,
                               height: 1.67,
                               letterSpacing: -0.24,
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    Text(
-                      'جنيه',
-                      style: TextStyle(
-                        color: const Color(0xFF99A2AC),
-                        fontSize: 12.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.67,
-                        letterSpacing: -0.24,
                       ),
                     ),
                   ],
@@ -441,23 +437,20 @@ class TicketPainter extends CustomPainter {
     const double dashWidth = 8.5;
     const double dashSpace = 4;
 
-    final paintBg =
-        Paint()
-          ..style = PaintingStyle.fill
-          ..strokeCap = StrokeCap.round
-          ..color = bgColor;
+    final paintBg = Paint()
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.round
+      ..color = bgColor;
 
-    final paintBorder =
-        Paint()
-          ..strokeWidth = 1
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..color = borderColor;
+    final paintBorder = Paint()
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..color = borderColor;
 
-    final paintDottedLine =
-        Paint()
-          ..color = dottedLineColor
-          ..strokeWidth = 1;
+    final paintDottedLine = Paint()
+      ..color = dottedLineColor
+      ..strokeWidth = 1;
 
     var path = Path();
 
@@ -475,113 +468,20 @@ class TicketPainter extends CustomPainter {
     path.lineTo(0, _cornerGap);
     _drawCornerArc(path, _cornerGap, 0);
 
-    // Draw shadow if shadow color is not transparent
     if (shadowColor != Colors.transparent) {
-      // Handle spread radius by creating an expanded path
-      Path shadowPath = path;
-      if (shadowSpreadRadius != 0) {
-        // Create expanded path for spread effect
-        shadowPath = Path();
-        final expandedCornerGap = _cornerGap + shadowSpreadRadius;
-        final expandedCutoutRadius = _cutoutRadius + shadowSpreadRadius;
-        final expandedCutoutDiameter = expandedCutoutRadius * 2;
-
-        final expandedWidth = maxWidth + (shadowSpreadRadius * 2);
-        final expandedHeight = maxHeight + (shadowSpreadRadius * 2);
-        final expandedCutoutStartPos = expandedHeight - expandedHeight * 0.3;
-        final expandedLeftCutoutStartY = expandedCutoutStartPos;
-        final expandedRightCutoutStartY =
-            expandedCutoutStartPos - expandedCutoutDiameter;
-
-        shadowPath.moveTo(
-          expandedCornerGap - shadowSpreadRadius,
-          -shadowSpreadRadius,
-        );
-        shadowPath.lineTo(
-          expandedWidth - expandedCornerGap - shadowSpreadRadius,
-          -shadowSpreadRadius,
-        );
-        _drawCornerArc(
-          shadowPath,
-          expandedWidth - shadowSpreadRadius,
-          expandedCornerGap - shadowSpreadRadius,
-          expandedCornerGap,
-        );
-        shadowPath.lineTo(
-          expandedWidth - shadowSpreadRadius,
-          expandedRightCutoutStartY - shadowSpreadRadius,
-        );
-        _drawCutout(
-          shadowPath,
-          expandedWidth - shadowSpreadRadius,
-          expandedRightCutoutStartY +
-              expandedCutoutDiameter -
-              shadowSpreadRadius,
-          expandedCutoutRadius,
-        );
-        shadowPath.lineTo(
-          expandedWidth - shadowSpreadRadius,
-          expandedHeight - expandedCornerGap - shadowSpreadRadius,
-        );
-        _drawCornerArc(
-          shadowPath,
-          expandedWidth - expandedCornerGap - shadowSpreadRadius,
-          expandedHeight - shadowSpreadRadius,
-          expandedCornerGap,
-        );
-        shadowPath.lineTo(
-          expandedCornerGap - shadowSpreadRadius,
-          expandedHeight - shadowSpreadRadius,
-        );
-        _drawCornerArc(
-          shadowPath,
-          -shadowSpreadRadius,
-          expandedHeight - expandedCornerGap - shadowSpreadRadius,
-          expandedCornerGap,
-        );
-        shadowPath.lineTo(
-          -shadowSpreadRadius,
-          expandedLeftCutoutStartY - shadowSpreadRadius,
-        );
-        _drawCutout(
-          shadowPath,
-          -shadowSpreadRadius,
-          expandedLeftCutoutStartY -
-              expandedCutoutDiameter -
-              shadowSpreadRadius,
-          expandedCutoutRadius,
-        );
-        shadowPath.lineTo(
-          -shadowSpreadRadius,
-          expandedCornerGap - shadowSpreadRadius,
-        );
-        _drawCornerArc(
-          shadowPath,
-          expandedCornerGap - shadowSpreadRadius,
-          -shadowSpreadRadius,
-          expandedCornerGap,
-        );
-      }
-
-      final shadowPaint =
-          Paint()
-            ..color = shadowColor
-            ..maskFilter = MaskFilter.blur(
-              BlurStyle.normal,
-              shadowBlurRadius / 2,
-            );
+      final shadowPaint = Paint()
+        ..color = shadowColor
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, shadowBlurRadius / 2);
 
       canvas.save();
       canvas.translate(shadowOffset.dx, shadowOffset.dy);
-      canvas.drawPath(shadowPath, shadowPaint);
+      canvas.drawPath(path, shadowPaint);
       canvas.restore();
     }
 
-    // Draw actual shape
     canvas.drawPath(path, paintBg);
     canvas.drawPath(path, paintBorder);
 
-    // Draw dotted line
     while (dottedLineStartX < dottedLineEndX) {
       canvas.drawLine(
         Offset(dottedLineStartX, dottedLineY),
@@ -592,7 +492,7 @@ class TicketPainter extends CustomPainter {
     }
   }
 
-  _drawCutout(Path path, double startX, double endY, [double? radius]) {
+  void _drawCutout(Path path, double startX, double endY, [double? radius]) {
     path.arcToPoint(
       Offset(startX, endY),
       radius: Radius.circular(radius ?? _cutoutRadius),
@@ -600,7 +500,7 @@ class TicketPainter extends CustomPainter {
     );
   }
 
-  _drawCornerArc(
+  void _drawCornerArc(
     Path path,
     double endPointX,
     double endPointY, [

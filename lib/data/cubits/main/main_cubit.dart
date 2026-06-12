@@ -13,6 +13,12 @@ class MainCubit extends Cubit<MainState> {
     pageController.jumpToPage(page);
   }
 
+  /// Resets back to the first tab (used on logout).
+  void reset() {
+    emit(const MainState());
+    if (pageController.hasClients) pageController.jumpToPage(0);
+  }
+
   void animateToTab(int page) {
     emit(state.copyWith(currentPage: page));
     pageController.animateToPage(

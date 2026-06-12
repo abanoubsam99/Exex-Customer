@@ -20,7 +20,8 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
 
   Timer? _timer;
 
-  /// تهيئة الشاشة بمقدم الحجز + رقم الطلب + رصيد المحفظة + بدء العدّاد التنازلي.
+  /// Sets up the screen (deposit + request id + wallet balance) and starts
+  /// the countdown.
   void init({
     ConfirmBookingArgs? args,
     num walletBalance = 201,
@@ -53,7 +54,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
   void toggleTerms(bool value) => emit(state.copyWith(termsAccepted: value));
 
   void rechargeWallet() {
-    // TODO: نقل لشاشة شحن المحفظة لما تتوفر.
+    // TODO: navigate to the wallet top-up screen once it exists.
     ToastManager.showSuccess('قريباً: شحن المحفظة');
   }
 
@@ -79,6 +80,20 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
       ToastManager.showError('تعذّر تأكيد الحجز، حاول مرة أخرى');
     }
+  }
+
+  /// Verifies a Paymob card payment once the gateway returns its order id.
+  /// TODO: wire [paymobOrderId] from the Paymob checkout result.
+  Future<bool> verifyPayment(int paymobOrderId) async {
+    emit(state.copyWith(isLoading: true));
+    final ok = await _repo.verifyPayment(paymobOrderId);
+    emit(state.copyWith(isLoading: false));
+    if (ok) {
+      ToastManager.showSuccess('تم تأكيد الدفع بنجاح');
+    } else {
+      ToastManager.showError('تعذّر تأكيد الدفع، حاول مرة أخرى');
+    }
+    return ok;
   }
 
   @override
