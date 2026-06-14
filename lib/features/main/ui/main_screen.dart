@@ -73,7 +73,8 @@ class MainScreen extends StatelessWidget {
                       onTap: () => cubit.goToTab(0),
                     ),
                     _NavItem(
-                      materialIcon: Icons.shopping_cart_outlined,
+                      // materialIcon: Icons.shopping_cart_outlined,
+                      icon: AppImages.iconsCart,
                       label: 'حجوزاتى',
                       page: 1,
                       currentPage: state.currentPage,

@@ -18,4 +18,32 @@ class OrderDetailsRepo {
       return null;
     }
   }
+
+  /// GET /api/Reservations/GetReservationUserNote/{id} — the client's note.
+  Future<String?> getReservationUserNote(int id) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.reservationUserNote}/$id',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return response.data['userNotes']?.toString() ?? '';
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// POST /api/Reservations/EditReservationUserNote — { reservationId, userNotes }
+  Future<bool> editReservationUserNote(int reservationId, String userNotes) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.editReservationUserNote,
+        data: {'reservationId': reservationId, 'userNotes': userNotes},
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
 }

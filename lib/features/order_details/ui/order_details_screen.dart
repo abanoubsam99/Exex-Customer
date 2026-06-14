@@ -568,27 +568,20 @@ class _TotalCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────
 //  Notes field
 // ─────────────────────────────────────────────────────────────────────────
-class _NotesField extends StatefulWidget {
+class _NotesField extends StatelessWidget {
   const _NotesField();
 
   @override
-  State<_NotesField> createState() => _NotesFieldState();
-}
-
-class _NotesFieldState extends State<_NotesField> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      maxLines: 3,
+    final cubit = context.read<OrderDetailsCubit>();
+    return Focus(
+      // Save the note when the field loses focus.
+      onFocusChange: (hasFocus) {
+        if (!hasFocus) cubit.saveUserNote();
+      },
+      child: TextFormField(
+        controller: cubit.notesController,
+        maxLines: 3,
       textAlign: TextAlign.start,
       textDirection: TextDirection.rtl,
       style: AppTextStyles.font14BlacksoftRegular,
@@ -606,6 +599,7 @@ class _NotesFieldState extends State<_NotesField> {
           borderSide: BorderSide(color: AppColors.orangeColor),
           borderRadius: BorderRadius.circular(14.r),
         ),
+      ),
       ),
     );
   }

@@ -11,11 +11,15 @@ class CompleteBookingArgs {
   final List<Addition> additions;
   final double totalCost;
 
+  /// Occasion date picked in the instant-booking filter (the reservation date).
+  final DateTime? occasionDate;
+
   const CompleteBookingArgs({
     this.port,
     this.service,
     this.additions = const [],
     this.totalCost = 0,
+    this.occasionDate,
   });
 }
 

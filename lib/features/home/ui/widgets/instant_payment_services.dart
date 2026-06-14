@@ -5,7 +5,8 @@ import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
 import 'package:evex_user/core/ui/widgets/speech_bubble_border.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
-import 'package:evex_user/features/home/ui/widgets/payment_services_type.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -70,7 +71,12 @@ class InstantPaymentServices extends StatelessWidget {
                   final isSelected = state.selectedPaymentPort?.id == port.id;
                   return GestureDetector(
                     onTap: () {
+                      // Direct-payment categories have no chips — go straight
+                      // to the direct services list.
                       context.read<HomeCubit>().selectPaymentPort(port);
+                      NavigationHelper.pushNamed(
+                        Routes.directServicesListScreen,
+                      );
                     },
                     child: Center(
                       child: Container(
@@ -136,7 +142,6 @@ class InstantPaymentServices extends StatelessWidget {
             );
           },
         ),
-        const PaymentServicesType(),
       ],
     );
   }

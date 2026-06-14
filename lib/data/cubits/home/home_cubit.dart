@@ -1,4 +1,6 @@
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart'
+    show CheckReservationResponse;
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -67,4 +69,14 @@ class HomeCubit extends Cubit<HomeState> {
   void selectPaymentPortType(PortTypeDto type) {
     emit(state.copyWith(selectedPaymentPortType: type));
   }
+
+  /// Stores the occasion date picked in the instant-booking filter so the
+  /// booking flow can send it as the reservation's occasionDate. Clears the
+  /// previous availability result until it's re-checked for the new date.
+  void setBookingDate(DateTime date) =>
+      emit(state.copyWith(bookingDate: date, clearAvailability: true));
+
+  /// Stores the availability result for the selected port + date.
+  void setAvailability(CheckReservationResponse? availability) =>
+      emit(state.copyWith(availability: availability));
 }

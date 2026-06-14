@@ -3,6 +3,9 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,53 @@ class ServiceTopPart extends StatefulWidget {
 
 class _ServiceTopPartState extends State<ServiceTopPart> {
   int activeIndex = 0;
+
+  /// Calls the port's phone number.
+  Future<void> _callPort() async {
+    final phone = context
+        .read<BookingServiceDetailsCubit>()
+        .state
+        .port
+        ?.phoneNumber1
+        ?.trim();
+    if (phone == null || phone.isEmpty) {
+      ToastManager.showError('رقم الهاتف غير متاح');
+      return;
+    }
+    if (!await launchUrl(Uri.parse('tel:$phone'))) {
+      ToastManager.showError('تعذّر فتح الاتصال');
+    }
+  }
+
+  /// Opens the port's location on the maps app (GPS, else the address text).
+  Future<void> _openLocation() async {
+    final port = context.read<BookingServiceDetailsCubit>().state.port;
+    final gps = port?.gps?.trim() ?? '';
+    final address = [port?.governorate, port?.city, port?.address]
+        .whereType<String>()
+        .where((e) => e.trim().isNotEmpty)
+        .join(' ');
+    final query = gps.isNotEmpty ? gps : address;
+    if (query.isEmpty) {
+      ToastManager.showError('الموقع غير متاح');
+      return;
+    }
+    final uri = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}',
+    );
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      ToastManager.showError('تعذّر فتح الخريطة');
+    }
+  }
+
+  /// Shares the port via the system share sheet.
+  Future<void> _sharePort() async {
+    final name =
+        context.read<BookingServiceDetailsCubit>().state.port?.portName ??
+            'EVEX';
+    await SharePlus.instance.share(ShareParams(text: '$name - عبر تطبيق EVEX'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -159,13 +209,19 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                   ),
                 ),
                 6.horizontalSpace,
-                SocialNavButton(icon: AppImages.iconsMarker, onTap: () {}),
+                SocialNavButton(
+                  icon: AppImages.iconsMarker,
+                  onTap: _openLocation,
+                ),
                 6.horizontalSpace,
-                SocialNavButton(icon: AppImages.iconsPhone2, onTap: () {}),
+                SocialNavButton(
+                  icon: AppImages.iconsPhone2,
+                  onTap: _callPort,
+                ),
                 6.horizontalSpace,
                 SocialNavButton(icon: AppImages.iconsFolder, onTap: () {}),
                 6.horizontalSpace,
-                SocialNavButton(icon: AppImages.iconsShare, onTap: () {}),
+                SocialNavButton(icon: AppImages.iconsShare, onTap: _sharePort),
               ],
             ),
           ),

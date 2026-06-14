@@ -1,4 +1,6 @@
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart'
+    show CheckReservationResponse;
 import 'package:evex_user/data/models/special_offer.dart';
 
 class HomeState {
@@ -11,6 +13,13 @@ class HomeState {
   final PortTypeDto? selectedBookingPortType;
   final PortCategoryWithPortTypes? selectedPaymentPort;
   final PortTypeDto? selectedPaymentPortType;
+
+  /// The occasion date the user picked in the instant-booking filter; reused
+  /// as the reservation's occasionDate later in the flow.
+  final DateTime? bookingDate;
+
+  /// Instant-booking availability for the selected port + [bookingDate].
+  final CheckReservationResponse? availability;
   final String? errorMessage;
 
   const HomeState({
@@ -23,6 +32,8 @@ class HomeState {
     this.selectedBookingPortType,
     this.selectedPaymentPort,
     this.selectedPaymentPortType,
+    this.bookingDate,
+    this.availability,
     this.errorMessage,
   });
 
@@ -36,6 +47,9 @@ class HomeState {
     PortTypeDto? selectedBookingPortType,
     PortCategoryWithPortTypes? selectedPaymentPort,
     PortTypeDto? selectedPaymentPortType,
+    DateTime? bookingDate,
+    CheckReservationResponse? availability,
+    bool clearAvailability = false,
     String? errorMessage,
   }) {
     return HomeState(
@@ -50,6 +64,9 @@ class HomeState {
       selectedPaymentPort: selectedPaymentPort ?? this.selectedPaymentPort,
       selectedPaymentPortType:
           selectedPaymentPortType ?? this.selectedPaymentPortType,
+      bookingDate: bookingDate ?? this.bookingDate,
+      availability:
+          clearAvailability ? null : (availability ?? this.availability),
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

@@ -18,6 +18,7 @@ import 'package:evex_user/features/home/ui/widgets/user_data_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -49,8 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          child: Column(
+        child: RefreshIndicator(
+          onRefresh: () => context.read<HomeCubit>().init(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
             children: [
               SizedBox(
                 height: 340.h,
@@ -133,11 +137,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Routes.notificationsScreen,
                                             );
                                           },
-                                          icon: const Icon(
-                                            Icons.notifications_outlined,
+                                          icon: CustomImageHandler(
+                                            AppImages.iconsNotification,
+                                            width: 22.r,
+                                            height: 22.r,
                                           ),
-                                          iconSize: 22.r,
                                         ),
+
                                       ],
                                     ),
                                   ],
@@ -404,6 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
               40.verticalSpace,
             ],
           ),
+        ),
         ),
       ),
       ),

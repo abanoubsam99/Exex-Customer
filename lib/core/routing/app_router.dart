@@ -270,6 +270,7 @@ class AppRouter {
           BlocProvider(
             create: (context) => CompleteBookingCubit(
               context.read<ConfirmBookingRepo>(),
+              context.read<HomeCubit>(),
               args: settings.arguments is CompleteBookingArgs
                   ? settings.arguments as CompleteBookingArgs
                   : const CompleteBookingArgs(),

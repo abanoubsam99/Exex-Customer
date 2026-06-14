@@ -2,6 +2,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/reservation_models.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,10 @@ import 'complete_booking_state.dart';
 
 class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   final ConfirmBookingRepo _repo;
+  final HomeCubit _homeCubit;
   final CompleteBookingArgs args;
 
-  CompleteBookingCubit(this._repo, {required this.args})
+  CompleteBookingCubit(this._repo, this._homeCubit, {required this.args})
       : super(const CompleteBookingState()) {
     getPortPolicy();
   }
@@ -38,8 +40,18 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
     }
+    if (args.totalCost <= 0) {
+      ToastManager.showError('السعر يجب أن يكون أكبر من صفر');
+      return;
+    }
     final port = args.port;
-    final occasionDate = _formatDate(port?.checkReservationResponse?.date);
+    // Prefer the date the user picked in the filter; fall back to the date the
+    // port's availability was checked against.
+    final occasionDate = _formatDate(
+      _homeCubit.state.bookingDate ??
+          args.occasionDate ??
+          port?.checkReservationResponse?.date,
+    );
     final governorate = port?.governorate;
     final city = port?.city;
     // Backend requires governorate, city and occasionDate.
@@ -48,6 +60,15 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
         (city ?? '').isEmpty) {
       ToastManager.showError(
         'بيانات المناسبة غير مكتملة (التاريخ/المحافظة/المدينة)',
+      );
+      return;
+    }
+    // If we already know the date is unavailable, don't attempt (avoids 409).
+    final availability = _homeCubit.state.availability;
+    if (availability != null && availability.allowedToReservation == false) {
+      ToastManager.showError(
+        availability.verificationResultMessage ??
+            'الميعاد غير متاح للحجز الفوري',
       );
       return;
     }

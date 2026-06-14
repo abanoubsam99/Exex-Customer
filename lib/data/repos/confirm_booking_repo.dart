@@ -1,6 +1,7 @@
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/port_policy.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/reservation_models.dart';
 
 /// Repo بتاع مسار "استكمال الحجز → تأكيد الحجز":
@@ -60,6 +61,27 @@ class ConfirmBookingRepo {
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// GET /api/Reservations/CheckReservationAvailabilityByClient/{portId}?date=
+  /// Returns whether the port is available for instant booking on [date].
+  Future<CheckReservationResponse?> checkAvailability({
+    required int portId,
+    required DateTime date,
+  }) async {
+    try {
+      final d = '${date.year}/${date.month}/${date.day}';
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.checkReservationAvailability}/$portId',
+        query: {'date': d},
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return CheckReservationResponse.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 

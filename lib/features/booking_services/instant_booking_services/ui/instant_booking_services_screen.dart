@@ -6,6 +6,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
 import 'package:flutter/material.dart';
@@ -69,9 +70,12 @@ class InstantBookingServicesScreen extends StatelessWidget {
                         Expanded(
                           child: DatePicker(
                             title: 'تاريخ المناسبة',
-                            onChanged: (date) => context
-                                .read<InstantBookingCubit>()
-                                .setDate(date),
+                            onChanged: (date) {
+                              context
+                                  .read<InstantBookingCubit>()
+                                  .setDate(date);
+                              context.read<HomeCubit>().setBookingDate(date);
+                            },
                           ),
                         ),
                         12.horizontalSpace,

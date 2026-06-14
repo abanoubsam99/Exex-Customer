@@ -14,6 +14,7 @@ class AppImages {
   /// Assets for iconsBadgePercent
   /// assets/icons/badge_percent.svg
   static const String iconsBadgePercent = "assets/icons/badge_percent.svg";
+  static const String iconsNotification = "assets/icons/notification.svg";
   /// Assets for iconsBell
   /// assets/icons/bell.svg
   static const String iconsBell = "assets/icons/bell.svg";
@@ -53,6 +54,7 @@ class AppImages {
   /// Assets for iconsHouse
   /// assets/icons/house.svg
   static const String iconsHouse = "assets/icons/house.svg";
+  static const String iconsCart = "assets/icons/cart.svg";
   /// Assets for iconsIncome
   /// assets/icons/income.svg
   static const String iconsIncome = "assets/icons/income.svg";

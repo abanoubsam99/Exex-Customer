@@ -51,7 +51,10 @@ class CompleteBookingScreen extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          child: ChangeOccasion(port: args.port),
+                          child: ChangeOccasion(
+                            port: args.port,
+                            occasionDate: args.occasionDate,
+                          ),
                         ),
                         22.verticalSpace,
                         SectionSeperator(),

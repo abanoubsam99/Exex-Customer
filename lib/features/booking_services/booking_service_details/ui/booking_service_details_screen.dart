@@ -1,10 +1,12 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/data/cubits/complete_booking/complete_booking_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
@@ -82,7 +84,10 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           },
                         ),
                         20.verticalSpace,
-                        ChangeOccasion(),
+                        ChangeOccasion(
+                          occasionDate:
+                              context.read<HomeCubit>().state.bookingDate,
+                        ),
                         24.verticalSpace,
                         ServicesSection(),
                       ],
@@ -204,6 +209,10 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                     onTap: () {
                       final cubit = context.read<BookingServiceDetailsCubit>();
                       final st = cubit.state;
+                      if (st.totalCost <= 0) {
+                        ToastManager.showError('من فضلك اختر خدمة أولاً');
+                        return;
+                      }
                       NavigationHelper.pushNamed(
                         Routes.completeBookingScreen,
                         arguments: CompleteBookingArgs(
@@ -211,6 +220,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           service: st.selectedService,
                           additions: cubit.prepareFinalAdditions(),
                           totalCost: st.totalCost,
+                          occasionDate:
+                              context.read<HomeCubit>().state.bookingDate,
                         ),
                       );
                     },
