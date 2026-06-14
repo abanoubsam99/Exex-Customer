@@ -44,6 +44,8 @@ dependencies:
   image_picker: ^1.1.2
   url_launcher: ^6.3.1
   share_plus: ^11.1.0
+  path_provider: ^2.1.5
+  open_filex: ^4.5.0
   google_sign_in: ^6.2.1
   upgrader: ^11.3.1
 

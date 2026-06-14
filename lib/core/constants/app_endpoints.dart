@@ -60,6 +60,8 @@ class AppEndpoints {
   static const editReservationUserNote = "/api/Reservations/EditReservationUserNote";
   static const updateReservationRequest = "/api/Reservations/UpdateReservationRequest"; // + /{id}
   static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
+  static const cancelReservation = "/api/Reservations/CancelReservation"; // + /{id}
+  static const downloadInfo = "/api/Reservations/DownloadInfo"; // ?id=
 
   // Accounts
   static const myFinancialOperations = "/api/Accounts/GetMyFinancialOperations";

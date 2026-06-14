@@ -2,6 +2,8 @@
 class ReservationRequestModel {
   final int? id;
   final int? portId;
+  final int? serviceId;
+  final int? occasionId;
   final String? portName;
   final String? portAddress;
   final String? governorate;
@@ -22,10 +24,13 @@ class ReservationRequestModel {
 
   final bool? acceptedByVendor;
   final bool? paid;
+  final String? userNotes;
 
   ReservationRequestModel({
     this.id,
     this.portId,
+    this.serviceId,
+    this.occasionId,
     this.portName,
     this.portAddress,
     this.governorate,
@@ -39,11 +44,14 @@ class ReservationRequestModel {
     this.deposit,
     this.acceptedByVendor,
     this.paid,
+    this.userNotes,
   });
 
   ReservationRequestModel.fromJson(Map<String, dynamic> json)
       : id = (json['id'] as num?)?.toInt(),
         portId = (json['portId'] as num?)?.toInt(),
+        serviceId = (json['serviceId'] as num?)?.toInt(),
+        occasionId = (json['occasionId'] as num?)?.toInt(),
         portName = json['portName'] as String?,
         portAddress = json['portAddress'] as String?,
         governorate = json['governorate'] as String?,
@@ -56,5 +64,6 @@ class ReservationRequestModel {
         finalCost = json['theFinalCostBasedOnNumberOfReservations'] as num?,
         deposit = json['deposit'] as num?,
         acceptedByVendor = json['acceptedByVendor'] as bool?,
-        paid = json['paid'] as bool?;
+        paid = json['paid'] as bool?,
+        userNotes = json['userNotes'] as String?;
 }

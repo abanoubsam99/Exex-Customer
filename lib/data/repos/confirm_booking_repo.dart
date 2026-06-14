@@ -98,4 +98,37 @@ class ConfirmBookingRepo {
       return false;
     }
   }
+
+  /// PUT /api/Reservations/UpdateReservationRequest/{id} — edit a pending request.
+  Future<bool> updateReservationRequest(
+    int id,
+    AddReservationRequest request,
+  ) async {
+    try {
+      final response = await DioHelper.putData(
+        url: '${AppEndpoints.updateReservationRequest}/$id',
+        data: request.toJson(),
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// PUT /api/Reservations/UpdateReservationByClient/{id} — edit a confirmed
+  /// reservation.
+  Future<bool> updateReservationByClient(
+    int id,
+    AddReservationRequest request,
+  ) async {
+    try {
+      final response = await DioHelper.putData(
+        url: '${AppEndpoints.updateReservationByClient}/$id',
+        data: request.toJson(),
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
 }

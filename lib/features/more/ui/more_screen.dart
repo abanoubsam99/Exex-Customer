@@ -51,10 +51,10 @@ class MoreScreen extends StatelessWidget {
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
               buildMoreItem(
-                title: 'المفضله',
+                title: 'تفضيلاتي',
                 image: AppImages.iconsHeart,
                 onTap: () {
-
+                  NavigationHelper.pushNamed(Routes.favoritesScreen);
                 },
               ),
               Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),

@@ -1,6 +1,7 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
+import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -39,8 +40,11 @@ class OrderDetailsScreen extends StatelessWidget {
                       Text('تفاصيل الحجز',
                           style: AppTextStyles.font18BlackExtraBoldHeader),
                       const Spacer(),
-                      Icon(Icons.more_horiz,
-                          color: AppColors.blacksoft, size: 24.r),
+                      GestureDetector(
+                        onTap: () => _showOptionsSheet(context),
+                        child: Icon(Icons.more_horiz,
+                            color: AppColors.blacksoft, size: 24.r),
+                      ),
                     ],
                   ),
                 ),
@@ -98,7 +102,16 @@ class OrderDetailsScreen extends StatelessWidget {
                           text: 'الغاء الحجز',
                           isfilled: false,
                           height: 52.h,
-                          onTap: () {},
+                          onTap: () async {
+                            final cubit = context.read<OrderDetailsCubit>();
+                            final ok = await ConfirmDialog.show(
+                              context,
+                              title: 'إلغاء الحجز',
+                              message: 'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟',
+                              confirmText: 'إلغاء الحجز',
+                            );
+                            if (ok) cubit.cancelReservation();
+                          },
                         ),
                       ),
                       12.horizontalSpace,
@@ -605,7 +618,32 @@ class _NotesField extends StatelessWidget {
   }
 }
 
-/// سعر بنفس convention باقي التطبيق: الرقم برتقالي بارز + "جنيه" أفتح وأصغر.
+void _showOptionsSheet(BuildContext context) {
+  final cubit = context.read<OrderDetailsCubit>();
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+    ),
+    builder: (sheetCtx) => SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: ListTile(
+          leading: Icon(Icons.picture_as_pdf, color: AppColors.orangeColor),
+          title: Text('تحميل PDF',
+              style: AppTextStyles.font16BlackRegularHeader),
+          onTap: () {
+            Navigator.pop(sheetCtx);
+            cubit.downloadPdf();
+          },
+        ),
+      ),
+    ),
+  );
+}
+
+/// Price in the app's convention: orange number + smaller, lighter "جنيه".
 Widget _priceText(num value, {double numberSize = 16, double unitSize = 12}) {
   return Text.rich(
     textDirection: TextDirection.rtl,

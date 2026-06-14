@@ -1,6 +1,7 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_state.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/my_booking_item.dart';
@@ -68,6 +69,22 @@ class _RequestsTab extends StatelessWidget {
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  onEdit: r.id == null
+                      ? null
+                      : () => _openEdit(
+                            EditReservationArgs(
+                              reservationId: r.id!,
+                              isConfirmed: false,
+                              portId: r.portId,
+                              serviceId: r.serviceId,
+                              occasionId: r.occasionId,
+                              governorate: r.governorate,
+                              city: r.city,
+                              occasionDate:
+                                  DateFormatHelper.parse(r.occasionDate),
+                              userNotes: r.userNotes,
+                            ),
+                          ),
                 );
               },
             ),
@@ -113,6 +130,21 @@ class _ReservationsTab extends StatelessWidget {
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  onEdit: r.id == null
+                      ? null
+                      : () => _openEdit(
+                            EditReservationArgs(
+                              reservationId: r.id!,
+                              isConfirmed: true,
+                              portId: r.portId,
+                              serviceId: r.serviceId,
+                              occasionId: r.occasionId,
+                              governorate: r.governorate,
+                              city: r.city,
+                              occasionDate:
+                                  DateFormatHelper.parse(r.occasionDate),
+                            ),
+                          ),
                 );
               },
             ),
@@ -131,6 +163,10 @@ class _EmptyTab extends StatelessWidget {
 
 void _openDetails(int id) {
   NavigationHelper.pushNamed(Routes.orderDetailsScreen, arguments: id);
+}
+
+void _openEdit(EditReservationArgs args) {
+  NavigationHelper.pushNamed(Routes.editReservationScreen, arguments: args);
 }
 
 String _location(String? governorate, String? city) {

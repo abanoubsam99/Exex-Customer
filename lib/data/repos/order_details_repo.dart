@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/order_details_model.dart';
@@ -40,6 +41,36 @@ class OrderDetailsRepo {
       final response = await DioHelper.postData(
         url: AppEndpoints.editReservationUserNote,
         data: {'reservationId': reservationId, 'userNotes': userNotes},
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// GET /api/Reservations/DownloadInfo?id={id} — returns the reservation PDF
+  /// as raw bytes.
+  Future<List<int>?> downloadInfo(int id) async {
+    try {
+      final response = await DioHelper.dio.get(
+        AppEndpoints.downloadInfo,
+        queryParameters: {'id': id},
+        options: Options(responseType: ResponseType.bytes),
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return response.data as List<int>;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// PUT /api/Reservations/CancelReservation/{id} — cancels the reservation.
+  Future<bool> cancelReservation(int id) async {
+    try {
+      final response = await DioHelper.putData(
+        url: '${AppEndpoints.cancelReservation}/$id',
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {

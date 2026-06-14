@@ -44,4 +44,7 @@ class Routes {
   static const String directServiceDetailsScreen =
       '/directServiceDetailsScreen';
   static const String contactInfoScreen = '/contactInfoScreen';
+
+  static const String favoritesScreen = '/favoritesScreen';
+  static const String editReservationScreen = '/editReservationScreen';
 }

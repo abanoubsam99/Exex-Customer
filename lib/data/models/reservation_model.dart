@@ -2,6 +2,8 @@
 class ReservationModel {
   final int? id;
   final int? portId;
+  final int? serviceId;
+  final int? occasionId;
   final String? portName;
   final String? governorate;
   final String? city;
@@ -22,6 +24,8 @@ class ReservationModel {
   ReservationModel({
     this.id,
     this.portId,
+    this.serviceId,
+    this.occasionId,
     this.portName,
     this.governorate,
     this.city,
@@ -37,6 +41,8 @@ class ReservationModel {
   ReservationModel.fromJson(Map<String, dynamic> json)
       : id = (json['id'] as num?)?.toInt(),
         portId = (json['portId'] as num?)?.toInt(),
+        serviceId = (json['serviceId'] as num?)?.toInt(),
+        occasionId = (json['occasionId'] as num?)?.toInt(),
         portName = json['portName'] as String?,
         governorate = json['governorate'] as String?,
         city = json['city'] as String?,
