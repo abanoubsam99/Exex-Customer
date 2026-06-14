@@ -70,10 +70,6 @@ class AppImages {
   /// Assets for iconsLocation2
   /// assets/icons/location2.svg
   static const String iconsLocation2 = "assets/icons/location2.svg";
-  /// Assets for iconsLock
-  /// assets/icons/lock.svg
-  static const String iconsLock = "assets/icons/lock.svg";
-
   /// Assets for iconsLogout
   /// assets/icons/logout.svg
   static const String iconsLogout = "assets/icons/logout.svg";

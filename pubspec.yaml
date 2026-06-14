@@ -33,7 +33,6 @@ dependencies:
   # flutter_intl_phone_field: ^0.0.7
   flutter_intl_phone_field:
     path: packages/flutter_intl_phone_field-main
-  intl_phone_number_input: ^0.7.5
   flutter_localizations:
     sdk: flutter
   dropdown_button2: ^2.3.9
