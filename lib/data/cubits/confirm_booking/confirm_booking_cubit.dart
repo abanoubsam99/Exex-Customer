@@ -13,6 +13,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
 
   ConfirmBookingCubit(this._repo) : super(const ConfirmBookingState());
 
+  // Hidden per request — card payment fields (kept for when the gateway is wired).
   final cardNameController = TextEditingController();
   final cardNumberController = TextEditingController();
   final expiryController = TextEditingController();
@@ -31,6 +32,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       totalAmount: args?.totalAmount ?? 0,
       depositAmount: args?.depositAmount ?? 0,
       reservationRequestId: args?.reservationRequestId ?? 0,
+      reservationRequestIds: args?.reservationRequestIds ?? const [],
       walletBalance: walletBalance,
       remainingSeconds: countdownSeconds,
     ));
@@ -53,6 +55,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
 
   void toggleTerms(bool value) => emit(state.copyWith(termsAccepted: value));
 
+  // Hidden per request — wallet top-up (kept for later).
   void rechargeWallet() {
     // TODO: navigate to the wallet top-up screen once it exists.
     ToastManager.showSuccess('قريباً: شحن المحفظة');
@@ -63,14 +66,17 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
     }
-    if (state.reservationRequestId <= 0) {
+    final ids = state.reservationRequestIds.isNotEmpty
+        ? state.reservationRequestIds.where((e) => e > 0).toList()
+        : (state.reservationRequestId > 0 ? [state.reservationRequestId] : <int>[]);
+    if (ids.isEmpty) {
       ToastManager.showError('رقم طلب الحجز غير صالح');
       return;
     }
     emit(state.copyWith(isLoading: true));
     final ok = await _repo.confirmClientReservation(
       depositAmount: state.depositAmount,
-      reservationRequestId: state.reservationRequestId,
+      reservationRequestIds: ids,
     );
     if (ok) {
       emit(state.copyWith(isLoading: false, success: true));

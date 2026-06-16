@@ -1,10 +1,13 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/cubits/order_details/order_details_cubit.dart';
 import 'package:evex_user/data/cubits/order_details/order_details_state.dart';
 import 'package:evex_user/data/models/order_details_model.dart';
@@ -119,7 +122,17 @@ class OrderDetailsScreen extends StatelessWidget {
                         child: CustomButton(
                           text: 'تعديل الحجز',
                           height: 52.h,
-                          onTap: () {},
+                          onTap: () {
+                            final id = order.reservationId;
+                            if (id == null) return;
+                            NavigationHelper.pushNamed(
+                              Routes.editReservationScreen,
+                              arguments: EditReservationArgs(
+                                reservationId: id,
+                                isConfirmed: order.status == 'حجز مؤكد',
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -629,18 +642,150 @@ void _showOptionsSheet(BuildContext context) {
     builder: (sheetCtx) => SafeArea(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 8.h),
-        child: ListTile(
-          leading: Icon(Icons.picture_as_pdf, color: AppColors.orangeColor),
-          title: Text('تحميل PDF',
-              style: AppTextStyles.font16BlackRegularHeader),
-          onTap: () {
-            Navigator.pop(sheetCtx);
-            cubit.downloadPdf();
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading:
+                  Icon(Icons.picture_as_pdf, color: AppColors.orangeColor),
+              title: Text('تحميل PDF',
+                  style: AppTextStyles.font16BlackRegularHeader),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                cubit.downloadPdf();
+              },
+            ),
+            ListTile(
+              leading:
+                  Icon(Icons.star_outline_rounded, color: AppColors.orangeColor),
+              title: Text('أضف تقييم',
+                  style: AppTextStyles.font16BlackRegularHeader),
+              onTap: () {
+                Navigator.pop(sheetCtx);
+                _showReviewSheet(context, cubit);
+              },
+            ),
+          ],
         ),
       ),
     ),
   );
+}
+
+/// Bottom sheet to submit a review (stars + comment) for the reservation.
+void _showReviewSheet(BuildContext context, OrderDetailsCubit cubit) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+    ),
+    builder: (_) => Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: _ReviewSheet(cubit: cubit),
+    ),
+  );
+}
+
+class _ReviewSheet extends StatefulWidget {
+  final OrderDetailsCubit cubit;
+  const _ReviewSheet({required this.cubit});
+
+  @override
+  State<_ReviewSheet> createState() => _ReviewSheetState();
+}
+
+class _ReviewSheetState extends State<_ReviewSheet> {
+  final _commentController = TextEditingController();
+  int _stars = 0;
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    setState(() => _submitting = true);
+    final ok = await widget.cubit.submitReview(
+      stars: _stars,
+      comment: _commentController.text,
+    );
+    if (!mounted) return;
+    setState(() => _submitting = false);
+    if (ok) Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 20.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text('أضف تقييم',
+                  style: AppTextStyles.font18BlackExtraBoldHeader),
+            ),
+            16.verticalSpace,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (i) {
+                final filled = i < _stars;
+                return GestureDetector(
+                  onTap: () => setState(() => _stars = i + 1),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Icon(
+                      filled ? Icons.star_rounded : Icons.star_outline_rounded,
+                      color: AppColors.orangeColor,
+                      size: 36.r,
+                    ),
+                  ),
+                );
+              }),
+            ),
+            20.verticalSpace,
+            TextField(
+              controller: _commentController,
+              maxLines: 4,
+              textDirection: TextDirection.rtl,
+              style: AppTextStyles.font16BlackRegularHeader,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFFF4F4F4),
+                hintText: 'اكتب تقييمك هنا',
+                hintStyle: TextStyle(
+                  color: const Color(0xFF99A2AC),
+                  fontSize: 13.r,
+                  fontFamily: 'Almarai',
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+              ),
+            ),
+            20.verticalSpace,
+            CustomButton(
+              text: 'إرسال التقييم',
+              height: 52.h,
+              isLoading: _submitting,
+              onTap: _submit,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Price in the app's convention: orange number + smaller, lighter "جنيه".

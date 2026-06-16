@@ -102,7 +102,9 @@ class MyApp extends StatelessWidget {
               onGenerateRoute: AppRouter.onGenerateRoute,
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(context).copyWith(
-                  textScaler: const TextScaler.linear(0.974),
+                  // Global text scale — bumped up so everything reads bigger
+                  // and clearer across the app (was 0.974 = shrinking).
+                  textScaler: const TextScaler.linear(1.1),
                 ),
                 child: child!,
               ),

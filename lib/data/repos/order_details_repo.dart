@@ -77,4 +77,28 @@ class OrderDetailsRepo {
       return false;
     }
   }
+
+  /// POST /api/Reviews — submit a review (stars + comment) for a reservation.
+  Future<bool> addReview({
+    required int reservationId,
+    required int portId,
+    required int stars,
+    required String comment,
+  }) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.reviews,
+        data: {
+          'reservationId': reservationId,
+          'portId': portId,
+          'stars': stars,
+          'comment': comment,
+          'createdAt': DateTime.now().toUtc().toIso8601String(),
+        },
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
 }

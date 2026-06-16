@@ -3,6 +3,7 @@ import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/data/cubits/complete_booking/complete_booking_cubit.dart';
 import 'package:evex_user/data/cubits/complete_booking/complete_booking_state.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/notes_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_cost_details_section.dart';
@@ -54,6 +55,15 @@ class CompleteBookingScreen extends StatelessWidget {
                           child: ChangeOccasion(
                             port: args.port,
                             occasionDate: args.occasionDate,
+                          ),
+                        ),
+                        16.verticalSpace,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: _OccasionPicker(
+                            occasions: state.occasions,
+                            selectedId: state.selectedOccasionId,
+                            onSelected: cubit.selectOccasion,
                           ),
                         ),
                         22.verticalSpace,
@@ -178,6 +188,82 @@ class CompleteBookingScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// "نوع المناسبة" picker — required so AddClientReservation gets a valid
+/// occasionId (the backend rejects the booking otherwise).
+class _OccasionPicker extends StatelessWidget {
+  final List<Occasion> occasions;
+  final int? selectedId;
+  final ValueChanged<int> onSelected;
+  const _OccasionPicker({
+    required this.occasions,
+    required this.selectedId,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'نوع المناسبة',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: const Color(0xFF2C262C),
+            fontSize: 15.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        8.verticalSpace,
+        Container(
+          height: 52.h,
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4F4F4),
+            borderRadius: BorderRadius.circular(14.r),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              isExpanded: true,
+              value: selectedId,
+              borderRadius: BorderRadius.circular(14.r),
+              hint: Text(
+                'حدد نوع المناسبة',
+                style: TextStyle(
+                  color: const Color(0xFF99A2AC),
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                ),
+              ),
+              icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                  color: Color(0xFF99A2AC)),
+              items: occasions
+                  .where((o) => o.id != null)
+                  .map((o) => DropdownMenuItem<int>(
+                        value: o.id,
+                        child: Text(
+                          o.name ?? '',
+                          style: TextStyle(
+                            color: const Color(0xFF2C262C),
+                            fontSize: 14.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) onSelected(v);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

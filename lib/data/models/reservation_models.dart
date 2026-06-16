@@ -14,6 +14,7 @@ class AddReservationRequest {
   final String? occasionDate;
   final String? userNotes;
   final bool acceptPolicy;
+  final num? totalCost;
   final List<Addition> additions;
 
   AddReservationRequest({
@@ -26,6 +27,7 @@ class AddReservationRequest {
     this.occasionDate,
     this.userNotes,
     this.acceptPolicy = true,
+    this.totalCost,
     this.additions = const [],
   });
 
@@ -37,15 +39,26 @@ class AddReservationRequest {
       'serviceId': serviceId,
       'portId': portId,
       'userNotes': userNotes ?? '',
-      'AcceptPolicy': acceptPolicy,
-      // The API only needs the addition id for each item.
+      'acceptPolicy': acceptPolicy,
+      'totalCost': totalCost ?? 0,
+      'netCost': totalCost ?? 0,
+      'additionalCost': 0,
+      'discount': 0,
+      'vat': 0,
+      'deposit': 0,
+      // Schema shape: { id, number, additionId }.
       'additions': additions
           .where((a) => a.additionId != null)
-          .map((a) => {'additionId': a.additionId})
+          .map((a) => {
+                'id': a.id ?? 0,
+                'number': a.number ?? 1,
+                'additionId': a.additionId,
+              })
           .toList(),
+      'oldAdditions': const [],
     };
     if (occasionId != null) map['occasionId'] = occasionId;
-    if (nationalId != null) map['NationalId'] = nationalId;
+    if (nationalId != null) map['nationalId'] = nationalId;
     return map;
   }
 }

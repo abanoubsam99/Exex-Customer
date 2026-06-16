@@ -41,11 +41,18 @@ class EditReservationScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+              child: BlocBuilder<EditReservationCubit, EditReservationState>(
+                buildWhen: (p, c) => p.isLoading != c.isLoading,
+                builder: (context, lstate) {
+                  if (lstate.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SingleChildScrollView(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                     _label('تاريخ المناسبة'),
                     8.verticalSpace,
                     BlocBuilder<EditReservationCubit, EditReservationState>(
@@ -118,8 +125,10 @@ class EditReservationScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
             Padding(

@@ -2,6 +2,8 @@ import 'package:evex_user/core/helpers/date_format_helper.dart';
 
 class OrderDetailsModel {
   final String bookingNumber;
+  final int? reservationId;
+  final int? portId;
   final OrderCustomer customer;
   final String status;
   final String createdDate;
@@ -22,6 +24,8 @@ class OrderDetailsModel {
 
   const OrderDetailsModel({
     required this.bookingNumber,
+    this.reservationId,
+    this.portId,
     required this.customer,
     required this.status,
     required this.createdDate,
@@ -44,6 +48,8 @@ class OrderDetailsModel {
   factory OrderDetailsModel.fromJson(Map<String, dynamic> json) {
     return OrderDetailsModel(
       bookingNumber: json['bookingNumber']?.toString() ?? '',
+      reservationId: (json['reservationId'] as num?)?.toInt(),
+      portId: (json['portId'] as num?)?.toInt(),
       customer: OrderCustomer.fromJson(json['customer'] ?? const {}),
       status: json['status'] ?? '',
       createdDate: json['createdDate'] ?? '',
@@ -96,6 +102,8 @@ class OrderDetailsModel {
 
     return OrderDetailsModel(
       bookingNumber: (json['reservationId'] as num?)?.toInt().toString() ?? '',
+      reservationId: (json['reservationId'] as num?)?.toInt(),
+      portId: (json['portId'] as num?)?.toInt(),
       customer: OrderCustomer(
         name: s('clientName'),
         email: s('email'),

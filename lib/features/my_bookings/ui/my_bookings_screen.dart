@@ -1,6 +1,7 @@
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
+import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/discount_progress.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/my_booking_tabs.dart';
@@ -15,8 +16,10 @@ class MyBookingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          MyBookingsCubit(context.read<MyBookingsRepo>())..load(),
+      create: (context) => MyBookingsCubit(
+        context.read<MyBookingsRepo>(),
+        context.read<ConfirmBookingRepo>(),
+      )..load(),
       child: DefaultTabController(
         length: 3,
         child: Scaffold(

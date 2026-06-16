@@ -3,11 +3,16 @@ enum BookingPaymentMethod { card, evex, cash }
 /// البيانات الجاية من شاشة استكمال الحجز لتأكيد الحجز (ConfirmClientReservation_2).
 class ConfirmBookingArgs {
   final int reservationRequestId;
+
+  /// When confirming several pending requests at once (CalculatePendingDeposit).
+  /// Takes precedence over [reservationRequestId] when not empty.
+  final List<int> reservationRequestIds;
   final num depositAmount;
   final num totalAmount;
 
   const ConfirmBookingArgs({
-    required this.reservationRequestId,
+    this.reservationRequestId = 0,
+    this.reservationRequestIds = const [],
     this.depositAmount = 0,
     this.totalAmount = 0,
   });
@@ -23,6 +28,9 @@ class ConfirmBookingState {
 
   /// رقم طلب الحجز اللي رجع من AddClientReservation.
   final int reservationRequestId;
+
+  /// One or more pending request ids to confirm together.
+  final List<int> reservationRequestIds;
   final num walletBalance;
   final int remainingSeconds;
   final bool isLoading;
@@ -35,6 +43,7 @@ class ConfirmBookingState {
     this.totalAmount = 0,
     this.depositAmount = 0,
     this.reservationRequestId = 0,
+    this.reservationRequestIds = const [],
     this.walletBalance = 0,
     this.remainingSeconds = 0,
     this.isLoading = false,
@@ -54,6 +63,7 @@ class ConfirmBookingState {
     num? totalAmount,
     num? depositAmount,
     int? reservationRequestId,
+    List<int>? reservationRequestIds,
     num? walletBalance,
     int? remainingSeconds,
     bool? isLoading,
@@ -66,6 +76,8 @@ class ConfirmBookingState {
       totalAmount: totalAmount ?? this.totalAmount,
       depositAmount: depositAmount ?? this.depositAmount,
       reservationRequestId: reservationRequestId ?? this.reservationRequestId,
+      reservationRequestIds:
+          reservationRequestIds ?? this.reservationRequestIds,
       walletBalance: walletBalance ?? this.walletBalance,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isLoading: isLoading ?? this.isLoading,

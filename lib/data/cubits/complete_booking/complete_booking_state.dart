@@ -1,4 +1,5 @@
 import 'package:evex_user/data/models/addition.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -30,12 +31,18 @@ class CompleteBookingState {
   final bool isSubmitting;
   final String? errorMessage;
 
+  /// Occasion types (نوع المناسبة) + the one the user picked.
+  final List<Occasion> occasions;
+  final int? selectedOccasionId;
+
   const CompleteBookingState({
     this.isLoadingPolicy = false,
     this.policy,
     this.termsAccepted = false,
     this.isSubmitting = false,
     this.errorMessage,
+    this.occasions = const [],
+    this.selectedOccasionId,
   });
 
   CompleteBookingState copyWith({
@@ -44,6 +51,8 @@ class CompleteBookingState {
     bool? termsAccepted,
     bool? isSubmitting,
     String? errorMessage,
+    List<Occasion>? occasions,
+    int? selectedOccasionId,
   }) {
     return CompleteBookingState(
       isLoadingPolicy: isLoadingPolicy ?? this.isLoadingPolicy,
@@ -51,6 +60,8 @@ class CompleteBookingState {
       termsAccepted: termsAccepted ?? this.termsAccepted,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage,
+      occasions: occasions ?? this.occasions,
+      selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
     );
   }
 }

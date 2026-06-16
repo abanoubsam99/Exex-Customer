@@ -18,6 +18,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   CompleteBookingCubit(this._repo, this._homeCubit, {required this.args})
       : super(const CompleteBookingState()) {
     getPortPolicy();
+    getOccasions();
   }
 
   final notesController = TextEditingController();
@@ -31,6 +32,14 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     emit(state.copyWith(isLoadingPolicy: false, policy: policy));
   }
 
+  /// Occasion types for the "نوع المناسبة" picker (required by the backend).
+  Future<void> getOccasions() async {
+    final occasions = await _repo.getOccasions();
+    if (occasions != null) emit(state.copyWith(occasions: occasions));
+  }
+
+  void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
+
   void toggleTerms(bool value) => emit(state.copyWith(termsAccepted: value));
 
   /// "إضافة لحجوزاتي" → creates the reservation request (AddClientReservation),
@@ -42,6 +51,10 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     }
     if (args.totalCost <= 0) {
       ToastManager.showError('السعر يجب أن يكون أكبر من صفر');
+      return;
+    }
+    if ((state.selectedOccasionId ?? 0) <= 0) {
+      ToastManager.showError('برجاء اختيار نوع المناسبة');
       return;
     }
     final port = args.port;
@@ -79,10 +92,12 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       AddReservationRequest(
         portId: port?.id,
         serviceId: args.service?.id,
+        occasionId: state.selectedOccasionId,
         governorate: governorate,
         city: city,
         occasionDate: occasionDate,
         userNotes: note.isEmpty ? null : note,
+        totalCost: args.totalCost,
         additions: args.additions,
       ),
     );

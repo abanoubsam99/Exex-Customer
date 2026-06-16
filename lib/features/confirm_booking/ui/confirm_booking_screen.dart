@@ -208,9 +208,14 @@ class ConfirmBookingScreen extends StatelessWidget {
   ) {
     switch (state.selectedMethod) {
       case BookingPaymentMethod.card:
-        return _CardForm(cubit: cubit);
+        // Hidden per request — card fields. Restore by uncommenting:
+        // return _CardForm(cubit: cubit);
+        return const SizedBox.shrink();
       case BookingPaymentMethod.evex:
-        return _WalletBox(balance: state.walletBalance, onRecharge: cubit.rechargeWallet);
+        return _WalletBox(
+          balance: state.walletBalance,
+          onRecharge: cubit.rechargeWallet,
+        );
       case BookingPaymentMethod.cash:
         return const _CashInfo();
     }
@@ -330,7 +335,10 @@ class _PaymentMethodsCard extends StatelessWidget {
   }
 }
 
-// ─────────────────────────── Card form ───────────────────────────
+// ─────────────────────────── Card form (hidden per request) ───────────────────────────
+// Kept for when the payment gateway is wired. Currently not rendered
+// (see _expansionContent: the card case returns SizedBox.shrink()).
+// ignore: unused_element
 class _CardForm extends StatelessWidget {
   final ConfirmBookingCubit cubit;
   const _CardForm({required this.cubit});
@@ -466,17 +474,18 @@ class _WalletBox extends StatelessWidget {
             ),
           ],
         ),
-        14.verticalSpace,
-        CustomButton(
-          text: 'شحن المحفظة',
-          isfilled: false,
-          backgroundColor: Colors.transparent,
-          bordereColor: _orange,
-          fontColor: _orange,
-          height: 48.h,
-          width: double.infinity,
-          onTap: onRecharge,
-        ),
+        // Hidden per request — wallet top-up button. Restore by uncommenting:
+        // 14.verticalSpace,
+        // CustomButton(
+        //   text: 'شحن المحفظة',
+        //   isfilled: false,
+        //   backgroundColor: Colors.transparent,
+        //   bordereColor: _orange,
+        //   fontColor: _orange,
+        //   height: 48.h,
+        //   width: double.infinity,
+        //   onTap: onRecharge,
+        // ),
       ],
     );
   }

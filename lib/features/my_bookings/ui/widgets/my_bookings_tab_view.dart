@@ -1,9 +1,12 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_state.dart';
+import 'package:evex_user/data/models/pending_deposit_model.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/my_booking_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,8 +27,8 @@ class MyBookingsTabView extends StatelessWidget {
           children: [
             _RequestsTab(state: state, onRefresh: cubit.loadRequests),
             _ReservationsTab(state: state, onRefresh: cubit.loadReservations),
-            // الحجوزات الملغاه — لسه مفيش API مخصص ليها.
-            const _EmptyTab(message: 'لا توجد حجوزات ملغاه'),
+            // Cancelled reservations — filtered from GetMyReservations by status.
+            _CancelledTab(state: state, onRefresh: cubit.loadReservations),
           ],
         );
       },
@@ -44,11 +47,14 @@ class _RequestsTab extends StatelessWidget {
     if (state.isLoadingRequests && state.requests.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: state.requests.isEmpty
-          ? _emptyList('لا توجد طلبات حالية')
-          : ListView.separated(
+    return Column(
+      children: [
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: state.requests.isEmpty
+                ? _emptyList('لا توجد طلبات حالية')
+                : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
               padding: EdgeInsets.symmetric(vertical: 20.h),
@@ -88,6 +94,12 @@ class _RequestsTab extends StatelessWidget {
                 );
               },
             ),
+          ),
+        ),
+        // if (state.pendingDeposit != null &&
+        //     state.pendingDeposit!.totalRequests > 0)
+        //   _PendingDepositFooter(summary: state.pendingDeposit!),
+      ],
     );
   }
 }
@@ -152,13 +164,45 @@ class _ReservationsTab extends StatelessWidget {
   }
 }
 
-// ── تاب فاضي (الحجوزات الملغاه) ──
-class _EmptyTab extends StatelessWidget {
-  final String message;
-  const _EmptyTab({required this.message});
+// ── الحجوزات الملغاه ──
+class _CancelledTab extends StatelessWidget {
+  final MyBookingsState state;
+  final Future<void> Function() onRefresh;
+  const _CancelledTab({required this.state, required this.onRefresh});
 
   @override
-  Widget build(BuildContext context) => _emptyList(message);
+  Widget build(BuildContext context) {
+    if (state.isLoadingReservations && state.cancelled.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: state.cancelled.isEmpty
+          ? _emptyList('لا توجد حجوزات ملغاه')
+          : ListView.separated(
+              separatorBuilder: (_, __) => 24.verticalSpace,
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              itemCount: state.cancelled.length,
+              itemBuilder: (context, index) {
+                final r = state.cancelled[index];
+                return MyBookingItem(
+                  portName: r.portName ?? '',
+                  statusText: 'ملغي',
+                  statusColor: _red,
+                  serviceName: r.serviceName ?? '',
+                  serviceDetails: '',
+                  location: _location(r.governorate, r.city),
+                  dateText: DateFormatHelper.arabicDate(r.occasionDate),
+                  deposit: r.deposit ?? 0,
+                  finalCost: r.finalCost ?? r.apparentPrice ?? 0,
+                  apparentPrice: r.apparentPrice ?? 0,
+                  onTap: r.id == null ? null : () => _openDetails(r.id!),
+                );
+              },
+            ),
+    );
+  }
 }
 
 void _openDetails(int id) {
@@ -167,6 +211,131 @@ void _openDetails(int id) {
 
 void _openEdit(EditReservationArgs args) {
   NavigationHelper.pushNamed(Routes.editReservationScreen, arguments: args);
+}
+
+/// Footer in the requests tab: total deposit for all pending requests +
+/// the multi-booking discount + a "confirm all" action (CalculatePendingDeposit).
+/// Currently commented out in _RequestsTab — restore by uncommenting there.
+// ignore: unused_element
+class _PendingDepositFooter extends StatelessWidget {
+  final PendingDepositModel summary;
+  const _PendingDepositFooter({required this.summary});
+
+  String _n(num v) =>
+      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(2);
+
+  @override
+  Widget build(BuildContext context) {
+    final availableIds = summary.items
+        .where((e) => e.isAvailable && e.id != null)
+        .map((e) => e.id!)
+        .toList();
+    final hasDiscount = summary.additionalDiscountPercentage > 0;
+    return Container(
+      margin: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 12.h),
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 18,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasDiscount) ...[
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF8F1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                'خصم ${_n(summary.additionalDiscountPercentage)}% عند حجز '
+                '${summary.numberOfReservationsAdditionalDiscount} مناسبات'
+                '${summary.additionalDiscountAmount > 0 ? ' (وفّرت ${_n(summary.additionalDiscountAmount)} جنيه)' : ''}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: const Color(0xFF2BA577),
+                  fontSize: 12.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            12.verticalSpace,
+          ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'إجمالي المقدم',
+                style: TextStyle(
+                  color: const Color(0xFF2C262C),
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text.rich(
+                textDirection: TextDirection.rtl,
+                TextSpan(children: [
+                  TextSpan(
+                    text: '${_n(summary.totalDeposit)} ',
+                    style: TextStyle(
+                      color: const Color(0xFFF38B4A),
+                      fontSize: 16.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'جنيه',
+                    style: TextStyle(
+                      color: const Color(0xFFA5B7C6),
+                      fontSize: 12.r,
+                      fontFamily: 'Almarai',
+                    ),
+                  ),
+                ]),
+              ),
+            ],
+          ),
+          12.verticalSpace,
+          if (availableIds.isEmpty)
+            Text(
+              'لا توجد حجوزات متاحة للتأكيد حالياً',
+              style: TextStyle(
+                color: _red,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+              ),
+            )
+          else
+            CustomButton(
+              text: 'تأكيد الحجوزات',
+              height: 50.h,
+              onTap: () => NavigationHelper.pushNamed(
+                Routes.confirmBookingScreen,
+                arguments: ConfirmBookingArgs(
+                  reservationRequestIds: availableIds,
+                  depositAmount: summary.totalDeposit,
+                  totalAmount:
+                      summary.items.fold<num>(0, (s, e) => s + e.netCost),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 String _location(String? governorate, String? city) {

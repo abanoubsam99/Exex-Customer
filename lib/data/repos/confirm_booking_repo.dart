@@ -1,12 +1,31 @@
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/data/models/net_cost_model.dart';
+import 'package:evex_user/data/models/occasion.dart';
+import 'package:evex_user/data/models/pending_deposit_model.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/reservation_models.dart';
+import 'package:evex_user/data/models/reservation_update_model.dart';
 
 /// Repo بتاع مسار "استكمال الحجز → تأكيد الحجز":
 /// جلب سياسات التاجر + إنشاء طلب الحجز + تأكيده.
 class ConfirmBookingRepo {
+  /// GET /api/Occasions — the occasion types (نوع المناسبة).
+  Future<List<Occasion>?> getOccasions() async {
+    try {
+      final response = await DioHelper.getData(url: AppEndpoints.occasions);
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return (response.data as List)
+            .map((e) => Occasion.fromJson(e))
+            .toList();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// GET /api/Ports/GetPortPolicy/{portId} — سياسات التاجر.
   Future<PortPolicy?> getPortPolicy(int portId) async {
     try {
@@ -44,18 +63,18 @@ class ConfirmBookingRepo {
   }
 
   /// POST /api/Reservations/ConfirmClientReservation_2
-  /// body: { "depositAmount": ..., "reservationRequestIds": ... }
-  /// بيرجّع `true` لو نجح.
+  /// body: { "depositAmount": ..., "reservationRequestIds": [...] }
+  /// Confirms one or more pending requests. Returns `true` on success.
   Future<bool> confirmClientReservation({
     required num depositAmount,
-    required int reservationRequestId,
+    required List<int> reservationRequestIds,
   }) async {
     try {
       final response = await DioHelper.postData(
         url: AppEndpoints.confirmClientReservation2,
         data: {
           'depositAmount': depositAmount,
-          'reservationRequestIds': reservationRequestId,
+          'reservationRequestIds': reservationRequestIds,
         },
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
@@ -99,15 +118,41 @@ class ConfirmBookingRepo {
     }
   }
 
+  /// GET /api/Reservations/GetBillDetailsByClient/{id} — loads the current
+  /// reservation so the edit screen can echo the full body back on save.
+  Future<ReservationUpdateModel?> getReservationBill(
+    int id, {
+    int? serviceId,
+    int? occasionId,
+    int? clientId,
+  }) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.billDetailsByClient}/$id',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return ReservationUpdateModel.fromBillJson(
+          response.data,
+          serviceId: serviceId,
+          occasionId: occasionId,
+          clientId: clientId,
+        );
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// PUT /api/Reservations/UpdateReservationRequest/{id} — edit a pending request.
   Future<bool> updateReservationRequest(
     int id,
-    AddReservationRequest request,
+    ReservationUpdateModel body,
   ) async {
     try {
       final response = await DioHelper.putData(
         url: '${AppEndpoints.updateReservationRequest}/$id',
-        data: request.toJson(),
+        data: body.toJson(),
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {
@@ -119,16 +164,60 @@ class ConfirmBookingRepo {
   /// reservation.
   Future<bool> updateReservationByClient(
     int id,
-    AddReservationRequest request,
+    ReservationUpdateModel body,
   ) async {
     try {
       final response = await DioHelper.putData(
         url: '${AppEndpoints.updateReservationByClient}/$id',
-        data: request.toJson(),
+        data: body.toJson(),
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// GET /api/Reservations/CalculateNetCost/{id} — returns the cost breakdown
+  /// (price after discount, net cost, deposit, tax) for a reservation.
+  Future<NetCostModel?> calculateNetCost({
+    required int id,
+    num? totalCost,
+    num? additionalCost,
+    num? discount,
+    num? vat,
+  }) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.calculateNetCost}/$id',
+        query: {
+          if (totalCost != null) 'totalCost': totalCost,
+          if (additionalCost != null) 'additionalCost': additionalCost,
+          if (discount != null) 'discount': discount,
+          if (vat != null) 'vat': vat,
+        },
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return NetCostModel.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// GET /api/Reservations/CalculatePendingDeposit — the deposit summary for
+  /// all of the client's pending reservation requests.
+  Future<PendingDepositModel?> calculatePendingDeposit() async {
+    try {
+      final response = await DioHelper.getData(
+        url: AppEndpoints.calculatePendingDeposit,
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return PendingDepositModel.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 }

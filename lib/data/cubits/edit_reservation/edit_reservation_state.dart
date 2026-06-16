@@ -1,4 +1,6 @@
-/// Data passed to the edit-reservation screen to prefill the form.
+import 'package:evex_user/data/models/reservation_update_model.dart';
+
+/// Data passed to the edit-reservation screen.
 class EditReservationArgs {
   final int reservationId;
 
@@ -28,13 +30,29 @@ class EditReservationArgs {
 }
 
 class EditReservationState {
+  final bool isLoading;
+
+  /// The current reservation (loaded from the bill) that we echo back on save.
+  final ReservationUpdateModel? model;
   final DateTime? occasionDate;
   final bool isSaving;
 
-  const EditReservationState({this.occasionDate, this.isSaving = false});
+  const EditReservationState({
+    this.isLoading = false,
+    this.model,
+    this.occasionDate,
+    this.isSaving = false,
+  });
 
-  EditReservationState copyWith({DateTime? occasionDate, bool? isSaving}) {
+  EditReservationState copyWith({
+    bool? isLoading,
+    ReservationUpdateModel? model,
+    DateTime? occasionDate,
+    bool? isSaving,
+  }) {
     return EditReservationState(
+      isLoading: isLoading ?? this.isLoading,
+      model: model ?? this.model,
       occasionDate: occasionDate ?? this.occasionDate,
       isSaving: isSaving ?? this.isSaving,
     );

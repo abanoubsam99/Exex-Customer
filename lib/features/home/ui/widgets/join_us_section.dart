@@ -66,7 +66,7 @@ class JoinUsSection extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 89.h,
+              height: 95.h,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 child: Column(

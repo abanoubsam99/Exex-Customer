@@ -33,6 +33,7 @@ class AppEndpoints {
   static const addition = "api/Additions/GetAllAdditions";
   static const serviceData = "api/Services/GetServiceData";
   static const reviews = "/api/Reviews";
+  static const occasions = "/api/Occasions";
   static const favorites = "/api/Favorites";
   static const walletData = "/api/Clients/GetMyClientWalletData";
 
@@ -60,7 +61,7 @@ class AppEndpoints {
   static const editReservationUserNote = "/api/Reservations/EditReservationUserNote";
   static const updateReservationRequest = "/api/Reservations/UpdateReservationRequest"; // + /{id}
   static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
-  static const cancelReservation = "/api/Reservations/CancelReservation"; // + /{id}
+  static const cancelReservation = "/api/Reservations/CancelReservationByClient"; // + /{id}
   static const downloadInfo = "/api/Reservations/DownloadInfo"; // ?id=
 
   // Accounts

@@ -73,6 +73,36 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
     }
   }
 
+  /// Submits a review (stars + comment) for this reservation (POST /api/Reviews).
+  /// Returns true on success so the UI can close the sheet.
+  Future<bool> submitReview({required int stars, required String comment}) async {
+    final order = state.order;
+    final reservationId = order?.reservationId ?? _reservationId;
+    final portId = order?.portId;
+    if (reservationId == null || portId == null) {
+      ToastManager.showError('تعذّر إضافة التقييم، بيانات الحجز غير مكتملة');
+      return false;
+    }
+    if (stars <= 0) {
+      ToastManager.showError('برجاء اختيار عدد النجوم');
+      return false;
+    }
+    emit(state.copyWith(isSubmittingReview: true));
+    final ok = await _repo.addReview(
+      reservationId: reservationId,
+      portId: portId,
+      stars: stars,
+      comment: comment.trim(),
+    );
+    emit(state.copyWith(isSubmittingReview: false));
+    if (ok) {
+      ToastManager.showSuccess('تم إضافة التقييم بنجاح');
+    } else {
+      ToastManager.showError('تعذّر إضافة التقييم، حاول مرة أخرى');
+    }
+    return ok;
+  }
+
   /// Cancels the reservation (the UI shows a confirmation first).
   Future<void> cancelReservation() async {
     final id = _reservationId;
