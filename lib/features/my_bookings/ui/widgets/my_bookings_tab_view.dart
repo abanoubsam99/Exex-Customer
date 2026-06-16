@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
+import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
@@ -65,7 +66,8 @@ class _RequestsTab extends StatelessWidget {
                     (r.reservationStatus ?? '').contains('متاح');
                 return MyBookingItem(
                   portName: r.portName ?? '',
-                  statusText: r.reservationStatus ?? '',
+                  statusText:
+                      ReservationStatusHelper.arabic(r.reservationStatus),
                   statusColor: available ? _green : _red,
                   serviceName: r.serviceName ?? '',
                   serviceDetails: r.serviceDetails ?? '',
@@ -126,13 +128,10 @@ class _ReservationsTab extends StatelessWidget {
               itemCount: state.reservations.length,
               itemBuilder: (context, index) {
                 final r = state.reservations[index];
-                final confirmed =
-                    (r.reservationStatus ?? '') == 'Confirmed';
                 return MyBookingItem(
                   portName: r.portName ?? '',
-                  statusText: confirmed
-                      ? 'حجز مؤكد'
-                      : (r.reservationStatus ?? ''),
+                  statusText:
+                      ReservationStatusHelper.arabic(r.reservationStatus),
                   statusColor: _green,
                   serviceName: r.serviceName ?? '',
                   serviceDetails: '',

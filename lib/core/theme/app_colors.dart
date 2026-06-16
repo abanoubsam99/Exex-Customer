@@ -68,4 +68,34 @@ class AppColors {
   static const Color lightGray2 = Color(0xff8A8A8A);
   static const Color bgGrey = Color(0xffF9FAFB);
   static const Color bgGray = Color(0xffE9EFF5);
+
+  // ── Recurring inline colors (centralized so the whole app changes here) ──
+  /// Blue-grey hint/secondary text (0xFF99A2AC) — very common.
+  static const Color blueGrey = Color(0xFF99A2AC);
+
+  /// Light blue-grey for unit labels like "جنيه" (0xFFA5B7C6).
+  static const Color unitGrey = Color(0xFFA5B7C6);
+
+  /// Divider / placeholder grey (0xFFD9D9D9).
+  static const Color dividerGrey = Color(0xFFD9D9D9);
+
+  /// Light border grey (0xFFE4E7EC).
+  static const Color borderGrey = Color(0xFFE4E7EC);
+
+  /// Faint line / separator (0xFFEDEDED).
+  static const Color lineGrey = Color(0xFFEDEDED);
+
+  /// Medium grey text (0xFF787878).
+  static const Color grey2 = Color(0xFF787878);
+
+  /// Success green (0xFF4CD195) + softer deposit green (0xFF79E2B2).
+  static const Color green = Color(0xFF4CD195);
+  static const Color greenSoft = Color(0xFF79E2B2);
+
+  /// Coral / cancel-total red (0xFFFE7062).
+  static const Color coral = Color(0xFFFE7062);
+
+  /// Card/elevation shadows.
+  static const Color shadow = Color(0x19000000);
+  static const Color shadowSoft = Color(0x0A000000);
 }

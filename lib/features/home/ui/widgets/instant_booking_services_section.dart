@@ -118,10 +118,10 @@ class InstantBookingServicesSection extends StatelessWidget {
                               port.nameAr,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: const Color(0xFF2C262C),
+                                color: Colors.black,
                                 fontSize: 14.r,
                                 fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: -0.24,
                               ),
                             ),

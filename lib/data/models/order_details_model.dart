@@ -1,4 +1,5 @@
 import 'package:evex_user/core/helpers/date_format_helper.dart';
+import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 
 class OrderDetailsModel {
   final String bookingNumber;
@@ -110,9 +111,7 @@ class OrderDetailsModel {
         phone: s('clientPhoneNumber'),
         address: address,
       ),
-      status: s('reservationStatus') == 'Confirmed'
-          ? 'حجز مؤكد'
-          : s('reservationStatus'),
+      status: ReservationStatusHelper.arabic(s('reservationStatus')),
       createdDate:
           DateFormatHelper.arabicDate(s('reservationDate'), fallback: ''),
       createdTime: DateFormatHelper.arabicTime(s('reservationDate')),

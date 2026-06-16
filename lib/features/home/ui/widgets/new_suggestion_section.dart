@@ -89,7 +89,7 @@ class NewSuggestionSection extends StatelessWidget {
                       'يمكنك اقتراح تاجر أو مقدم خدمة جديد \nوالحصول على خصم عند الحجز',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF787878),
+                        color: const Color.fromRGBO(102, 129, 175, 1),
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,

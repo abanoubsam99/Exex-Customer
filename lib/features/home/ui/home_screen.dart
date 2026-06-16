@@ -129,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             AppImages.iconsReceipt,
                                             width: 22.r,
                                             height: 22.r,
+                                            color: Colors.black,
                                           ),
                                         ),
                                         IconButton(

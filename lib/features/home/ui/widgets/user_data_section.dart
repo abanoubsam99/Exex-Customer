@@ -51,18 +51,18 @@ class UserDataSection extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xFF6F767E),
-                fontSize: 13.r,
+                fontSize: 12.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,
                 letterSpacing: -0.24,
               ),
             ),
             Text(
-              user?.userName ?? 'زائر',
+              user?.name ??  user?.userName ??'عميل',
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: const Color(0xFF2C262C),
-                fontSize: 18.r,
+                fontSize: 16.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
                 height: 1.50,

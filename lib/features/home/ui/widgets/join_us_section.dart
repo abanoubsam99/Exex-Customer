@@ -44,7 +44,7 @@ class JoinUsSection extends StatelessWidget {
           children: [
             Container(
               width: 1.sw,
-              height: 89.h,
+              height: 95.h,
               decoration: ShapeDecoration(
                 color: const Color(0x23F38B4A),
                 shape: RoundedRectangleBorder(
@@ -56,7 +56,7 @@ class JoinUsSection extends StatelessWidget {
               angle: -4.5 * Math.pi / 180,
               child: Container(
                 width: 1.sw,
-                height: 89.h,
+                height: 95.h,
                 decoration: ShapeDecoration(
                   color: const Color(0x23F38B4A),
                   shape: RoundedRectangleBorder(

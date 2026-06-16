@@ -256,16 +256,16 @@ class MyBookingItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    13.horizontalSpace,
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16.r),
-                      child: Image.asset(
-                        AppImages.imagesLuxuriousDinnerHall,
-                        fit: BoxFit.fill,
-                        height: 63.r,
-                        width: 63.r,
-                      ),
-                    ),
+                    // 13.horizontalSpace,
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(16.r),
+                    //   child: Image.asset(
+                    //     AppImages.imagesLuxuriousDinnerHall,
+                    //     fit: BoxFit.fill,
+                    //     height: 63.r,
+                    //     width: 63.r,
+                    //   ),
+                    // ),
                   ],
                 ),
                 const Spacer(),
