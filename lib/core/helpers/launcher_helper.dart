@@ -1,9 +1,29 @@
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Thin wrapper around url_launcher for the common actions used across the app:
-/// opening web links, dialing a number, sending an email, opening WhatsApp.
+/// opening web links, dialing a number, sending an email, opening WhatsApp,
+/// and opening a location in Google Maps. Use these instead of repeating the
+/// launch/maps-URL logic in each screen.
 class LauncherHelper {
   LauncherHelper._();
+
+  /// Opens Google Maps for a location. Prefers [gps] coordinates; falls back to
+  /// the text [address]. Shows a message if neither is available.
+  static Future<void> openMaps({String? gps, String? address}) async {
+    final g = gps?.trim() ?? '';
+    final a = address?.trim() ?? '';
+    final query = g.isNotEmpty ? g : a;
+    if (query.isEmpty) {
+      ToastManager.showError('الموقع غير متاح');
+      return;
+    }
+    await _launch(
+      Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}',
+      ),
+    );
+  }
 
   /// Opens a web URL in an external browser.
   static Future<void> openUrl(String? url) async {

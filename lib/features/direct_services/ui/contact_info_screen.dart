@@ -1,10 +1,10 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// شاشة "معلومات التواصل" — بتعرض أرقام التاجر وعنوانه ومواعيد عمله،
 /// كلها من بيانات الـ [Item] الجاية من شاشة التفاصيل.
@@ -85,7 +85,7 @@ class ContactInfoScreen extends StatelessWidget {
                       bg: const Color(0xFF40C4D6),
                       onTap: phones.isEmpty
                           ? null
-                          : () => _launch('tel:${phones.first}'),
+                          : () => LauncherHelper.call(phones.first),
                     ),
                   ],
                 ),
@@ -298,20 +298,6 @@ class ContactInfoScreen extends StatelessWidget {
   }
 
   Future<void> _openMap(String address) async {
-    final gps = port?.gps?.trim();
-    final query = (gps != null && gps.isNotEmpty)
-        ? gps
-        : (address.isNotEmpty ? address : null);
-    if (query == null) return;
-    await _launch(
-      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}',
-    );
-  }
-
-  Future<void> _launch(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+    await LauncherHelper.openMaps(gps: port?.gps, address: address);
   }
 }

@@ -3,9 +3,9 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:flutter/material.dart';
@@ -38,30 +38,17 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
       ToastManager.showError('رقم الهاتف غير متاح');
       return;
     }
-    if (!await launchUrl(Uri.parse('tel:$phone'))) {
-      ToastManager.showError('تعذّر فتح الاتصال');
-    }
+    await LauncherHelper.call(phone);
   }
 
   /// Opens the port's location on the maps app (GPS, else the address text).
   Future<void> _openLocation() async {
     final port = context.read<BookingServiceDetailsCubit>().state.port;
-    final gps = port?.gps?.trim() ?? '';
     final address = [port?.governorate, port?.city, port?.address]
         .whereType<String>()
         .where((e) => e.trim().isNotEmpty)
         .join(' ');
-    final query = gps.isNotEmpty ? gps : address;
-    if (query.isEmpty) {
-      ToastManager.showError('الموقع غير متاح');
-      return;
-    }
-    final uri = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}',
-    );
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      ToastManager.showError('تعذّر فتح الخريطة');
-    }
+    await LauncherHelper.openMaps(gps: port?.gps, address: address);
   }
 
   /// Shares the port via the system share sheet.

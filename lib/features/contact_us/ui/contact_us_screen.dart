@@ -92,8 +92,20 @@ class _OfficeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // The address is sometimes empty or just ".", fall back to the governorate.
     final addr = branch.address?.trim();
-    final displayAddress =
-        (addr == null || addr.isEmpty || addr == '.') ? (branch.governorate ?? '') : addr;
+    final displayAddress = (addr == null || addr.isEmpty || addr == '.')
+        ? [branch.governorate, branch.firstCity]
+            .whereType<String>()
+            .where((e) => e.trim().isNotEmpty)
+            .join(' - ')
+        : addr;
+    Future<void> openLocation() async {
+      final address = [branch.governorate, branch.firstCity, branch.address]
+          .whereType<String>()
+          .where((e) => e.trim().isNotEmpty && e != '.')
+          .join(' ');
+      await LauncherHelper.openMaps(gps: branch.gps, address: address);
+    }
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
@@ -119,7 +131,9 @@ class _OfficeCard extends StatelessWidget {
               // عرض ↗ (يسار)
               Expanded(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    openLocation();
+                  },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

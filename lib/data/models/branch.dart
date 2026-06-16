@@ -42,4 +42,21 @@ class Branch {
       .where((p) => p != null && p.trim().isNotEmpty)
       .cast<String>()
       .toList();
+
+  /// `cities` arrives as a stringified list, e.g. "[نجع حمادي]" or
+  /// "[15 مايو,الازبكية,...]". This parses it into clean city names.
+  List<String> get cityNames {
+    final raw = cities?.trim();
+    if (raw == null || raw.isEmpty) return const [];
+    return raw
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
+  /// First city name, or null when none.
+  String? get firstCity => cityNames.isEmpty ? null : cityNames.first;
 }
