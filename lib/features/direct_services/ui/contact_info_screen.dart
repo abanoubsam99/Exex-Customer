@@ -148,7 +148,7 @@ class ContactInfoScreen extends StatelessWidget {
                     ),
                     12.horizontalSpace,
                     _circleIconButton(
-                      icon: AppImages.iconsReceipt,
+                      materialIcon: Icons.access_time_rounded,
                       bg: const Color(0x1A40C4D6),
                       iconColor: const Color(0xFF40C4D6),
                       onTap: null,
@@ -274,7 +274,8 @@ class ContactInfoScreen extends StatelessWidget {
       );
 
   Widget _circleIconButton({
-    required String icon,
+    String? icon,
+    IconData? materialIcon,
     required Color bg,
     Color iconColor = Colors.white,
     VoidCallback? onTap,
@@ -287,12 +288,14 @@ class ContactInfoScreen extends StatelessWidget {
         height: 44.r,
         alignment: Alignment.center,
         decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-        child: CustomImageHandler(
-          icon,
-          width: 20.r,
-          height: 20.r,
-          color: iconColor,
-        ),
+        child: materialIcon != null
+            ? Icon(materialIcon, size: 22.r, color: iconColor)
+            : CustomImageHandler(
+                icon!,
+                width: 20.r,
+                height: 20.r,
+                color: iconColor,
+              ),
       ),
     );
   }
