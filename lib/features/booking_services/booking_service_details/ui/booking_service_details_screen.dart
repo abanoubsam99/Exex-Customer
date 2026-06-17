@@ -93,33 +93,37 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  22.verticalSpace,
-                  SectionSeperator(),
-                  22.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: AdditionsSection(),
-                  ),
-                  22.verticalSpace,
-                  SectionSeperator(),
-                  22.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: BuffetsSection(),
-                  ),
-                  22.verticalSpace,
-                  SectionSeperator(),
-                  22.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: ReviewsSection(),
-                  ),
-                  22.verticalSpace,
-                  SectionSeperator(),
-                  22.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: OtherServicesSection(),
+                  // Each optional section is hidden (together with its leading
+                  // separator) when it has no data, so we never show an empty
+                  // header like "الإضافات" / "البوفيه".
+                  BlocBuilder<BookingServiceDetailsCubit,
+                      BookingServiceDetailsState>(
+                    builder: (context, state) {
+                      Widget sectionBlock(Widget child) => Column(
+                            children: [
+                              22.verticalSpace,
+                              const SectionSeperator(),
+                              22.verticalSpace,
+                              Padding(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 24.w),
+                                child: child,
+                              ),
+                            ],
+                          );
+                      return Column(
+                        children: [
+                          if (state.additions.isNotEmpty)
+                            sectionBlock(const AdditionsSection()),
+                          if (state.buffets.isNotEmpty)
+                            sectionBlock(const BuffetsSection()),
+                          if (state.reviews.isNotEmpty)
+                            sectionBlock(const ReviewsSection()),
+                          if (state.services.isNotEmpty)
+                            sectionBlock(const OtherServicesSection()),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

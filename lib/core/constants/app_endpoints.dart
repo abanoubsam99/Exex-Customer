@@ -37,8 +37,8 @@ class AppEndpoints {
   static const favorites = "/api/Favorites";
   static const walletData = "/api/Clients/GetMyClientWalletData";
 
-  // Auth — external (Google) login
-  static const externalLogin = "/EVEX/Account/ExternalLogin";
+  // Auth — external (Google) login — disabled (App Store guideline 4.8).
+  // static const externalLogin = "/EVEX/Account/ExternalLogin";
 
   // Offices / branches
   static const allOffices = "/api/Home/GetAllOffices";

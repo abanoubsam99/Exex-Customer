@@ -6,9 +6,10 @@ import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
-import 'package:evex_user/core/services/google_auth_service.dart';
+// import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
@@ -107,7 +108,7 @@ class AppRouter {
               context.read<LoginRepo>(),
               context.read<UserService>(),
               context.read<LocalAuthService>(),
-              GoogleAuthService(),
+              // GoogleAuthService(),
             ),
             child: const LoginScreen(),
           ),
@@ -263,6 +264,10 @@ class AppRouter {
               context.read<HomeCubit>(),
               port: settings.arguments is Item
                   ? settings.arguments as Item
+                  : null,
+              // Opened from a special offer: only its portId is available.
+              portId: settings.arguments is SpecialOffer
+                  ? (settings.arguments as SpecialOffer).portId
                   : null,
             ),
             child: const BookingServiceDetailsScreen(),

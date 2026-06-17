@@ -13,6 +13,8 @@ class ReviewCardItem extends StatelessWidget {
         ? review.clientName!.trim()
         : 'عميل';
     final initial = name.characters.isNotEmpty ? name.characters.first : 'ع';
+    final hasComment = review.comment?.trim().isNotEmpty == true;
+    final comment = hasComment ? review.comment!.trim() : 'لا يوجد تعليق';
     return Container(
       width: 280.w,
       height: 115.h,
@@ -129,15 +131,19 @@ class ReviewCardItem extends StatelessWidget {
             6.verticalSpace,
             Expanded(
               child: Text(
-                review.comment ?? '',
+                comment,
                 textAlign: TextAlign.right,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  // Lighter/italic when it's the "no comment" placeholder.
+                  color: hasComment
+                      ? const Color(0xFF6F767E)
+                      : const Color(0xFFA5B7C6),
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
+                  fontStyle: hasComment ? FontStyle.normal : FontStyle.italic,
                   height: 1.50,
                 ),
               ),

@@ -64,24 +64,24 @@ class RegisterBodyWidget extends StatelessWidget {
                 );
               },
             ),
-            24.verticalSpace,
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(child: _Divider()),
-                Text(
-                  'أو تسجيل سريع بـ',
-                  style: TextStyle(
-                    color: const Color(0xFF6F767E),
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w400,
-                    height: 1.50,
-                  ),
-                ),
-                Expanded(child: _Divider()),
-              ],
-            ),
+            // 24.verticalSpace,
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Expanded(child: _Divider()),
+            //     Text(
+            //       'أو تسجيل سريع بـ',
+            //       style: TextStyle(
+            //         color: const Color(0xFF6F767E),
+            //         fontSize: 14.r,
+            //         fontFamily: 'Almarai',
+            //         fontWeight: FontWeight.w400,
+            //         height: 1.50,
+            //       ),
+            //     ),
+            //     Expanded(child: _Divider()),
+            //   ],
+            // ),
             // 16.verticalSpace,
             // const AllSocalMediaWidget(),
             24.verticalSpace,
@@ -119,28 +119,28 @@ class RegisterBodyWidget extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 42.h),
-            Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  minimumSize: Size.zero,
-                ),
-                onPressed: () {},
-                child: Text(
-                  'تخطي',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black.withValues(alpha: 0.85),
-                    fontSize: 16.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.24,
-                  ),
-                ),
-              ),
-            ),
+            // SizedBox(height: 42.h),
+            // Center(
+            //   child: TextButton(
+            //     style: TextButton.styleFrom(
+            //       padding: EdgeInsets.zero,
+            //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //       minimumSize: Size.zero,
+            //     ),
+            //     onPressed: () {},
+            //     child: Text(
+            //       'تخطي',
+            //       textAlign: TextAlign.center,
+            //       style: TextStyle(
+            //         color: Colors.black.withValues(alpha: 0.85),
+            //         fontSize: 16.r,
+            //         fontFamily: 'Almarai',
+            //         fontWeight: FontWeight.w700,
+            //         letterSpacing: -0.24,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

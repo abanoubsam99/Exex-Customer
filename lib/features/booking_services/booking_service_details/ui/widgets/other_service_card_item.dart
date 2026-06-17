@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,14 +38,30 @@ class OtherServiceCardItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomImageHandler(
-              images.isEmpty ? AppImages.imagesWedding2 : images[0],
-              fit: BoxFit.fill,
+            // Fixed image area so every card looks identical whether the
+            // service has an image or falls back to the placeholder.
+            Expanded(
+              child: SizedBox(
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: CustomImageHandler(
+                    images.isEmpty
+                        ? AppImages.imagesWedding2
+                        : (ImageUrlHelper.full(images[0]) ??
+                            AppImages.imagesWedding2),
+                    fit: BoxFit.cover,
+                    errorIcon: const Icon(Icons.broken_image_outlined),
+                  ),
+                ),
+              ),
             ),
             3.verticalSpace,
             Text(
-              '${title}',
+              title,
               textAlign: TextAlign.right,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: const Color(0xFF2C262C),
                 fontSize: 14.r,

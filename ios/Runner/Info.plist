@@ -67,7 +67,8 @@
 		<string>http</string>
 		<string>whatsapp</string>
 	</array>
-	<!-- google_sign_in: iOS client id -->
+	<!-- google_sign_in: disabled — Google login removed (App Store guideline 4.8). -->
+	<!--
 	<key>GIDClientID</key>
 	<string>461662438992-2j5be2jf3ad7jcr3s7uquvjspf3pet25.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
@@ -77,10 +78,10 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- Reversed iOS client id -->
 				<string>com.googleusercontent.apps.461662438992-2j5be2jf3ad7jcr3s7uquvjspf3pet25</string>
 			</array>
 		</dict>
 	</array>
+	-->
 </dict>
 </plist>

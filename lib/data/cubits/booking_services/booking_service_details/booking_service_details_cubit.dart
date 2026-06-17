@@ -17,12 +17,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
 
   /// [port] is the port selected on the previous screen. Its id drives the
   /// services/additions/reviews requests; the object feeds the header UI.
+  /// [portId] is used when we only have the id (e.g. opening a special offer
+  /// where no full [Item] is available).
   BookingServiceDetailsCubit(
     this._repo,
     this._favoritesRepo,
     this._homeCubit, {
     Item? port,
-  }) : super(BookingServiceDetailsState(port: port)) {
+    int? portId,
+  })  : _offerPortId = portId,
+        super(BookingServiceDetailsState(port: port)) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await getAllPortServices();
       await getAdditions();
@@ -30,10 +34,14 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     });
   }
 
+  /// Port id passed directly (without a full [Item]) — e.g. from an offer.
+  final int? _offerPortId;
+
   static const int _defaultPortId = 3;
 
   int get _portId =>
       state.port?.id ??
+      _offerPortId ??
       _homeCubit.state.selectedBookingPortType?.id ??
       _defaultPortId;
 

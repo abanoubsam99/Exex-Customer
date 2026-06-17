@@ -26,31 +26,32 @@ class LoginRepo {
     }
   }
 
-  /// External (Google) login. POST /EVEX/Account/ExternalLogin
-  Future<UserModel?> externalLogin({
-    required String idToken,
-    required String provider,
-    required String email,
-    required String name,
-  }) async {
-    try {
-      final response = await DioHelper.postData(
-        url: AppEndpoints.externalLogin,
-        data: {
-          'idToken': idToken,
-          'provider': provider,
-          'email': email,
-          'name': name,
-        },
-      );
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final user = UserModel.fromJson(response.data);
-        await cacheHelper.saveData(key: CacheKeys.token, value: user.token);
-        return user;
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
-  }
+  // Google login disabled — removed for App Store guideline 4.8.
+  // /// External (Google) login. POST /EVEX/Account/ExternalLogin
+  // Future<UserModel?> externalLogin({
+  //   required String idToken,
+  //   required String provider,
+  //   required String email,
+  //   required String name,
+  // }) async {
+  //   try {
+  //     final response = await DioHelper.postData(
+  //       url: AppEndpoints.externalLogin,
+  //       data: {
+  //         'idToken': idToken,
+  //         'provider': provider,
+  //         'email': email,
+  //         'name': name,
+  //       },
+  //     );
+  //     if (response.statusCode! >= 200 && response.statusCode! < 300) {
+  //       final user = UserModel.fromJson(response.data);
+  //       await cacheHelper.saveData(key: CacheKeys.token, value: user.token);
+  //       return user;
+  //     }
+  //     return null;
+  //   } catch (_) {
+  //     return null;
+  //   }
+  // }
 }

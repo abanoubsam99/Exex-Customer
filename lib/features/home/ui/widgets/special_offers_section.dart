@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
@@ -189,7 +191,10 @@ class SpecialOffersSection extends StatelessWidget {
                                   bordereColor: const Color(0xFF2C262C),
                                   fontSize: 14.r,
                                   text: "تفاصيل",
-                                  onTap: () {},
+                                  onTap: () => NavigationHelper.pushNamed(
+                                    Routes.bookingServiceDetailsScreen,
+                                    arguments: offer,
+                                  ),
                                 ),
                               ],
                             ),
