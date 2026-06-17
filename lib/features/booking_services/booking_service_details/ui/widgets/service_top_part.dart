@@ -15,6 +15,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ServiceTopPart extends StatefulWidget {
   const ServiceTopPart({super.key});
@@ -189,7 +190,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                   builder: (context, state) => SocialNavButton(
                     icon: AppImages.iconsHeart,
                     iconColor:
-                        state.isFavorite ? const Color(0xFFFE2B2C) : null,
+                        state.isFavorite ? AppColors.red2 : null,
                     onTap: () => context
                         .read<BookingServiceDetailsCubit>()
                         .toggleFavorite(),
@@ -223,8 +224,8 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
               dotHeight: 8.r,
               dotWidth: 8.r,
               expansionFactor: 2,
-              activeDotColor: const Color(0xFFF38B4A),
-              dotColor: const Color(0xFFD9D9D9),
+              activeDotColor: AppColors.primaryColor,
+              dotColor: AppColors.dividerGrey,
             ),
           ),
         ),
@@ -246,7 +247,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: const Color(0xFF2C262C),
+                        color: AppColors.blacksoft,
                         fontSize: 20.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w800,
@@ -268,7 +269,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                     '${state.port?.rate ?? 0}',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: const Color(0xFF2C262C),
+                      color: AppColors.blacksoft,
                       fontSize: 14.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w400,

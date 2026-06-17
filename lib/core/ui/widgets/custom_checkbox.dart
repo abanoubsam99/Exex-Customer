@@ -78,7 +78,7 @@ class _CustomCheckboxState extends State<CustomCheckbox> {
                   border:
                       isChecked
                           ? null
-                          : Border.all(width: 1.67.r, color: Color(0xFFD0D5DD)),
+                          : Border.all(width: 1.67.r, color: AppColors.borderGrey2),
                   borderRadius: BorderRadius.circular(5.0.r),
                 ),
 

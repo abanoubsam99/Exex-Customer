@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 /// كارت منتج/خدمة في شاشة الدفع المباشر (عرض فقط — بيفتح bottom sheet التفاصيل).
 class DirectProductCard extends StatelessWidget {
@@ -34,7 +35,7 @@ class DirectProductCard extends StatelessWidget {
           color: Colors.white,
           shadows: [
             BoxShadow(
-              color: const Color(0x19000000),
+              color: AppColors.shadow,
               blurRadius: 16.r,
               offset: Offset(0, 4.r),
               spreadRadius: -2,
@@ -77,7 +78,7 @@ class DirectProductCard extends StatelessWidget {
                             vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF38B4A),
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Text(
@@ -101,7 +102,7 @@ class DirectProductCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -115,7 +116,7 @@ class DirectProductCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -131,12 +132,12 @@ class DirectProductCard extends StatelessWidget {
                     Text(
                       '$before LE',
                       style: TextStyle(
-                        color: const Color(0xFFA5B7C6),
+                        color: AppColors.unitGrey,
                         fontSize: 11.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,
                         decoration: TextDecoration.lineThrough,
-                        decorationColor: const Color(0xFFFF928E),
+                        decorationColor: AppColors.salmon,
                       ),
                     ),
                     6.horizontalSpace,
@@ -148,7 +149,7 @@ class DirectProductCard extends StatelessWidget {
                         TextSpan(
                           text: '$price',
                           style: TextStyle(
-                            color: const Color(0xFFF38B4A),
+                            color: AppColors.primaryColor,
                             fontSize: 16.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -157,7 +158,7 @@ class DirectProductCard extends StatelessWidget {
                         TextSpan(
                           text: ' LE',
                           style: TextStyle(
-                            color: const Color(0xFF99A2AC),
+                            color: AppColors.blueGrey,
                             fontSize: 12.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,

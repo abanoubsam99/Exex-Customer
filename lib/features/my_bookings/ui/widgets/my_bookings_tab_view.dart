@@ -12,9 +12,10 @@ import 'package:evex_user/features/my_bookings/ui/widgets/my_booking_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
-const _green = Color(0xFF4CD195);
-const _red = Color(0xFFFE7062);
+const _green = AppColors.green;
+const _red = AppColors.coral;
 
 class MyBookingsTabView extends StatelessWidget {
   const MyBookingsTabView({super.key});
@@ -67,7 +68,7 @@ class _RequestsTab extends StatelessWidget {
                 return MyBookingItem(
                   portName: r.portName ?? '',
                   statusText:
-                      ReservationStatusHelper.arabic(r.reservationStatus),
+                      ReservationStatusHelper.label(r.reservationStatus),
                   statusColor: available ? _green : _red,
                   serviceName: r.serviceName ?? '',
                   serviceDetails: r.serviceDetails ?? '',
@@ -76,7 +77,18 @@ class _RequestsTab extends StatelessWidget {
                   deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
-                  onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  // A pending request → go to the confirm/pay screen (not details).
+                  onTap: r.id == null
+                      ? null
+                      : () => NavigationHelper.pushNamed(
+                            Routes.confirmBookingScreen,
+                            arguments: ConfirmBookingArgs(
+                              reservationRequestId: r.id!,
+                              depositAmount: r.deposit ?? 0,
+                              totalAmount:
+                                  r.finalCost ?? r.apparentPrice ?? 0,
+                            ),
+                          ),
                   onEdit: r.id == null
                       ? null
                       : () => _openEdit(
@@ -131,7 +143,7 @@ class _ReservationsTab extends StatelessWidget {
                 return MyBookingItem(
                   portName: r.portName ?? '',
                   statusText:
-                      ReservationStatusHelper.arabic(r.reservationStatus),
+                      ReservationStatusHelper.label(r.reservationStatus),
                   statusColor: _green,
                   serviceName: r.serviceName ?? '',
                   serviceDetails: '',
@@ -187,7 +199,7 @@ class _CancelledTab extends StatelessWidget {
                 final r = state.cancelled[index];
                 return MyBookingItem(
                   portName: r.portName ?? '',
-                  statusText: 'ملغي',
+                  statusText: ReservationStatusHelper.label('cancelled'),
                   statusColor: _red,
                   serviceName: r.serviceName ?? '',
                   serviceDetails: '',
@@ -238,7 +250,7 @@ class _PendingDepositFooter extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x14000000),
+            color: AppColors.blackAlpha14,
             blurRadius: 18,
             offset: Offset(0, 4),
           ),
@@ -252,7 +264,7 @@ class _PendingDepositFooter extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: const Color(0xFFEAF8F1),
+                color: AppColors.greenBg2,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Text(
@@ -261,7 +273,7 @@ class _PendingDepositFooter extends StatelessWidget {
                 '${summary.additionalDiscountAmount > 0 ? ' (وفّرت ${_n(summary.additionalDiscountAmount)} جنيه)' : ''}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: const Color(0xFF2BA577),
+                  color: AppColors.green6,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -276,7 +288,7 @@ class _PendingDepositFooter extends StatelessWidget {
               Text(
                 'إجمالي المقدم',
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -288,7 +300,7 @@ class _PendingDepositFooter extends StatelessWidget {
                   TextSpan(
                     text: '${_n(summary.totalDeposit)} ',
                     style: TextStyle(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       fontSize: 16.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w800,
@@ -297,7 +309,7 @@ class _PendingDepositFooter extends StatelessWidget {
                   TextSpan(
                     text: 'جنيه',
                     style: TextStyle(
-                      color: const Color(0xFFA5B7C6),
+                      color: AppColors.unitGrey,
                       fontSize: 12.r,
                       fontFamily: 'Almarai',
                     ),
@@ -352,7 +364,7 @@ Widget _emptyList(String message) {
         child: Text(
           message,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,

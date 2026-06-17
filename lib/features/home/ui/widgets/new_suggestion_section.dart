@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../app/helpers/navigation_helper.dart';
 import '../../../../core/routing/routes.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class NewSuggestionSection extends StatelessWidget {
   const NewSuggestionSection({super.key});
@@ -18,7 +19,7 @@ class NewSuggestionSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -43,11 +44,11 @@ class NewSuggestionSection extends StatelessWidget {
           children: [
             Container(
               width: 1.sw,
-              height: 76.h,
+              height: 85.h,
               decoration: ShapeDecoration(
-                color: const Color(0x33AED0E7),
+                color: AppColors.lightBlue3Alpha33,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1, color: const Color(0xFFAED0E7)),
+                  side: BorderSide(width: 1, color: AppColors.lightBlue3),
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
@@ -58,7 +59,7 @@ class NewSuggestionSection extends StatelessWidget {
             //     width: 1.sw,
             //     height: 89.h,
             //     decoration: ShapeDecoration(
-            //       color: const Color(0x23F38B4A),
+            //       color: AppColors.primaryAlpha23,
             //       shape: RoundedRectangleBorder(
             //         borderRadius: BorderRadius.circular(16),
             //       ),
@@ -77,7 +78,7 @@ class NewSuggestionSection extends StatelessWidget {
                       'اقترح تاجر جديد ..',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF2C262C),
+                        color: AppColors.blacksoft,
                         fontSize: 14.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -110,9 +111,9 @@ class NewSuggestionSection extends StatelessWidget {
                   width: 75.w,
                   borderRadius: 8.r,
                   fontSize: 13.r,
-                  backgroundColor: Color(0xFFB6DAEE),
-                  fontColor: Color(0xFF6681AF),
-                  bordereColor: Color(0xFFB6DAEE),
+                  backgroundColor: AppColors.lightBlue1,
+                  fontColor: AppColors.blueGrey2,
+                  bordereColor: AppColors.lightBlue1,
                   text: 'اقترح الآن',
                   onTap: () {
                     NavigationHelper.pushNamed(Routes.newSuggestionScreen);

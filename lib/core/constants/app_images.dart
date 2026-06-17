@@ -27,6 +27,7 @@ class AppImages {
   /// Assets for iconsCalendar2
   /// assets/icons/calendar2.svg
   static const String iconsCalendar2 = "assets/icons/calendar2.svg";
+  static const String iconsAccessTime = "assets/icons/access_time.svg";
   /// Assets for iconsChevronRightSolid
   /// assets/icons/chevron-right-solid.svg
   static const String iconsChevronRightSolid = "assets/icons/chevron-right-solid.svg";
@@ -154,6 +155,7 @@ class AppImages {
   /// Assets for imagesCoin
   /// assets/images/coin.png
   static const String imagesCoin = "assets/images/coin.png";
+  static const String imagesBgCardDetails = "assets/images/bgcarddetails.png";
   /// Assets for imagesDollars
   /// assets/images/dollars.png
   static const String imagesDollars = "assets/images/dollars.png";
@@ -223,6 +225,7 @@ class AppImages {
   /// Assets for iconsWhatsapp
   /// assets/icons/whatsapp.png
   static const String iconsWhatsapp = "assets/icons/whatsapp.png";
+  static const String iconsFavicon = "assets/icons/favicon.png";
   static const String iconsIc = "assets/icons/idicon.svg";
   /// Assets for iconsSocialTelegram
   /// assets/icons/social_telegram.png

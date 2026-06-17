@@ -3,6 +3,7 @@ import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class OnboardThirdPage extends StatefulWidget {
   const OnboardThirdPage({super.key});
@@ -23,7 +24,7 @@ class _OnboardThirdPageState extends State<OnboardThirdPage>
         gradient: LinearGradient(
           begin: Alignment(1.5, -1),
           end: Alignment(-1, 0.2),
-          colors: [Color(0xffF9C5A4).withValues(alpha: 0.5), Colors.white],
+          colors: [AppColors.peachOrange.withValues(alpha: 0.5), Colors.white],
         ),
       ),
       child: Center(
@@ -72,7 +73,7 @@ class _OnboardThirdPageState extends State<OnboardThirdPage>
                               'خصومات وعروض حصرية !!',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: const Color(0xFF2C262C),
+                                color: AppColors.blacksoft,
                                 fontSize: 22.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w800,
@@ -84,7 +85,7 @@ class _OnboardThirdPageState extends State<OnboardThirdPage>
                               'استفيد بخصومات على كل حجوزاتك\nوبدون وسيط أو عمولات ',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: const Color(0xFF5E5E5E),
+                                color: AppColors.darkGrey,
                                 fontSize: 14.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w400,

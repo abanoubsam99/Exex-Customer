@@ -29,7 +29,7 @@ class ProfileScreenBody extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.0, 0.4],
-          colors: [Color(0xFFFEF3ED), Colors.white],
+          colors: [AppColors.peachBg1, Colors.white],
         ),
       ),
       child: SafeArea(
@@ -70,10 +70,10 @@ class ProfileScreenBody extends StatelessWidget {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color(0xFFFB7272),
+                              color: AppColors.salmon2,
                               width: 1.3,
                             ),
-                            color: const Color(0xFFFFECEE),
+                            color: AppColors.pinkBg,
                             borderRadius: BorderRadius.circular(10.r),
                           ),
                           child: CustomImageHandler(
@@ -133,7 +133,7 @@ class ProfileScreenBody extends StatelessWidget {
                               textAlign: TextAlign.right,
                               textDirection: TextDirection.ltr,
                               style: TextStyle(
-                                color: const Color(0xFF99A2AC),
+                                color: AppColors.blueGrey,
                                 fontSize: 14.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w400,
@@ -148,7 +148,7 @@ class ProfileScreenBody extends StatelessWidget {
                                 child: _statCard(
                                   'لايوجد',
                                   'كود الدعوة',
-                                  const Color(0xFF4A7CF7),
+                                  AppColors.blue2,
                                 ),
                               ),
                               10.horizontalSpace,
@@ -180,7 +180,7 @@ class ProfileScreenBody extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 side: const BorderSide(
                                   width: 1,
-                                  color: Color(0xFFF2F4F7),
+                                  color: AppColors.boarderColor,
                                 ),
                                 borderRadius: BorderRadius.circular(16.r),
                               ),
@@ -237,9 +237,9 @@ class ProfileScreenBody extends StatelessWidget {
                           ),
                           18.verticalSpace,
                           CustomButton(
-                            bordereColor: const Color(0xff2C262C),
+                            bordereColor: AppColors.blacksoft,
                             backgroundColor: Colors.white,
-                            fontColor: const Color(0xff2C262C),
+                            fontColor: AppColors.blacksoft,
                             text: 'تغيير كلمة المرور',
                             onTap: () => NavigationHelper.pushNamed(
                               Routes.changePassword,
@@ -249,7 +249,7 @@ class ProfileScreenBody extends StatelessWidget {
                           CustomButton(
                             bordereColor: Colors.white,
                             backgroundColor: Colors.white,
-                            fontColor: const Color(0xffD42D1C),
+                            fontColor: AppColors.red5,
                             isfilled: false,
                             text: 'حذف الحساب',
                             onTap: () {
@@ -283,12 +283,12 @@ class ProfileScreenBody extends StatelessWidget {
           side: BorderSide(
             width: 0.5,
             strokeAlign: BorderSide.strokeAlignCenter,
-            color: Color(0xFFEDEDED),
+            color: AppColors.lineGrey,
           ),
         ),
         shadows: [
           BoxShadow(
-            color: Color(0x19000000),
+            color: AppColors.shadow,
             blurRadius: 4,
             offset: Offset(0, 2),
             spreadRadius: 0,
@@ -308,7 +308,7 @@ class ProfileScreenBody extends StatelessWidget {
       children: [
         CustomImageHandler(
           icon,
-          color: const Color(0xFFFFC9A9),
+          color: AppColors.peach2,
           height: 22.r,
           width: 22.r,
         ),
@@ -317,7 +317,7 @@ class ProfileScreenBody extends StatelessWidget {
           label,
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: const Color(0xFF2C262C),
+            color: AppColors.blacksoft,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,
@@ -329,7 +329,7 @@ class ProfileScreenBody extends StatelessWidget {
             textAlign: TextAlign.left,
             textDirection: ltrValue ? TextDirection.ltr : TextDirection.rtl,
             style: TextStyle(
-              color: const Color(0xFF99A2AC),
+              color: AppColors.blueGrey,
               fontSize: 14.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -347,7 +347,7 @@ class ProfileScreenBody extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFFF2F4F7)),
+          side: const BorderSide(width: 1, color: AppColors.boarderColor),
           borderRadius: BorderRadius.circular(12.r),
         ),
       ),
@@ -372,7 +372,7 @@ class ProfileScreenBody extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: const Color(0xFF99A2AC),
+              color: AppColors.blueGrey,
               fontSize: 12.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -423,7 +423,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     width: 28.r,
                     height: 28.r,
                     decoration: const ShapeDecoration(
-                      color: Color(0xFFF2F4F7),
+                      color: AppColors.boarderColor,
                       shape: OvalBorder(),
                     ),
                     child: Material(
@@ -452,7 +452,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     side: BorderSide(
                       width: 4,
                       strokeAlign: BorderSide.strokeAlignCenter,
-                      color: Color(0x19FE2B2C),
+                      color: AppColors.red2Alpha19,
                     ),
                   ),
                 ),
@@ -461,7 +461,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   width: 42.r,
                   height: 42.r,
                   decoration: const ShapeDecoration(
-                    color: Color(0xFFFE2B2C),
+                    color: AppColors.red2,
                     shape: OvalBorder(),
                   ),
                   child: Center(
@@ -479,7 +479,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 'هل انت متأكد من أنك تريد حذف الحساب الخاص بك نهائياً ؟',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 16.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w800,
@@ -491,7 +491,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 Container(
                   width: 271.r,
                   decoration: ShapeDecoration(
-                    color: const Color(0x19FE2B2C),
+                    color: AppColors.red2Alpha19,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -518,7 +518,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                             'سيؤدى حذف الحساب الى إلغاء اشتراكك بالكامل ومسح جميع الأنشطة التى قمت بها طوال الفترة السابقة والغاء جميع الحجوزات الحالية ولا يمكن نهائياً استرجاع ايأ منها لاحقأ',
                             textAlign: TextAlign.right,
                             style: TextStyle(
-                              color: const Color(0xFF6F767E),
+                              color: AppColors.grey,
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
@@ -558,7 +558,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                       height: 48.h,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2C262C),
+                          backgroundColor: AppColors.blacksoft,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
@@ -588,7 +588,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                           final isLoading = _showEmailField && state.isLoading;
                           return OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xFFD92D20)),
+                              side: const BorderSide(color: AppColors.errorRed),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
@@ -611,7 +611,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                                     height: 20.r,
                                     child: const CircularProgressIndicator(
                                       strokeWidth: 2.5,
-                                      color: Color(0xFFD92D20),
+                                      color: AppColors.errorRed,
                                     ),
                                   )
                                 : Text(
@@ -619,7 +619,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                                         ? 'تأكيد الحذف'
                                         : 'حذف الحساب',
                                     style: TextStyle(
-                                      color: const Color(0xFFD92D20),
+                                      color: AppColors.errorRed,
                                       fontSize: 14.r,
                                       fontFamily: 'Almarai',
                                       fontWeight: FontWeight.w700,

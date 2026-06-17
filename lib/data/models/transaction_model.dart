@@ -46,14 +46,16 @@ class TransactionModel {
         operationType.contains('استرداد');
   }
 
+  /// Returns a translation key (screens localize it with `.tr()`); an unknown
+  /// raw operation type is passed through unchanged.
   static String _reasonFor(String operationType) {
     switch (operationType.toLowerCase()) {
       case 'deposit':
-        return 'مقدم الحجز';
+        return 'booking deposit';
       case 'paying':
-        return 'دفعات الحجز';
+        return 'booking payments';
       default:
-        return _isRefund(operationType) ? 'استرداد' : operationType;
+        return _isRefund(operationType) ? 'refund' : operationType;
     }
   }
 

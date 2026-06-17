@@ -61,7 +61,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 width: 80.w,
                 height: 4.r,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE4E7EC),
+                  color: AppColors.borderGrey,
                   borderRadius: BorderRadius.circular(100.r),
                 ),
               ),
@@ -71,7 +71,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               'تصفيه',
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 18.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
@@ -122,7 +122,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                               side: BorderSide(
                                 width: 0.5,
                                 strokeAlign: BorderSide.strokeAlignCenter,
-                                color: const Color(0xFF99A2AC),
+                                color: AppColors.blueGrey,
                               ),
                             ),
                           ),
@@ -234,8 +234,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 Spacer(),
                 Switch(
                   value: isAvilableOnly,
-                  activeTrackColor: Color(0xFFF38B4A),
-                  inactiveTrackColor: Color(0xFFD9D9D9),
+                  activeTrackColor: AppColors.primaryColor,
+                  inactiveTrackColor: AppColors.dividerGrey,
                   inactiveThumbColor: Colors.white,
                   thumbColor: WidgetStateProperty.all(Colors.white),
 
@@ -276,8 +276,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 Spacer(),
                 Switch(
                   value: isAvilableOnly,
-                  activeTrackColor: Color(0xFFF38B4A),
-                  inactiveTrackColor: Color(0xFFD9D9D9),
+                  activeTrackColor: AppColors.primaryColor,
+                  inactiveTrackColor: AppColors.dividerGrey,
                   inactiveThumbColor: Colors.white,
                   thumbColor: WidgetStateProperty.all(Colors.white),
 
@@ -343,7 +343,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   '(EGP)',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF99A2AC),
+                    color: AppColors.blueGrey,
                     fontSize: 13.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -359,7 +359,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   '500',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF99A2AC),
+                    color: AppColors.blueGrey,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -371,7 +371,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   '250k',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF99A2AC),
+                    color: AppColors.blueGrey,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -382,14 +382,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             ),
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                activeTrackColor: Color(0xFFF38B4A),
-                inactiveTrackColor: Color(0xFFF4F4F4),
+                activeTrackColor: AppColors.primaryColor,
+                inactiveTrackColor: AppColors.boarderFillColor,
                 trackHeight: 5.0.r,
                 thumbShape: CustomThumbShape(
                   thumbRadius: 12.0,
                   label: '${(_currentValue / 1000).round()}k',
                 ),
-                // overlayColor: Color(0xFFF38B4A).withOpacity(0.2),
+                // overlayColor: AppColors.primaryColor.withOpacity(0.2),
                 // overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
               ),
               child: Slider(
@@ -444,7 +444,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 // ),
                 hintText: "حدد عدد الحضور",
                 hintStyle: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 16.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -499,30 +499,30 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       child: Icon(
                         Icons.remove_rounded,
                         size: 22.r,
-                        color: Color(0xFF433D42),
+                        color: AppColors.offBlackColor,
                       ),
                     ),
                   ),
                 ),
                 filled: true,
-                focusColor: Color(0xFFF4F4F4),
+                focusColor: AppColors.boarderFillColor,
                 fillColor:
                     _focusNode.hasFocus
                         ?
                         // No fill color when focused
                         AppColors.whiteColor
-                        : Color(0xFFF4F4F4),
+                        : AppColors.boarderFillColor,
                 // contentPadding: const EdgeInsets.symmetric(
                 //   horizontal: 16,
                 //   vertical: 16,
                 // ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
-                  borderSide: const BorderSide(color: Color(0xFFF4F4F4)),
+                  borderSide: const BorderSide(color: AppColors.boarderFillColor),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
-                  borderSide: const BorderSide(color: Color(0xFFF4F4F4)),
+                  borderSide: const BorderSide(color: AppColors.boarderFillColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
@@ -532,7 +532,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
-                  borderSide: const BorderSide(color: Color(0xFFF4F4F4)),
+                  borderSide: const BorderSide(color: AppColors.boarderFillColor),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.r),
@@ -638,7 +638,7 @@ class CustomThumbShape extends SliderComponentShape {
     // Draw shadow for the thumb
     final shadowPaint =
         Paint()
-          ..color = Color(0x23000000)
+          ..color = AppColors.blackAlpha23
           ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4);
 
     canvas.drawCircle(center, thumbRadius, shadowPaint);
@@ -655,7 +655,7 @@ class CustomThumbShape extends SliderComponentShape {
     final textSpan = TextSpan(
       text: label,
       style: TextStyle(
-        color: const Color(0xFF2C262C),
+        color: AppColors.blacksoft,
         fontSize: 16.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w800,

@@ -39,7 +39,7 @@ class PhoneFieldComponent extends StatefulWidget {
     this.radius = 12,
     required this.hint,
   }) {
-    fillColor ?? const Color(0xffF8F8F8);
+    fillColor ?? AppColors.bgLightGrey;
     textStyle ?? const TextStyle(color: AppColors.blackColor);
     hintTextStyle ?? const TextStyle(color: AppColors.textDarkGreyColor);
   }
@@ -90,8 +90,8 @@ class _PhoneFieldComponentState extends State<PhoneFieldComponent> {
     });
 
     if (widget.isReadOnly) {
-      widget.fillColor = const Color(0xffF4F4F4);
-      widget.borderColor = const Color(0xffF4F4F4);
+      widget.fillColor = AppColors.boarderFillColor;
+      widget.borderColor = AppColors.boarderFillColor;
     }
     changeObsecureStatus = widget.hasShowPasswordIcon;
   }
@@ -249,7 +249,7 @@ class _PhoneFieldComponentState extends State<PhoneFieldComponent> {
                   fontWeight: FontWeight.w300,
                   fontSize: 16,
                   fontFamily: 'Almarai',
-                  color: Color(0xff99A2AC),
+                  color: AppColors.blueGrey,
                 ),
           ),
 

@@ -17,6 +17,7 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/w
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class BookingServiceDetailsScreen extends StatelessWidget {
   const BookingServiceDetailsScreen({super.key});
@@ -31,7 +32,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
       //     color: Colors.white,
       //     boxShadow: [
       //       BoxShadow(
-      //         color: Color(0x19000000),
+      //         color: AppColors.shadow,
       //         blurRadius: 48,
       //         offset: Offset(0, -7),
       //         spreadRadius: -6,
@@ -73,7 +74,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                                   : 'لا يوجد وصف متاح لهذه الخدمة',
                               textAlign: TextAlign.right,
                               style: TextStyle(
-                                color: const Color(0xFF787878),
+                                color: AppColors.grey2,
                                 fontSize: 13.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w400,
@@ -138,7 +139,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Color(0x19000000),
+                  color: AppColors.shadow,
                   blurRadius: 48,
                   offset: Offset(0, -7),
                   spreadRadius: -6,
@@ -155,7 +156,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                         'إجمالي التكلفة',
                         textAlign: TextAlign.right,
                         style: TextStyle(
-                          color: const Color(0xFF6F767E),
+                          color: AppColors.grey,
                           fontSize: 18.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w800,
@@ -173,7 +174,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                                 text: state.totalCost
                                     .toStringAsFixed(2),
                                 style: TextStyle(
-                                  color: const Color(0xFFF38B4A),
+                                  color: AppColors.primaryColor,
                                   fontSize: 20.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w800,
@@ -183,7 +184,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               TextSpan(
                                 text: ' ',
                                 style: TextStyle(
-                                  color: const Color(0xFF6F767E),
+                                  color: AppColors.grey,
                                   fontSize: 20.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w400,
@@ -193,7 +194,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               TextSpan(
                                 text: 'جنيه',
                                 style: TextStyle(
-                                  color: const Color(0xFFA5B7C6),
+                                  color: AppColors.unitGrey,
                                   fontSize: 14.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w400,
@@ -284,7 +285,7 @@ class RPSCustomPainter extends CustomPainter {
     path_0.close();
 
     Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = Color(0xffFFB88C).withOpacity(1.0);
+    paint0Fill.color = AppColors.lightOrangeColor.withOpacity(1.0);
     canvas.drawPath(path_0, paint0Fill);
   }
 
@@ -391,7 +392,7 @@ class RPSClipper extends CustomClipper<Path> {
 //           onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
 //           controller: _controller,
 //           style: TextStyle(
-//             color: const Color(0xFFF38B4A),
+//             color: AppColors.primaryColor,
 //             fontSize: 16.r,
 //             fontFamily: 'Almarai',
 //             fontWeight: FontWeight.w700,
@@ -411,7 +412,7 @@ class RPSClipper extends CustomClipper<Path> {
 //               'LE',
 //               textAlign: TextAlign.right,
 //               style: TextStyle(
-//                 color: const Color(0xFFA5B7C6),
+//                 color: AppColors.unitGrey,
 //                 fontSize: 12.r,
 //                 fontFamily: 'Almarai',
 //                 fontWeight: FontWeight.w400,

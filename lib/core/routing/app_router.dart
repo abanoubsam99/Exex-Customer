@@ -295,7 +295,7 @@ class AppRouter {
           BlocProvider(
             create: (context) =>
                 PaymentHistoryCubit(context.read<PaymentHistoryRepo>())
-                  ..loadTransactions(),
+                  ..loadAll(),
             child: const PaymentHistoryScreen(),
           ),
           settings,
@@ -391,6 +391,8 @@ class AppRouter {
           BlocProvider(
             create: (context) => EditReservationCubit(
               context.read<ConfirmBookingRepo>(),
+              context.read<LocationRepo>(),
+              context.read<PortServicesRepo>(),
               args: settings.arguments is EditReservationArgs
                   ? settings.arguments as EditReservationArgs
                   : const EditReservationArgs(reservationId: 0),

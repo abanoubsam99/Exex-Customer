@@ -152,7 +152,7 @@ class MyBookingItem extends StatelessWidget {
                     ),
                   ],
                 ),
-                Divider(color: const Color(0xFFF2F4F7), thickness: 1.r),
+                Divider(color: AppColors.boarderColor, thickness: 1.r),
                 Row(
                   children: [
                     Expanded(
@@ -177,7 +177,7 @@ class MyBookingItem extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: const Color(0xFF6F767E),
+                                        color: AppColors.grey,
                                         fontSize: 12.r,
                                         fontFamily: 'Almarai',
                                         fontWeight: FontWeight.w700,
@@ -191,7 +191,7 @@ class MyBookingItem extends StatelessWidget {
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: const Color(0xFF99A2AC),
+                                        color: AppColors.blueGrey,
                                         fontSize: 11.r,
                                         fontFamily: 'Almarai',
                                         fontWeight: FontWeight.w300,
@@ -220,7 +220,7 @@ class MyBookingItem extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: const Color(0xFF6F767E),
+                                    color: AppColors.grey,
                                     fontSize: 12.r,
                                     fontFamily: 'Almarai',
                                     fontWeight: FontWeight.w700,
@@ -243,7 +243,7 @@ class MyBookingItem extends StatelessWidget {
                                 dateText,
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
-                                  color: const Color(0xFF6F767E),
+                                  color: AppColors.grey,
                                   fontSize: 12.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w700,
@@ -275,7 +275,7 @@ class MyBookingItem extends StatelessWidget {
                       'مقدم الحجز',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF99A2AC),
+                        color: AppColors.blueGrey,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -285,13 +285,13 @@ class MyBookingItem extends StatelessWidget {
                     ),
                     const Spacer(),
                     Text.rich(
-                      textDirection: TextDirection.ltr,
+                      textDirection: TextDirection.rtl,
                       TextSpan(
                         children: [
                           TextSpan(
                             text: '${_money(deposit)} ',
                             style: TextStyle(
-                              color: const Color(0xFF79E2B2),
+                              color: AppColors.greenSoft,
                               fontSize: 16.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w800,
@@ -302,7 +302,7 @@ class MyBookingItem extends StatelessWidget {
                           TextSpan(
                             text: 'جنيه',
                             style: TextStyle(
-                              color: const Color(0xFF99A2AC),
+                              color: AppColors.blueGrey,
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
@@ -321,7 +321,7 @@ class MyBookingItem extends StatelessWidget {
                       'الإجمالي',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF99A2AC),
+                        color: AppColors.blueGrey,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -336,9 +336,9 @@ class MyBookingItem extends StatelessWidget {
                         children: [
                           Text(
                             _money(apparentPrice),
-                            textDirection: TextDirection.ltr,
+                            textDirection: TextDirection.rtl,
                             style: TextStyle(
-                              color: const Color(0xFFFF928E),
+                              color: AppColors.salmon,
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
@@ -360,13 +360,13 @@ class MyBookingItem extends StatelessWidget {
                       7.horizontalSpace,
                     ],
                     Text.rich(
-                      textDirection: TextDirection.ltr,
+                      textDirection: TextDirection.rtl,
                       TextSpan(
                         children: [
                           TextSpan(
                             text: '${_money(finalCost)} ',
                             style: TextStyle(
-                              color: const Color(0xFFFE7062),
+                              color: AppColors.coral,
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w700,
@@ -377,7 +377,7 @@ class MyBookingItem extends StatelessWidget {
                           TextSpan(
                             text: 'جنيه',
                             style: TextStyle(
-                              color: const Color(0xFF99A2AC),
+                              color: AppColors.blueGrey,
                               fontSize: 12.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
@@ -415,7 +415,7 @@ class TicketPainter extends CustomPainter {
   TicketPainter({
     required this.bgColor,
     required this.borderColor,
-    this.dottedLineColor = const Color(0xFFD9D9D9),
+    this.dottedLineColor = AppColors.dividerGrey,
     this.shadowColor = Colors.transparent,
     this.shadowBlurRadius = 0,
     this.shadowOffset = Offset.zero,

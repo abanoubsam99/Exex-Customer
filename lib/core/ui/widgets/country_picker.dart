@@ -60,7 +60,7 @@ class CountryPicker extends StatelessWidget {
               fontWeight: FontWeight.w300,
               fontSize: 14.r,
               fontFamily: 'Almarai',
-              color: const Color(0xff99A2AC),
+              color: AppColors.blueGrey,
             ),
           ),
           onChanged: onChanged,
@@ -95,7 +95,7 @@ class CountryPicker extends StatelessWidget {
                                 side: BorderSide(
                                   width: 0.5,
                                   strokeAlign: BorderSide.strokeAlignCenter,
-                                  color: const Color(0xFF99A2AC),
+                                  color: AppColors.blueGrey,
                                 ),
                               ),
                             ),

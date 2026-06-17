@@ -3,6 +3,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class DatePicker extends StatefulWidget {
   const DatePicker({super.key, required this.title, this.onChanged});
@@ -38,7 +39,7 @@ class _DatePickerState extends State<DatePicker> {
       child: Container(
         height: 46.h,
         decoration: ShapeDecoration(
-          color: const Color(0xFFF4F4F4),
+          color: AppColors.boarderFillColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
           ),
@@ -50,7 +51,7 @@ class _DatePickerState extends State<DatePicker> {
             children: [
               CustomImageHandler(
                 AppImages.iconsCalendar,
-                color: const Color(0xFFF8BC96),
+                color: AppColors.lightOrange2,
               ),
               8.horizontalSpace,
               Text(
@@ -58,7 +59,7 @@ class _DatePickerState extends State<DatePicker> {
                     ? DateFormat('dd/MM/yyyy').format(selectedDate!)
                     : widget.title,
                 style: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,

@@ -1,6 +1,7 @@
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 /// قسم "سياسات التاجر" — بيعرض بيانات GetPortPolicy.
 class VendorPoliciesSection extends StatelessWidget {
@@ -28,7 +29,7 @@ class VendorPoliciesSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -53,7 +54,7 @@ class VendorPoliciesSection extends StatelessWidget {
           'جميعها مطروحه ومشروطه من قبل مقدم الخدمة أو التاجر نفسه',
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: 11.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,
@@ -65,7 +66,7 @@ class VendorPoliciesSection extends StatelessWidget {
             'اخر تحديث في $lastUpdated',
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: const Color(0xFF6F767E),
+              color: AppColors.grey,
               fontSize: 11.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -149,7 +150,7 @@ class VendorPoliciesSection extends StatelessWidget {
                 'يلتزم التاجر برد مبلغ التأمين كاملاً للعميل\nبعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من قبل العميل',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  color: AppColors.grey,
                   fontSize: 11.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w300,
@@ -162,7 +163,7 @@ class VendorPoliciesSection extends StatelessWidget {
                 'سياسات أخرى',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -175,7 +176,7 @@ class VendorPoliciesSection extends StatelessWidget {
                     : 'لا توجد سياسات أخرى',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  color: AppColors.grey,
                   fontSize: 11.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w300,
@@ -198,12 +199,12 @@ class VendorPoliciesSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 side: BorderSide(
-                  color: const Color(0xFFF38B4A).withValues(alpha: 0.6),
+                  color: AppColors.primaryColor.withValues(alpha: 0.6),
                   width: 1.1.r,
                 ),
                 fillColor: WidgetStateProperty.resolveWith<Color>((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return const Color(0xFFF38B4A);
+                    return AppColors.primaryColor;
                   }
                   return Colors.transparent;
                 }),
@@ -237,7 +238,7 @@ class VendorPoliciesSection extends StatelessWidget {
             textAlign: TextAlign.right,
             style: TextStyle(
               color:
-                  boldTitle ? const Color(0xFF2C262C) : const Color(0xFF6F767E),
+                  boldTitle ? AppColors.blacksoft : AppColors.grey,
               fontSize: boldTitle ? 12.r : 11.r,
               fontFamily: 'Almarai',
               fontWeight: boldTitle ? FontWeight.w700 : FontWeight.w300,
@@ -252,7 +253,7 @@ class VendorPoliciesSection extends StatelessWidget {
               TextSpan(
                 text: value,
                 style: TextStyle(
-                  color: const Color(0xFFF38B4A),
+                  color: AppColors.primaryColor,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -266,7 +267,7 @@ class VendorPoliciesSection extends StatelessWidget {
               TextSpan(
                 text: unit,
                 style: TextStyle(
-                  color: const Color(0xFFA5B7C6),
+                  color: AppColors.unitGrey,
                   fontSize: 11.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -291,7 +292,7 @@ class VendorPoliciesSection extends StatelessWidget {
             side: BorderSide(
               width: 0.5.r,
               strokeAlign: BorderSide.strokeAlignCenter,
-              color: const Color(0xFFF4F4F4),
+              color: AppColors.boarderFillColor,
             ),
           ),
         ),
@@ -331,7 +332,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
       child: Container(
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1, color: const Color(0xFFF2F4F7)),
+            side: BorderSide(width: 1, color: AppColors.boarderColor),
             borderRadius: BorderRadius.circular(16.r),
           ),
         ),

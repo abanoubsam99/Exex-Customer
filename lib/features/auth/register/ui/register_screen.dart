@@ -3,6 +3,7 @@ import 'package:evex_user/features/auth/register/ui/widgets/register_body_widget
 import 'package:evex_user/features/auth/register/ui/widgets/register_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -41,7 +42,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                           shadows: [
                             BoxShadow(
-                              color: Color(0x19000000),
+                              color: AppColors.shadow,
                               blurRadius: 54,
                               offset: Offset(0, -6),
                               spreadRadius: -30,

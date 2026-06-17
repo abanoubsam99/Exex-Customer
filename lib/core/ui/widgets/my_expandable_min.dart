@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class MyExpandableMin extends StatelessWidget {
   const MyExpandableMin({super.key});
@@ -17,7 +18,7 @@ class MyExpandableMin extends StatelessWidget {
             elevation: 0,
             color: Colors.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Color(0xFFF2F4F7), width: 1.r),
+              side: BorderSide(color: AppColors.boarderColor, width: 1.r),
               borderRadius: BorderRadius.circular(16.r),
             ),
             clipBehavior: Clip.antiAlias,
@@ -31,7 +32,7 @@ class MyExpandableMin extends StatelessWidget {
                     hasIcon: false,
                   ),
                   header: Container(
-                    color: Color(0xFF2C262C).withValues(alpha: 0.04),
+                    color: AppColors.blacksoft.withValues(alpha: 0.04),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 12.r,
@@ -42,7 +43,7 @@ class MyExpandableMin extends StatelessWidget {
                           Text(
                             "الحجوزات المؤكدة",
                             style: TextStyle(
-                              color: Color(0xFF2C262C),
+                              color: AppColors.blacksoft,
                               fontWeight: FontWeight.bold,
                               fontSize: 14.r,
                             ),
@@ -52,7 +53,7 @@ class MyExpandableMin extends StatelessWidget {
                             height: 18.r,
                             width: 16.r,
                             decoration: BoxDecoration(
-                              color: Color(0xFFD9D9D9),
+                              color: AppColors.dividerGrey,
                               shape: BoxShape.rectangle,
                               borderRadius: BorderRadius.circular(4.r),
                             ),
@@ -61,7 +62,7 @@ class MyExpandableMin extends StatelessWidget {
                             child: Text(
                               '2',
                               style: TextStyle(
-                                color: Color(0xFF2C262C),
+                                color: AppColors.blacksoft,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.r,
                               ),
@@ -100,7 +101,7 @@ class MyExpandableMin extends StatelessWidget {
                     ),
                     shrinkWrap: true,
                     separatorBuilder: (BuildContext context, int index) {
-                      return Divider(color: Color(0xFFF2F4F7), thickness: 1.r);
+                      return Divider(color: AppColors.boarderColor, thickness: 1.r);
                     },
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
@@ -126,7 +127,7 @@ class MyExpandableMin extends StatelessWidget {
                                         vertical: 2.h,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFFFF1E9),
+                                        color: AppColors.lightPeach,
                                         borderRadius: BorderRadius.circular(
                                           500.r,
                                         ),
@@ -134,7 +135,7 @@ class MyExpandableMin extends StatelessWidget {
                                       child: Text(
                                         'Besho Bassem',
                                         style: TextStyle(
-                                          color: Color(0xFFF38B4A),
+                                          color: AppColors.primaryColor,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 11.r,
                                         ),
@@ -186,10 +187,10 @@ class MyExpandableMin extends StatelessWidget {
                                   elevation: 0,
                                   padding: EdgeInsets.zero,
                                   backgroundColor: Colors.transparent,
-                                  foregroundColor: Color(0xFF121212),
+                                  foregroundColor: AppColors.black,
                                   shape: RoundedRectangleBorder(
                                     side: BorderSide(
-                                      color: Color(0xFF2C262C),
+                                      color: AppColors.blacksoft,
                                       width: 1.r,
                                     ),
                                     borderRadius: BorderRadius.circular(8.r),
@@ -199,7 +200,7 @@ class MyExpandableMin extends StatelessWidget {
                                   'تفاصيل',
                                   style: TextStyle(
                                     fontSize: 11.r,
-                                    color: Color(0xFF121212),
+                                    color: AppColors.black,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),

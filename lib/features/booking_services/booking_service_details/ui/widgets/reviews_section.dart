@@ -4,6 +4,7 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/w
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ReviewsSection extends StatelessWidget {
   const ReviewsSection({super.key});
@@ -19,7 +20,7 @@ class ReviewsSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -49,7 +50,7 @@ class ReviewsSection extends StatelessWidget {
                 child: Text(
                   'لا توجد تقييمات بعد',
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 13.r,
                     fontFamily: 'Almarai',
                   ),

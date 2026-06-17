@@ -46,7 +46,7 @@ class CustomDropDownFormField extends StatelessWidget {
               fontWeight: FontWeight.w400,
               fontSize: 14.r,
               fontFamily: 'Almarai',
-              color: const Color(0xff99A2AC),
+              color: AppColors.blueGrey,
             ),
           ),
           selectedItemBuilder:
@@ -143,7 +143,7 @@ class CustomDropDownFormField extends StatelessWidget {
 //           fontFamily: 'din',
 //           fontWeight: FontWeight.w600,
 //           fontSize: 2.sp,
-//           color: const Color(0xFF121212),
+//           color: AppColors.black,
 //         ),
 
 //         hint: hintText != null

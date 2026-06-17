@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class SpeechBubbleBorder extends ShapeBorder {
   final Color borderColor;
@@ -11,7 +12,7 @@ class SpeechBubbleBorder extends ShapeBorder {
   final double tailTipRadius; // How rounded the tail tip is (1.0 to 5.0)
 
   const SpeechBubbleBorder({
-    this.borderColor = const Color(0xffF38B4A),
+    this.borderColor = AppColors.primaryColor,
     this.borderWidth = 1.5,
     this.tailWidth = 14.0,
     this.tailHeight = 11.0, // Increased from 8.0 to 12.0

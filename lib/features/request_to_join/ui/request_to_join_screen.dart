@@ -55,7 +55,7 @@ class RequestToJoinScreen extends StatelessWidget {
                     decoration: ShapeDecoration(
                       color: AppColors.whiteColor,
                       shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: Color(0xFFEDEDED)),
+                        side: const BorderSide(color: AppColors.lineGrey),
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                     ),
@@ -170,7 +170,7 @@ class RequestToJoinScreen extends StatelessWidget {
                       Text(
                         '(+20) 1220789797',
                         style: TextStyle(
-                          color: const Color(0xFF2F80ED),
+                          color: AppColors.blue1,
                           fontSize: 13.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w700,
@@ -233,7 +233,7 @@ class _DropdownField<T> extends StatelessWidget {
           onChanged: onChanged,
           isExpanded: true,
           icon: Icon(Icons.keyboard_arrow_down_rounded,
-              color: const Color(0xFF99A2AC)),
+              color: AppColors.blueGrey),
           hint: Text(hint, style: AppTextStyles.font16GreyRegularHint),
           style: AppTextStyles.font16BlackRegularHeader,
           dropdownColor: AppColors.whiteColor,

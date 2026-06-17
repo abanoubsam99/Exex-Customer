@@ -4,6 +4,7 @@ import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class BiometricAuthWidget extends StatelessWidget {
   const BiometricAuthWidget({super.key});
@@ -22,7 +23,7 @@ class BiometricAuthWidget extends StatelessWidget {
                 Text(
                   'المس مستشعر البصمة',
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,

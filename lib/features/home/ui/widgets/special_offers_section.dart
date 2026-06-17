@@ -11,6 +11,7 @@ import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class SpecialOffersSection extends StatelessWidget {
   const SpecialOffersSection({super.key});
@@ -27,7 +28,7 @@ class SpecialOffersSection extends StatelessWidget {
                 width: 6.r,
                 height: 18.r,
                 decoration: ShapeDecoration(
-                  color: const Color(0xFFF38B4A),
+                  color: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.r),
                   ),
@@ -109,7 +110,7 @@ class SpecialOffersSection extends StatelessWidget {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                const Color(0xFF2C262C).withValues(alpha: 0),
+                                AppColors.blacksoft.withValues(alpha: 0),
                                 Colors.black.withValues(alpha: 0.5),
                               ],
                             ),
@@ -123,7 +124,7 @@ class SpecialOffersSection extends StatelessWidget {
                             width: 74.r,
                             height: 19.r,
                             decoration: ShapeDecoration(
-                              color: const Color(0xFFF38B4A),
+                              color: AppColors.primaryColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(13.r),
@@ -188,7 +189,7 @@ class SpecialOffersSection extends StatelessWidget {
                                 CustomButton(
                                   height: 40.h,
                                   width: 75.w,
-                                  bordereColor: const Color(0xFF2C262C),
+                                  bordereColor: AppColors.blacksoft,
                                   fontSize: 14.r,
                                   text: "تفاصيل",
                                   onTap: () => NavigationHelper.pushNamed(

@@ -23,7 +23,7 @@ class AddPhoneBody extends StatelessWidget {
               controller: cubit.phoneController,
               countryController: cubit.countryCodeController,
               title: 'رقم الهاتف',
-              fillColor: const Color(0xFFF4F4F4),
+              fillColor: AppColors.boarderFillColor,
               bgColor: AppColors.whiteColor,
               keyboardType: TextInputType.phone,
               padding: const EdgeInsets.only(top: 8),

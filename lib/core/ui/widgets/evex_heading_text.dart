@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class EvexHeadingText extends StatelessWidget {
   final String title;
@@ -12,7 +13,7 @@ class EvexHeadingText extends StatelessWidget {
       title,
       textAlign: TextAlign.right,
       style: TextStyle(
-        color: Color(0xFF121212),
+        color: AppColors.black,
         fontSize: fontSize ?? 20.sp,
         fontWeight: FontWeight.bold,
       ),

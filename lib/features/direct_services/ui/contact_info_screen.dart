@@ -5,6 +5,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 /// شاشة "معلومات التواصل" — بتعرض أرقام التاجر وعنوانه ومواعيد عمله،
 /// كلها من بيانات الـ [Item] الجاية من شاشة التفاصيل.
@@ -12,7 +13,7 @@ class ContactInfoScreen extends StatelessWidget {
   final Item? port;
   const ContactInfoScreen({super.key, this.port});
 
-  static const _orange = Color(0xFFF38B4A);
+  static const _orange = AppColors.primaryColor;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class ContactInfoScreen extends StatelessWidget {
                   Text(
                     'معلومات التواصل',
                     style: TextStyle(
-                      color: const Color(0xFF121212),
+                      color: AppColors.black,
                       fontSize: 18.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w800,
@@ -53,7 +54,7 @@ class ContactInfoScreen extends StatelessWidget {
                 'للتواصل مع التاجر أو مقدم الخدمة بشكل مباشر',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  color: AppColors.grey,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -82,7 +83,7 @@ class ContactInfoScreen extends StatelessWidget {
                     12.horizontalSpace,
                     _circleIconButton(
                       icon: AppImages.iconsPhone,
-                      bg: const Color(0xFF40C4D6),
+                      bg: AppColors.cyan,
                       onTap: phones.isEmpty
                           ? null
                           : () => LauncherHelper.call(phones.first),
@@ -117,7 +118,7 @@ class ContactInfoScreen extends StatelessWidget {
                     12.horizontalSpace,
                     _circleIconButton(
                       icon: AppImages.iconsMarker,
-                      bg: const Color(0x1AF38B4A),
+                      bg: AppColors.primaryAlpha1A,
                       iconColor: _orange,
                       onTap: () => _openMap(address),
                     ),
@@ -149,8 +150,8 @@ class ContactInfoScreen extends StatelessWidget {
                     12.horizontalSpace,
                     _circleIconButton(
                       materialIcon: Icons.access_time_rounded,
-                      bg: const Color(0x1A40C4D6),
-                      iconColor: const Color(0xFF40C4D6),
+                      bg: AppColors.cyanAlpha1A,
+                      iconColor: AppColors.cyan,
                       onTap: null,
                     ),
                   ],
@@ -189,7 +190,7 @@ class ContactInfoScreen extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            color: const Color(0xFF2C262C),
+            color: AppColors.blacksoft,
             fontSize: 15.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w700,
@@ -235,10 +236,10 @@ class ContactInfoScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFF2F4F7)),
+        border: Border.all(color: AppColors.boarderColor),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0F000000),
+            color: AppColors.blackAlpha0F,
             blurRadius: 16,
             offset: Offset(0, 6),
           ),
@@ -253,7 +254,7 @@ class ContactInfoScreen extends StatelessWidget {
         textAlign: TextAlign.right,
         textDirection: TextDirection.rtl,
         style: TextStyle(
-          color: const Color(0xFF2C262C),
+          color: AppColors.blacksoft,
           fontSize: 15.r,
           fontFamily: 'Almarai',
           fontWeight: FontWeight.w700,
@@ -265,7 +266,7 @@ class ContactInfoScreen extends StatelessWidget {
         text,
         textAlign: TextAlign.right,
         style: TextStyle(
-          color: const Color(0xFF99A2AC),
+          color: AppColors.blueGrey,
           fontSize: 13.r,
           fontFamily: 'Almarai',
           fontWeight: FontWeight.w400,

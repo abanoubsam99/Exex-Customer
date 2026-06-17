@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_images.dart';
 import '../../../../../core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ResetPasswordTopPart extends StatelessWidget {
   const ResetPasswordTopPart({super.key});
@@ -30,7 +31,7 @@ class ResetPasswordTopPart extends StatelessWidget {
           'ادخل كلمة المرور الجديدة ويمكنك الدخول بها من الآن',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,

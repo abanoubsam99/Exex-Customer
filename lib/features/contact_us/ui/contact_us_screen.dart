@@ -112,12 +112,12 @@ class _OfficeCard extends StatelessWidget {
       decoration: ShapeDecoration(
         color: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFF3E2D6)),
+          side: const BorderSide(color: AppColors.beige),
           borderRadius: BorderRadius.circular(16.r),
         ),
         shadows: const [
           BoxShadow(
-            color: Color(0x0F000000),
+            color: AppColors.blackAlpha0F,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -212,12 +212,12 @@ class _ContactChannelsCard extends StatelessWidget {
       decoration: ShapeDecoration(
         color: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFEFEFEF)),
+          side: const BorderSide(color: AppColors.fillGrey5),
           borderRadius: BorderRadius.circular(16.r),
         ),
         shadows: const [
           BoxShadow(
-            color: Color(0x0A000000),
+            color: AppColors.shadowSoft,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -228,29 +228,29 @@ class _ContactChannelsCard extends StatelessWidget {
           _ContactRow(
             title: 'الهاتف',
             value: info?.phoneNumber ?? '-',
-            iconBg: const Color(0xFFEAF4FF),
+            iconBg: AppColors.blueBg1,
             icon: Icon(Icons.phone_outlined,
-                size: 18.r, color: const Color(0xFF2F80ED)),
+                size: 18.r, color: AppColors.blue1),
             onTap: () => LauncherHelper.call(info?.phoneNumber),
           ),
-          Divider(color: const Color(0xFFF0F0F0), height: 1.h),
+          Divider(color: AppColors.fillGrey1, height: 1.h),
           _ContactRow(
             title: 'البريد الالكتروني',
             value: info?.email ?? '-',
-            iconBg: const Color(0xFFFDECEC),
+            iconBg: AppColors.redBg,
             icon: CustomImageHandler(
               AppImages.iconsEmail,
               width: 18.r,
               height: 18.r,
-              color: const Color(0xFFEB5757),
+              color: AppColors.red4,
             ),
             onTap: () => LauncherHelper.email(info?.email),
           ),
-          Divider(color: const Color(0xFFF0F0F0), height: 1.h),
+          Divider(color: AppColors.fillGrey1, height: 1.h),
           _ContactRow(
             title: 'الواتساب',
             value: info?.whatsappNumber ?? '-',
-            iconBg: const Color(0xFFE7F7EE),
+            iconBg: AppColors.greenBg1,
             icon: CustomImageHandler(
               AppImages.iconsWhatsapp,
               width: 20.r,
@@ -338,11 +338,11 @@ class _SocialRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // No telegram link in the API; falls back to the X account.
-        _social(
-          CustomImageHandler(AppImages.iconsSocialTelegram,
-              width: 44.r, height: 44.r),
-          info?.xAccount,
-        ),
+        // _social(
+        //   CustomImageHandler(AppImages.iconsSocialTelegram,
+        //       width: 44.r, height: 44.r),
+        //   info?.xAccount,
+        // ),
         _social(
           CustomImageHandler(AppImages.iconsSocialYoutube,
               width: 44.r, height: 44.r),

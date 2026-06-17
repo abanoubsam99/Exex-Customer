@@ -23,7 +23,7 @@ class ChangePasswordScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             stops: [0.0, 0.4],
-            colors: [Color(0xFFFEF3ED), Colors.white],
+            colors: [AppColors.peachBg1, Colors.white],
           ),
         ),
         child: SafeArea(
@@ -44,7 +44,7 @@ class ChangePasswordScreen extends StatelessWidget {
                           'تغيير كلمه المرور',
                           style: TextStyle(
                             fontSize: 20.r,
-                            color: const Color(0xFF121212),
+                            color: AppColors.black,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
                           ),
@@ -54,7 +54,7 @@ class ChangePasswordScreen extends StatelessWidget {
                           'يمكنك تغير كلمه المرور فى اى وقت واعاده التسجيل',
                           style: TextStyle(
                             fontSize: 12.r,
-                            color: const Color(0xFF6F767E),
+                            color: AppColors.grey,
                             fontFamily: 'Almarai',
                           ),
                         ),
@@ -117,9 +117,9 @@ class ChangePasswordScreen extends StatelessWidget {
                         ),
                         18.verticalSpace,
                         CustomButton(
-                          bordereColor: const Color(0xff2C262C),
+                          bordereColor: AppColors.blacksoft,
                           backgroundColor: Colors.white,
-                          fontColor: const Color(0xff2C262C),
+                          fontColor: AppColors.blacksoft,
                           text: 'الغاء',
                           onTap: () => NavigationHelper.pop(),
                         ),

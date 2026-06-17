@@ -5,9 +5,10 @@ import 'package:evex_user/data/cubits/my_bookings/my_bookings_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
-const _orange = Color(0xFFF38B4A);
-const _green = Color(0xFF4CD195);
+const _orange = AppColors.primaryColor;
+const _green = AppColors.green;
 
 /// Multi-booking discount banner, driven by CalculatePendingDeposit.
 /// Two states: in-progress (orange) and achieved (green).
@@ -40,7 +41,7 @@ class DiscountProgress extends StatelessWidget {
   // ── In-progress (orange) ──
   Widget _inProgress(num percentage, int current, int target, double progress) {
     return _shell(
-      bg: const Color(0x19F38B4A),
+      bg: AppColors.primaryAlpha19,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -54,8 +55,8 @@ class DiscountProgress extends StatelessWidget {
               4.horizontalSpace,
               Expanded(
                 child: Text(
-                  'لفترة محدودة تقدر تستفيد بخصم إضافي ',
-                  // 'لفترة محدودة تقدر تستفيد بخصم إضافي ${_n(percentage)}%',
+                  // 'لفترة محدودة تقدر تستفيد بخصم إضافي ',
+                  'لفترة محدودة تقدر تستفيد بخصم إضافي ${_n(percentage)}%',
                   textAlign: TextAlign.right,
                   style: _titleStyle,
                 ),
@@ -85,7 +86,7 @@ class DiscountProgress extends StatelessWidget {
     double progress,
   ) {
     return _shell(
-      bg: const Color(0x194CD195),
+      bg: AppColors.greenAlpha19,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,7 +158,7 @@ class DiscountProgress extends StatelessWidget {
           label,
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: const Color(0xFF2C262C),
+            color: AppColors.blacksoft,
             fontSize: 12.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w700,
@@ -180,8 +181,8 @@ class DiscountProgress extends StatelessWidget {
   }
 
   TextStyle get _titleStyle => TextStyle(
-        color: const Color(0xFF2C262C),
-        fontSize: 14.r,
+        color: AppColors.blacksoft,
+        fontSize: 12.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w700,
         height: 1.43,
@@ -189,8 +190,8 @@ class DiscountProgress extends StatelessWidget {
       );
 
   TextStyle get _subStyle => TextStyle(
-        color: const Color(0xFF6F767E),
-        fontSize: 12.r,
+        color: AppColors.grey,
+        fontSize: 10.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w400,
         height: 1.67,
@@ -198,7 +199,7 @@ class DiscountProgress extends StatelessWidget {
       );
 
   TextStyle get _labelStyle => TextStyle(
-        color: const Color(0xFF2C262C),
+        color: AppColors.blacksoft,
         fontSize: 12.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w400,

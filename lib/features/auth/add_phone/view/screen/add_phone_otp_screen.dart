@@ -5,6 +5,7 @@ import 'package:evex_user/features/auth/add_phone/view/widget/add_phone_otp_top_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class AddPhoneOtpScreen extends StatefulWidget {
   const AddPhoneOtpScreen({super.key});
@@ -57,7 +58,7 @@ class _AddPhoneOtpScreenState extends State<AddPhoneOtpScreen> {
                         ),
                         shadows: const [
                           BoxShadow(
-                            color: Color(0x19000000),
+                            color: AppColors.shadow,
                             blurRadius: 54,
                             offset: Offset(0, -6),
                             spreadRadius: -30,

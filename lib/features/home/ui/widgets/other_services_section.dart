@@ -2,6 +2,7 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class OtherServicesSection extends StatelessWidget {
   const OtherServicesSection({super.key});
@@ -16,7 +17,7 @@ class OtherServicesSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -44,13 +45,13 @@ class OtherServicesSection extends StatelessWidget {
               width: 157.w,
               height: 51.h,
               decoration: ShapeDecoration(
-                color: const Color(0xFF79E2B2).withValues(alpha: 0.15),
+                color: AppColors.greenSoft.withValues(alpha: 0.15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 shadows: const [
                   BoxShadow(
-                    color: Color(0x0A000000),
+                    color: AppColors.shadowSoft,
                     blurRadius: 30,
                     offset: Offset(0, 14),
                     spreadRadius: 0,
@@ -77,7 +78,7 @@ class OtherServicesSection extends StatelessWidget {
                         Text(
                           'خدمة قسطلي',
                           style: TextStyle(
-                            color: Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w700,
@@ -95,13 +96,13 @@ class OtherServicesSection extends StatelessWidget {
               width: 157.w,
               height: 51.h,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A).withValues(alpha: 0.15),
+                color: AppColors.primaryColor.withValues(alpha: 0.15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 shadows: const [
                   BoxShadow(
-                    color: Color(0x0A000000),
+                    color: AppColors.shadowSoft,
                     blurRadius: 30,
                     offset: Offset(0, 14),
                     spreadRadius: 0,
@@ -128,7 +129,7 @@ class OtherServicesSection extends StatelessWidget {
                         Text(
                           'خدمة نظملي',
                           style: TextStyle(
-                            color: Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w700,

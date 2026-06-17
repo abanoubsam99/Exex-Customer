@@ -114,7 +114,7 @@ class TextFieldBuilder extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
-                    color: const Color(0xff99A2AC),
+                    color: AppColors.blueGrey,
                   ),
               suffixIcon:
                   isDatePicker
@@ -182,7 +182,7 @@ class TextFieldBuilder extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
-                    color: const Color(0xff99A2AC),
+                    color: AppColors.blueGrey,
                   ),
               suffixIcon:
                   isDatePicker

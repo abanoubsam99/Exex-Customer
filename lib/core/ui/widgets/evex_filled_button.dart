@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../theme/app_text_styles.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class EvexFilledButton extends StatelessWidget {
   final String text;
@@ -26,9 +27,9 @@ class EvexFilledButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2C262C),
+          backgroundColor: AppColors.blacksoft,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: const Color(0xFF2C262C),
+          disabledBackgroundColor: AppColors.blacksoft,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),

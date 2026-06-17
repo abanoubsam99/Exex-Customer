@@ -7,6 +7,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class UserDataSection extends StatelessWidget {
   const UserDataSection({super.key});
@@ -27,7 +28,7 @@ class UserDataSection extends StatelessWidget {
             decoration: ShapeDecoration(
               color: Colors.grey.shade200,
               shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1, color: Color(0xFFC5BFC3)),
+                side: const BorderSide(width: 1, color: AppColors.grey9),
                 borderRadius: BorderRadius.circular(20.r),
               ),
             ),
@@ -50,7 +51,7 @@ class UserDataSection extends StatelessWidget {
               'أهلاً بيك !',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: const Color(0xFF6F767E),
+                color: AppColors.grey,
                 fontSize: 12.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,
@@ -61,7 +62,7 @@ class UserDataSection extends StatelessWidget {
               user?.name ??  user?.userName ??'عميل',
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 16.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,

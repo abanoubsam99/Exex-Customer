@@ -9,6 +9,7 @@ import 'package:evex_user/features/my_bookings/ui/widgets/my_bookings_tab_view.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class MyBookingsScreen extends StatelessWidget {
   const MyBookingsScreen({super.key});
@@ -47,7 +48,7 @@ class MyBookingsScreen extends StatelessWidget {
                         'حجوزاتي',
                         textAlign: TextAlign.right,
                         style: TextStyle(
-                          color: const Color(0xFF121212),
+                          color: AppColors.black,
                           fontSize: 18.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w800,

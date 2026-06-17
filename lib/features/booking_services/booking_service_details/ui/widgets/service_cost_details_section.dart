@@ -1,6 +1,7 @@
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ServiceCostDetailsSection extends StatelessWidget {
   /// سياسات التاجر — منها بنجيب مبلغ التأمين.
@@ -25,7 +26,7 @@ class ServiceCostDetailsSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -51,8 +52,8 @@ class ServiceCostDetailsSection extends StatelessWidget {
           width: double.infinity,
           child: CustomPaint(
             painter: TicketPainter(
-              borderColor: const Color(0x7FFFB88C),
-              bgColor: const Color(0x7FFEF1E9).withValues(alpha: 0.5),
+              borderColor: AppColors.lightOrangeAlpha7F,
+              bgColor: AppColors.peachAlpha7F.withValues(alpha: 0.5),
             ),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
@@ -88,7 +89,7 @@ class ServiceCostDetailsSection extends StatelessWidget {
           title,
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: isTotal ? 16.r : 14.r,
             fontFamily: 'Almarai',
             fontWeight: isTotal ? FontWeight.w700 : FontWeight.w400,
@@ -103,8 +104,8 @@ class ServiceCostDetailsSection extends StatelessWidget {
                 text: value,
                 style: TextStyle(
                   color: isTotal
-                      ? const Color(0xFFF38B4A)
-                      : const Color(0xFF6F767E),
+                      ? AppColors.primaryColor
+                      : AppColors.grey,
                   fontSize: isTotal ? 18.r : 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: isTotal ? FontWeight.w800 : FontWeight.w700,
@@ -114,7 +115,7 @@ class ServiceCostDetailsSection extends StatelessWidget {
               TextSpan(
                 text: ' ',
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  color: AppColors.grey,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -124,7 +125,7 @@ class ServiceCostDetailsSection extends StatelessWidget {
               TextSpan(
                 text: 'جنيه',
                 style: TextStyle(
-                  color: const Color(0xFFA5B7C6),
+                  color: AppColors.unitGrey,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,

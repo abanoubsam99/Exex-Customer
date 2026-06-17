@@ -1,5 +1,9 @@
+import 'dart:math';
+
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
@@ -47,13 +51,13 @@ class OrderDetailsScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () => _showOptionsSheet(context),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F5F7),
+                            color: AppColors.fillGrey4,
                             borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Icon(Icons.more_horiz,
-                              color: AppColors.blueGrey, size: 24.r),
+                              color: AppColors.titleGrey2, size: 24.r),
                         ),
                       ),
                     ],
@@ -70,31 +74,51 @@ class OrderDetailsScreen extends StatelessWidget {
                         16.verticalSpace,
                         _BookingSummaryCard(order: order),
                         20.verticalSpace,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: AppColors.lineGrey),
+                            borderRadius:BorderRadius.circular(16.r) ,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(children: [
+                              _SectionHeader('الخدمات الأساسية'),
+                              10.verticalSpace,
+                              _AdditionsListCard(items: [order.basicService]),
+                              20.verticalSpace,
 
-                        _SectionHeader('الخدمات الأساسية'),
-                        10.verticalSpace,
-                        _AdditionsListCard(items: [order.basicService]),
+                              if (order.additions.isNotEmpty) ...[
+                                _SectionHeader('الإضافات'),
+                                10.verticalSpace,
+                                _AdditionsListCard(items: order.additions),
+                                20.verticalSpace,
+                              ],
+
+                              if (order.buffet.isNotEmpty) ...[
+                                _SectionHeader('البوفيه'),
+                                10.verticalSpace,
+                                _AdditionsListCard(items: order.buffet),
+                                20.verticalSpace,
+                              ],
+
+                              _SectionHeader('تفاصيل التكلفة'),
+                              10.verticalSpace,
+                              _CostAndTotalCard(order: order),
+                              20.verticalSpace,
+
+                            ],),
+                          ),
+                        ),
+
                         20.verticalSpace,
-
-                        if (order.additions.isNotEmpty) ...[
-                          _SectionHeader('الإضافات'),
-                          10.verticalSpace,
-                          _AdditionsListCard(items: order.additions),
-                          20.verticalSpace,
-                        ],
-
-                        if (order.buffet.isNotEmpty) ...[
-                          _SectionHeader('البوفيه'),
-                          10.verticalSpace,
-                          _AdditionsListCard(items: order.buffet),
-                          20.verticalSpace,
-                        ],
-
-                        _SectionHeader('تفاصيل التكلفة'),
-                        10.verticalSpace,
-                        _CostAndTotalCard(order: order),
-                        20.verticalSpace,
-
                         _SectionHeader('إضافة ملاحظات'),
                         10.verticalSpace,
                         const _NotesField(),
@@ -103,8 +127,9 @@ class OrderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // ── Bottom action buttons ──
-                Padding(
+                // ── Bottom action buttons (hidden once the reservation is cancelled) ──
+                if (!ReservationStatusHelper.isCancelled(order.status))
+                  Padding(
                   padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 12.h),
                   child: Row(
                     children: [
@@ -137,7 +162,9 @@ class OrderDetailsScreen extends StatelessWidget {
                               Routes.editReservationScreen,
                               arguments: EditReservationArgs(
                                 reservationId: id,
-                                isConfirmed: order.status == 'حجز مؤكد',
+                                isConfirmed:
+                                  ReservationStatusHelper.isConfirmed(
+                                      order.status),
                               ),
                             );
                           },
@@ -167,82 +194,91 @@ class _CustomerCard extends StatelessWidget {
     final c = order.customer;
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: ShapeDecoration(
+      height: 210.r,
+      // padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(
         // Soft diagonal mix: peach (top-right) → white → mint (bottom-left).
-        gradient: const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Color(0xFFFFF0E5), Color(0xFFFFFFFF), Color(0xFFF6F6F6)],
-          stops: [0.0, 0.5, 1.0],
-        ),
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFBFD9EC)),
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(c.name,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: AppColors.blacksoft,
-                          fontSize: 18.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w800,
-                        )),
-                    // 4.verticalSpace,
-                    Text(c.email,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: AppColors.blueGrey,
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                        )),
-                  ],
-                ),
-              ),
-              10.horizontalSpace,
-              Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-                decoration: BoxDecoration(
-                  color: const Color(0x1AF38B4A),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SvgPicture.asset(AppImages.iconsIc),
-                    4.horizontalSpace,
-                    Text(order.bookingNumber,
-                        style: TextStyle(
-                          color: AppColors.orangeColor,
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w700,
-                        )),
-                    // 4.horizontalSpace,
-                    // Icon(Icons.article_outlined,
-                    //     size: 15.r, color: AppColors.orangeColor),
-                  ],
-                ),
-              ),
-            ],
+        image: DecorationImage(image: AssetImage(AppImages.imagesBgCardDetails),fit: BoxFit.fill),
+        // gradient: const LinearGradient(
+        //   begin: Alignment.topRight,
+        //   end: Alignment.bottomLeft,
+        //   colors: [AppColors.peachBg2, AppColors.whiteColor, AppColors.fillGrey3],
+        //   stops: [0.0, 0.5, 1.0],
+        // ),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-          5.verticalSpace,
-          _infoRow(AppImages.iconsPhone, 'رقم الهاتف', c.phone),
-          5.verticalSpace,
-          _infoRow(AppImages.iconsLocation2, 'العنوان', c.address),
         ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(c.name,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: AppColors.blacksoft,
+                            fontSize: 18.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w800,
+                          )),
+                      // 4.verticalSpace,
+                      Text(c.email,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: AppColors.titleGrey2,
+                            fontSize: 13.r,
+                            fontFamily: 'Almarai',
+                          )),
+                    ],
+                  ),
+                ),
+                10.horizontalSpace,
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryAlpha1A,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(AppImages.iconsIc),
+                      4.horizontalSpace,
+                      Text(order.bookingNumber,
+                          style: TextStyle(
+                            color: AppColors.orangeColor,
+                            fontSize: 13.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                          )),
+                      // 4.horizontalSpace,
+                      // Icon(Icons.article_outlined,
+                      //     size: 15.r, color: AppColors.orangeColor),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            5.verticalSpace,
+            _infoRow(AppImages.iconsPhone, 'رقم الهاتف', c.phone),
+            5.verticalSpace,
+            _infoRow(AppImages.iconsLocation2, 'العنوان', c.address),
+          ],
+        ),
       ),
     );
   }
@@ -252,7 +288,7 @@ class _CustomerCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomImageHandler(icon,
-            width: 18.r, height: 18.r, color: AppColors.blueGrey),
+            width: 18.r, height: 18.r, color: AppColors.titleGrey2),
         10.horizontalSpace,
         Expanded(
           child: Column(
@@ -261,7 +297,7 @@ class _CustomerCard extends StatelessWidget {
               Text(label,
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: AppColors.blueGrey,
+                    color: AppColors.titleGrey2,
                     fontSize: 13.r,
                     fontFamily: 'Almarai',
                   )),
@@ -294,38 +330,53 @@ class _BookingSummaryCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-      decoration: ShapeDecoration(
+      decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFEDEDED)),
-          borderRadius: BorderRadius.circular(16.r),
-        ),
+        // shape: RoundedRectangleBorder(
+        //   side: const BorderSide(color: AppColors.lineGrey),
+        //   borderRadius: BorderRadius.circular(16.r),
+        // ),
+        border: Border.all(color: AppColors.lineGrey),
+        borderRadius:BorderRadius.circular(16.r) ,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Row(
             children: [
-              CustomImageHandler(AppImages.iconsCalendar,
-                  width: 16.r, height: 16.r, color: AppColors.grey),
-              6.horizontalSpace,
-              Text('${order.createdDate}  ${order.createdTime}',
-                  style: AppTextStyles.font12greyRegular),
-              const Spacer(),
               Container(
                 padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE7F7EE),
+                  color: ReservationStatusHelper.isCancelled(order.status)
+                      ? AppColors.redBg
+                      : AppColors.greenBg1,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Text(order.status,
+                child: Text(ReservationStatusHelper.label(order.status),
                     style: TextStyle(
-                      color: const Color(0xFF1F9D55),
+                      color: ReservationStatusHelper.isCancelled(order.status)
+                          ? AppColors.red3
+                          : AppColors.green8,
                       fontSize: 12.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
                     )),
               ),
+              8.horizontalSpace,
+              // Icon(Icons.access_time,color: AppColors.grey),
+              CustomImageHandler(AppImages.iconsAccessTime,
+                  width: 16.r, height: 16.r, color: AppColors.grey),
+              6.horizontalSpace,
+              Text('${order.createdDate}  ${order.createdTime}',
+                  style: AppTextStyles.font12greyRegular),
+              // const Spacer(),
             ],
           ),
           14.verticalSpace,
@@ -341,7 +392,7 @@ class _BookingSummaryCard extends StatelessWidget {
                   line2: order.venueLocation,
                 ),
               ),
-              Container(width: 1, height: 36.h, color: const Color(0xFFEDEDED)),
+              Container(width: 1, height: 36.h, color: AppColors.lineGrey),
               12.horizontalSpace,
               // date (left)
               Expanded(
@@ -349,6 +400,8 @@ class _BookingSummaryCard extends StatelessWidget {
                   line1: order.eventDay,
                   line1Color: AppColors.orangeColor,
                   line2: order.eventDate,
+                  line2Color: AppColors.black,
+                  line2Style:FontWeight.bold,
                 ),
               ),
             ],
@@ -364,6 +417,8 @@ class _BookingSummaryCard extends StatelessWidget {
     required String line2,
     String? tag,
     Color? line1Color,
+    Color? line2Color,
+    FontWeight? line2Style,
   }) {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +441,7 @@ class _BookingSummaryCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: const Color(0x1AF38B4A),
+                  color: AppColors.primaryAlpha1A,
                   borderRadius: BorderRadius.circular(6.r),
                 ),
                 child: Text(tag,
@@ -404,14 +459,36 @@ class _BookingSummaryCard extends StatelessWidget {
         Text(line2,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.font12greyRegular),
+            style: AppTextStyles.font13greyRegular.copyWith(
+              color: line2Color ?? AppColors.grey,
+              fontWeight: line2Style?? FontWeight.w400
+
+            )),
       ],
     );
     if (icon == null) return content;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomImageHandler(icon, width: 18.r, height: 18.r),
+        Container(
+            width: 35.r,
+            height: 34.r,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+        )
+            ,child: Padding(
+              padding: const EdgeInsets.all(7),
+              child: CustomImageHandler(icon, width: 22.r, height: 22.r),
+            )),
         8.horizontalSpace,
         Expanded(child: content),
       ],
@@ -453,7 +530,7 @@ Widget _sectionCard({required Widget child}) {
       decoration: ShapeDecoration(
         color: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFEDEDED)),
+          side: const BorderSide(color: AppColors.lineGrey),
           borderRadius: BorderRadius.circular(16.r),
         ),
       ),
@@ -496,7 +573,7 @@ class _AdditionsListCard extends StatelessWidget {
                           return SizedBox(
                             width: dashWidth,
                             height: 1,
-                            child: const DecoratedBox(decoration: BoxDecoration(color: Color(0xFFEDEDED))),
+                            child: const DecoratedBox(decoration: BoxDecoration(color: AppColors.lineGrey)),
                           );
                         }),
                       );
@@ -603,7 +680,7 @@ class _CostAndTotalCard extends StatelessWidget {
       decoration: ShapeDecoration(
         color: AppColors.whiteColor,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Color(0xFFEDEDED)),
+          side: const BorderSide(color: AppColors.boarderColor),
           borderRadius: BorderRadius.circular(16.r),
         ),
       ),
@@ -622,7 +699,7 @@ class _CostAndTotalCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(row.label,
+                            Text(row.label.tr(),
                                 textAlign: TextAlign.right,
                                 style: AppTextStyles.font14BlacksoftRegular),
                             if (row.subtitle != null) ...[
@@ -647,7 +724,7 @@ class _CostAndTotalCard extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: row.unit,
+                            text: row.unit.tr(),
                             style: TextStyle(
                               color: AppColors.blueGrey,
                               fontSize: 12.r,
@@ -662,68 +739,17 @@ class _CostAndTotalCard extends StatelessWidget {
               }).toList(),
             ),
           ),
+          // Ticket-style separator: concave notches biting into both card edges
+          // (band height must equal 2 * notchRadius so the arcs meet the side borders).
           SizedBox(
-            height: 20.h,
-            child: Stack(
-              children: [
-                Center(
-                  child: Container(
-                    height: 1,
-                    margin: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final dashWidth = 5.0;
-                        final dashCount = (constraints.constrainWidth() / (2 * dashWidth)).floor();
-                        return Flex(
-                          direction: Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: List.generate(dashCount, (_) {
-                            return SizedBox(
-                              width: dashWidth,
-                              height: 1,
-                              child: const DecoratedBox(decoration: BoxDecoration(color: Color(0xFFEDEDED))),
-                            );
-                          }),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: -1,
-                  top: 0,
-                  bottom: 0,
-                  child: Container(
-                    width: 10.r,
-                    decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      border: const Border(
-                        top: BorderSide(color: Color(0xFFEDEDED)),
-                        bottom: BorderSide(color: Color(0xFFEDEDED)),
-                        right: BorderSide(color: Color(0xFFEDEDED)),
-                      ),
-                      borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: -1,
-                  top: 0,
-                  bottom: 0,
-                  child: Container(
-                    width: 10.r,
-                    decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      border: const Border(
-                        top: BorderSide(color: Color(0xFFEDEDED)),
-                        bottom: BorderSide(color: Color(0xFFEDEDED)),
-                        left: BorderSide(color: Color(0xFFEDEDED)),
-                      ),
-                      borderRadius: BorderRadius.horizontal(left: Radius.circular(10.r)),
-                    ),
-                  ),
-                ),
-              ],
+            height: 24.r,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _TicketDividerPainter(
+                notchRadius: 12.r,
+                cardColor: AppColors.whiteColor,
+                borderColor: AppColors.boarderColor,
+              ),
             ),
           ),
           Padding(
@@ -786,6 +812,75 @@ class _CostAndTotalCard extends StatelessWidget {
   }
 }
 
+/// Paints the ticket separator: a dashed line with a concave semicircle notch
+/// cut into each card edge. The notches erase the card's side border and redraw
+/// it as an inward arc, matching the Figma "coupon" divider.
+class _TicketDividerPainter extends CustomPainter {
+  final double notchRadius;
+  final Color cardColor; // erases the card's side border behind the notch
+  final Color borderColor;
+
+  const _TicketDividerPainter({
+    required this.notchRadius,
+    required this.cardColor,
+    required this.borderColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const dashWidth = 5.0;
+    const dashGap = 4.0;
+    final r = notchRadius;
+    final cy = size.height / 2;
+
+    final erase = Paint()
+      ..color = cardColor
+      ..style = PaintingStyle.fill;
+    final stroke = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    // Left notch (opens from the left edge, bulging right into the card).
+    final leftRect = Rect.fromCircle(center: Offset(0, cy), radius: r);
+    canvas
+      ..drawPath(
+        Path()
+          ..moveTo(0, cy - r)
+          ..arcToPoint(Offset(0, cy + r),
+              radius: Radius.circular(r), clockwise: true)
+          ..close(),
+        erase,
+      )
+      ..drawArc(leftRect, -pi / 2, pi, false, stroke);
+
+    // Right notch (opens from the right edge, bulging left into the card).
+    final rightRect = Rect.fromCircle(center: Offset(size.width, cy), radius: r);
+    canvas
+      ..drawPath(
+        Path()
+          ..moveTo(size.width, cy - r)
+          ..arcToPoint(Offset(size.width, cy + r),
+              radius: Radius.circular(r), clockwise: false)
+          ..close(),
+        erase,
+      )
+      ..drawArc(rightRect, pi / 2, pi, false, stroke);
+
+    // Dashed line spanning between the two notches.
+    final endX = size.width - r;
+    for (double x = r; x < endX; x += dashWidth + dashGap) {
+      canvas.drawLine(Offset(x, cy), Offset(min(x + dashWidth, endX), cy), stroke);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_TicketDividerPainter old) =>
+      old.notchRadius != notchRadius ||
+      old.cardColor != cardColor ||
+      old.borderColor != borderColor;
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 //  Notes field
 // ─────────────────────────────────────────────────────────────────────────
@@ -808,7 +903,7 @@ class _NotesField extends StatelessWidget {
       style: AppTextStyles.font14BlacksoftRegular,
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color(0xFFF8F8F8),
+        fillColor: AppColors.bgLightGrey,
         hintText: 'في حال وجود ملاحظات .. اكتب ملاحظتك هنا باختصار شديد',
         hintStyle: AppTextStyles.font12greyRegular,
         contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
@@ -954,10 +1049,10 @@ class _ReviewSheetState extends State<_ReviewSheet> {
               style: AppTextStyles.font16BlackRegularHeader,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: const Color(0xFFF4F4F4),
+                fillColor: AppColors.boarderFillColor,
                 hintText: 'اكتب تقييمك هنا',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                 ),
@@ -1001,7 +1096,7 @@ Widget _priceText(num value, {double numberSize = 16, double unitSize = 12}) {
         TextSpan(
           text: 'جنيه',
           style: TextStyle(
-            color: const Color(0xFFA5B7C6),
+            color: AppColors.unitGrey,
             fontSize: unitSize.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,

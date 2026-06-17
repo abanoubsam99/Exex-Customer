@@ -83,7 +83,7 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
               color: widget.isSelected && count > 0 ||
                       (widget.giftCount != null && widget.giftCount! > 0)
                   ? AppColors.secondaryColor
-                  : const Color(0xffE4E7EC),
+                  : AppColors.borderGrey,
             )),
         child: Column(
           children: [
@@ -97,7 +97,7 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
                     widget.title,
                     softWrap: true,
                     style: const TextStyle(
-                      color: Color(0xFF2C262C),
+                      color: AppColors.blacksoft,
                       fontSize: 12,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
@@ -110,7 +110,7 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
                   SizedBox(
                     width: 0.25.sw,
                     child: Card(
-                      color: const Color(0xffFFF1E9),
+                      color: AppColors.lightPeach,
                       shape: const StadiumBorder(),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -225,7 +225,7 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
                         Container(
                           height: 25.h,
                           width: 1.1,
-                          color: const Color(0xffE4E7EC),
+                          color: AppColors.borderGrey,
                         ),
                         const SizedBox(
                           width: 10,

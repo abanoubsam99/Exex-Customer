@@ -31,7 +31,7 @@
 //       decoration: ShapeDecoration(
 //         // color: Colors.red,
 //         shape: RoundedRectangleBorder(
-//           side: const BorderSide(width: 2, color: Color(0xFFD0D0D0)),
+//           side: const BorderSide(width: 2, color: AppColors.grey3),
 //           borderRadius: BorderRadius.circular(16.r),
 //         ),
 //       ),
@@ -60,7 +60,7 @@
 //                 decoration: ShapeDecoration(
 //                   color: Colors.white,
 //                   shape: RoundedRectangleBorder(
-//                     side: const BorderSide(width: 1, color: Color(0xFFD0D0D0)),
+//                     side: const BorderSide(width: 1, color: AppColors.grey3),
 //                     borderRadius: BorderRadius.circular(16.r),
 //                   ),
 //                 ),

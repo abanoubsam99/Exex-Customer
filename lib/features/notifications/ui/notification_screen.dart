@@ -53,7 +53,7 @@ class NotificationScreen extends StatelessWidget {
                           _NotificationTile(item: recent[i]),
                           if (i != recent.length - 1)
                             Divider(
-                                color: const Color(0xFFF0F0F0), height: 1.h),
+                                color: AppColors.fillGrey1, height: 1.h),
                         ],
                       ],
                       if (others.isNotEmpty) ...[
@@ -81,7 +81,7 @@ class NotificationScreen extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: const Color(0xFF777175),
+            color: AppColors.grey5,
             fontSize: 13.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w700,
@@ -99,7 +99,7 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: highlighted ? const Color(0xFFF7F7F7) : Colors.transparent,
+        color: highlighted ? AppColors.bgGrey2 : Colors.transparent,
         borderRadius: BorderRadius.circular(12.r),
       ),
       padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: highlighted ? 8.w : 0),
@@ -159,33 +159,33 @@ class _StatusIcon extends StatelessWidget {
     late final Widget icon;
     switch (type) {
       case NotificationType.confirmed:
-        bg = const Color(0xFFE7F7EE);
+        bg = AppColors.greenBg1;
         icon = Icon(Icons.check_rounded,
-            size: 20.r, color: const Color(0xFF27AE60));
+            size: 20.r, color: AppColors.green7);
         break;
       case NotificationType.canceled:
-        bg = const Color(0xFFFDECEC);
+        bg = AppColors.redBg;
         icon =
-            Icon(Icons.close_rounded, size: 20.r, color: const Color(0xFFEB5757));
+            Icon(Icons.close_rounded, size: 20.r, color: AppColors.red4);
         break;
       case NotificationType.trash:
-        bg = const Color(0xFFFFF6D9);
+        bg = AppColors.yellowBg;
         icon = Icon(Icons.delete_outline_rounded,
-            size: 20.r, color: const Color(0xFFC19600));
+            size: 20.r, color: AppColors.yellowColor);
         break;
       case NotificationType.team:
-        bg = const Color(0xFFEDEBFB);
+        bg = AppColors.lavenderBg;
         icon = CustomImageHandler(
           AppImages.iconsProfile2user,
           width: 20.r,
           height: 20.r,
-          color: const Color(0xFF6C5CE7),
+          color: AppColors.purple2,
         );
         break;
       case NotificationType.offer:
-        bg = const Color(0xFFE8F0FE);
+        bg = AppColors.blueBg2;
         icon = Icon(Icons.local_offer_outlined,
-            size: 18.r, color: const Color(0xFF2F80ED));
+            size: 18.r, color: AppColors.blue1);
         break;
     }
     return Container(

@@ -8,8 +8,9 @@ import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
-const _orange = Color(0xFFF38B4A);
+const _orange = AppColors.primaryColor;
 
 class ConfirmBookingScreen extends StatelessWidget {
   const ConfirmBookingScreen({super.key});
@@ -38,8 +39,8 @@ class ConfirmBookingScreen extends StatelessWidget {
                             stops: [0.0, 0.55, 1.0],
                             colors: [
                               _orange,
-                              Color(0xFFF9B98C),
-                              Color(0xFFFDEFE5),
+                              AppColors.lightOrange3,
+                              AppColors.peachBg3,
                             ],
                           ),
                         ),
@@ -109,7 +110,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0x14000000),
+                      color: AppColors.blackAlpha14,
                       blurRadius: 24,
                       offset: Offset(0, -6),
                     ),
@@ -236,7 +237,7 @@ class _PaymentMethodsCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: const [
-          BoxShadow(color: Color(0x12000000), blurRadius: 16, offset: Offset(0, 6)),
+          BoxShadow(color: AppColors.blackAlpha12, blurRadius: 16, offset: Offset(0, 6)),
         ],
       ),
       child: Column(
@@ -253,12 +254,12 @@ class _PaymentMethodsCard extends StatelessWidget {
               ],
             ),
           ),
-          _divider(),
-          _row(
-            method: BookingPaymentMethod.evex,
-            label: 'محفظة evex',
-            logos: Image.asset(AppImages.imagesNewLogo, height: 20.r),
-          ),
+          // _divider(),
+          // _row(
+          //   method: BookingPaymentMethod.evex,
+          //   label: 'محفظة evex',
+          //   logos: Image.asset(AppImages.imagesNewLogo, height: 20.r),
+          // ),
           _divider(),
           _row(
             method: BookingPaymentMethod.cash,
@@ -270,7 +271,7 @@ class _PaymentMethodsCard extends StatelessWidget {
     );
   }
 
-  Widget _divider() => Divider(color: const Color(0xFFF0F0F0), height: 1.h);
+  Widget _divider() => Divider(color: AppColors.fillGrey1, height: 1.h);
 
   Widget _row({
     required BookingPaymentMethod method,
@@ -287,7 +288,7 @@ class _PaymentMethodsCard extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 14.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
@@ -298,7 +299,7 @@ class _PaymentMethodsCard extends StatelessWidget {
             const Spacer(),
             Icon(
               isSelected ? Icons.keyboard_arrow_down : Icons.chevron_left,
-              color: isSelected ? _orange : const Color(0xFFB7B7B7),
+              color: isSelected ? _orange : AppColors.grey4,
               size: 20.r,
             ),
             10.horizontalSpace,
@@ -316,7 +317,7 @@ class _PaymentMethodsCard extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? _orange : const Color(0xFFCFCFCF),
+          color: selected ? _orange : AppColors.grey8,
           width: 2,
         ),
       ),
@@ -418,7 +419,7 @@ class _WalletBox extends StatelessWidget {
               Text(
                 'الرصيد النقدي للمحفظة',
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w600,
@@ -429,7 +430,7 @@ class _WalletBox extends StatelessWidget {
                 '$balance جنيه',
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
-                  color: const Color(0xFF3F8CFF),
+                  color: AppColors.blue4,
                   fontSize: 15.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w800,
@@ -453,7 +454,7 @@ class _WalletBox extends StatelessWidget {
                       text:
                           'ينصح بتغيير الرقم السري للمحفظة بشكل دوري لضمان مستوى الأمان ',
                       style: TextStyle(
-                        color: const Color(0xFF6F767E),
+                        color: AppColors.grey,
                         fontSize: 12.r,
                         fontFamily: 'Almarai',
                         height: 1.6,
@@ -511,7 +512,7 @@ class _CashInfo extends StatelessWidget {
                   text:
                       'يمكنك استكمال الحجز بالدفع نقداً بمكتب الشركة علماً بأنه حتى تلك اللحظة، لايمكننا تثبيت أو حجز الميعاد المطلوب قبل دفع المبلغ ',
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 13.r,
                     fontFamily: 'Almarai',
                     height: 1.7,
@@ -566,7 +567,7 @@ class _PoliciesSection extends StatelessWidget {
             Text(
               'سياسات الحجز',
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 16.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w800,
@@ -578,7 +579,7 @@ class _PoliciesSection extends StatelessWidget {
         Text(
           'تأكد من قراءة جميع الشروط والسياسات بعناية',
           style: TextStyle(
-            color: const Color(0xFF99A2AC),
+            color: AppColors.blueGrey,
             fontSize: 12.r,
             fontFamily: 'Almarai',
           ),
@@ -591,13 +592,13 @@ class _PoliciesSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(color: const Color(0xFFEDEDED)),
+            border: Border.all(color: AppColors.lineGrey),
           ),
           child: SingleChildScrollView(
             child: Text(
               _terms,
               style: TextStyle(
-                color: const Color(0xFFB7B7B7),
+                color: AppColors.grey4,
                 fontSize: 12.r,
                 fontFamily: 'Almarai',
                 height: 1.8,
@@ -626,7 +627,7 @@ class _PoliciesSection extends StatelessWidget {
               Text(
                 'قرأت جميع الشروط والسياسات وأوافق عليها',
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w600,

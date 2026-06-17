@@ -55,7 +55,7 @@ class AppTextStyles {
   static TextStyle get font14BrownBold => TextStyle(
     fontSize: 14.r,
     fontWeight: FontWeightManager.bold,
-    color: Color(0xFF777175),
+    color: AppColors.grey5,
     fontFamily: 'Almarai',
   );
   //Textfield header and style
@@ -97,6 +97,12 @@ class AppTextStyles {
   static TextStyle get font12greyRegular => TextStyle(
     color: AppColors.grey,
     fontSize: 12.r,
+    fontFamily: 'Almarai',
+    fontWeight: FontWeight.w400,
+  );
+  static TextStyle get font13greyRegular => TextStyle(
+    color: AppColors.grey,
+    fontSize: 13.r,
     fontFamily: 'Almarai',
     fontWeight: FontWeight.w400,
   );

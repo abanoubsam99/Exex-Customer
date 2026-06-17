@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_images.dart';
 import '../../../../../core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ForgetPasswordOtpTopPart extends StatelessWidget {
   final String phone;
@@ -35,7 +36,7 @@ class ForgetPasswordOtpTopPart extends StatelessWidget {
               'تم إرسال كود التحقق على رقم  ',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: const Color(0xFF6F767E),
+                color: AppColors.grey,
                 fontSize: 14.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,
@@ -48,7 +49,7 @@ class ForgetPasswordOtpTopPart extends StatelessWidget {
               textAlign: TextAlign.center,
               textDirection: TextDirection.ltr,
               style: TextStyle(
-                color: const Color(0xFF6F767E),
+                color: AppColors.grey,
                 fontSize: 14.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,
@@ -66,7 +67,7 @@ class ForgetPasswordOtpTopPart extends StatelessWidget {
               child: Text(
                 'تعديل',
                 style: TextStyle(
-                  color: const Color(0xFFF38B4A),
+                  color: AppColors.primaryColor,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,

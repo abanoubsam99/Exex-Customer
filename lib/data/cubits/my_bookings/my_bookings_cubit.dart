@@ -1,4 +1,4 @@
-import 'package:evex_user/data/models/reservation_model.dart';
+import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,10 +21,12 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     emit(state.copyWith(isLoadingReservations: true));
     final list = await _repo.getMyReservations();
     if (list != null) {
-      bool isCancelled(ReservationModel r) =>
-          (r.reservationStatus ?? '').toLowerCase() == 'cancelled';
-      final cancelled = list.where(isCancelled).toList();
-      final active = list.where((r) => !isCancelled(r)).toList();
+      final cancelled = list
+          .where((r) => ReservationStatusHelper.isCancelled(r.reservationStatus))
+          .toList();
+      final active = list
+          .where((r) => !ReservationStatusHelper.isCancelled(r.reservationStatus))
+          .toList();
       emit(state.copyWith(
         isLoadingReservations: false,
         reservations: active,
@@ -42,7 +44,11 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     emit(state.copyWith(isLoadingRequests: true));
     final list = await _repo.getMyRequestReservations();
     if (list != null) {
-      emit(state.copyWith(isLoadingRequests: false, requests: list));
+      // Cancelled requests don't belong in the active "current requests" tab.
+      final active = list
+          .where((r) => !ReservationStatusHelper.isCancelled(r.reservationStatus))
+          .toList();
+      emit(state.copyWith(isLoadingRequests: false, requests: active));
     } else {
       emit(state.copyWith(isLoadingRequests: false, requestsError: 'حدث خطأ'));
     }

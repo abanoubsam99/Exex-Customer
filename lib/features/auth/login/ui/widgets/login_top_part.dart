@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_images.dart';
 import '../../../../../core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class LoginTopPart extends StatelessWidget {
   const LoginTopPart({super.key});
@@ -29,7 +30,7 @@ class LoginTopPart extends StatelessWidget {
           'سجل دخولك الآن لتستمتع بالعروض والخصومات',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,

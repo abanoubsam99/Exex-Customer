@@ -10,6 +10,7 @@ import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ChangeOccasion extends StatelessWidget {
   /// البوابة المختارة من الشاشة السابقة. لو اتبعتت بنعرض اسمها وموقعها الحقيقي،
@@ -66,7 +67,7 @@ class ChangeOccasion extends StatelessWidget {
         vertical: port == null ? 5.h : 8.h,
       ),
       decoration: ShapeDecoration(
-        color: Color(0xFFF7F7F7),
+        color: AppColors.bgGrey2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
@@ -85,11 +86,11 @@ class ChangeOccasion extends StatelessWidget {
                   builder: (context, avail) {
                     final available = avail?.allowedToReservation ?? true;
                     final dotColor = available
-                        ? const Color(0xFF79E2B2)
-                        : const Color(0xFFFE7062);
+                        ? AppColors.greenSoft
+                        : AppColors.coral;
                     final textColor = available
-                        ? const Color(0xFF42C287)
-                        : const Color(0xFFFE7062);
+                        ? AppColors.green2
+                        : AppColors.coral;
                     final message = avail?.verificationResultMessage ??
                         (available
                             ? 'متاح للحجز الفوري'
@@ -133,13 +134,13 @@ class ChangeOccasion extends StatelessWidget {
                   end: Alignment.centerRight,
                   stops: [0, 0.64, 1],
                   colors: [
-                    const Color(0xFF79E2B2),
-                    const Color(0xFF55A07E),
-                    const Color(0xFF79E2B2),
+                    AppColors.greenSoft,
+                    AppColors.green4,
+                    AppColors.greenSoft,
                   ],
                 ),
                 style: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -155,7 +156,7 @@ class ChangeOccasion extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 15.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w800,
@@ -178,7 +179,7 @@ class ChangeOccasion extends StatelessWidget {
                               : 'حدد تاريخ المناسبة',
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w700,
@@ -190,7 +191,7 @@ class ChangeOccasion extends StatelessWidget {
                     Transform.translate(
                       offset: Offset(0, 2.h),
                       child:
-                          CustomCircle(radius: 5.r, color: Color(0xFFD9D9D9)),
+                          CustomCircle(radius: 5.r, color: AppColors.dividerGrey),
                     ),
                     6.horizontalSpace,
                     Flexible(
@@ -200,7 +201,7 @@ class ChangeOccasion extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Color(0xFF99A2AC),
+                          color: AppColors.blueGrey,
                           fontSize: 14.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w400,
@@ -211,14 +212,14 @@ class ChangeOccasion extends StatelessWidget {
                     Transform.translate(
                       offset: Offset(0, 2.h),
                       child:
-                          CustomCircle(radius: 5.r, color: Color(0xFFD9D9D9)),
+                          CustomCircle(radius: 5.r, color: AppColors.dividerGrey),
                     ),
                     6.horizontalSpace,
                     const Text(
                       'فرح',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: Color(0xFF99A2AC),
+                        color: AppColors.blueGrey,
                         fontSize: 14,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,

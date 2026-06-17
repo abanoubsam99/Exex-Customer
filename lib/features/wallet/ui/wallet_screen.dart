@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -37,7 +38,7 @@ class WalletScreen extends StatelessWidget {
                     'محفظة evex',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: const Color(0xFF121212),
+                      color: AppColors.black,
                       fontSize: 18.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w800,
@@ -55,8 +56,8 @@ class WalletScreen extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      const Color(0xFF9670F7).withValues(alpha: 0.7),
-                      const Color(0xFF584191).withValues(alpha: 0.7),
+                      AppColors.purple1.withValues(alpha: 0.7),
+                      AppColors.purple3.withValues(alpha: 0.7),
                     ],
                   ),
                   shape: RoundedRectangleBorder(
@@ -123,7 +124,7 @@ class WalletScreen extends StatelessWidget {
                     width: 6.r,
                     height: 18.r,
                     decoration: ShapeDecoration(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.r),
                       ),
@@ -152,7 +153,7 @@ class WalletScreen extends StatelessWidget {
                     width: 155.r,
                     height: 65.r,
                     decoration: ShapeDecoration(
-                      color: const Color(0xFFF2F4F7),
+                      color: AppColors.boarderColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.r),
                       ),
@@ -166,7 +167,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: '${state.data?.numberOfPoints ?? 0}',
                                 style: TextStyle(
-                                  color: const Color(0xFF2CAC61),
+                                  color: AppColors.green3,
                                   fontSize: 18.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w800,
@@ -176,7 +177,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: ' ',
                                 style: TextStyle(
-                                  color: const Color(0xFF2CAC61),
+                                  color: AppColors.green3,
                                   fontSize: 18.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w700,
@@ -186,7 +187,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: 'نقطة',
                                 style: TextStyle(
-                                  color: const Color(0xFF99A2AC),
+                                  color: AppColors.blueGrey,
                                   fontSize: 14.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w400,
@@ -201,7 +202,7 @@ class WalletScreen extends StatelessWidget {
                           'قيمة النقاط',
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: const Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,
@@ -216,7 +217,7 @@ class WalletScreen extends StatelessWidget {
                     width: 155.r,
                     height: 65.r,
                     decoration: ShapeDecoration(
-                      color: const Color(0xFFF2F4F7),
+                      color: AppColors.boarderColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.r),
                       ),
@@ -230,7 +231,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: '${state.data?.pointsValue ?? 0}',
                                 style: TextStyle(
-                                  color: const Color(0xFF879DFF),
+                                  color: AppColors.periwinkle,
                                   fontSize: 18.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w800,
@@ -240,7 +241,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: ' ',
                                 style: TextStyle(
-                                  color: const Color(0xFF879DFF),
+                                  color: AppColors.periwinkle,
                                   fontSize: 18.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w700,
@@ -250,7 +251,7 @@ class WalletScreen extends StatelessWidget {
                               TextSpan(
                                 text: 'جنيه',
                                 style: TextStyle(
-                                  color: const Color(0xFF99A2AC),
+                                  color: AppColors.blueGrey,
                                   fontSize: 14.r,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w400,
@@ -265,7 +266,7 @@ class WalletScreen extends StatelessWidget {
                           'الرصيد النقدي',
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: const Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,
@@ -295,7 +296,7 @@ class WalletScreen extends StatelessWidget {
                       text:
                           '  ينصح بتغيير الرقم السري للمحفظة بشكل دوري لضمان مستوى الأمان',
                       style: TextStyle(
-                        color: const Color(0xFF6F767E),
+                        color: AppColors.grey,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,
@@ -306,7 +307,7 @@ class WalletScreen extends StatelessWidget {
                     TextSpan(
                       text: ' ',
                       style: TextStyle(
-                        color: const Color(0xFF4764E8),
+                        color: AppColors.blue3,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -317,7 +318,7 @@ class WalletScreen extends StatelessWidget {
                     TextSpan(
                       text: 'تغيير كلمة المرور للمحفظة',
                       style: TextStyle(
-                        color: const Color(0xFFF38B4A),
+                        color: AppColors.primaryColor,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -336,7 +337,7 @@ class WalletScreen extends StatelessWidget {
                     //     child: Text(
                     //       'تغيير كلمة المرور للمحفظة',
                     //       style: TextStyle(
-                    //         color: const Color(0xFFF38B4A),
+                    //         color: AppColors.primaryColor,
                     //         fontSize: 13,
                     //         fontFamily: 'Almarai',
                     //         fontWeight: FontWeight.w700,
@@ -365,7 +366,7 @@ class WalletScreen extends StatelessWidget {
               //         text:
               //             '  يمكنك اسخدام الرصيد النقدي فقط في خدمات الحجز الفوري ويمكنك استخدام قيمة النقاط فقط في خدمات الدفع المباشر',
               //         style: TextStyle(
-              //           color: const Color(0xFF6F767E),
+              //           color: AppColors.grey,
               //           fontSize: 13.r,
               //           fontFamily: 'Almarai',
               //           fontWeight: FontWeight.w400,

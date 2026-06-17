@@ -3,6 +3,7 @@ import 'package:evex_user/features/auth/add_phone/view/widget/add_phone_body.dar
 import 'package:evex_user/features/auth/add_phone/view/widget/add_phone_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class AddPhoneScreen extends StatelessWidget {
   const AddPhoneScreen({super.key});
@@ -38,7 +39,7 @@ class AddPhoneScreen extends StatelessWidget {
                         ),
                         shadows: const [
                           BoxShadow(
-                            color: Color(0x19000000),
+                            color: AppColors.shadow,
                             blurRadius: 54,
                             offset: Offset(0, -6),
                             spreadRadius: -30,

@@ -60,7 +60,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                         shadows: const [
                           BoxShadow(
-                            color: Color(0x19000000),
+                            color: AppColors.shadow,
                             blurRadius: 54,
                             offset: Offset(0, -6),
                             spreadRadius: -30,

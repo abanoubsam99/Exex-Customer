@@ -15,6 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../home/ui/widgets/booking_services_type.dart';
 import 'widgets/custom_bottom_sheet.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class InstantBookingServicesScreen extends StatelessWidget {
   const InstantBookingServicesScreen({super.key});
@@ -44,7 +45,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                           'خدمات الحجز الفوري',
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: const Color(0xFF121212),
+                            color: AppColors.black,
                             fontSize: 18.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -57,7 +58,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                       'دلوقتي ولأول مرة في مصر, عرفنا تاريخ مناسبتك وهنعرفك فوراً الخدمات المتاحة للحجز',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF6F767E),
+                        color: AppColors.grey,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,
@@ -93,7 +94,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                             width: 46.r,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.r),
-                              color: const Color(0xFFF38B4A),
+                              color: AppColors.primaryColor,
                             ),
                             child: Center(
                               child: CustomImageHandler(
@@ -119,7 +120,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                     width: 315.w,
                     height: 144.h,
                     decoration: ShapeDecoration(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16.r),
                       ),
@@ -190,7 +191,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                               Shadow(
                                 offset: Offset(0, 4.r),
                                 blurRadius: 24.r,
-                                color: Color(0xFF000000).withOpacity(0.50),
+                                color: AppColors.pureBlack.withOpacity(0.50),
                               ),
                             ],
                           ),
@@ -212,7 +213,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                 Shadow(
                                   offset: Offset(0, 2.r),
                                   blurRadius: 20.r,
-                                  color: Color(0xFF000000).withOpacity(1.00),
+                                  color: AppColors.pureBlack.withOpacity(1.00),
                                 ),
                               ],
                             ),
@@ -242,7 +243,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                         child: Text(
                           'لا توجد نتائج متاحة',
                           style: TextStyle(
-                            color: const Color(0xFF6F767E),
+                            color: AppColors.grey,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                           ),
@@ -280,7 +281,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                   child: Container(
                                     height: 89.h,
                                     decoration: ShapeDecoration(
-                                      color: const Color(0x33D9D9D9),
+                                      color: AppColors.dividerGreyAlpha33,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: index % 2 == 1
                                             ? BorderRadius.only(
@@ -317,7 +318,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       color:
-                                                          const Color(0xFF2C262C),
+                                                          AppColors.blacksoft,
                                                       fontSize: 15.r,
                                                       fontFamily: 'Almarai',
                                                       fontWeight:
@@ -336,7 +337,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                                   textAlign: TextAlign.right,
                                                   style: TextStyle(
                                                     color:
-                                                        const Color(0xFF2C262C),
+                                                        AppColors.blacksoft,
                                                     fontSize: 12.r,
                                                     fontFamily: 'Almarai',
                                                     fontWeight: FontWeight.w400,
@@ -353,7 +354,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                  color: const Color(0xFF787878),
+                                                  color: AppColors.grey2,
                                                   fontSize: 12.r,
                                                   fontFamily: 'Almarai',
                                                   fontWeight: FontWeight.w400,
@@ -501,7 +502,7 @@ class RPSCustomPainter extends CustomPainter {
     path_0.close();
 
     Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = Color(0xffFFB88C).withOpacity(1.0);
+    paint0Fill.color = AppColors.lightOrangeColor.withOpacity(1.0);
     canvas.drawPath(path_0, paint0Fill);
   }
 

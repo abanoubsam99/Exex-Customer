@@ -31,7 +31,7 @@ class EditProfileScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.0, 0.4],
-              colors: [Color(0xFFFEF3ED), Colors.white],
+              colors: [AppColors.peachBg1, Colors.white],
             ),
           ),
           child: SafeArea(
@@ -214,9 +214,9 @@ class EditProfileScreen extends StatelessWidget {
                     ),
                     16.verticalSpace,
                     CustomButton(
-                      bordereColor: const Color(0xff2C262C),
+                      bordereColor: AppColors.blacksoft,
                       backgroundColor: Colors.white,
-                      fontColor: const Color(0xff2C262C),
+                      fontColor: AppColors.blacksoft,
                       text: 'الغاء',
                       onTap: () => NavigationHelper.pop(),
                     ),

@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ServiceCardItem extends StatefulWidget {
   final String title;
@@ -48,7 +49,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
           color: Colors.white,
           shadows: [
             BoxShadow(
-              color: const Color(0x19000000),
+              color: AppColors.shadow,
               blurRadius: 16.r,
               offset: Offset(0, 4.r),
               spreadRadius: -2,
@@ -58,7 +59,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
             side: BorderSide(
               width: 2.r,
               color:
-                  widget.isSelected ? const Color(0xFFF38B4A) : Colors.transparent,
+                  widget.isSelected ? AppColors.primaryColor : Colors.transparent,
             ),
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -95,7 +96,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                           height: 13.r,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Color(0xFF79E2B2),
+                            color: AppColors.greenSoft,
                           ),
                         ),
                       ),
@@ -112,7 +113,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                             effect: JumpingDotEffect(
                               dotHeight: 5.r,
                               dotWidth: 5.r,
-                              activeDotColor: const Color(0xFFF38B4A),
+                              activeDotColor: AppColors.primaryColor,
                               dotColor: Colors.white.withValues(alpha: 0.7),
                             ),
                           ),
@@ -128,7 +129,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -142,7 +143,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -160,7 +161,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         TextSpan(
                           text: '${widget.price}',
                           style: TextStyle(
-                            color: const Color(0xFFF38B4A),
+                            color: AppColors.primaryColor,
                             fontSize: 16.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -171,7 +172,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         TextSpan(
                           text: ' LE',
                           style: TextStyle(
-                            color: const Color(0xFF99A2AC),
+                            color: AppColors.blueGrey,
                             fontSize: 12.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,
@@ -189,8 +190,8 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                     height: 25.r,
                     decoration: ShapeDecoration(
                       color: widget.isSelected
-                          ? const Color(0xFFF38B4A)
-                          : const Color(0x33F38B4A),
+                          ? AppColors.primaryColor
+                          : AppColors.primaryAlpha33,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -239,7 +240,7 @@ class StrikethroughPainter extends CustomPainter {
     Paint paint0Stroke = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.width * 0.01562500;
-    paint0Stroke.color = const Color(0xffFF928E).withValues(alpha: 1.0);
+    paint0Stroke.color = AppColors.salmon.withValues(alpha: 1.0);
     canvas.drawLine(
       Offset(size.width * 0.002021556, size.height * 0.8782440),
       Offset(size.width * 0.9981313, size.height * 0.02414160),

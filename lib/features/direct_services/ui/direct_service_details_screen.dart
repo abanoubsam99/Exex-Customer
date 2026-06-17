@@ -16,8 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
-const _orange = Color(0xFFF38B4A);
+const _orange = AppColors.primaryColor;
 
 /// شاشة تفاصيل خدمة الدفع المباشر (نقاط + كاش باك + طريقة الاستخدام).
 class DirectServiceDetailsScreen extends StatelessWidget {
@@ -46,7 +47,7 @@ class DirectServiceDetailsScreen extends StatelessWidget {
                     : 'لا يوجد وصف متاح لهذه الخدمة',
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF787878),
+                  color: AppColors.grey2,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -216,7 +217,7 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                 dotWidth: 8.r,
                 expansionFactor: 2,
                 activeDotColor: _orange,
-                dotColor: const Color(0xFFD9D9D9),
+                dotColor: AppColors.dividerGrey,
               ),
             ),
           ),
@@ -235,7 +236,7 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF2C262C),
+                      color: AppColors.blacksoft,
                       fontSize: 20.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w800,
@@ -252,7 +253,7 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                 Text(
                   '${widget.port?.rate ?? 0}',
                   style: TextStyle(
-                    color: const Color(0xFF2C262C),
+                    color: AppColors.blacksoft,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -310,7 +311,7 @@ class _SectionHeader extends StatelessWidget {
             subtitle!,
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: const Color(0xFF6F767E),
+              color: AppColors.grey,
               fontSize: 12.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -349,7 +350,7 @@ class _ProductsSection extends StatelessWidget {
                   child: Text(
                     'لا توجد منتجات متاحة',
                     style: TextStyle(
-                      color: const Color(0xFF6F767E),
+                      color: AppColors.grey,
                       fontSize: 13.r,
                       fontFamily: 'Almarai',
                     ),
@@ -396,7 +397,7 @@ class _PointsSection extends StatelessWidget {
           children: [
             Expanded(
               child: _pointsCard(
-                bg: const Color(0x1AF38B4A),
+                bg: AppColors.primaryAlpha1A,
                 title: 'نقاطك الحالية',
                 value: '$points',
                 unit: 'نقطه',
@@ -407,14 +408,14 @@ class _PointsSection extends StatelessWidget {
             12.horizontalSpace,
             Expanded(
               child: _pointsCard(
-                bg: const Color(0x1A42C287),
+                bg: AppColors.green2Alpha1A,
                 title: 'قيمة النقاط',
                 value: '$value',
                 unit: 'جنيه',
-                valueColor: const Color(0xFF42C287),
+                valueColor: AppColors.green2,
                 icon: const Icon(
                   Icons.monetization_on,
-                  color: Color(0xFF42C287),
+                  color: AppColors.green2,
                   size: 18,
                 ),
               ),
@@ -451,7 +452,7 @@ class _PointsSection extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -475,7 +476,7 @@ class _PointsSection extends StatelessWidget {
                 TextSpan(
                   text: unit,
                   style: TextStyle(
-                    color: const Color(0xFF99A2AC),
+                    color: AppColors.blueGrey,
                     fontSize: 12.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -518,7 +519,7 @@ class _HowToUseSection extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(width: 1, color: Color(0xFFF2F4F7)),
+              side: const BorderSide(width: 1, color: AppColors.boarderColor),
               borderRadius: BorderRadius.circular(16.r),
             ),
           ),
@@ -531,7 +532,7 @@ class _HowToUseSection extends StatelessWidget {
                   '${i + 1}- ${_steps[i]}',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 12.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -559,7 +560,7 @@ class _HelpRow extends StatelessWidget {
         Text(
           'للمساعدة والاستفسار',
           style: TextStyle(
-            color: const Color(0xFF2C262C),
+            color: AppColors.blacksoft,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w700,

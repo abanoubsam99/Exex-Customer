@@ -52,7 +52,7 @@ class _EvexCostFormFieldState extends State<EvexCostFormField> {
           style: TextStyle(
             fontFamily: "din",
             fontSize: 16.sp,
-            color: Color(0xFF121212),
+            color: AppColors.black,
           ),
         ),
         4.r.verticalSpace,
@@ -85,7 +85,7 @@ class _EvexCostFormFieldState extends State<EvexCostFormField> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
-                color: Color(0xFF121212),
+                color: AppColors.black,
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -107,14 +107,14 @@ class _EvexCostFormFieldState extends State<EvexCostFormField> {
                         : isFocus
                         ? AppColors.backgroundColor
                         : AppColors.boarderFillColor,
-                // fillColor: Color(0xFFF4F4F4),
+                // fillColor: AppColors.boarderFillColor,
                 errorStyle: TextStyle(fontSize: 12.sp),
 
                 suffixText: "جنيه مصري",
                 suffixStyle: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF6F767E),
+                  color: AppColors.grey,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,

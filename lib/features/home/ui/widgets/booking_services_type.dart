@@ -42,7 +42,7 @@ class BookingServicesType extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(
                           width: 1.5,
-                          color: Color(0xFF2C262C),
+                          color: AppColors.blacksoft,
                         ),
                         borderRadius: BorderRadius.circular(10.r),
                       ),

@@ -13,8 +13,12 @@ class ReservationUpdateModel {
   String occasionDate;
   final String? reservationWay;
   final String? employeName;
-  final String? governorate;
-  final String? city;
+
+  /// Editable — occasion governorate.
+  String? governorate;
+
+  /// Editable — occasion city.
+  String? city;
   final String? clientName;
   final String? startTime;
   final String? finishTime;
@@ -24,7 +28,9 @@ class ReservationUpdateModel {
   final int portId;
   final int serviceId;
   final int clientId;
-  final int occasionId;
+
+  /// Editable — occasion type.
+  int occasionId;
   final num totalCost;
   final num additionalCost;
   final String? additionalCostDetails;
@@ -37,7 +43,10 @@ class ReservationUpdateModel {
 
   /// Editable — client notes.
   String userNotes;
-  final List<Map<String, dynamic>> additions;
+
+  /// Editable — the desired additions (id/number/additionId). oldAdditions
+  /// stays as originally loaded so the backend can diff against it.
+  List<Map<String, dynamic>> additions;
   final List<Map<String, dynamic>> oldAdditions;
 
   ReservationUpdateModel({

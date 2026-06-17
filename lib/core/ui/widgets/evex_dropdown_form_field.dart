@@ -57,7 +57,7 @@ class _EvexDropDownFieldState<T> extends State<EvexDropDownField<T>> {
           style: TextStyle(
             fontFamily: "din",
             fontSize: 16.sp,
-            color: Color(0xFF121212),
+            color: AppColors.black,
           ),
         ),
         4.r.verticalSpace,
@@ -89,7 +89,7 @@ class _EvexDropDownFieldState<T> extends State<EvexDropDownField<T>> {
                           style: TextStyle(
                             fontFamily: "din",
                             fontSize: 16.sp,
-                            color: Color(0xFF121212),
+                            color: AppColors.black,
                           ),
                         ),
                       ),
@@ -105,7 +105,7 @@ class _EvexDropDownFieldState<T> extends State<EvexDropDownField<T>> {
                 fontFamily: 'din',
                 fontWeight: FontWeight.w600,
                 fontSize: 2.sp,
-                color: Color(0xFF121212),
+                color: AppColors.black,
               ),
 
               hint:
@@ -118,8 +118,8 @@ class _EvexDropDownFieldState<T> extends State<EvexDropDownField<T>> {
                           fontWeight: FontWeight.normal,
                           color:
                               widget.items.isEmpty
-                                  ? Color(0xFF99A2AC)
-                                  : Color(0xFF6F767E),
+                                  ? AppColors.blueGrey
+                                  : AppColors.grey,
                         ),
                       )
                       : null,
@@ -138,8 +138,8 @@ class _EvexDropDownFieldState<T> extends State<EvexDropDownField<T>> {
                 Icons.keyboard_arrow_down_rounded,
                 color:
                     widget.items.isEmpty
-                        ? Color(0xFF99A2AC)
-                        : Color(0xFF121212),
+                        ? AppColors.blueGrey
+                        : AppColors.black,
                 // size: 30.r,
               ),
               decoration: InputDecoration(

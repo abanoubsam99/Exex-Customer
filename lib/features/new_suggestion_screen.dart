@@ -189,7 +189,7 @@ class _Card extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xffE4E7EC)),
+        border: Border.all(color: AppColors.borderGrey),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

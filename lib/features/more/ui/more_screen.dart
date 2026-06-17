@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../app/helpers/navigation_helper.dart';
 import '../../../core/routing/routes.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -32,7 +33,7 @@ class MoreScreen extends StatelessWidget {
                     'المزيد',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: const Color(0xFF121212),
+                      color: AppColors.black,
                       fontSize: 18.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w800,
@@ -49,7 +50,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.profileScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'تفضيلاتي',
                 image: AppImages.iconsHeart,
@@ -57,7 +58,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.favoritesScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'سجل المدفوعات',
                 image: AppImages.iconsMoneyTransfer,
@@ -65,7 +66,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.paymentHistoryScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'الإشعارات',
                 image: AppImages.iconsBell,
@@ -73,7 +74,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.notificationsScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'انضم الينا',
                 image: AppImages.iconsPuzzle,
@@ -81,7 +82,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.requestToJoinScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'إقتراح جديد',
                 image: AppImages.iconsThoughtBubble,
@@ -89,7 +90,7 @@ class MoreScreen extends StatelessWidget {
                   NavigationHelper.pushNamed(Routes.newSuggestionScreen);
                 },
               ),
-              Divider(color: const Color(0xFFD9D9D9), thickness: 1.r),
+              Divider(color: AppColors.dividerGrey, thickness: 1.r),
               buildMoreItem(
                 title: 'اتصل بنا',
                 image: AppImages.iconsPhonePlus,
@@ -116,7 +117,7 @@ class MoreScreen extends StatelessWidget {
         title,
         textAlign: TextAlign.right,
         style: TextStyle(
-          color: const Color(0xFF2C262C),
+          color: AppColors.blacksoft,
           fontSize: 16.r,
           fontFamily: 'Almarai',
           fontWeight: FontWeight.w400,

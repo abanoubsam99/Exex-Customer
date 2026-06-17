@@ -4,6 +4,7 @@ import 'package:evex_user/features/auth/login/ui/widgets/login_top_part.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -25,7 +26,7 @@ class LoginScreen extends StatelessWidget {
               //       left: -46.r,
               //       child: CustomCircle(
               //         radius: 107.r,
-              //         color: Color(0xFF79E2B2),
+              //         color: AppColors.greenSoft,
               //       ),
               //     ),
               //     Positioned(
@@ -33,7 +34,7 @@ class LoginScreen extends StatelessWidget {
               //       left: 146.w,
               //       child: CustomCircle(
               //         radius: 163.r,
-              //         color: Color(0xFFF38B4A),
+              //         color: AppColors.primaryColor,
               //       ),
               //     ),
               //     Positioned(
@@ -41,7 +42,7 @@ class LoginScreen extends StatelessWidget {
               //       left: 321.w,
               //       child: CustomCircle(
               //         radius: 107.r,
-              //         color: Color(0xFFFFBC2B),
+              //         color: AppColors.amber,
               //       ),
               //     ),
               //     BackdropFilter(
@@ -54,7 +55,7 @@ class LoginScreen extends StatelessWidget {
               //         width: 1.sw,
               //         height: 240.h,
               //         decoration: BoxDecoration(
-              //           color: const Color(0xFFF8F8F8).withOpacity(0.5),
+              //           color: AppColors.bgLightGrey.withOpacity(0.5),
               //         ),
               //       ),
               //     ),
@@ -85,7 +86,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                           shadows: [
                             BoxShadow(
-                              color: Color(0x19000000),
+                              color: AppColors.shadow,
                               blurRadius: 54,
                               offset: Offset(0, -6),
                               spreadRadius: -30,

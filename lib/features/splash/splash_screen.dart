@@ -9,6 +9,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
           gradient: LinearGradient(
             begin: const Alignment(1.5, -1),
             end: const Alignment(-1, 0.2),
-            colors: [Color(0xffF9C5A4).withValues(alpha: 0), Colors.white],
+            colors: [AppColors.peachOrange.withValues(alpha: 0), Colors.white],
           ),
         ),
         alignment: const Alignment(0, -0.3),

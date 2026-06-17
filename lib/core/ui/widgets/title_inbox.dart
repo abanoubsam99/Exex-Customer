@@ -39,7 +39,7 @@ class TitleInBox extends StatelessWidget {
             textAlign: TextAlign.start,
             style: TextStyle(
               fontSize: 16.r,
-              color: const Color(0xFF2C262C),
+              color: AppColors.blacksoft,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -52,7 +52,7 @@ class TitleInBox extends StatelessWidget {
                   color:
                       paddingInLeft == 0
                           ? AppColors.redtext
-                          : const Color(0xff99A2AC),
+                          : AppColors.blueGrey,
                 ),
               ),
             ),

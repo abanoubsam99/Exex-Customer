@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class TransactionItem extends StatelessWidget {
   const TransactionItem({super.key, required this.transaction});
@@ -22,8 +24,8 @@ class TransactionItem extends StatelessWidget {
               decoration: ShapeDecoration(
                 color:
                     transaction.paymentType == 0
-                        ? const Color(0x19EE6163)
-                        : const Color(0x1979E2B2),
+                        ? AppColors.red6Alpha19
+                        : AppColors.greenSoftAlpha19,
                 shape: OvalBorder(),
               ),
               alignment: Alignment.center,
@@ -42,7 +44,7 @@ class TransactionItem extends StatelessWidget {
                 width: 22.r,
                 height: 22.r,
                 decoration: ShapeDecoration(
-                  color: const Color(0xFFF4F4F4),
+                  color: AppColors.boarderFillColor,
                   shape: OvalBorder(
                     side: BorderSide(width: 1.5, color: Colors.white),
                   ),
@@ -76,7 +78,7 @@ class TransactionItem extends StatelessWidget {
               transaction.dateText,
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: const Color(0xFF6F767E),
+                color: AppColors.grey,
                 fontSize: 12.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,
@@ -97,8 +99,8 @@ class TransactionItem extends StatelessWidget {
               style: TextStyle(
                 color:
                     transaction.paymentType == 0
-                        ? const Color(0xFFEF6164)
-                        : const Color(0xFF79E2B2),
+                        ? AppColors.red3
+                        : AppColors.greenSoft,
                 fontSize: 18.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
@@ -106,10 +108,10 @@ class TransactionItem extends StatelessWidget {
               ),
             ),
             Text(
-              transaction.paymentReasson,
+              transaction.paymentReasson.tr(),
               textAlign: TextAlign.right,
               style: TextStyle(
-                color: const Color(0xFF6F767E),
+                color: AppColors.grey,
                 fontSize: 12.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w400,

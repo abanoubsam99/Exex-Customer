@@ -8,19 +8,19 @@ class MyBookingTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TabBar(
-      dividerColor: Color(0xFFDADADA),
+      dividerColor: AppColors.grey6,
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 4.r,
       indicator: CustomTabIndicator(),
       labelStyle: TextStyle(
-        color: const Color(0xFF2C262C),
+        color: AppColors.blacksoft,
         fontSize: 13.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w700,
         letterSpacing: -0.24,
       ),
       unselectedLabelStyle: TextStyle(
-        color: const Color(0xFF6F767E),
+        color: AppColors.grey,
         fontSize: 13.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w400,

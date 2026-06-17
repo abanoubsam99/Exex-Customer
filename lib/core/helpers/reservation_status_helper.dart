@@ -1,29 +1,18 @@
-/// Central place to translate backend reservation statuses to Arabic.
-/// Use [arabic] wherever a `reservationStatus` is shown to the user, so the
-/// whole project stays Arabic and changes happen here only.
+import 'package:easy_localization/easy_localization.dart';
+
+/// Helpers for reservation statuses. The status itself is kept raw in the
+/// models; translation happens here via easy_localization (keys live in
+/// assets/translations/*.json), so screens just call [label].
 class ReservationStatusHelper {
   ReservationStatusHelper._();
 
-  static const Map<String, String> _ar = {
-    'confirmed': 'حجز مؤكد',
-    'cancelled': 'ملغي',
-    'canceled': 'ملغي',
-    'pending': 'قيد الانتظار',
-    'waiting': 'في الانتظار',
-    'rejected': 'مرفوض',
-    'accepted': 'مقبول',
-    'completed': 'مكتمل',
-    'expired': 'منتهي',
-    'new': 'جديد',
-    'request': 'طلب حجز',
-  };
-
-  /// Arabic label for [status]. Unknown values (often already Arabic, like the
-  /// request availability messages) are returned as-is.
-  static String arabic(String? status) {
+  /// Localized label for a raw backend [status] (e.g. 'confirmed' → 'حجز مؤكد').
+  /// Unknown values (often already-localized availability messages) fall back to
+  /// the original text, since `.tr()` returns the key when it has no entry.
+  static String label(String? status) {
     final raw = status?.trim() ?? '';
     if (raw.isEmpty) return '';
-    return _ar[raw.toLowerCase()] ?? raw;
+    return raw.toLowerCase().tr();
   }
 
   static bool isConfirmed(String? status) =>
@@ -31,6 +20,7 @@ class ReservationStatusHelper {
 
   static bool isCancelled(String? status) {
     final s = status?.trim().toLowerCase() ?? '';
-    return s == 'cancelled' || s == 'canceled';
+    // Accept the raw backend value and the already-translated Arabic label.
+    return s == 'cancelled' || s == 'canceled' || s == 'ملغي' || s == 'ملغى';
   }
 }

@@ -25,6 +25,7 @@ import 'package:upgrader/upgrader.dart';
 import 'widgets/Instant_booking_services_section.dart';
 import 'widgets/instant_payment_services.dart';
 import 'widgets/special_offers_section.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: -46.r,
                             child: CustomCircle(
                               radius: 107.r,
-                              color: const Color(0xFF79E2B2),
+                              color: AppColors.greenSoft,
                             ),
                           ),
                           Positioned(
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: 146.w,
                             child: CustomCircle(
                               radius: 163.r,
-                              color: const Color(0xFFF38B4A),
+                              color: AppColors.primaryColor,
                             ),
                           ),
                           Positioned(
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             left: 321.w,
                             child: CustomCircle(
                               radius: 107.r,
-                              color: const Color(0xFFFFBC2B),
+                              color: AppColors.amber,
                             ),
                           ),
                           BackdropFilter(
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 1.sw,
                               height: 229.h,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF8F8F8).withOpacity(0.5),
+                                color: AppColors.bgLightGrey.withOpacity(0.5),
                               ),
                               child: Padding(
                                 padding:
@@ -365,8 +366,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         dotHeight: 8.r,
                                         dotWidth: 8.r,
                                         activeDotColor:
-                                            const Color(0xFFF38B4A),
-                                        dotColor: const Color(0xFFD9D9D9),
+                                            AppColors.primaryColor,
+                                        dotColor: AppColors.dividerGrey,
                                       ),
                                     ),
                                   ),

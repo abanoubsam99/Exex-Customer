@@ -8,6 +8,7 @@ import 'package:evex_user/data/cubits/auth/register/register_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 // import 'all_scoial_media_widget.dart';
 
@@ -28,7 +29,7 @@ class RegisterBodyWidget extends StatelessWidget {
               title: AppStrings.email.tr(),
               hintText: AppStrings.email.tr(),
               controller: cubit.emailController,
-              fillColor: const Color(0xFFF4F4F4),
+              fillColor: AppColors.boarderFillColor,
             ),
             16.verticalSpace,
             TextFieldBuilder(
@@ -36,7 +37,7 @@ class RegisterBodyWidget extends StatelessWidget {
               title: AppStrings.password.tr(),
               hintText: AppStrings.password.tr(),
               controller: cubit.passwordController,
-              fillColor: const Color(0xFFF4F4F4),
+              fillColor: AppColors.boarderFillColor,
             ),
             16.verticalSpace,
             TextFieldBuilder(
@@ -72,7 +73,7 @@ class RegisterBodyWidget extends StatelessWidget {
             //     Text(
             //       'أو تسجيل سريع بـ',
             //       style: TextStyle(
-            //         color: const Color(0xFF6F767E),
+            //         color: AppColors.grey,
             //         fontSize: 14.r,
             //         fontFamily: 'Almarai',
             //         fontWeight: FontWeight.w400,
@@ -91,7 +92,7 @@ class RegisterBodyWidget extends StatelessWidget {
                 Text(
                   'لدي حساب بالفعل ؟  ',
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
@@ -109,7 +110,7 @@ class RegisterBodyWidget extends StatelessWidget {
                   child: Text(
                     'تسجيل الدخول',
                     style: TextStyle(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       fontSize: 14.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
@@ -157,7 +158,7 @@ class _Divider extends StatelessWidget {
       height: 1.h,
       margin: EdgeInsets.symmetric(horizontal: 8.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFD9D9D9),
+        color: AppColors.dividerGrey,
         borderRadius: BorderRadius.circular(15.r),
       ),
     );

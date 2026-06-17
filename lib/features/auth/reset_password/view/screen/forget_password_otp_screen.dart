@@ -5,6 +5,7 @@ import 'package:evex_user/features/auth/reset_password/view/widget/forget_passwo
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ForgetPasswordOtpScreen extends StatefulWidget {
   const ForgetPasswordOtpScreen({super.key});
@@ -63,7 +64,7 @@ class _ForgetPasswordOtpScreenState extends State<ForgetPasswordOtpScreen> {
                         ),
                         shadows: const [
                           BoxShadow(
-                            color: Color(0x19000000),
+                            color: AppColors.shadow,
                             blurRadius: 54,
                             offset: Offset(0, -6),
                             spreadRadius: -30,

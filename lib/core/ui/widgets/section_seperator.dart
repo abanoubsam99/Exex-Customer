@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class SectionSeperator extends StatelessWidget {
   const SectionSeperator({super.key});
@@ -10,7 +11,7 @@ class SectionSeperator extends StatelessWidget {
       clipBehavior: Clip.none,
       width: 1.sw,
       height: 11.h,
-      decoration: BoxDecoration(color: const Color(0x7FF4F4F4)),
+      decoration: BoxDecoration(color: AppColors.fillGreyAlpha7F),
     );
   }
 }

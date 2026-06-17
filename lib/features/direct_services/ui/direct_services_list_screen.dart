@@ -44,7 +44,7 @@ class DirectServicesListScreen extends StatelessWidget {
                         Text(
                           'الخدمات المباشرة',
                           style: TextStyle(
-                            color: const Color(0xFF121212),
+                            color: AppColors.black,
                             fontSize: 18.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -59,7 +59,7 @@ class DirectServicesListScreen extends StatelessWidget {
                       'مشترياتك من تجار evex',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF6F767E),
+                        color: AppColors.grey,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,
@@ -93,7 +93,7 @@ class DirectServicesListScreen extends StatelessWidget {
                           'لا توجد نتائج متاحة',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: const Color(0xFF6F767E),
+                            color: AppColors.grey,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                           ),
@@ -157,7 +157,7 @@ class _TypeTabs extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         side: const BorderSide(
                           width: 1.5,
-                          color: Color(0xFF2C262C),
+                          color: AppColors.blacksoft,
                         ),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
@@ -254,7 +254,7 @@ class _PromoBanner extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF38B4A),
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(30.r),
                   ),
                   child: Text(
@@ -314,7 +314,7 @@ class _PortListItem extends StatelessWidget {
       child: Container(
         height: 110.h,
         decoration: ShapeDecoration(
-          color: const Color(0x33D9D9D9),
+          color: AppColors.dividerGreyAlpha33,
           shape: RoundedRectangleBorder(
             borderRadius: imageOnRight
                 ? BorderRadius.horizontal(left: Radius.circular(16.r))
@@ -331,7 +331,7 @@ class _PortListItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 15.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
@@ -346,7 +346,7 @@ class _PortListItem extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF787878),
+                  color: AppColors.grey2,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -386,13 +386,13 @@ class _PortListItem extends StatelessWidget {
             AppImages.iconsFolder,
             width: 13.r,
             height: 13.r,
-            color: const Color(0xFFF38B4A),
+            color: AppColors.primaryColor,
           ),
           4.horizontalSpace,
           Text(
             '+$count صوره',
             style: TextStyle(
-              color: const Color(0xFFF38B4A),
+              color: AppColors.primaryColor,
               fontSize: 11.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w700,

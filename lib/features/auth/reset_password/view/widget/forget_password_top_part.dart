@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/constants/app_images.dart';
 import '../../../../../core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ForgetPasswordTopPart extends StatelessWidget {
   const ForgetPasswordTopPart({super.key});
@@ -30,7 +31,7 @@ class ForgetPasswordTopPart extends StatelessWidget {
           'اكتب رقم الهاتف الخاص بالحساب وسوف نرسل لك\nالرمز التأكيدي',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: const Color(0xFF6F767E),
+            color: AppColors.grey,
             fontSize: 14.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,

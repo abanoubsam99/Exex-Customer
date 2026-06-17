@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:evex_user/data/models/review.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class ReviewCardItem extends StatelessWidget {
   final Review review;
@@ -21,7 +22,7 @@ class ReviewCardItem extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFFF2F4F7)),
+          side: const BorderSide(width: 1, color: AppColors.boarderColor),
           borderRadius: BorderRadius.circular(16.r),
         ),
       ),
@@ -36,7 +37,7 @@ class ReviewCardItem extends StatelessWidget {
                   width: 36.r,
                   height: 36.r,
                   decoration: const ShapeDecoration(
-                    color: Color(0x28F38B4A),
+                    color: AppColors.primaryAlpha28,
                     shape: OvalBorder(),
                   ),
                   alignment: Alignment.center,
@@ -54,7 +55,7 @@ class ReviewCardItem extends StatelessWidget {
                       initial,
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFFF38B4A),
+                        color: AppColors.primaryColor,
                         fontSize: 14.r,
                         fontWeight: FontWeight.w700,
                         height: -0.4,
@@ -70,7 +71,7 @@ class ReviewCardItem extends StatelessWidget {
                       name,
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF2C262C),
+                        color: AppColors.blacksoft,
                         fontSize: 13.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
@@ -82,7 +83,7 @@ class ReviewCardItem extends StatelessWidget {
                       _formatDate(review.createdAt),
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF99A2AC),
+                        color: AppColors.blueGrey,
                         fontSize: 12.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w400,
@@ -97,7 +98,7 @@ class ReviewCardItem extends StatelessWidget {
                   width: 36.r,
                   height: 19.r,
                   decoration: ShapeDecoration(
-                    color: const Color(0xFF3FC086),
+                    color: AppColors.green5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(8.r),
@@ -138,8 +139,8 @@ class ReviewCardItem extends StatelessWidget {
                 style: TextStyle(
                   // Lighter/italic when it's the "no comment" placeholder.
                   color: hasComment
-                      ? const Color(0xFF6F767E)
-                      : const Color(0xFFA5B7C6),
+                      ? AppColors.grey
+                      : AppColors.unitGrey,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,

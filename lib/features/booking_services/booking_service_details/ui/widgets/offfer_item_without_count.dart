@@ -33,7 +33,7 @@ class OfferItemWithoutCount extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color:
-                isSelected ? AppColors.secondaryColor : const Color(0xffE4E7EC),
+                isSelected ? AppColors.secondaryColor : AppColors.borderGrey,
           ),
         ),
         child: Row(
@@ -42,7 +42,7 @@ class OfferItemWithoutCount extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 12,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
@@ -53,7 +53,7 @@ class OfferItemWithoutCount extends StatelessWidget {
             if (isGift ?? false)
               SizedBox(
                 child: Card(
-                  color: const Color(0xffFFF1E9),
+                  color: AppColors.lightPeach,
                   shape: const StadiumBorder(),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

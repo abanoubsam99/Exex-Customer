@@ -95,7 +95,7 @@ class _AdditionItemState extends State<AdditionItem> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isActive ? const Color(0x99F38B4A) : const Color(0xFFF2F4F7),
+            color: isActive ? AppColors.primaryAlpha99 : AppColors.boarderColor,
             width: 1,
           ),
         ),
@@ -107,7 +107,7 @@ class _AdditionItemState extends State<AdditionItem> {
                 widget.title,
                 textAlign: TextAlign.right,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
@@ -122,7 +122,7 @@ class _AdditionItemState extends State<AdditionItem> {
                     horizontal: 10.w,
                   ),
                   decoration: ShapeDecoration(
-                    color: const Color(0xFFFFF1E9),
+                    color: AppColors.lightPeach,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.r),
                     ),
@@ -154,7 +154,7 @@ class _AdditionItemState extends State<AdditionItem> {
                   Text(
                     'LE',
                     style: TextStyle(
-                      color: const Color(0xFFA5B7C6),
+                      color: AppColors.unitGrey,
                       fontSize: 12.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w400,
@@ -165,7 +165,7 @@ class _AdditionItemState extends State<AdditionItem> {
                   Text(
                     widget.price,
                     style: TextStyle(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       fontSize: 16.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
@@ -220,8 +220,8 @@ class _AdditionItemState extends State<AdditionItem> {
             height: 28.r,
             width: 28.r,
             decoration: const ShapeDecoration(
-              shape: CircleBorder(side: BorderSide(color: Color(0xFFF2F4F7))),
-              color: Color(0xFFF38B4A),
+              shape: CircleBorder(side: BorderSide(color: AppColors.boarderColor)),
+              color: AppColors.primaryColor,
             ),
             child: const Icon(Icons.add, color: Colors.white),
           ),
@@ -235,7 +235,7 @@ class _AdditionItemState extends State<AdditionItem> {
             textDirection: TextDirection.ltr,
             keyboardType: TextInputType.number,
             style: TextStyle(
-              color: const Color(0xFF2C262C),
+              color: AppColors.blacksoft,
               fontSize: 13.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w700,
@@ -283,7 +283,7 @@ class _AdditionItemState extends State<AdditionItem> {
             height: 28.r,
             width: 28.r,
             decoration: const ShapeDecoration(
-              shape: CircleBorder(side: BorderSide(color: Color(0xFFF2F4F7))),
+              shape: CircleBorder(side: BorderSide(color: AppColors.boarderColor)),
               color: Colors.white,
             ),
             child: const Icon(Icons.remove),

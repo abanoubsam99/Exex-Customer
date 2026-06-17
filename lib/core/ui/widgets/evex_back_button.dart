@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class EvexBackButton extends StatelessWidget {
   const EvexBackButton({super.key});
@@ -17,7 +18,7 @@ class EvexBackButton extends StatelessWidget {
         style: ButtonStyle(
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
-              side: BorderSide(color: Color(0xFFD8DADC), width: 1.03.r),
+              side: BorderSide(color: AppColors.grey7, width: 1.03.r),
               borderRadius: BorderRadius.circular(10.r),
             ),
           ),

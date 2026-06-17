@@ -11,8 +11,11 @@ import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
-const _orange = Color(0xFFF38B4A);
+const _orange = AppColors.primaryColor;
+const _coral = AppColors.salmon3;
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -39,7 +42,7 @@ class FavoritesScreen extends StatelessWidget {
                         Text(
                           'تفضيلاتي',
                           style: TextStyle(
-                            color: const Color(0xFF121212),
+                            color: AppColors.black,
                             fontSize: 18.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -52,11 +55,11 @@ class FavoritesScreen extends StatelessWidget {
                     const _IntroCard(),
                     8.verticalSpace,
                     TabBar(
-                      labelColor: _orange,
-                      unselectedLabelColor: const Color(0xFF6F767E),
+                      labelColor: AppColors.blacksoft,
+                      unselectedLabelColor: AppColors.grey,
                       indicatorColor: _orange,
                       indicatorSize: TabBarIndicatorSize.label,
-                      dividerColor: const Color(0xFFEDEDED),
+                      dividerColor: AppColors.lineGrey,
                       labelStyle: TextStyle(
                         fontSize: 14.r,
                         fontFamily: 'Almarai',
@@ -99,34 +102,34 @@ class _IntroCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [Color(0xFFFDE7D8), Color(0xFFFFF8F3)],
+          colors: [AppColors.peachBg4, AppColors.lightestPrimaryColor],
         ),
         borderRadius: BorderRadius.circular(16.r),
       ),
-      child: Row(
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(Icons.favorite, color: _orange, size: 40.r),
-          12.horizontalSpace,
+          // Icon(Icons.favorite, color: _orange, size: 40.r),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'تفضيلاتي',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF2C262C),
+                    color: AppColors.blacksoft,
                     fontSize: 16.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                4.verticalSpace,
+                10.verticalSpace,
                 Text(
-                  'محتار ولسه بتختار ؟ ضيف كل التجار المفضلين ليك هنا وقارن بسهولة',
+                  'محتار ولسه بتختار ؟\n ضيف كل التجار المفضلين ليك هنا وقارن بسهولة',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: const Color(0xFF6F767E),
+                    color: AppColors.grey,
                     fontSize: 12.r,
                     fontFamily: 'Almarai',
                     height: 1.5,
@@ -135,6 +138,9 @@ class _IntroCard extends StatelessWidget {
               ],
             ),
           ),
+          12.horizontalSpace,
+          Image.asset(AppImages.iconsFavicon),
+
         ],
       ),
     );
@@ -161,7 +167,7 @@ class _FavList extends StatelessWidget {
                       child: Text(
                         'لا توجد مفضلات',
                         style: TextStyle(
-                          color: const Color(0xFF6F767E),
+                          color: AppColors.grey,
                           fontSize: 14.r,
                           fontFamily: 'Almarai',
                         ),
@@ -174,7 +180,7 @@ class _FavList extends StatelessWidget {
                   itemCount: state.favorites.length,
                   separatorBuilder: (_, __) => 16.verticalSpace,
                   itemBuilder: (context, index) =>
-                      _FavItem(item: state.favorites[index], index: index),
+                      _FavItem(item: state.favorites[index]),
                 ),
         );
       },
@@ -184,12 +190,10 @@ class _FavList extends StatelessWidget {
 
 class _FavItem extends StatelessWidget {
   final Item item;
-  final int index;
-  const _FavItem({required this.item, required this.index});
+  const _FavItem({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    final imageOnRight = index % 2 == 0;
     final image = ClipRRect(
       borderRadius: BorderRadius.circular(16.r),
       child: SizedBox(
@@ -219,14 +223,14 @@ class _FavItem extends StatelessWidget {
                   if (ok) cubit.removeFavorite(id);
                 },
                 child: Container(
-                  width: 28.r,
-                  height: 28.r,
+                  width: 30.r,
+                  height: 30.r,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.92),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(Icons.favorite, color: _orange, size: 16.r),
+                  child: Icon(Icons.favorite, color: _coral, size: 16.r),
                 ),
               ),
             ),
@@ -245,11 +249,9 @@ class _FavItem extends StatelessWidget {
       child: Container(
         height: 110.h,
         decoration: ShapeDecoration(
-          color: const Color(0x33D9D9D9),
+          color: AppColors.dividerGreyAlpha33,
           shape: RoundedRectangleBorder(
-            borderRadius: imageOnRight
-                ? BorderRadius.horizontal(left: Radius.circular(16.r))
-                : BorderRadius.horizontal(right: Radius.circular(16.r)),
+            borderRadius: BorderRadius.horizontal(left: Radius.circular(16.r)),
           ),
         ),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
@@ -265,7 +267,7 @@ class _FavItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF2C262C),
+                      color: AppColors.blacksoft,
                       fontSize: 15.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
@@ -278,7 +280,7 @@ class _FavItem extends StatelessWidget {
                 Text(
                   '${item.rate ?? 0}',
                   style: TextStyle(
-                    color: const Color(0xFF2C262C),
+                    color: AppColors.blacksoft,
                     fontSize: 12.r,
                     fontFamily: 'Almarai',
                   ),
@@ -293,7 +295,7 @@ class _FavItem extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF787878),
+                  color: AppColors.grey2,
                   fontSize: 12.r,
                   fontFamily: 'Almarai',
                   height: 1.35,
@@ -307,7 +309,7 @@ class _FavItem extends StatelessWidget {
                   TextSpan(
                     text: 'يبدأ بـ ',
                     style: TextStyle(
-                      color: const Color(0xFF2C262C),
+                      color: AppColors.blacksoft,
                       fontSize: 12.r,
                       fontFamily: 'Almarai',
                     ),
@@ -324,7 +326,7 @@ class _FavItem extends StatelessWidget {
                   TextSpan(
                     text: 'جنيه',
                     style: TextStyle(
-                      color: const Color(0xFF6F767E),
+                      color: AppColors.grey,
                       fontSize: 11.r,
                       fontFamily: 'Almarai',
                     ),
@@ -343,7 +345,7 @@ class _FavItem extends StatelessWidget {
         arguments: item,
       ),
       child: Row(
-        children: imageOnRight ? [panel, image] : [image, panel],
+        children: [image, panel],
       ),
     );
   }

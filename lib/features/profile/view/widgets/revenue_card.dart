@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class RevenueCard extends StatelessWidget {
   final String title;
@@ -31,7 +32,7 @@ class RevenueCard extends StatelessWidget {
         boxShadow: isShadow
             ? [
                 const BoxShadow(
-                  color: Color(0x1E000000),
+                  color: AppColors.blackAlpha1E,
                   blurRadius: 30,
                   offset: Offset(0, 8),
                   spreadRadius: -10,
@@ -85,7 +86,7 @@ class RevenueCard extends StatelessWidget {
                   TextSpan(
                     text: currency,
                     style: TextStyle(
-                      color: const Color(0xFF99A2AC),
+                      color: AppColors.blueGrey,
                       fontSize: 14.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w400,

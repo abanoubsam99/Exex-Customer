@@ -37,7 +37,7 @@ class TextFieldComponent extends StatefulWidget {
     this.radius = 12,
     required this.hint,
   }) {
-    fillColor = const Color(0xFFF4F4F4);
+    fillColor = AppColors.boarderFillColor;
     textStyle = textStyle ?? AppTextStyles.font16BlackBold;
     hintTextStyle ??
         TextStyle(color: AppColors.textDarkGreyColor, fontSize: 14.r);
@@ -89,8 +89,8 @@ class _TextFieldComponentState extends State<TextFieldComponent> {
     });
 
     if (widget.isReadOnly) {
-      widget.fillColor = const Color(0xffF4F4F4);
-      widget.borderColor = const Color(0xffF4F4F4);
+      widget.fillColor = AppColors.boarderFillColor;
+      widget.borderColor = AppColors.boarderFillColor;
     }
     changeObsecureStatus = widget.hasShowPasswordIcon;
   }
@@ -243,7 +243,7 @@ class _TextFieldComponentState extends State<TextFieldComponent> {
                   fontWeight: FontWeight.w300,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
-                  color: const Color(0xff99A2AC),
+                  color: AppColors.blueGrey,
                 ),
           ),
         ),

@@ -11,6 +11,7 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/w
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class CompleteBookingScreen extends StatelessWidget {
   const CompleteBookingScreen({super.key});
@@ -35,7 +36,7 @@ class CompleteBookingScreen extends StatelessWidget {
                         'استكمال الحجز',
                         textAlign: TextAlign.right,
                         style: TextStyle(
-                          color: const Color(0xFF121212),
+                          color: AppColors.black,
                           fontSize: 18.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w800,
@@ -106,7 +107,7 @@ class CompleteBookingScreen extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0x19000000),
+                        color: AppColors.shadow,
                         blurRadius: 48,
                         offset: Offset(0, -7),
                         spreadRadius: -6,
@@ -126,7 +127,7 @@ class CompleteBookingScreen extends StatelessWidget {
                               'إجمالي التكلفة',
                               textAlign: TextAlign.right,
                               style: TextStyle(
-                                color: const Color(0xFF6F767E),
+                                color: AppColors.grey,
                                 fontSize: 18.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w800,
@@ -140,7 +141,7 @@ class CompleteBookingScreen extends StatelessWidget {
                                   TextSpan(
                                     text: args.totalCost.toStringAsFixed(2),
                                     style: TextStyle(
-                                      color: const Color(0xFFF38B4A),
+                                      color: AppColors.primaryColor,
                                       fontSize: 20.r,
                                       fontFamily: 'Almarai',
                                       fontWeight: FontWeight.w800,
@@ -150,7 +151,7 @@ class CompleteBookingScreen extends StatelessWidget {
                                   TextSpan(
                                     text: ' ',
                                     style: TextStyle(
-                                      color: const Color(0xFF6F767E),
+                                      color: AppColors.grey,
                                       fontSize: 20.r,
                                       fontFamily: 'Almarai',
                                       fontWeight: FontWeight.w400,
@@ -160,7 +161,7 @@ class CompleteBookingScreen extends StatelessWidget {
                                   TextSpan(
                                     text: 'جنيه',
                                     style: TextStyle(
-                                      color: const Color(0xFFA5B7C6),
+                                      color: AppColors.unitGrey,
                                       fontSize: 14.r,
                                       fontFamily: 'Almarai',
                                       fontWeight: FontWeight.w400,
@@ -213,7 +214,7 @@ class _OccasionPicker extends StatelessWidget {
           'نوع المناسبة',
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: const Color(0xFF2C262C),
+            color: AppColors.blacksoft,
             fontSize: 15.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w700,
@@ -224,7 +225,7 @@ class _OccasionPicker extends StatelessWidget {
           height: 52.h,
           padding: EdgeInsets.symmetric(horizontal: 14.w),
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F4F4),
+            color: AppColors.boarderFillColor,
             borderRadius: BorderRadius.circular(14.r),
           ),
           child: DropdownButtonHideUnderline(
@@ -235,13 +236,13 @@ class _OccasionPicker extends StatelessWidget {
               hint: Text(
                 'حدد نوع المناسبة',
                 style: TextStyle(
-                  color: const Color(0xFF99A2AC),
+                  color: AppColors.blueGrey,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                 ),
               ),
               icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                  color: Color(0xFF99A2AC)),
+                  color: AppColors.blueGrey),
               items: occasions
                   .where((o) => o.id != null)
                   .map((o) => DropdownMenuItem<int>(
@@ -249,7 +250,7 @@ class _OccasionPicker extends StatelessWidget {
                         child: Text(
                           o.name ?? '',
                           style: TextStyle(
-                            color: const Color(0xFF2C262C),
+                            color: AppColors.blacksoft,
                             fontSize: 14.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w700,

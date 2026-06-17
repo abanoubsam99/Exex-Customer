@@ -70,7 +70,12 @@ class DateFormatHelper {
     if (d == null) return fallback;
     return '${d.day} ${_months[d.month - 1]} ${d.year}';
   }
-
+  /// "14 يونيو 2026" — or [fallback] when the date is invalid.
+  static String arabicDateWithComa(String? value, {String fallback = '—'}) {
+    final d = parse(value);
+    if (d == null) return fallback;
+    return '${d.day} , ${_months[d.month - 1]} , ${d.year}';
+  }
   /// "الأحد" — or an empty string when the date is invalid.
   static String arabicWeekday(String? value) {
     final d = parse(value);

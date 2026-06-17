@@ -1,6 +1,7 @@
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class NotesSection extends StatelessWidget {
   final TextEditingController? controller;
@@ -16,7 +17,7 @@ class NotesSection extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),

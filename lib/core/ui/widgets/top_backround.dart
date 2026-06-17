@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class TopBackround extends StatelessWidget {
   final double? height;
@@ -18,17 +19,17 @@ class TopBackround extends StatelessWidget {
         Positioned(
           top: -52.r,
           left: -46.r,
-          child: CustomCircle(radius: 107.r, color: Color(0xFF79E2B2)),
+          child: CustomCircle(radius: 107.r, color: AppColors.greenSoft),
         ),
         Positioned(
           top: -91.h,
           left: 146.w,
-          child: CustomCircle(radius: 163.r, color: Color(0xFFF38B4A)),
+          child: CustomCircle(radius: 163.r, color: AppColors.primaryColor),
         ),
         Positioned(
           top: 105.h,
           left: 321.w,
-          child: CustomCircle(radius: 107.r, color: Color(0xFFFFBC2B)),
+          child: CustomCircle(radius: 107.r, color: AppColors.amber),
         ),
         BackdropFilter(
           filter: ImageFilter.blur(
@@ -40,7 +41,7 @@ class TopBackround extends StatelessWidget {
             width: 1.sw,
             height: height ?? 279.h,
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F8F8).withOpacity(0.5),
+              color: AppColors.bgLightGrey.withOpacity(0.5),
             ),
           ),
         ),

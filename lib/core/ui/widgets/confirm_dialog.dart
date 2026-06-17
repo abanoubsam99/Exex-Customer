@@ -1,6 +1,7 @@
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 /// Reusable confirmation dialog for destructive / cancel actions.
 /// Returns `true` when the user confirms, `false` otherwise.
@@ -35,7 +36,7 @@ class ConfirmDialog {
                 width: 56.r,
                 height: 56.r,
                 decoration: const BoxDecoration(
-                  color: Color(0x1AEF5350),
+                  color: AppColors.redSoftAlpha1A,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -43,7 +44,7 @@ class ConfirmDialog {
                   width: 40.r,
                   height: 40.r,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFEF5350),
+                    color: AppColors.redSoft,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -58,7 +59,7 @@ class ConfirmDialog {
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 16.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w800,
@@ -69,7 +70,7 @@ class ConfirmDialog {
                 message,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: const Color(0xFF6F767E),
+                  color: AppColors.grey,
                   fontSize: 13.r,
                   fontFamily: 'Almarai',
                   height: 1.6,
@@ -82,8 +83,8 @@ class ConfirmDialog {
                     child: CustomButton(
                       text: confirmText,
                       height: 48.h,
-                      backgroundColor: const Color(0xFFEF5350),
-                      bordereColor: const Color(0xFFEF5350),
+                      backgroundColor: AppColors.redSoft,
+                      bordereColor: AppColors.redSoft,
                       onTap: () => Navigator.pop(ctx, true),
                     ),
                   ),

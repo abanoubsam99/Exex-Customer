@@ -6,6 +6,7 @@ import 'package:evex_user/data/models/port_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 /// Bottom sheet عرض تفاصيل خدمة واحدة (صور + اسم + سعر + الوصف الكامل).
 /// بيتفتح لما المستخدم يضغط على كارت خدمة من قائمة "الخدمات الأساسية".
@@ -61,7 +62,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                   width: 80.w,
                   height: 4.r,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE4E7EC),
+                    color: AppColors.borderGrey,
                     borderRadius: BorderRadius.circular(100.r),
                   ),
                 ),
@@ -89,7 +90,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                                 dotHeight: 7.r,
                                 dotWidth: 7.r,
                                 expansionFactor: 2,
-                                activeDotColor: const Color(0xFFF38B4A),
+                                activeDotColor: AppColors.primaryColor,
                                 dotColor: Colors.white.withValues(alpha: 0.7),
                               ),
                             ),
@@ -110,7 +111,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                         TextSpan(
                           text: '${widget.service.price ?? 0}',
                           style: TextStyle(
-                            color: const Color(0xFFF38B4A),
+                            color: AppColors.primaryColor,
                             fontSize: 20.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w800,
@@ -119,7 +120,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                         TextSpan(
                           text: ' جنيه',
                           style: TextStyle(
-                            color: const Color(0xFFA5B7C6),
+                            color: AppColors.unitGrey,
                             fontSize: 13.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,
@@ -134,7 +135,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                       widget.service.name ?? '',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF2C262C),
+                        color: AppColors.blacksoft,
                         fontSize: 18.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w800,
@@ -153,7 +154,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                         : 'لا يوجد وصف متاح لهذه الخدمة',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: const Color(0xFF6F767E),
+                      color: AppColors.grey,
                       fontSize: 13.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w400,

@@ -3,6 +3,7 @@ import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class OtherServiceCardItem extends StatelessWidget {
   final String title;
@@ -25,7 +26,7 @@ class OtherServiceCardItem extends StatelessWidget {
 
         boxShadow: [
           BoxShadow(
-            color: Color(0x19000000),
+            color: AppColors.shadow,
             blurRadius: 16.r,
             offset: Offset(0, 4.r),
             spreadRadius: -2,
@@ -63,7 +64,7 @@ class OtherServiceCardItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: const Color(0xFF2C262C),
+                color: AppColors.blacksoft,
                 fontSize: 14.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,

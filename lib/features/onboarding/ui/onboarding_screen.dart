@@ -13,6 +13,7 @@ import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vector_graphics/vector_graphics_compat.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -55,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      backgroundColor: const Color(0xFF2C262C),
+                      backgroundColor: AppColors.blacksoft,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
@@ -105,8 +106,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       dotHeight: 8.r,
                       dotWidth: 8.r,
                       expansionFactor: 2,
-                      activeDotColor: const Color(0xFFF38B4A),
-                      dotColor: const Color(0xFFD9D9D9),
+                      activeDotColor: AppColors.primaryColor,
+                      dotColor: AppColors.dividerGrey,
                     ),
                   ),
                 ),
@@ -150,7 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        backgroundColor: const Color(0xFFF8F8F8),
+                        backgroundColor: AppColors.bgLightGrey,
                         foregroundColor: Colors.black.withValues(alpha: 0.85),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(

@@ -64,7 +64,7 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
           style: TextStyle(
             fontFamily: "din",
             fontSize: 16.sp,
-            color: Color(0xFF121212),
+            color: AppColors.black,
           ),
         ),
         4.r.verticalSpace,
@@ -79,8 +79,8 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
                 Icons.keyboard_arrow_down_rounded,
                 color:
                     widget.items.isEmpty
-                        ? Color(0xFF99A2AC)
-                        : Color(0xFF121212),
+                        ? AppColors.blueGrey
+                        : AppColors.black,
               ),
               iconOpened: Icon(Icons.keyboard_arrow_up),
             ),
@@ -92,7 +92,7 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
                 style: TextStyle(
                   fontFamily: "din",
                   fontSize: 16.sp,
-                  color: Color(0xFF121212),
+                  color: AppColors.black,
                 ),
               ),
           decoratorProps: DropDownDecoratorProps(
@@ -108,8 +108,8 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
                 fontWeight: FontWeight.normal,
                 color:
                     widget.items.isEmpty
-                        ? Color(0xFF99A2AC)
-                        : Color(0xFF6F767E),
+                        ? AppColors.blueGrey
+                        : AppColors.grey,
               ),
               // suffixIcon: Icon(Icons.arrow_back),
               filled: true,
@@ -176,7 +176,7 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
                         width: 80.w,
                         height: 4.r,
                         decoration: BoxDecoration(
-                          color: Color(0xFFE4E7EC),
+                          color: AppColors.borderGrey,
                           borderRadius: BorderRadius.circular(500),
                         ),
                       ),
@@ -184,7 +184,7 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
                       Container(
                         decoration: BoxDecoration(
                           border: Border(
-                            bottom: BorderSide(color: Color(0xFFE4E7EC)),
+                            bottom: BorderSide(color: AppColors.borderGrey),
                           ),
                         ),
                         height: 48.r,
@@ -210,14 +210,14 @@ class _EvexMultiSelectDropDownSearchFieldState<T>
             //     width: 80.w,
             //     height: 4.r,
             //     decoration: BoxDecoration(
-            //       color: Color(0xFFE4E7EC),
+            //       color: AppColors.borderGrey,
             //       borderRadius: BorderRadius.circular(500),
             //     ),
             //   ),
             // ),
             itemClickProps: ClickProps(
-              highlightColor: Color(0xFFFFF1E9),
-              splashColor: Color(0xFFFFF1E9),
+              highlightColor: AppColors.lightPeach,
+              splashColor: AppColors.lightPeach,
               onLongPress: () {
                 print("hello");
               },
@@ -278,7 +278,7 @@ class _MyCheck2State extends State<MyCheck2> {
             children: [
               Text(
                 'hhhh',
-                style: TextStyle(fontSize: 16.sp, color: Color(0xFF121212)),
+                style: TextStyle(fontSize: 16.sp, color: AppColors.black),
               ),
               8.horizontalSpace,
               Checkbox(value: widget.isSelected, onChanged: (value) {}),
@@ -313,7 +313,7 @@ class _MyCheck2State extends State<MyCheck2> {
                               ? null
                               : Border.all(
                                 width: 1.67.r,
-                                color: Color(0xFFD0D5DD),
+                                color: AppColors.borderGrey2,
                               ),
                       borderRadius: BorderRadius.circular(5.0.r),
                     ),

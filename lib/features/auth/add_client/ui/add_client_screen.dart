@@ -13,6 +13,7 @@ import 'package:evex_user/data/cubits/auth/add_client/add_client_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class AddClientScreen extends StatelessWidget {
   const AddClientScreen({super.key});
@@ -32,7 +33,7 @@ class AddClientScreen extends StatelessWidget {
                     begin: const Alignment(1.5, -1),
                     end: const Alignment(-1, 0.2),
                     colors: [
-                      const Color(0xffF9C5A4).withValues(alpha: 0),
+                      AppColors.peachOrange.withValues(alpha: 0),
                       Colors.white,
                     ],
                   ),
@@ -69,7 +70,7 @@ class AddClientScreen extends StatelessWidget {
                   ),
                   shadows: [
                     BoxShadow(
-                      color: Color(0x66000000),
+                      color: AppColors.blackAlpha66,
                       blurRadius: 66,
                       offset: Offset(0, -5),
                       spreadRadius: 24,
@@ -90,7 +91,7 @@ class AddClientScreen extends StatelessWidget {
                             'أهلا بيك وسط عيلتك ..',
                             textAlign: TextAlign.right,
                             style: TextStyle(
-                              color: const Color(0xFF2C262C),
+                              color: AppColors.blacksoft,
                               fontSize: 22.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w800,
@@ -109,7 +110,7 @@ class AddClientScreen extends StatelessWidget {
                             'المنطقة',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: const Color(0xFF2C262C),
+                              color: AppColors.blacksoft,
                               fontSize: 14.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
@@ -120,7 +121,7 @@ class AddClientScreen extends StatelessWidget {
                           Container(
                             width: 1.sw,
                             decoration: ShapeDecoration(
-                              color: const Color(0xFFF4F4F4),
+                              color: AppColors.boarderFillColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16.r),
                               ),
@@ -194,7 +195,7 @@ class AddClientScreen extends StatelessWidget {
                                       contentPadding: EdgeInsets.zero,
                                       prefixIcon: CustomImageHandler(
                                         AppImages.iconsAngleSmallDown,
-                                        color: const Color(0xFF787878),
+                                        color: AppColors.grey2,
                                       ),
                                       prefixIconConstraints:
                                           const BoxConstraints(
@@ -209,7 +210,7 @@ class AddClientScreen extends StatelessWidget {
                                   Container(
                                     width: 1,
                                     height: 30.r,
-                                    color: const Color(0xFF99A2AC),
+                                    color: AppColors.blueGrey,
                                   ),
                                   5.horizontalSpace,
                                   // Governorate dropdown
@@ -222,7 +223,7 @@ class AddClientScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14.r,
                                           fontFamily: 'Almarai',
-                                          color: const Color(0xFF99A2AC),
+                                          color: AppColors.blueGrey,
                                         ),
                                       ),
                                       value: state.selectedGovernorate,
@@ -240,7 +241,7 @@ class AddClientScreen extends StatelessWidget {
                                       decoration: InputDecoration(
                                         prefixIcon: CustomImageHandler(
                                           AppImages.iconsAngleSmallDown,
-                                          color: const Color(0xFF787878),
+                                          color: AppColors.grey2,
                                         ),
                                         prefixIconConstraints:
                                             const BoxConstraints(
@@ -255,7 +256,7 @@ class AddClientScreen extends StatelessWidget {
                                   Container(
                                     width: 1,
                                     height: 30.r,
-                                    color: const Color(0xFF99A2AC),
+                                    color: AppColors.blueGrey,
                                   ),
                                   5.horizontalSpace,
                                   // City dropdown
@@ -268,7 +269,7 @@ class AddClientScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14.r,
                                           fontFamily: 'Almarai',
-                                          color: const Color(0xFF99A2AC),
+                                          color: AppColors.blueGrey,
                                         ),
                                       ),
                                       value: state.selectedCity,
@@ -285,7 +286,7 @@ class AddClientScreen extends StatelessWidget {
                                       decoration: InputDecoration(
                                         prefixIcon: CustomImageHandler(
                                           AppImages.iconsAngleSmallDown,
-                                          color: const Color(0xFF787878),
+                                          color: AppColors.grey2,
                                         ),
                                         prefixIconConstraints:
                                             const BoxConstraints(

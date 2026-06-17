@@ -1,5 +1,4 @@
 import 'package:evex_user/core/helpers/date_format_helper.dart';
-import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 
 class OrderDetailsModel {
   final String bookingNumber;
@@ -111,7 +110,8 @@ class OrderDetailsModel {
         phone: s('clientPhoneNumber'),
         address: address,
       ),
-      status: ReservationStatusHelper.arabic(s('reservationStatus')),
+      // Raw status — screens localize it via ReservationStatusHelper.label().
+      status: s('reservationStatus'),
       createdDate:
           DateFormatHelper.arabicDate(s('reservationDate'), fallback: ''),
       createdTime: DateFormatHelper.arabicTime(s('reservationDate')),
@@ -119,7 +119,7 @@ class OrderDetailsModel {
       eventType: s('occasionType'),
       venueLocation: venue,
       eventDay: DateFormatHelper.arabicWeekday(s('occasionDate')),
-      eventDate: DateFormatHelper.arabicDate(s('occasionDate'), fallback: ''),
+      eventDate: DateFormatHelper.arabicDateWithComa(s('occasionDate'), fallback: ''),
       basicService: OrderLineItem(
         name: s('serviceName'),
         price: n('servicePrice').round(),
@@ -127,32 +127,35 @@ class OrderDetailsModel {
       ),
       additions: additions,
       buffet: buffet,
+      // Labels/units are translation keys — screens render them with `.tr()`.
       costBreakdown: [
-        CostRow(label: 'عموله evex', value: n('evexCommission').round()),
-        CostRow(label: 'رسوم إدارية', value: n('administrativeFees').round()),
-        CostRow(label: 'ضريبة', value: n('tax').round()),
-        CostRow(label: 'مبلغ التأمين', value: n('insuranceAmount').round()),
-        CostRow(label: 'مقدم الحجز', value: n('deposit').round()),
+        CostRow(label: 'evex commission', value: n('evexCommission').round()),
         CostRow(
-          label: 'كاش باك',
+            label: 'administrative fees',
+            value: n('administrativeFees').round()),
+        CostRow(label: 'tax', value: n('tax').round()),
+        CostRow(label: 'insurance amount', value: n('insuranceAmount').round()),
+        CostRow(label: 'booking deposit', value: n('deposit').round()),
+        CostRow(
+          label: 'cashback',
           value: n('cashbackPointsValue').round(),
-          unit: 'نقطة',
+          unit: 'point',
         ),
         CostRow(
-          label: 'خصم إضافي من التاجر',
+          label: 'additional discount from vendor',
           value: n('additionalDiscountFromVendor').round(),
         ),
         CostRow(
-          label: 'خصم إضافي من evex',
+          label: 'additional discount from evex',
           value: n('additionalDiscountFromEVEX').round(),
         ),
         CostRow(
-          label: 'تكلفة إضافية من التاجر',
+          label: 'additional cost from vendor',
           value: n('additionalCostFromVendor').round(),
           subtitle: json['detailsAdditionalCostFromVendor']?.toString(),
         ),
         CostRow(
-          label: 'تكلفة إضافية من evex',
+          label: 'additional cost from evex',
           value: n('additionalCostFromEVEX').round(),
           subtitle: json['detailsAdditionalCostFromEVEX']?.toString(),
         ),
@@ -218,15 +221,16 @@ class OrderLineItem {
 }
 
 class CostRow {
+  /// Translation key for the label + unit ('pound' / 'point'); screens call `.tr()`.
   final String label;
   final num value;
-  final String unit; // جنيه / نقطة
+  final String unit;
   final String? subtitle;
 
   const CostRow({
     required this.label,
     required this.value,
-    this.unit = 'جنيه',
+    this.unit = 'pound',
     this.subtitle,
   });
 
@@ -234,7 +238,7 @@ class CostRow {
     return CostRow(
       label: json['label'] ?? '',
       value: json['value'] ?? 0,
-      unit: json['unit'] ?? 'جنيه',
+      unit: json['unit'] ?? 'pound',
       subtitle: json['subtitle'],
     );
   }

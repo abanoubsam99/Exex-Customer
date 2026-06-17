@@ -62,7 +62,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
             children: [
               Text(
                 widget.item,
-                style: TextStyle(fontSize: 16.sp, color: Color(0xFF121212)),
+                style: TextStyle(fontSize: 16.sp, color: AppColors.black),
               ),
               8.horizontalSpace,
               Checkbox(value: isChecked, onChanged: (value) {}),
@@ -97,7 +97,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
                               ? null
                               : Border.all(
                                 width: 1.67.r,
-                                color: Color(0xFFD0D5DD),
+                                color: AppColors.borderGrey2,
                               ),
                       borderRadius: BorderRadius.circular(5.0.r),
                     ),

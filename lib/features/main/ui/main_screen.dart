@@ -54,7 +54,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 shadows: const [
                   BoxShadow(
-                    color: Color(0x19000000),
+                    color: AppColors.shadow,
                     blurRadius: 22,
                     offset: Offset(0, 4),
                     spreadRadius: 2,

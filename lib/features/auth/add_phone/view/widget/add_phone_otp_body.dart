@@ -22,7 +22,7 @@ class AddPhoneOtpBody extends StatelessWidget {
             'ادخل الكود',
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: const Color(0xFF2C262C),
+              color: AppColors.blacksoft,
               fontSize: 14.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -59,8 +59,8 @@ class AddPhoneOtpBody extends StatelessWidget {
                 activeBorderWidth: 1,
                 selectedColor: AppColors.primaryColor,
                 selectedFillColor: Colors.white,
-                inactiveFillColor: const Color(0xFFF4F4F4),
-                inactiveColor: const Color(0xffE8ECF4),
+                inactiveFillColor: AppColors.boarderFillColor,
+                inactiveColor: AppColors.blueGreyBg,
                 inactiveBorderWidth: 1,
               ),
               onChanged: cubit.onOtpChanged,
@@ -73,7 +73,7 @@ class AddPhoneOtpBody extends StatelessWidget {
               Text(
                 'لم يصلنى الكود ؟  ',
                 style: TextStyle(
-                  color: const Color(0xFF2C262C),
+                  color: AppColors.blacksoft,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,
@@ -90,7 +90,7 @@ class AddPhoneOtpBody extends StatelessWidget {
                 child: Text(
                   'إعادة الإرسال',
                   style: TextStyle(
-                    color: const Color(0xFFF38B4A),
+                    color: AppColors.primaryColor,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w700,

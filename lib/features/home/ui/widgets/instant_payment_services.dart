@@ -10,6 +10,7 @@ import 'package:evex_user/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 
 class InstantPaymentServices extends StatelessWidget {
   const InstantPaymentServices({super.key});
@@ -24,7 +25,7 @@ class InstantPaymentServices extends StatelessWidget {
               width: 6.r,
               height: 18.r,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF38B4A),
+                color: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.r),
                 ),
@@ -86,7 +87,7 @@ class InstantPaymentServices extends StatelessWidget {
                             ? ShapeDecoration(
                                 color: Colors.white,
                                 shape: SpeechBubbleBorder(
-                                  borderColor: const Color(0xffF38B4A),
+                                  borderColor: AppColors.primaryColor,
                                   borderWidth: 2,
                                   tailPosition: 0.70,
                                 ),
@@ -103,7 +104,7 @@ class InstantPaymentServices extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     width: 1,
-                                    color: Color(0xFFF3F3F3),
+                                    color: AppColors.fillGrey2,
                                   ),
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
@@ -124,7 +125,7 @@ class InstantPaymentServices extends StatelessWidget {
                               port.nameAr,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: const Color(0xFF2C262C),
+                                color: AppColors.blacksoft,
                                 fontSize: 14.r,
                                 fontFamily: 'Almarai',
                                 fontWeight: FontWeight.w400,

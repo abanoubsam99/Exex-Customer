@@ -27,7 +27,7 @@ class PaymentHistoryScreen extends StatelessWidget {
                       'سجل المدفوعات',
                       textAlign: TextAlign.right,
                       style: TextStyle(
-                        color: const Color(0xFF121212),
+                        color: AppColors.black,
                         fontSize: 18.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w800,
@@ -41,27 +41,27 @@ class PaymentHistoryScreen extends StatelessWidget {
                   height: 38.h,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14.r),
-                    color: const Color(0xFFF2F4F7),
+                    color: AppColors.boarderColor,
                   ),
                   child: TabBar(
                     padding: EdgeInsets.all(4.r),
                     labelPadding: EdgeInsets.zero,
                     labelColor: AppColors.secondaryColor,
                     labelStyle: TextStyle(
-                      color: const Color(0xFFF38B4A),
+                      color: AppColors.primaryColor,
                       fontSize: 16.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w700,
                     ),
                     unselectedLabelStyle: TextStyle(
-                      color: const Color(0xFF6F767E),
+                      color: AppColors.grey,
                       fontSize: 14.r,
                       fontFamily: 'Almarai',
                       fontWeight: FontWeight.w400,
                     ),
                     indicatorColor: Colors.transparent,
                     dividerColor: Colors.transparent,
-                    unselectedLabelColor: const Color(0xff6F767E),
+                    unselectedLabelColor: AppColors.grey,
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: Colors.white,
@@ -81,7 +81,7 @@ class PaymentHistoryScreen extends StatelessWidget {
                               height: 7.r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color(0xFFEF6164),
+                                color: AppColors.red3,
                               ),
                             ),
                           ),
@@ -99,7 +99,7 @@ class PaymentHistoryScreen extends StatelessWidget {
                               height: 7.r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color(0xFF79E2B2),
+                                color: AppColors.greenSoft,
                               ),
                             ),
                           ),
