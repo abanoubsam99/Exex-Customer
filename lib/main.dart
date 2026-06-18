@@ -7,6 +7,7 @@ import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_theme.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -39,6 +40,7 @@ void main() async {
   DioHelper.init(cacheHelper);
   final userService = UserService(cacheHelper);
   await userService.init();
+  final locationService = LocationService(cacheHelper);
   final localAuthService = LocalAuthService();
   final deepLinkService = DeepLinkService(userService);
   // Start listening for the launch link + runtime links before the UI builds.
@@ -59,6 +61,7 @@ void main() async {
       child: MyApp(
         cacheHelper: cacheHelper,
         userService: userService,
+        locationService: locationService,
         localAuthService: localAuthService,
         deepLinkService: deepLinkService,
       ),
@@ -71,12 +74,14 @@ class MyApp extends StatelessWidget {
     super.key,
     required this.cacheHelper,
     required this.userService,
+    required this.locationService,
     required this.localAuthService,
     required this.deepLinkService,
   });
 
   final CacheHelper cacheHelper;
   final UserService userService;
+  final LocationService locationService;
   final LocalAuthService localAuthService;
   final DeepLinkService deepLinkService;
 
@@ -86,6 +91,7 @@ class MyApp extends StatelessWidget {
       providers: BlocProviders.repositories(
         cacheHelper: cacheHelper,
         userService: userService,
+        locationService: locationService,
         localAuthService: localAuthService,
         deepLinkService: deepLinkService,
       ),

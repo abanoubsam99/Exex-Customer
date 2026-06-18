@@ -1,6 +1,8 @@
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
 import 'package:evex_user/data/repos/add_client_repo.dart';
 import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -104,7 +106,16 @@ class AppRouter {
         return _page(const SplashScreen(), settings);
 
       case Routes.onboardingScreen:
-        return _page(const OnboardingScreen(), settings);
+        return _page(
+          BlocProvider(
+            create: (context) => OnboardingLocationCubit(
+              context.read<LocationRepo>(),
+              context.read<LocationService>(),
+            ),
+            child: const OnboardingScreen(),
+          ),
+          settings,
+        );
 
       case Routes.loginScreen:
         return _page(

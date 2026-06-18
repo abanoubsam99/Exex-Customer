@@ -1,8 +1,6 @@
-import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
-import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
+import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_first_page.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_second_page.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_third_page.dart';
@@ -12,7 +10,6 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:vector_graphics/vector_graphics_compat.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -65,7 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_pageController.page!.toInt() < 2) {
                         _pageController.animateToPage(
                           _pageController.page!.toInt() + 1,
@@ -73,8 +70,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        // navigate to next screen after onboarding
-                        context.read<CacheHelper>().saveData(
+                        // Location is mandatory before finishing onboarding.
+                        final locationCubit =
+                            context.read<OnboardingLocationCubit>();
+                        if (!locationCubit.state.canFinish) {
+                          ToastManager.showError(
+                              'من فضلك اختر المحافظة والمدينة');
+                          return;
+                        }
+                        final cache = context.read<CacheHelper>();
+                        await locationCubit.persist();
+                        cache.saveData(
                           key: 'onboardingCompleted',
                           value: true,
                         );

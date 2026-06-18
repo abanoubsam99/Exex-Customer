@@ -1,6 +1,7 @@
 import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/repos/add_client_repo.dart';
 import 'package:evex_user/data/repos/add_phone_repo.dart';
@@ -38,6 +39,7 @@ class BlocProviders {
   static List<RepositoryProvider> repositories({
     required CacheHelper cacheHelper,
     required UserService userService,
+    required LocationService locationService,
     required LocalAuthService localAuthService,
     required DeepLinkService deepLinkService,
   }) =>
@@ -45,6 +47,7 @@ class BlocProviders {
         // Services
         RepositoryProvider<CacheHelper>.value(value: cacheHelper),
         RepositoryProvider<UserService>.value(value: userService),
+        RepositoryProvider<LocationService>.value(value: locationService),
         RepositoryProvider<LocalAuthService>.value(value: localAuthService),
         RepositoryProvider<DeepLinkService>.value(value: deepLinkService),
         // Repositories — all use DioHelper directly, no data sources
@@ -110,6 +113,7 @@ class BlocProviders {
             context.read<HomeRepo>(),
             context.read<NotificationsRepo>(),
             context.read<UserService>(),
+            context.read<LocationService>(),
           ),
         ),
       ];

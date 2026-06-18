@@ -14,4 +14,10 @@ class CacheKeys {
   static const String typeAds = "typeAds";
   static const String countryName = "countryName";
   static const String countryImage = "countryImage";
+
+  // Location chosen on onboarding (reused as gov/city in the data APIs).
+  static const String selectedGovId = "selectedGovId";
+  static const String selectedGovName = "selectedGovName";
+  static const String selectedCityId = "selectedCityId";
+  static const String selectedCityName = "selectedCityName";
 }

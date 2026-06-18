@@ -1,3 +1,4 @@
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart'
@@ -12,9 +13,14 @@ class HomeCubit extends Cubit<HomeState> {
   final HomeRepo _homeRepo;
   final NotificationsRepo _notificationsRepo;
   final UserService _userService;
+  final LocationService _locationService;
 
-  HomeCubit(this._homeRepo, this._notificationsRepo, this._userService)
-      : super(const HomeState());
+  HomeCubit(
+    this._homeRepo,
+    this._notificationsRepo,
+    this._userService,
+    this._locationService,
+  ) : super(const HomeState());
 
   /// Clears all home state so the next signed-in account starts fresh.
   void reset() => emit(const HomeState());
@@ -43,7 +49,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> getHomeUserAppInfo() async {
     emit(state.copyWith(isLoadingPorts: true));
-    final ports = await _homeRepo.getHomeUserAppInfo();
+    final ports = await _homeRepo.getHomeUserAppInfo(
+      gov: _locationService.govName,
+      city: _locationService.cityName,
+    );
     if (ports != null) {
       final booking = ports.where((p) => p.subscriptionType == 0).toList();
       final payment = ports.where((p) => p.subscriptionType == 1).toList();
@@ -59,7 +68,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> getSpecialOffers() async {
     emit(state.copyWith(isLoadingOffers: true));
-    final offers = await _homeRepo.getSpecialOffers();
+    final offers = await _homeRepo.getSpecialOffers(
+      gov: _locationService.govName,
+      city: _locationService.cityName,
+    );
     if (offers != null) {
       emit(state.copyWith(isLoadingOffers: false, specialOffers: offers));
     } else {
