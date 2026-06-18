@@ -29,6 +29,12 @@ class LoginCubit extends Cubit<LoginState> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  /// "تخطّي" — enter the app as a guest (browse-only, no account).
+  Future<void> continueAsGuest() async {
+    await _userService.continueAsGuest();
+    NavigationHelper.pushNamedAndRemoveUntil(Routes.mainScreen);
+  }
+
   /// Logs in using the locally stored credentials after a successful
   /// biometric check. Used by the fingerprint / Face ID button.
   Future<void> loginWithBiometrics() async {

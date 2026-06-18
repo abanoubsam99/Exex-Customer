@@ -75,6 +75,28 @@ class LoginBodyWidget extends StatelessWidget {
                 );
               },
             ),
+            8.verticalSpace,
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: Size.zero,
+                ),
+                onPressed: () => cubit.continueAsGuest(),
+                child: Text(
+                  'تخطّي والتصفّح كزائر',
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 14.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    decoration: TextDecoration.underline,
+                    height: 1.50,
+                  ),
+                ),
+              ),
+            ),
             // 25.verticalSpace,
             // Row(
             //   crossAxisAlignment: CrossAxisAlignment.center,

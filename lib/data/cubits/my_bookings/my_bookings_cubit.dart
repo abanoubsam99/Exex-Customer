@@ -1,4 +1,5 @@
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,6 +55,17 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     }
     // The pending-deposit summary footer reflects the current requests.
     await loadPendingDeposit();
+  }
+
+  /// Deletes a pending request (after the UI confirms) then refreshes the list.
+  Future<void> cancelRequest(int id) async {
+    final ok = await _repo.cancelRequest(id);
+    if (ok) {
+      ToastManager.showSuccess('تم حذف الطلب');
+      await loadRequests();
+    } else {
+      ToastManager.showError('تعذّر حذف الطلب');
+    }
   }
 
   /// Loads the deposit summary for all pending requests (footer in the

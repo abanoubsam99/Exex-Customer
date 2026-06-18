@@ -86,7 +86,10 @@ class AppRouter {
   /// Decides where to land on startup based on the cached user.
   static String getInitialRoute(UserService userService) {
     final user = userService.currentUser;
-    if (user == null) return Routes.loginScreen;
+    if (user == null) {
+      // Guests skip login and browse the app; everyone else signs in.
+      return userService.isGuest ? Routes.mainScreen : Routes.loginScreen;
+    }
     if (!user.hasPhone) return Routes.addPhoneScreen;
     if (!user.isPhoneVerified) return Routes.addPhoneOptScreen;
     if (!user.isAccountComplete) return Routes.addClientScreen;

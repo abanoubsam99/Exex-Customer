@@ -2,6 +2,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
@@ -77,18 +78,13 @@ class _RequestsTab extends StatelessWidget {
                   deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
-                  // A pending request → go to the confirm/pay screen (not details).
-                  onTap: r.id == null
+                  // Tapping the card opens the booking details (the confirm/pay
+                  // flow lives in the booking-creation journey, not here).
+                  onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  // Trash icon → confirm, then delete the request.
+                  onDelete: r.id == null
                       ? null
-                      : () => NavigationHelper.pushNamed(
-                            Routes.confirmBookingScreen,
-                            arguments: ConfirmBookingArgs(
-                              reservationRequestId: r.id!,
-                              depositAmount: r.deposit ?? 0,
-                              totalAmount:
-                                  r.finalCost ?? r.apparentPrice ?? 0,
-                            ),
-                          ),
+                      : () => _confirmDeleteRequest(context, r.id!),
                   onEdit: r.id == null
                       ? null
                       : () => _openEdit(
@@ -222,6 +218,18 @@ void _openDetails(int id) {
 
 void _openEdit(EditReservationArgs args) {
   NavigationHelper.pushNamed(Routes.editReservationScreen, arguments: args);
+}
+
+/// Asks for confirmation, then deletes the pending request via the cubit.
+Future<void> _confirmDeleteRequest(BuildContext context, int id) async {
+  final cubit = context.read<MyBookingsCubit>();
+  final confirmed = await ConfirmDialog.show(
+    context,
+    title: 'حذف الطلب',
+    message: 'هل أنت متأكد أنك تريد حذف هذا الطلب؟',
+    confirmText: 'حذف',
+  );
+  if (confirmed) cubit.cancelRequest(id);
 }
 
 /// Footer in the requests tab: total deposit for all pending requests +

@@ -1,5 +1,6 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/data/cubits/main/main_state.dart';
@@ -14,6 +15,16 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
+
+  /// Floating nav bar geometry. Kept here as the single source of truth so the
+  /// page bottom padding always matches the bar and content never scrolls
+  /// underneath it.
+  static const double _navBarHeight = 74;
+  static const double _navBarMargin = 22;
+
+  /// Vertical space the floating bar occupies from the screen bottom
+  /// (height + top & bottom margins). Reserved under every page.
+  static const double _navBarReserved = _navBarHeight + _navBarMargin * 2;
 
   static const List<Widget> _pages = [
     HomeScreen(),
@@ -34,7 +45,7 @@ class MainScreen extends StatelessWidget {
             onPageChanged: cubit.animateToTab,
             children: _pages.map((page) {
               return Padding(
-                padding: EdgeInsets.only(bottom: 74.h),
+                padding: EdgeInsets.only(bottom: _navBarReserved.r),
                 child: page,
               );
             }).toList(),
@@ -44,8 +55,8 @@ class MainScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: 74.r,
-              margin: EdgeInsets.all(22.r),
+              height: _navBarHeight.r,
+              margin: EdgeInsets.all(_navBarMargin.r),
               padding: EdgeInsets.symmetric(horizontal: 35.r, vertical: 12.r),
               decoration: ShapeDecoration(
                 color: Colors.white,
@@ -78,14 +89,14 @@ class MainScreen extends StatelessWidget {
                       label: 'حجوزاتى',
                       page: 1,
                       currentPage: state.currentPage,
-                      onTap: () => cubit.goToTab(1),
+                      onTap: () => _selectTab(context, cubit, 1),
                     ),
                     _NavItem(
                       icon: AppImages.iconsWallet,
                       label: 'المحفظه',
                       page: 2,
                       currentPage: state.currentPage,
-                      onTap: () => cubit.goToTab(2),
+                      onTap: () => _selectTab(context, cubit, 2),
                     ),
                     _NavItem(
                       icon: AppImages.iconsMenu,
@@ -103,6 +114,13 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Switches tabs, but gates the account-based tabs (bookings, wallet) so a
+/// guest is prompted to sign in instead of opening them.
+void _selectTab(BuildContext context, MainCubit cubit, int page) {
+  if ((page == 1 || page == 2) && !AuthGuard.requireLogin(context)) return;
+  cubit.goToTab(page);
 }
 
 class _NavItem extends StatelessWidget {

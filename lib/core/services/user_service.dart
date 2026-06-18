@@ -10,8 +10,19 @@ class UserService {
 
   UserModel? currentUser;
 
+  /// True when the user chose "تخطّي" on the login screen and is browsing
+  /// without an account. Cleared automatically once they actually sign in.
+  bool get isGuest =>
+      currentUser == null &&
+      (_cacheHelper.getData(CacheKeys.isGuest) as bool? ?? false);
+
   Future<void> init() async {
     await _loadUser();
+  }
+
+  /// Enters guest (browse-only) mode.
+  Future<void> continueAsGuest() async {
+    await _cacheHelper.saveData(key: CacheKeys.isGuest, value: true);
   }
 
   Future<void> saveUser(UserModel user) async {
@@ -19,6 +30,8 @@ class UserService {
       key: CacheKeys.userModel,
       value: json.encode(user.toJson()),
     );
+    // A real account replaces any prior guest session.
+    await _cacheHelper.removeData(key: CacheKeys.isGuest);
     currentUser = user;
   }
 

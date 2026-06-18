@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
@@ -212,6 +213,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                     height: 52.h,
                     text: "إضافة لحجوزاتي",
                     onTap: () {
+                      // Account action — guests must sign in first.
+                      if (!AuthGuard.requireLogin(context)) return;
                       final cubit = context.read<BookingServiceDetailsCubit>();
                       final st = cubit.state;
                       if (st.totalCost <= 0) {

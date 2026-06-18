@@ -3,6 +3,7 @@ import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,7 @@ class UserDataSection extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
+            if (!AuthGuard.requireLogin(context)) return;
             NavigationHelper.pushNamed(Routes.profileScreen);
           },
           child: Container(

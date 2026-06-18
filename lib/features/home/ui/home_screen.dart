@@ -6,6 +6,7 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
@@ -122,6 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         IconButton(
                                           onPressed: () {
+                                            if (!AuthGuard.requireLogin(
+                                                context)) {
+                                              return;
+                                            }
                                             NavigationHelper.pushNamed(
                                               Routes.paymentHistoryScreen,
                                             );
@@ -135,6 +140,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         IconButton(
                                           onPressed: () {
+                                            if (!AuthGuard.requireLogin(
+                                                context)) {
+                                              return;
+                                            }
                                             NavigationHelper.pushNamed(
                                               Routes.notificationsScreen,
                                             );
@@ -269,10 +278,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   height: 30.h,
                                                   width: 112.w,
                                                   text: "اقتراح جديد",
-                                                  onTap: () =>
-                                                      NavigationHelper.pushNamed(
-                                                        Routes.newSuggestionScreen,
-                                                      ),
+                                                  onTap: () {
+                                                    if (!AuthGuard.requireLogin(
+                                                        context)) {
+                                                      return;
+                                                    }
+                                                    NavigationHelper.pushNamed(
+                                                      Routes.newSuggestionScreen,
+                                                    );
+                                                  },
                                                 ),
                                               ],
                                             ),

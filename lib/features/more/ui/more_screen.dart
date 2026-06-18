@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
@@ -47,6 +48,7 @@ class MoreScreen extends StatelessWidget {
                 title: 'الصفحة الشخصية',
                 image: AppImages.iconsUser,
                 onTap: () {
+                  if (!AuthGuard.requireLogin(context)) return;
                   NavigationHelper.pushNamed(Routes.profileScreen);
                 },
               ),
@@ -55,6 +57,7 @@ class MoreScreen extends StatelessWidget {
                 title: 'تفضيلاتي',
                 image: AppImages.iconsHeart,
                 onTap: () {
+                  if (!AuthGuard.requireLogin(context)) return;
                   NavigationHelper.pushNamed(Routes.favoritesScreen);
                 },
               ),
@@ -63,6 +66,7 @@ class MoreScreen extends StatelessWidget {
                 title: 'سجل المدفوعات',
                 image: AppImages.iconsMoneyTransfer,
                 onTap: () {
+                  if (!AuthGuard.requireLogin(context)) return;
                   NavigationHelper.pushNamed(Routes.paymentHistoryScreen);
                 },
               ),
@@ -71,6 +75,7 @@ class MoreScreen extends StatelessWidget {
                 title: 'الإشعارات',
                 image: AppImages.iconsBell,
                 onTap: () {
+                  if (!AuthGuard.requireLogin(context)) return;
                   NavigationHelper.pushNamed(Routes.notificationsScreen);
                 },
               ),
@@ -87,6 +92,7 @@ class MoreScreen extends StatelessWidget {
                 title: 'إقتراح جديد',
                 image: AppImages.iconsThoughtBubble,
                 onTap: () {
+                  if (!AuthGuard.requireLogin(context)) return;
                   NavigationHelper.pushNamed(Routes.newSuggestionScreen);
                 },
               ),

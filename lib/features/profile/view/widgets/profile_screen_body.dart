@@ -2,7 +2,6 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
@@ -50,14 +49,13 @@ class ProfileScreenBody extends StatelessWidget {
                       InkWell(
                         onTap: () async {
                           // Capture cubits/services before the async gap, then
-                          // wipe everything tied to the old account so the next
-                          // sign-in starts clean.
+                          // wipe the old account session. Biometric credentials
+                          // are intentionally kept so the fingerprint login keeps
+                          // working after logout.
                           final home = context.read<HomeCubit>();
                           final main = context.read<MainCubit>();
                           final userService = context.read<UserService>();
-                          final localAuth = context.read<LocalAuthService>();
                           await userService.logout();
-                          await localAuth.clearCredentials();
                           home.reset();
                           main.reset();
                           NavigationHelper.pushNamedAndRemoveUntil(
