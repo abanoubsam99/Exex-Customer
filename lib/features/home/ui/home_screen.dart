@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/constants/layout_constants.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
@@ -423,7 +424,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              40.verticalSpace,
+              // Clear the floating nav bar at the end of the scroll.
+              SizedBox(height: kFloatingNavBarSpace.r),
             ],
           ),
         ),

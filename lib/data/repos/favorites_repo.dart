@@ -30,7 +30,7 @@ class FavoritesRepo {
     try {
       final response = await DioHelper.postData(
         url: AppEndpoints.favorites,
-        query: {'lessonId': id},
+        query: {'portId': id},
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {

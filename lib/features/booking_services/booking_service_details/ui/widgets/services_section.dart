@@ -98,7 +98,9 @@ class ServicesSection extends StatelessWidget {
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();
             return SizedBox(
-              height: 180.h,
+              // Headroom for the global 1.1 text scaling so the card content
+              // (image + title + price row) never overflows.
+              height: 192.h,
               child: ListView.separated(
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,

@@ -8,11 +8,12 @@ class MyBookingsRepo {
   Future<List<ReservationModel>?> getMyReservations({
     int index = 0,
     int size = 20,
+    String status = "",
   }) async {
     try {
       final response = await DioHelper.getData(
         url: AppEndpoints.myReservations,
-        query: {'index': index, 'size': size},
+        query: {'index': index, 'size': size,"status":status},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final items = response.data['items'] as List?;

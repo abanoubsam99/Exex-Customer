@@ -1,4 +1,5 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/constants/layout_constants.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
@@ -60,7 +61,7 @@ class _RequestsTab extends StatelessWidget {
                 : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.symmetric(vertical: 20.h),
+              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
               itemCount: state.requests.length,
               itemBuilder: (context, index) {
                 final r = state.requests[index];
@@ -132,7 +133,7 @@ class _ReservationsTab extends StatelessWidget {
           : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.symmetric(vertical: 20.h),
+              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
               itemCount: state.reservations.length,
               itemBuilder: (context, index) {
                 final r = state.reservations[index];
@@ -189,7 +190,7 @@ class _CancelledTab extends StatelessWidget {
           : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.symmetric(vertical: 20.h),
+              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
               itemCount: state.cancelled.length,
               itemBuilder: (context, index) {
                 final r = state.cancelled[index];

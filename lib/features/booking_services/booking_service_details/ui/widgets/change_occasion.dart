@@ -60,11 +60,12 @@ class ChangeOccasion extends StatelessWidget {
     final portName = port?.portName?.trim();
     final hasName = portName != null && portName.isNotEmpty;
     return Container(
-      height: port == null ? 58.h : null,
+      // No fixed height: let the card size to its content so the global text
+      // scaling never overflows it.
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: 11.w,
-        vertical: port == null ? 5.h : 8.h,
+        vertical: port == null ? 6.h : 8.h,
       ),
       decoration: ShapeDecoration(
         color: AppColors.bgGrey2,

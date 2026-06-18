@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/constants/layout_constants.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -16,16 +17,6 @@ import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  /// Floating nav bar geometry. Kept here as the single source of truth so the
-  /// page bottom padding always matches the bar and content never scrolls
-  /// underneath it.
-  static const double _navBarHeight = 74;
-  static const double _navBarMargin = 22;
-
-  /// Vertical space the floating bar occupies from the screen bottom
-  /// (height + top & bottom margins). Reserved under every page.
-  static const double _navBarReserved = _navBarHeight + _navBarMargin * 2;
-
   static const List<Widget> _pages = [
     HomeScreen(),
     MyBookingsScreen(),
@@ -39,24 +30,22 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
+          // Pages fill the full height; each scrollable page reserves
+          // kFloatingNavBarSpace at its bottom so content clears the floating
+          // bar without leaving a dead white band behind it.
           PageView(
             controller: cubit.pageController,
             physics: const BouncingScrollPhysics(),
             onPageChanged: cubit.animateToTab,
-            children: _pages.map((page) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: _navBarReserved.r),
-                child: page,
-              );
-            }).toList(),
+            children: _pages,
           ),
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: _navBarHeight.r,
-              margin: EdgeInsets.all(_navBarMargin.r),
+              height: kNavBarHeight.r,
+              margin: EdgeInsets.all(kNavBarMargin.r),
               padding: EdgeInsets.symmetric(horizontal: 35.r, vertical: 12.r),
               decoration: ShapeDecoration(
                 color: Colors.white,
