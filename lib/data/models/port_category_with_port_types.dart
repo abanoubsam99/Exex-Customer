@@ -13,8 +13,8 @@ class PortCategoryWithPortTypes {
 
   final int id;
   final String key;
-  final String nameAr;
-  final String nameEn;
+  final String? nameAr;
+  final String? nameEn;
   final String? icone;
   final String? iconePath;
   final int subscriptionType;
@@ -24,8 +24,8 @@ class PortCategoryWithPortTypes {
   PortCategoryWithPortTypes.fromJson(Map<String, dynamic> json)
       : id = (json['id'] as num).toInt(),
         key = json['key'] as String,
-        nameAr = json['nameAr'] as String,
-        nameEn = json['nameEn'] as String,
+        nameAr = json['nameAr'] as String?,
+        nameEn = json['nameEn'] as String?,
         icone = json['icone'] as String?,
         iconePath = json['iconePath'] as String?,
         subscriptionType = (json['subscriptionType'] as num).toInt(),
@@ -62,8 +62,8 @@ class PortTypeDto {
   });
 
   final int id;
-  final String nameAr;
-  final String nameEn;
+  final String? nameAr;
+  final String? nameEn;
   final String? portIcone;
   final String? portIconePath;
   final int portCategoryId;
@@ -72,8 +72,8 @@ class PortTypeDto {
 
   PortTypeDto.fromJson(Map<String, dynamic> json)
       : id = (json['id'] as num).toInt(),
-        nameAr = json['nameAr'] as String,
-        nameEn = json['nameEn'] as String,
+        nameAr = json['nameAr'] as String?,
+        nameEn = json['nameEn'] as String?,
         portIcone = json['portIcone'] as String?,
         portIconePath = json['portIconePath'] as String?,
         portCategoryId = (json['portCategoryId'] as num).toInt(),

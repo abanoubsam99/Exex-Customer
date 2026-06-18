@@ -48,7 +48,7 @@ class BookingServicesType extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      type.nameAr,
+                      type.nameAr ?? type.nameEn ?? '',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color:

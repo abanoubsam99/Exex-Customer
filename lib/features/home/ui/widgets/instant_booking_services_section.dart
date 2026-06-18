@@ -116,7 +116,7 @@ class InstantBookingServicesSection extends StatelessWidget {
                               errorIcon: const Icon(Icons.image_not_supported),
                             ),
                             Text(
-                              port.nameAr,
+                              port.nameAr ?? port.nameEn ?? '',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,

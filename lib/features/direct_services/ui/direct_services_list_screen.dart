@@ -163,7 +163,7 @@ class _TypeTabs extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      type.nameAr,
+                      type.nameAr ?? type.nameEn ?? '',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: isSelected ? Colors.white : AppColors.blacksoft,

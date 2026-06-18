@@ -1,10 +1,11 @@
 class AppEndpoints {
   AppEndpoints._();
 
-  static const baseUrl2 = 'https://jsonplaceholder.typicode.com/';
+  static const baseUrl2 = 'https://backend.evexnow.com/';
+  // static const baseUrl2 = 'https://jsonplaceholder.typicode.com/';
   static const posts = 'posts';
-  static const baseUrl = 'https://evex.runasp.net/';
-  // static const baseUrl = "https://backend.evexnow.com/";
+  static const baseUrl = 'https://backend.evexnow.com/';
+  // static const baseUrl = 'https://evex.runasp.net/';
 
   /// End Points
   static const register = "EVEX/Account/Register";
