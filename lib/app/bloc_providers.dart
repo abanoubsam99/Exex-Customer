@@ -1,4 +1,5 @@
 import 'package:evex_user/app/helpers/cache_helper.dart';
+import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/repos/add_client_repo.dart';
@@ -38,12 +39,14 @@ class BlocProviders {
     required CacheHelper cacheHelper,
     required UserService userService,
     required LocalAuthService localAuthService,
+    required DeepLinkService deepLinkService,
   }) =>
       [
         // Services
         RepositoryProvider<CacheHelper>.value(value: cacheHelper),
         RepositoryProvider<UserService>.value(value: userService),
         RepositoryProvider<LocalAuthService>.value(value: localAuthService),
+        RepositoryProvider<DeepLinkService>.value(value: deepLinkService),
         // Repositories — all use DioHelper directly, no data sources
         RepositoryProvider<LoginRepo>(create: (_) => LoginRepo(cacheHelper)),
         RepositoryProvider<RegisterRepo>(create: (_) => RegisterRepo()),

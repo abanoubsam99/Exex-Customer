@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:evex_user/app/helpers/cache_helper.dart';
 import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
@@ -28,6 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _startDelay() {
     final cacheHelper = context.read<CacheHelper>();
     final userService = context.read<UserService>();
+    final deepLinkService = context.read<DeepLinkService>();
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
       final isOnboardingCompleted =
@@ -39,6 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
         NavigationHelper.pushNamedAndRemoveUntil(
           AppRouter.getInitialRoute(userService),
         );
+        // Open a link the app was launched from, now the initial route exists.
+        deepLinkService.flushPending();
       }
     });
   }

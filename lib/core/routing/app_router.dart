@@ -265,10 +265,13 @@ class AppRouter {
               port: settings.arguments is Item
                   ? settings.arguments as Item
                   : null,
-              // Opened from a special offer: only its portId is available.
+              // Opened from a special offer (SpecialOffer) or a shared deep
+              // link (int) — only the portId is available in both cases.
               portId: settings.arguments is SpecialOffer
                   ? (settings.arguments as SpecialOffer).portId
-                  : null,
+                  : settings.arguments is int
+                      ? settings.arguments as int
+                      : null,
             ),
             child: const BookingServiceDetailsScreen(),
           ),

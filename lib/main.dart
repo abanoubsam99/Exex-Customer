@@ -5,6 +5,7 @@ import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/app_router.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_theme.dart';
@@ -39,6 +40,9 @@ void main() async {
   final userService = UserService(cacheHelper);
   await userService.init();
   final localAuthService = LocalAuthService();
+  final deepLinkService = DeepLinkService(userService);
+  // Start listening for the launch link + runtime links before the UI builds.
+  await deepLinkService.init();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   SystemChrome.setPreferredOrientations([
@@ -56,6 +60,7 @@ void main() async {
         cacheHelper: cacheHelper,
         userService: userService,
         localAuthService: localAuthService,
+        deepLinkService: deepLinkService,
       ),
     ),
   );
@@ -67,11 +72,13 @@ class MyApp extends StatelessWidget {
     required this.cacheHelper,
     required this.userService,
     required this.localAuthService,
+    required this.deepLinkService,
   });
 
   final CacheHelper cacheHelper;
   final UserService userService;
   final LocalAuthService localAuthService;
+  final DeepLinkService deepLinkService;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +87,7 @@ class MyApp extends StatelessWidget {
         cacheHelper: cacheHelper,
         userService: userService,
         localAuthService: localAuthService,
+        deepLinkService: deepLinkService,
       ),
       child: MultiBlocProvider(
         providers: BlocProviders.providers,

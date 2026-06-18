@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:share_plus/share_plus.dart';
@@ -52,12 +53,14 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
     await LauncherHelper.openMaps(gps: port?.gps, address: address);
   }
 
-  /// Shares the port via the system share sheet.
+  /// Shares the port (name + deep link) via the system share sheet.
   Future<void> _sharePort() async {
-    final name =
-        context.read<BookingServiceDetailsCubit>().state.port?.portName ??
-            'EVEX';
-    await SharePlus.instance.share(ShareParams(text: '$name - عبر تطبيق EVEX'));
+    final cubit = context.read<BookingServiceDetailsCubit>();
+    final name = cubit.state.port?.portName ?? 'EVEX';
+    final link = AppDeepLink.portLink(cubit.currentPortId);
+    await SharePlus.instance.share(
+      ShareParams(text: '$name\n$link\n- عبر تطبيق EVEX'),
+    );
   }
 
   @override

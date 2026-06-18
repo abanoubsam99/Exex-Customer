@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EVEX</title>
+
+  <!-- Open Graph preview (WhatsApp / Facebook / Telegram).
+       Ideally fill these server-side per port (title/description/image). -->
+  <meta property="og:title" content="EVEX" />
+  <meta property="og:description" content="شوف التفاصيل واحجز عبر تطبيق EVEX" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    body { font-family: -apple-system, Roboto, Arial, sans-serif; text-align: center;
+           padding: 48px 24px; color: #1f2330; }
+    .btn { display: inline-block; margin-top: 24px; padding: 14px 28px;
+           background: #F2854B; color: #fff; border-radius: 12px;
+           text-decoration: none; font-weight: 700; }
+    .muted { color: #8a8f99; margin-top: 12px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h2>جارٍ فتح التطبيق…</h2>
+  <p class="muted">لو التطبيق مش متسطّب، هنوديك للمتجر.</p>
+  <a id="store" class="btn" href="#">حمّل تطبيق EVEX</a>
+
+  <script>
+    // CONFIG — set these to the real store ids before going live.
+    var ANDROID_PACKAGE = "com.evex.evexuser";
+    var IOS_APP_ID = "REPLACE_WITH_APPLE_NUMERIC_APP_ID"; // e.g. 6480000000
+
+    var PLAY_URL = "https://play.google.com/store/apps/details?id=" + ANDROID_PACKAGE;
+    var APP_STORE_URL = "https://apps.apple.com/app/id" + IOS_APP_ID;
+
+    // NOTE: when the app IS installed, the OS opens it BEFORE this page loads
+    // (verified App Link / Universal Link). This page only runs when the app
+    // is NOT installed — so its only job is to send the user to the store.
+    var ua = navigator.userAgent || "";
+    var isIOS = /iPad|iPhone|iPod/.test(ua);
+    var storeUrl = isIOS ? APP_STORE_URL : PLAY_URL;
+
+    document.getElementById("store").href = storeUrl;
+    setTimeout(function () { window.location.href = storeUrl; }, 600);
+  </script>
+</body>
+</html>

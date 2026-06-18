@@ -45,6 +45,9 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       _homeCubit.state.selectedBookingPortType?.id ??
       _defaultPortId;
 
+  /// The id of the port currently shown — used to build its share link.
+  int get currentPortId => _portId;
+
   /// Toggles the favorite state of this port (optimistic; reverts on failure).
   Future<void> toggleFavorite() async {
     final id = state.port?.id;
