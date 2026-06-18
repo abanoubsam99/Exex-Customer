@@ -27,6 +27,10 @@ class MyBookingItem extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
+  /// When set, the header shows a single download icon (DownloadInfo) instead of
+  /// the edit + trash actions. Used by the confirmed / cancelled tabs.
+  final VoidCallback? onDownload;
+
   const MyBookingItem({
     super.key,
     required this.portName,
@@ -42,6 +46,7 @@ class MyBookingItem extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
+    this.onDownload,
   });
 
   static String _money(num v) => v.round().toString();
@@ -116,40 +121,62 @@ class MyBookingItem extends StatelessWidget {
                       ),
                     ),
                     5.horizontalSpace,
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: onEdit,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: CustomImageHandler(
-                              AppImages.iconsEdit,
-                              width: 17.r,
-                              height: 17.r,
+                    // Confirmed / cancelled cards: a single download (DownloadInfo)
+                    // action. Otherwise (current requests): edit + trash.
+                    if (onDownload != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onDownload,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Icon(
+                                Icons.download_rounded,
+                                size: 22.r,
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    else ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onEdit,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: CustomImageHandler(
+                                AppImages.iconsEdit,
+                                width: 17.r,
+                                height: 17.r,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: onDelete,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: CustomImageHandler(
-                              AppImages.iconsTrash,
-                              width: 18.r,
-                              height: 18.r,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onDelete,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: CustomImageHandler(
+                                AppImages.iconsTrash,
+                                width: 18.r,
+                                height: 18.r,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 Divider(color: AppColors.boarderColor, thickness: 1.r),

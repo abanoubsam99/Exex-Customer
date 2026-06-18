@@ -1,7 +1,9 @@
+import 'package:evex_user/core/helpers/file_download_helper.dart';
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
+import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'my_bookings_state.dart';
@@ -9,8 +11,9 @@ import 'my_bookings_state.dart';
 class MyBookingsCubit extends Cubit<MyBookingsState> {
   final MyBookingsRepo _repo;
   final ConfirmBookingRepo _confirmRepo;
+  final OrderDetailsRepo _orderDetailsRepo;
 
-  MyBookingsCubit(this._repo, this._confirmRepo)
+  MyBookingsCubit(this._repo, this._confirmRepo, this._orderDetailsRepo)
       : super(const MyBookingsState());
 
   /// بيحمّل التابين مع بعض (الطلبات الحالية + الحجوزات المؤكدة).
@@ -73,5 +76,13 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
   Future<void> loadPendingDeposit() async {
     final summary = await _confirmRepo.calculatePendingDeposit();
     if (summary != null) emit(state.copyWith(pendingDeposit: summary));
+  }
+
+  /// Downloads a reservation's PDF (DownloadInfo) and opens it — used by the
+  /// download icon on confirmed / cancelled cards.
+  Future<void> downloadReservation(int id) async {
+    ToastManager.showSuccess('جاري تحميل الملف...');
+    final bytes = await _orderDetailsRepo.downloadInfo(id);
+    await FileDownloadHelper.openReservationPdf(id: id, bytes: bytes);
   }
 }

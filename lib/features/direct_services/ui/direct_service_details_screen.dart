@@ -141,15 +141,14 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
           height: 283.h,
           width: 1.sw,
           child: images.isEmpty
-              ? CustomImageHandler(AppImages.imagesWedding5, fit: BoxFit.cover)
+              ? const CustomImageHandler(null, fit: BoxFit.cover)
               : PageView.builder(
                   controller: _controller,
                   itemCount: images.length,
                   onPageChanged: (i) => setState(() => _active = i),
                   itemBuilder: (_, i) => CustomImageHandler(
-                    ImageUrlHelper.full(images[i]) ?? AppImages.imagesWedding5,
+                    ImageUrlHelper.full(images[i]),
                     fit: BoxFit.cover,
-                    errorIcon: const Icon(Icons.broken_image_outlined),
                   ),
                 ),
         ),

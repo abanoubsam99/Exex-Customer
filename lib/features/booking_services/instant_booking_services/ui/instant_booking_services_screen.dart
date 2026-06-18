@@ -23,15 +23,12 @@ class InstantBookingServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: RefreshIndicator(
+        onRefresh: () => context.read<InstantBookingCubit>().loadPorts(),
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
-              BlocBuilder<InstantBookingCubit, InstantBookingState>(
-                builder: (context, state) => state.isLoading
-                    ? const CircularProgressIndicator()
-                    : const SizedBox(),
-              ),
               60.verticalSpace,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -85,7 +82,10 @@ class InstantBookingServicesScreen extends StatelessWidget {
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
-                              builder: (_) => const CustomBottomSheet(),
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<InstantBookingCubit>(),
+                                child: const CustomBottomSheet(),
+                              ),
                             );
                           },
                           child: Container(
@@ -113,117 +113,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Stack(
-                alignment: Alignment.topLeft,
-                children: [
-                  Container(
-                    width: 315.w,
-                    height: 144.h,
-                    decoration: ShapeDecoration(
-                      color: AppColors.primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                    ),
-                  ),
-                  CustomPaint(
-                    size: Size(
-                      305.w,
-                      144.h,
-                    ), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-                    painter: RPSCustomPainter(),
-                  ),
-                  ClipPath(
-                    clipper: RPSClipper(),
-                    child: CustomImageHandler(
-                      AppImages.imagesWedding5,
-                      fit: BoxFit.cover,
-                      height: 159.h,
-                      width: 292.w,
-                    ),
-                  ),
-                  ClipPath(
-                    clipper: RPSClipper(),
-                    child: Container(
-                      height: 159.h,
-                      width: 292.w,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment(-1.0, 1),
-                          end: Alignment(1, 0.0),
-                          stops: [0, 22.0],
-                          colors: [
-                            // Colors.red.withValues(alpha: 1.00),
-                            // Colors.blue,
-                            Colors.black.withValues(alpha: 0.00),
-                            Colors.black.withValues(alpha: 0.44),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 4.w,
-                    bottom: 10.h,
-                    child: CustomImageHandler(
-                      AppImages.iconsSpecialOffers,
-                      fit: BoxFit.contain,
-                      width: 78.r,
-                    ),
-                  ),
-                  Positioned(
-                    right: 11.w,
-                    bottom: 24.h,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'قاعه البارون',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.24.w,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0, 4.r),
-                                blurRadius: 24.r,
-                                color: AppColors.pureBlack.withOpacity(0.50),
-                              ),
-                            ],
-                          ),
-                        ),
-                        2.verticalSpace,
-                        SizedBox(
-                          width: 225.w,
-                          child: Text(
-                            'الاكثر مبيعاً, استمتع بخصم يصل الى 50% على جميع قاعات البارون',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12.r,
-                              fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w400,
-                              height: 1.30,
-                              letterSpacing: -0.24.w,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 2.r),
-                                  blurRadius: 20.r,
-                                  color: AppColors.pureBlack.withOpacity(1.00),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              const _SpecialOfferBanner(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: BlocBuilder<InstantBookingCubit, InstantBookingState>(
@@ -270,8 +160,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(16.r),
                                   child: CustomImageHandler(
-                                    _portImageUrl(item) ??
-                                        AppImages.imagesWedding5,
+                                    _portImageUrl(item),
                                     fit: BoxFit.cover,
                                     width: 113.w,
                                     height: 137.h,
@@ -456,6 +345,149 @@ String _portSubtitle(Item item) {
   return [item.governorate, item.city]
       .where((e) => e != null && e.isNotEmpty)
       .join('، ');
+}
+
+/// The featured "عروض مميزة" banner — driven by the first special offer for the
+/// selected port type (`GetAllServicesByClient?specialOffer=true&portTypeId=...`).
+/// Falls back to the static design while offers are still loading / empty.
+class _SpecialOfferBanner extends StatelessWidget {
+  const _SpecialOfferBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<InstantBookingCubit, InstantBookingState>(
+      buildWhen: (p, c) => p.specialOffers != c.specialOffers,
+      builder: (context, state) {
+        final offer =
+            state.specialOffers.isNotEmpty ? state.specialOffers.first : null;
+        final title = offer?.name ?? 'قاعه البارون';
+        final subtitle = offer?.details ??
+            'الاكثر مبيعاً, استمتع بخصم يصل الى 50% على جميع قاعات البارون';
+        final image = (offer != null && offer.serviceImages.isNotEmpty)
+            ? ImageUrlHelper.full(offer.serviceImages.first)
+            : null;
+
+        return GestureDetector(
+          onTap: offer == null
+              ? null
+              : () => NavigationHelper.pushNamed(
+                    Routes.bookingServiceDetailsScreen,
+                    arguments: offer,
+                  ),
+          child: Stack(
+            alignment: Alignment.topLeft,
+            children: [
+              Container(
+                width: 315.w,
+                height: 144.h,
+                decoration: ShapeDecoration(
+                  color: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                ),
+              ),
+              CustomPaint(
+                size: Size(305.w, 144.h),
+                painter: RPSCustomPainter(),
+              ),
+              ClipPath(
+                clipper: RPSClipper(),
+                child: CustomImageHandler(
+                  image,
+                  fit: BoxFit.cover,
+                  height: 159.h,
+                  width: 292.w,
+                ),
+              ),
+              ClipPath(
+                clipper: RPSClipper(),
+                child: Container(
+                  height: 159.h,
+                  width: 292.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment(-1.0, 1),
+                      end: Alignment(1, 0.0),
+                      stops: [0, 22.0],
+                      colors: [
+                        Colors.black.withValues(alpha: 0.00),
+                        Colors.black.withValues(alpha: 0.44),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 4.w,
+                bottom: 10.h,
+                child: CustomImageHandler(
+                  AppImages.iconsSpecialOffers,
+                  fit: BoxFit.contain,
+                  width: 78.r,
+                ),
+              ),
+              Positioned(
+                right: 11.w,
+                bottom: 24.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.24.w,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 4.r),
+                            blurRadius: 24.r,
+                            color: AppColors.pureBlack.withOpacity(0.50),
+                          ),
+                        ],
+                      ),
+                    ),
+                    2.verticalSpace,
+                    SizedBox(
+                      width: 225.w,
+                      child: Text(
+                        subtitle,
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                          height: 1.30,
+                          letterSpacing: -0.24.w,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 2.r),
+                              blurRadius: 20.r,
+                              color: AppColors.pureBlack.withOpacity(1.00),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
 //Copy this CustomPainter code to the Bottom of the File

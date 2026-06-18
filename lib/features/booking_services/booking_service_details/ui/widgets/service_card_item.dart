@@ -219,16 +219,15 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
   /// لو مفيش صور بيعرض صورة افتراضية.
   Widget _buildImages() {
     if (widget.images.isEmpty) {
-      return CustomImageHandler(AppImages.imagesWedding2, fit: BoxFit.fill);
+      return const CustomImageHandler(null, fit: BoxFit.fill);
     }
     return PageView.builder(
       controller: _pageController,
       itemCount: widget.images.length,
       onPageChanged: (i) => setState(() => _activeImage = i),
       itemBuilder: (context, i) => CustomImageHandler(
-        ImageUrlHelper.full(widget.images[i]) ?? AppImages.imagesWedding2,
+        ImageUrlHelper.full(widget.images[i]),
         fit: BoxFit.fill,
-        errorIcon: const Icon(Icons.broken_image_outlined),
       ),
     );
   }

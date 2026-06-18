@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_images.dart';
+import '../../theme/app_colors.dart';
 
 class CustomImageHandler extends StatelessWidget {
   const CustomImageHandler(
@@ -25,8 +26,29 @@ class CustomImageHandler extends StatelessWidget {
   final Color? color;
   final Icon? errorIcon;
 
+  /// Shown whenever there is no image to display (null/empty path) or one fails
+  /// to load: the app logo centered on a light background — never a stock photo.
+  Widget _logoPlaceholder() {
+    return Container(
+      height: height,
+      width: width,
+      alignment: Alignment.center,
+      color: AppColors.fillGrey2,
+      child: FractionallySizedBox(
+        widthFactor: 0.5,
+        heightFactor: 0.5,
+        child: Image.asset(AppImages.imagesNewLogo, fit: BoxFit.contain),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // No image (null or empty url) → logo placeholder instead of a stock photo.
+    if (path == null || (path is String && (path as String).trim().isEmpty)) {
+      return _logoPlaceholder();
+    }
+
     if (path is File) {
       return Image.file(
         path,
@@ -58,7 +80,9 @@ class CustomImageHandler extends StatelessWidget {
         // memCacheHeight: height?.toInt(),
         // memCacheWidth: width?.toInt(),
         errorWidget: (BuildContext context, _, stackTrace) {
-          return Center(child: errorIcon ?? const Icon(Icons.error));
+          return errorIcon != null
+              ? Center(child: errorIcon)
+              : _logoPlaceholder();
         },
         progressIndicatorBuilder: (context, url, downloadProgress) {
           return Center(
@@ -97,13 +121,7 @@ class CustomImageHandler extends StatelessWidget {
       // cacheWidth: width?.toInt(),
       // new_logo.png is a PNG, so it must be loaded with Image.asset, not
       // SvgPicture.asset (which only renders SVG and silently fails on a PNG).
-      errorBuilder: (context, error, stackTrace) => Center(
-        child: SizedBox(
-          height: 32,
-          width: 32,
-          child: Image.asset(AppImages.imagesNewLogo),
-        ),
-      ),
+      errorBuilder: (context, error, stackTrace) => _logoPlaceholder(),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:evex_user/data/models/occasion.dart';
+
 class ServiceDetailsModel {
   final int? id;
   final String? name;
@@ -7,6 +9,9 @@ class ServiceDetailsModel {
   final int? portId;
   final List<String>? serviceImages;
   final List<String>? serviceOccasionsDTOs;
+
+  /// Occasion types allowed for this service (`occasions` in the response).
+  final List<Occasion>? occasions;
   final double? price;
   final bool? specialOffer;
   final String? time;
@@ -25,6 +30,7 @@ class ServiceDetailsModel {
     this.portId,
     this.serviceImages,
     this.serviceOccasionsDTOs,
+    this.occasions,
     this.price,
     this.specialOffer,
     this.time,
@@ -45,6 +51,9 @@ class ServiceDetailsModel {
             .toList(),
         serviceOccasionsDTOs = (json['serviceOccasionsDTOs'] as List?)
             ?.map((e) => e as String)
+            .toList(),
+        occasions = (json['occasions'] as List?)
+            ?.map((e) => Occasion.fromJson(e))
             .toList(),
         price = (json['price'] as num?)?.toDouble(),
         specialOffer = json['specialOffer'],
@@ -70,6 +79,7 @@ class ServiceDetailsModel {
     data['portId'] = portId;
     data['serviceImages'] = serviceImages;
     data['serviceOccasionsDTOs'] = serviceOccasionsDTOs;
+    data['occasions'] = occasions?.map((e) => e.toJson()).toList();
     data['price'] = price;
     data['specialOffer'] = specialOffer;
     data['time'] = time;

@@ -3,6 +3,7 @@ import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:flutter/widgets.dart';
@@ -54,10 +55,15 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     if (id == null) return;
     final wasFavorite = state.isFavorite;
     emit(state.copyWith(isFavorite: !wasFavorite));
-    final ok = wasFavorite
+    final response = wasFavorite
         ? await _favoritesRepo.removeFavorite(id)
         : await _favoritesRepo.addFavorite(id);
-    if (!ok) emit(state.copyWith(isFavorite: wasFavorite));
+    // On failure the server error is already toasted by the dio interceptor.
+    if (response == null) {
+      emit(state.copyWith(isFavorite: wasFavorite));
+    } else if (response.message != null && response.message!.isNotEmpty) {
+      ToastManager.showSuccess(response.message!);
+    }
   }
 
   Future<void> getAllPortServices() async {

@@ -17,5 +17,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
     }
+    // Opening the screen counts as seeing them — clear the server's unread flag.
+    await _notificationsRepo.markAllAsRead();
   }
 }

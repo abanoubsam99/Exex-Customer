@@ -1,4 +1,3 @@
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
@@ -47,12 +46,8 @@ class OtherServiceCardItem extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
                   child: CustomImageHandler(
-                    images.isEmpty
-                        ? AppImages.imagesWedding2
-                        : (ImageUrlHelper.full(images[0]) ??
-                            AppImages.imagesWedding2),
+                    images.isEmpty ? null : ImageUrlHelper.full(images[0]),
                     fit: BoxFit.cover,
-                    errorIcon: const Icon(Icons.broken_image_outlined),
                   ),
                 ),
               ),

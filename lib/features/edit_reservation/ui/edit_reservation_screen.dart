@@ -6,6 +6,7 @@ import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.da
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/addition_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -143,19 +144,9 @@ class EditReservationScreen extends StatelessWidget {
                             if (v != null) cubit.selectOccasion(v);
                           },
                         ),
-                        // ── Additions ──
-                        if (state.additions.isNotEmpty) ...[
-                          20.verticalSpace,
-                          _label('الإضافات'),
-                          8.verticalSpace,
-                          ...state.additions.where((a) => a.id != null).map(
-                                (a) => Padding(
-                                  padding: EdgeInsets.only(bottom: 10.h),
-                                  child: _additionTile(cubit, a,
-                                      state.additionCounts[a.id] ?? 0),
-                                ),
-                              ),
-                        ],
+                        // ── Additions & buffet (same styled rows as the
+                        // booking/"adding" screen) ──
+                        ..._additionsAndBuffet(cubit, state),
                         // ── Notes ──
                         20.verticalSpace,
                         _label('ملاحظات'),
@@ -272,82 +263,82 @@ class EditReservationScreen extends StatelessWidget {
         ),
       );
 
-  /// A single addition row: name + price with a +/- stepper (quantity additions)
-  /// or a tick toggle (gift / single additions).
-  Widget _additionTile(EditReservationCubit cubit, AdditionModel a, int count) {
-    final id = a.id!;
-    final isCounter = a.displayNumber == true;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: AppColors.boarderFillColor,
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  a.name ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: _itemStyle,
-                ),
-                if ((a.price ?? 0) > 0)
-                  Text(
-                    '${a.price} جنيه',
-                    style: TextStyle(
-                      color: AppColors.blueGrey,
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          if (isCounter)
-            Row(
-              children: [
-                _circleBtn(Icons.remove,
-                    () => cubit.setAdditionCount(id, count - 1)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text('$count', style: _itemStyle),
-                ),
-                _circleBtn(
-                    Icons.add, () => cubit.setAdditionCount(id, count + 1)),
-              ],
-            )
-          else
-            GestureDetector(
-              onTap: () => cubit.setAdditionCount(id, count > 0 ? 0 : 1),
-              child: Icon(
-                count > 0 ? Icons.check_box : Icons.check_box_outline_blank,
-                color: _orange,
-                size: 24.r,
-              ),
-            ),
-        ],
-      ),
-    );
+  /// The "الإضافات" + "البوفيه" sections, styled exactly like the booking
+  /// ("adding") screen — same orange-bar headers and [AdditionItem] rows.
+  /// Both are split out of the port's additions by [AdditionModel.specificToBuffet].
+  List<Widget> _additionsAndBuffet(
+    EditReservationCubit cubit,
+    EditReservationState state,
+  ) {
+    final additions = state.additions
+        .where((a) => a.id != null && a.specificToBuffet != true)
+        .toList();
+    final buffets = state.additions
+        .where((a) => a.id != null && a.specificToBuffet == true)
+        .toList();
+    return [
+      if (additions.isNotEmpty) ...[
+        24.verticalSpace,
+        _sectionHeader('الإضافات'),
+        12.verticalSpace,
+        ...additions.map((a) => _additionItem(cubit, state, a)),
+      ],
+      if (buffets.isNotEmpty) ...[
+        16.verticalSpace,
+        _sectionHeader('البوفيه'),
+        12.verticalSpace,
+        ...buffets.map((a) => _additionItem(cubit, state, a)),
+      ],
+    ];
   }
 
-  Widget _circleBtn(IconData icon, VoidCallback onTap) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 26.r,
-          height: 26.r,
-          decoration: BoxDecoration(
-            color: AppColors.whiteColor,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.borderGrey),
+  /// Section title with the orange vertical bar (matches the booking screen).
+  Widget _sectionHeader(String title) => Row(
+        children: [
+          Container(
+            width: 6.r,
+            height: 18.r,
+            decoration: ShapeDecoration(
+              color: _orange,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.r),
+              ),
+            ),
           ),
-          child: Icon(icon, size: 16.r, color: _orange),
-        ),
+          8.horizontalSpace,
+          Text(
+            title,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 15.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.24,
+            ),
+          ),
+        ],
       );
+
+  /// A single addition/buffet row reusing the booking screen's [AdditionItem]
+  /// (orange +/- circular buttons, "LE" price, white rounded tile).
+  Widget _additionItem(
+    EditReservationCubit cubit,
+    EditReservationState state,
+    AdditionModel a,
+  ) {
+    final count = state.additionCounts[a.id] ?? 0;
+    return AdditionItem(
+      key: ValueKey(a.id),
+      title: a.name ?? '',
+      price: (a.price ?? 0).toString(),
+      hasCount: a.displayNumber ?? false,
+      initialCount: count,
+      isSelected: count > 0,
+      onChanged: () => cubit.setAdditionCount(a.id!, count > 0 ? 0 : 1),
+      onChangeCount: (c) => cubit.setAdditionCount(a.id!, c),
+    );
+  }
 
   Future<void> _pickDate(
     BuildContext context,

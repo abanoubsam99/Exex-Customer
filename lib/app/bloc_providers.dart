@@ -106,7 +106,11 @@ class BlocProviders {
   static List<BlocProvider> get providers => [
         BlocProvider<MainCubit>(create: (_) => MainCubit()),
         BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(context.read<HomeRepo>()),
+          create: (context) => HomeCubit(
+            context.read<HomeRepo>(),
+            context.read<NotificationsRepo>(),
+            context.read<UserService>(),
+          ),
         ),
       ];
 }

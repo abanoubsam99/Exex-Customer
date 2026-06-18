@@ -1,3 +1,4 @@
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +23,12 @@ class FavoritesCubit extends Cubit<FavoritesState> {
   Future<void> removeFavorite(int portId) async {
     final updated = state.favorites.where((p) => p.id != portId).toList();
     emit(state.copyWith(favorites: updated));
-    final ok = await _repo.removeFavorite(portId);
-    if (!ok) loadFavorites();
+    final response = await _repo.removeFavorite(portId);
+    // On failure the server error is already toasted by the dio interceptor.
+    if (response == null) {
+      loadFavorites();
+    } else if (response.message != null && response.message!.isNotEmpty) {
+      ToastManager.showSuccess(response.message!);
+    }
   }
 }

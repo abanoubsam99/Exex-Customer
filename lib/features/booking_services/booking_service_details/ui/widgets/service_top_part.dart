@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_deep_link.dart';
+import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -64,71 +65,59 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
     );
   }
 
+  /// The port's images as full URLs (empty when the backend returned none).
+  List<String> _portImages(BookingServiceDetailsState state) {
+    final imgs = state.port?.portImages;
+    if (imgs is List) {
+      return imgs
+          .map((e) => ImageUrlHelper.full(e.toString()))
+          .whereType<String>()
+          .toList();
+    }
+    return const [];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
-        CarouselSlider(
-          items: [
-            Transform.scale(
-              alignment: Alignment.topCenter,
-              scale: 1.23,
-              child: Image.asset(AppImages.imagesWedding5, fit: BoxFit.cover),
-            ),
-            Container(
-              height: 200,
-              width: 1.sw,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
+        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          buildWhen: (p, c) => p.port != c.port,
+          builder: (context, state) {
+            final images = _portImages(state);
+            // No backend images → a single logo placeholder slide (no stock photo).
+            final slides = images.isEmpty
+                ? const [CustomImageHandler(null, fit: BoxFit.cover)]
+                : images
+                    .map((url) => SizedBox(
+                          width: 1.sw,
+                          child: CustomImageHandler(url, fit: BoxFit.cover),
+                        ))
+                    .toList();
+            return CarouselSlider(
+              items: slides,
+              options: CarouselOptions(
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    activeIndex = index;
+                  });
+                },
+                height: 283.h,
+                viewportFraction: 1,
+                initialPage: 0,
+                enableInfiniteScroll: images.length > 1,
+                reverse: false,
+                autoPlay: false,
+                autoPlayInterval: const Duration(seconds: 7),
+                autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                autoPlayCurve: Curves.fastOutSlowIn,
+                enlargeCenterPage: true,
+                scrollDirection: Axis.horizontal,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.asset(AppImages.imagesWedding2, fit: BoxFit.fill),
-              ),
-            ),
-            Container(
-              height: 200,
-              width: 1.sw,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.asset(AppImages.imagesWedding3, fit: BoxFit.fill),
-              ),
-            ),
-            Container(
-              height: 200,
-              width: 1.sw,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.asset(AppImages.imagesWedding4, fit: BoxFit.fill),
-              ),
-            ),
-          ],
-          options: CarouselOptions(
-            onPageChanged: (index, reason) {
-              setState(() {
-                activeIndex = index;
-              });
-            },
-            height: 283.h,
-            viewportFraction: 1,
-            initialPage: 0,
-            enableInfiniteScroll: true,
-            reverse: false,
-            autoPlay: false,
-            autoPlayInterval: const Duration(seconds: 7),
-            autoPlayAnimationDuration: const Duration(milliseconds: 800),
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enlargeCenterPage: true,
-            scrollDirection: Axis.horizontal,
-          ),
+            );
+          },
         ),
         Container(
           width: 1.sw,
@@ -223,17 +212,25 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
         ),
         Positioned(
           bottom: 40.h,
-          child: AnimatedSmoothIndicator(
-            activeIndex: activeIndex,
-            textDirection: TextDirection.ltr,
-            count: 4,
-            effect: ExpandingDotsEffect(
-              dotHeight: 8.r,
-              dotWidth: 8.r,
-              expansionFactor: 2,
-              activeDotColor: AppColors.primaryColor,
-              dotColor: AppColors.dividerGrey,
-            ),
+          child: BlocBuilder<BookingServiceDetailsCubit,
+              BookingServiceDetailsState>(
+            buildWhen: (p, c) => p.port != c.port,
+            builder: (context, state) {
+              final count = _portImages(state).length;
+              if (count <= 1) return const SizedBox.shrink();
+              return AnimatedSmoothIndicator(
+                activeIndex: activeIndex,
+                textDirection: TextDirection.ltr,
+                count: count,
+                effect: ExpandingDotsEffect(
+                  dotHeight: 8.r,
+                  dotWidth: 8.r,
+                  expansionFactor: 2,
+                  activeDotColor: AppColors.primaryColor,
+                  dotColor: AppColors.dividerGrey,
+                ),
+              );
+            },
           ),
         ),
         Positioned(

@@ -1,6 +1,7 @@
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
+import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'direct_services_list_state.dart';
@@ -9,22 +10,23 @@ import 'direct_services_list_state.dart';
 /// نوع البوابة المختار من قسم الدفع المباشر (selectedPaymentPortType).
 class DirectServicesListCubit extends Cubit<DirectServicesListState> {
   final BookingServicesPortsRepo _repo;
+  final HomeRepo _homeRepo;
   final HomeCubit _homeCubit;
 
-  DirectServicesListCubit(this._repo, this._homeCubit)
+  DirectServicesListCubit(this._repo, this._homeRepo, this._homeCubit)
       : super(const DirectServicesListState());
 
   final GetPortsRequest _request = GetPortsRequest();
 
   Future<void> loadPorts() async {
     _request.portType = _homeCubit.state.selectedPaymentPortType?.id;
-    await _fetch();
+    await Future.wait([_fetch(), _fetchSpecialOffers()]);
   }
 
   /// تغيير نوع الخدمة من الـ tabs اللي فوق (يعيد الفلترة بدون navigation جديد).
   Future<void> changeType(int? portTypeId) async {
     _request.portType = portTypeId;
-    await _fetch();
+    await Future.wait([_fetch(), _fetchSpecialOffers()]);
   }
 
   Future<void> _fetch() async {
@@ -35,5 +37,12 @@ class DirectServicesListCubit extends Cubit<DirectServicesListState> {
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
     }
+  }
+
+  /// Featured offers filtered by the currently selected payment port type.
+  Future<void> _fetchSpecialOffers() async {
+    final offers =
+        await _homeRepo.getSpecialOffers(portTypeId: _request.portType);
+    if (offers != null) emit(state.copyWith(specialOffers: offers));
   }
 }

@@ -1,22 +1,45 @@
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart'
     show CheckReservationResponse;
 import 'package:evex_user/data/repos/home_repo.dart';
+import 'package:evex_user/data/repos/notifications_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepo _homeRepo;
+  final NotificationsRepo _notificationsRepo;
+  final UserService _userService;
 
-  HomeCubit(this._homeRepo) : super(const HomeState());
+  HomeCubit(this._homeRepo, this._notificationsRepo, this._userService)
+      : super(const HomeState());
 
   /// Clears all home state so the next signed-in account starts fresh.
   void reset() => emit(const HomeState());
 
   Future<void> init() async {
-    await Future.wait([getHomeUserAppInfo(), getSpecialOffers()]);
+    await Future.wait([
+      getHomeUserAppInfo(),
+      getSpecialOffers(),
+      loadUnreadNotifications(),
+    ]);
   }
+
+  /// Loads the unread-notifications count for the bell badge. Skipped for guests
+  /// (the endpoint needs auth); keeps the old value on failure (repo returns
+  /// null).
+  Future<void> loadUnreadNotifications() async {
+    if (_userService.currentUser == null) return;
+    final count = await _notificationsRepo.getUnreadCount();
+    if (count != null) emit(state.copyWith(unreadNotifications: count));
+  }
+
+  /// Resets the badge to zero — called when the user opens the notifications
+  /// screen, which marks everything as read on the server.
+  void clearUnreadNotifications() =>
+      emit(state.copyWith(unreadNotifications: 0));
 
   Future<void> getHomeUserAppInfo() async {
     emit(state.copyWith(isLoadingPorts: true));

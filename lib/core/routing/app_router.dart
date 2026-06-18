@@ -13,6 +13,7 @@ import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
+import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/login_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
@@ -47,6 +48,7 @@ import 'package:evex_user/features/notifications/ui/notification_screen.dart';
 import 'package:evex_user/features/order_details/ui/order_details_screen.dart';
 import 'package:evex_user/features/onboarding/ui/onboarding_screen.dart';
 import 'package:evex_user/features/payment_history/ui/payment_history_screen.dart';
+import 'package:evex_user/features/payment_webview/ui/payment_webview_screen.dart';
 import 'package:evex_user/features/posts/ui/posts_screen.dart';
 import 'package:evex_user/features/profile/view/screens/change_password_screen.dart';
 import 'package:evex_user/features/profile/view/screens/edit_profile_screen.dart';
@@ -251,6 +253,7 @@ class AppRouter {
           BlocProvider(
             create: (context) => InstantBookingCubit(
               context.read<BookingServicesPortsRepo>(),
+              context.read<HomeRepo>(),
               context.read<HomeCubit>(),
             )..loadPorts(),
             child: const InstantBookingServicesScreen(),
@@ -382,6 +385,16 @@ class AppRouter {
           settings,
         );
 
+      case Routes.paymentWebViewScreen:
+        return _page(
+          PaymentWebViewScreen(
+            url: settings.arguments is String
+                ? settings.arguments as String
+                : '',
+          ),
+          settings,
+        );
+
       case Routes.favoritesScreen:
         return _page(
           BlocProvider(
@@ -413,6 +426,7 @@ class AppRouter {
           BlocProvider(
             create: (context) => DirectServicesListCubit(
               context.read<BookingServicesPortsRepo>(),
+              context.read<HomeRepo>(),
               context.read<HomeCubit>(),
             )..loadPorts(),
             child: const DirectServicesListScreen(),

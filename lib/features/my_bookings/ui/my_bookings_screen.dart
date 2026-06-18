@@ -3,6 +3,7 @@ import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
+import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/discount_progress.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/my_booking_tabs.dart';
 import 'package:evex_user/features/my_bookings/ui/widgets/my_bookings_tab_view.dart';
@@ -20,6 +21,7 @@ class MyBookingsScreen extends StatelessWidget {
       create: (context) => MyBookingsCubit(
         context.read<MyBookingsRepo>(),
         context.read<ConfirmBookingRepo>(),
+        context.read<OrderDetailsRepo>(),
       )..load(),
       child: DefaultTabController(
         length: 3,

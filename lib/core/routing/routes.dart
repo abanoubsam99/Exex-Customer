@@ -47,4 +47,7 @@ class Routes {
 
   static const String favoritesScreen = '/favoritesScreen';
   static const String editReservationScreen = '/editReservationScreen';
+
+  /// In-app payment gateway WebView. Argument: the gateway URL (String).
+  static const String paymentWebViewScreen = '/paymentWebViewScreen';
 }

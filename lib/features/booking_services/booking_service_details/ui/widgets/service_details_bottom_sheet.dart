@@ -1,4 +1,3 @@
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -180,16 +179,15 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
 
   Widget _buildImages(List<String> images) {
     if (images.isEmpty) {
-      return CustomImageHandler(AppImages.imagesWedding2, fit: BoxFit.cover);
+      return const CustomImageHandler(null, fit: BoxFit.cover);
     }
     return PageView.builder(
       controller: _pageController,
       itemCount: images.length,
       onPageChanged: (i) => setState(() => _activeImage = i),
       itemBuilder: (context, i) => CustomImageHandler(
-        ImageUrlHelper.full(images[i]) ?? AppImages.imagesWedding2,
+        ImageUrlHelper.full(images[i]),
         fit: BoxFit.cover,
-        errorIcon: const Icon(Icons.broken_image_outlined),
       ),
     );
   }

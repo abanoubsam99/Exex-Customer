@@ -122,7 +122,7 @@ class InstantPaymentServices extends StatelessWidget {
                               errorIcon: const Icon(Icons.image_not_supported),
                             ),
                             Text(
-                              port.nameAr,
+                              port.nameAr ?? port.nameEn ?? '',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: AppColors.blacksoft,

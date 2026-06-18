@@ -1,4 +1,3 @@
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/port_service.dart';
@@ -60,11 +59,9 @@ class DirectProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                         child: CustomImageHandler(
                           images.isEmpty
-                              ? AppImages.imagesWedding2
-                              : (ImageUrlHelper.full(images.first) ??
-                                  AppImages.imagesWedding2),
+                              ? null
+                              : ImageUrlHelper.full(images.first),
                           fit: BoxFit.cover,
-                          errorIcon: const Icon(Icons.broken_image_outlined),
                         ),
                       ),
                     ),

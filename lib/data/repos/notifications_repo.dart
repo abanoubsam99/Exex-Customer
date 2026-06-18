@@ -1,62 +1,72 @@
+import 'package:evex_user/app/helpers/dio_helper.dart';
+import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/app_notification.dart';
+import 'package:evex_user/data/models/general_response.dart';
 
 class NotificationsRepo {
-  /// TODO: لسه مفيش endpoint للإشعارات في الـ backend.
-  /// لما يتوفر، استبدل الـ mock ده بـ:
-  ///   final response = await DioHelper.getData(url: AppEndpoints.notifications);
-  ///   return (response.data as List).map((e) => AppNotification.fromJson(e)).toList();
-  Future<List<AppNotification>?> getNotifications() async {
-    return const [
-      AppNotification(
-        title: 'تم تأكيد حجز قاعه البارون',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: 'الان',
-        type: NotificationType.confirmed,
-      ),
-      AppNotification(
-        title: 'تم الغاء بنجاح',
-        body: 'لقد قمت بالغاء الحجز لفوتوغرافر وسيتم ...',
-        time: '3 ساعات',
-        type: NotificationType.canceled,
-      ),
-      AppNotification(
-        title: 'تم اضافه حجز الى سله المهملات',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.trash,
-      ),
-      AppNotification(
-        title: 'تم تأكيد حجز قاعه البارون',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.confirmed,
-      ),
-      AppNotification(
-        title: 'تم تأكيد حجز فريق العمل',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.team,
-      ),
-      AppNotification(
-        title: 'تخفيض حصري الان',
-        body: 'الحق التخفيض الذي على القاعات حتى 20 اكت ...',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.offer,
-      ),
-      AppNotification(
-        title: 'تم تأكيد حجز قاعه البارون',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.confirmed,
-        isRecent: false,
-      ),
-      AppNotification(
-        title: 'تم تأكيد حجز فريق العمل',
-        body: 'عرض المزيد من تفاصيل قاعه البارون',
-        time: '6 اكتوبر 2026',
-        type: NotificationType.team,
-        isRecent: false,
-      ),
-    ];
+  /// GET /api/Notifications/GetMyNotifications?index=&size= — the client's
+  /// notifications. Parsing is defensive (raw list or a paged `{ items: [...] }`).
+  Future<List<AppNotification>?> getNotifications({
+    int index = 0,
+    int size = 20,
+  }) async {
+    try {
+      final response = await DioHelper.getData(
+        url: AppEndpoints.myNotifications,
+        query: {'index': index, 'size': size},
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final data = response.data;
+        final list = data is List
+            ? data
+            : (data is Map
+                ? (data['items'] ?? data['data'] ?? data['notifications'])
+                : null);
+        if (list is List) {
+          return list.map((e) => AppNotification.fromJson(e)).toList();
+        }
+        return [];
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// GET /api/Notifications/GetUnreadCount — number of unread notifications.
+  /// Returns null on failure so callers can keep the previous badge value.
+  Future<int?> getUnreadCount() async {
+    try {
+      final response = await DioHelper.getData(
+        url: AppEndpoints.notificationsUnreadCount,
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final data = response.data;
+        if (data is Map) {
+          final count = data['unreadCount'] ?? data['count'] ?? 0;
+          return count is num ? count.toInt() : int.tryParse('$count') ?? 0;
+        }
+        if (data is num) return data.toInt();
+        return 0;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// PUT /api/Notifications/MarkAllAsRead — marks every notification as read.
+  Future<GeneralResponse?> markAllAsRead() async {
+    try {
+      final response = await DioHelper.putData(
+        url: AppEndpoints.markAllNotificationsRead,
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return GeneralResponse.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 }

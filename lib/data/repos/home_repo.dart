@@ -24,10 +24,23 @@ class HomeRepo {
     }
   }
 
-  Future<List<SpecialOffer>?> getSpecialOffers() async {
+  /// GET /api/Services/GetAllServicesByClient — the featured "special offers".
+  /// On home it's called without [portTypeId]; the instant-booking and direct-
+  /// services lists pass the selected port type to filter the offers.
+  Future<List<SpecialOffer>?> getSpecialOffers({
+    int? portTypeId,
+    String? gov,
+    String? city,
+  }) async {
     try {
       final response = await DioHelper.getData(
-        url: AppEndpoints.sepcialOffers,
+        url: AppEndpoints.getAllServicesByClient,
+        query: {
+          'specialOffer': true,
+          if (portTypeId != null) 'portTypeId': portTypeId,
+          'gov': gov,
+          'city': city,
+        },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return (response.data as List)

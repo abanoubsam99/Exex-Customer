@@ -20,6 +20,9 @@ class HomeState {
 
   /// Instant-booking availability for the selected port + [bookingDate].
   final CheckReservationResponse? availability;
+
+  /// Unread notifications count, shown as a badge on the home bell icon.
+  final int unreadNotifications;
   final String? errorMessage;
 
   const HomeState({
@@ -34,6 +37,7 @@ class HomeState {
     this.selectedPaymentPortType,
     this.bookingDate,
     this.availability,
+    this.unreadNotifications = 0,
     this.errorMessage,
   });
 
@@ -50,6 +54,7 @@ class HomeState {
     DateTime? bookingDate,
     CheckReservationResponse? availability,
     bool clearAvailability = false,
+    int? unreadNotifications,
     String? errorMessage,
   }) {
     return HomeState(
@@ -67,6 +72,7 @@ class HomeState {
       bookingDate: bookingDate ?? this.bookingDate,
       availability:
           clearAvailability ? null : (availability ?? this.availability),
+      unreadNotifications: unreadNotifications ?? this.unreadNotifications,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

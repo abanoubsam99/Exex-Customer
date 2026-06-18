@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
@@ -75,6 +76,11 @@ class ConfirmBookingScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
+                                if (state.isLoadingNetCost ||
+                                    state.netCostTotal > 0) ...[
+                                  10.verticalSpace,
+                                  _netCostPill(state),
+                                ],
                                 24.verticalSpace,
                                 _PaymentMethodsCard(
                                   selected: state.selectedMethod,
@@ -104,31 +110,41 @@ class ConfirmBookingScreen extends StatelessWidget {
                 ),
               ),
               // ── Bottom confirm button ──
-              Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.blackAlpha14,
-                      blurRadius: 24,
-                      offset: Offset(0, -6),
-                    ),
-                  ],
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 12.h),
-                    child: CustomButton(
-                      text: 'تأكيد الدفع',
-                      height: 54.h,
-                      isLoading: state.isLoading,
-                      onTap: cubit.confirmPayment,
+              // Cash needs no online payment, so the button only shows for card.
+              if (state.selectedMethod == BookingPaymentMethod.card)
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.blackAlpha14,
+                        blurRadius: 24,
+                        offset: Offset(0, -6),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 12.h),
+                      child: CustomButton(
+                        text: 'تأكيد الدفع',
+                        height: 54.h,
+                        isLoading: state.isLoading,
+                        onTap: () async {
+                          final url = await cubit.confirmCardPayment();
+                          if (url != null && url.isNotEmpty) {
+                            NavigationHelper.pushNamed(
+                              Routes.paymentWebViewScreen,
+                              arguments: url,
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           );
         },
@@ -197,6 +213,52 @@ class ConfirmBookingScreen extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  /// إجمالي تكلفة الخدمات من CalculateNetCost (تحت المقدم).
+  Widget _netCostPill(ConfirmBookingState state) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'إجمالي الخدمات',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 13.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          8.horizontalSpace,
+          if (state.isLoadingNetCost)
+            SizedBox(
+              width: 14.r,
+              height: 14.r,
+              child: const CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          else
+            Text(
+              '${state.netCostTotal} جنيه',
+              textDirection: TextDirection.ltr,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w800,
+              ),
+            ),
         ],
       ),
     );

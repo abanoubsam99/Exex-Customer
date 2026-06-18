@@ -23,7 +23,7 @@ class AppEndpoints {
   static const addClient = "/api/Clients/AddClient";
   //Home & profile
   static const getHomeUserAppInfo = "/api/Home/GetHomeUserAppInfo";
-  static const sepcialOffers = "/api/Services/GetAllServicesByClient?specialOffer=true";
+  static const getAllServicesByClient = "/api/Services/GetAllServicesByClient";
   static const ports = "/api/Ports/Filter";
   static const newSuggestion = "/api/Suggestions";
   // Contact us
@@ -37,6 +37,11 @@ class AppEndpoints {
   static const occasions = "/api/Occasions";
   static const favorites = "/api/Favorites";
   static const walletData = "/api/Clients/GetMyClientWalletData";
+
+  // Notifications
+  static const myNotifications = "/api/Notifications/GetMyNotifications";
+  static const notificationsUnreadCount = "/api/Notifications/GetUnreadCount";
+  static const markAllNotificationsRead = "/api/Notifications/MarkAllAsRead";
 
   // Auth — external (Google) login — disabled (App Store guideline 4.8).
   // static const externalLogin = "/EVEX/Account/ExternalLogin";

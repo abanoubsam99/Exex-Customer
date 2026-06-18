@@ -37,6 +37,30 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       remainingSeconds: countdownSeconds,
     ));
     _startTimer();
+    _loadNetCost();
+  }
+
+  /// The request ids to confirm: the multi-id list when present, otherwise the
+  /// single id from the booking-creation journey.
+  List<int> _idsToConfirm() {
+    if (state.reservationRequestIds.isNotEmpty) {
+      return state.reservationRequestIds.where((e) => e > 0).toList();
+    }
+    return state.reservationRequestId > 0 ? [state.reservationRequestId] : [];
+  }
+
+  /// Loads the price shown on the screen from CalculateNetCost — summed across
+  /// all the requests being confirmed.
+  Future<void> _loadNetCost() async {
+    final ids = _idsToConfirm();
+    if (ids.isEmpty) return;
+    emit(state.copyWith(isLoadingNetCost: true));
+    num total = 0;
+    for (final id in ids) {
+      final netCost = await _repo.calculateNetCost(id: id);
+      if (netCost != null) total += netCost.netCost;
+    }
+    emit(state.copyWith(isLoadingNetCost: false, netCostTotal: total));
   }
 
   void _startTimer() {
@@ -61,14 +85,38 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
     ToastManager.showSuccess('قريباً: شحن المحفظة');
   }
 
+  /// Card payment: confirms via ConfirmClientReservation and returns the
+  /// payment-gateway URL for the caller to open in a WebView. Returns null when
+  /// the terms aren't accepted, the ids are invalid, or the request fails.
+  Future<String?> confirmCardPayment() async {
+    if (!state.termsAccepted) {
+      ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
+      return null;
+    }
+    final ids = _idsToConfirm();
+    if (ids.isEmpty) {
+      ToastManager.showError('رقم طلب الحجز غير صالح');
+      return null;
+    }
+    emit(state.copyWith(isLoading: true));
+    final url = await _repo.confirmClientReservationGateway(
+      depositAmount: state.depositAmount,
+      reservationRequestIds: ids,
+    );
+    emit(state.copyWith(isLoading: false));
+    if (url == null || url.isEmpty) {
+      ToastManager.showError('تعذّر بدء عملية الدفع، حاول مرة أخرى');
+      return null;
+    }
+    return url;
+  }
+
   Future<void> confirmPayment() async {
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
     }
-    final ids = state.reservationRequestIds.isNotEmpty
-        ? state.reservationRequestIds.where((e) => e > 0).toList()
-        : (state.reservationRequestId > 0 ? [state.reservationRequestId] : <int>[]);
+    final ids = _idsToConfirm();
     if (ids.isEmpty) {
       ToastManager.showError('رقم طلب الحجز غير صالح');
       return;

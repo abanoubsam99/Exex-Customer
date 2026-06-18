@@ -32,19 +32,25 @@ class ConfirmBookingState {
   /// One or more pending request ids to confirm together.
   final List<int> reservationRequestIds;
   final num walletBalance;
+
+  /// إجمالي تكلفة الخدمات من CalculateNetCost (مجموع netCost لكل طلب).
+  final num netCostTotal;
+  final bool isLoadingNetCost;
   final int remainingSeconds;
   final bool isLoading;
   final bool? success;
   final String? errorMessage;
 
   const ConfirmBookingState({
-    this.selectedMethod = BookingPaymentMethod.evex,
+    this.selectedMethod = BookingPaymentMethod.card,
     this.termsAccepted = false,
     this.totalAmount = 0,
     this.depositAmount = 0,
     this.reservationRequestId = 0,
     this.reservationRequestIds = const [],
     this.walletBalance = 0,
+    this.netCostTotal = 0,
+    this.isLoadingNetCost = false,
     this.remainingSeconds = 0,
     this.isLoading = false,
     this.success,
@@ -65,6 +71,8 @@ class ConfirmBookingState {
     int? reservationRequestId,
     List<int>? reservationRequestIds,
     num? walletBalance,
+    num? netCostTotal,
+    bool? isLoadingNetCost,
     int? remainingSeconds,
     bool? isLoading,
     bool? success,
@@ -79,6 +87,8 @@ class ConfirmBookingState {
       reservationRequestIds:
           reservationRequestIds ?? this.reservationRequestIds,
       walletBalance: walletBalance ?? this.walletBalance,
+      netCostTotal: netCostTotal ?? this.netCostTotal,
+      isLoadingNetCost: isLoadingNetCost ?? this.isLoadingNetCost,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isLoading: isLoading ?? this.isLoading,
       success: success,

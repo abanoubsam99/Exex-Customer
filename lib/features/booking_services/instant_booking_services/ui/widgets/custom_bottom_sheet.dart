@@ -4,7 +4,9 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
+import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomBottomSheet extends StatefulWidget {
@@ -263,7 +265,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             Row(
               children: [
                 Text(
-                  'جميع الخدمات',
+                  'جميع الخدمات',  // mutually exclusive with "available only"
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     color: Colors.black,
@@ -275,7 +277,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
                 Spacer(),
                 Switch(
-                  value: isAvilableOnly,
+                  value: !isAvilableOnly,
                   activeTrackColor: AppColors.primaryColor,
                   inactiveTrackColor: AppColors.dividerGrey,
                   inactiveThumbColor: Colors.white,
@@ -296,7 +298,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   }),
                   onChanged: (value) {
                     setState(() {
-                      isAvilableOnly = value;
+                      isAvilableOnly = !value;
                     });
                   },
                 ),

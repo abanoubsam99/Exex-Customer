@@ -83,6 +83,60 @@ class ConfirmBookingRepo {
     }
   }
 
+  /// POST /api/Reservations/ConfirmClientReservation — the card-payment variant.
+  /// body: { "depositAmount": ..., "reservationRequestIds": [...] }
+  /// Returns the payment-gateway URL to open in a WebView, or null on failure.
+  Future<String?> confirmClientReservationGateway({
+    required num depositAmount,
+    required List<int> reservationRequestIds,
+  }) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.confirmClientReservation,
+        data: {
+          'depositAmount': depositAmount,
+          'reservationRequestIds': reservationRequestIds,
+        },
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return _extractUrl(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// The gateway response shape isn't pinned down, so we pull the first http(s)
+  /// link out of whatever the backend returns (raw string, common url keys, or
+  /// a nested object / message).
+  String? _extractUrl(dynamic data) {
+    bool isLink(Object? v) =>
+        v is String && v.trim().toLowerCase().startsWith('http');
+
+    if (isLink(data)) return (data as String).trim();
+    if (data is Map) {
+      const keys = [
+        'url',
+        'iframeUrl',
+        'iframe_url',
+        'paymentUrl',
+        'payment_url',
+        'redirectUrl',
+        'redirect_url',
+        'gatewayUrl',
+        'link',
+        'message',
+      ];
+      for (final k in keys) {
+        if (isLink(data[k])) return (data[k] as String).trim();
+      }
+      final nested = data['data'] ?? data['result'];
+      if (nested != null) return _extractUrl(nested);
+    }
+    return null;
+  }
+
   /// GET /api/Reservations/CheckReservationAvailabilityByClient/{portId}?date=
   /// Returns whether the port is available for instant booking on [date].
   Future<CheckReservationResponse?> checkAvailability({

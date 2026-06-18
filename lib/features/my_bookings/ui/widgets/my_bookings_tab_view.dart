@@ -61,7 +61,7 @@ class _RequestsTab extends StatelessWidget {
                 : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
+              padding: EdgeInsets.fromLTRB(0, 20.h, 0, 12.h),
               itemCount: state.requests.length,
               itemBuilder: (context, index) {
                 final r = state.requests[index];
@@ -107,10 +107,52 @@ class _RequestsTab extends StatelessWidget {
             ),
           ),
         ),
-        // if (state.pendingDeposit != null &&
-        //     state.pendingDeposit!.totalRequests > 0)
-        //   _PendingDepositFooter(summary: state.pendingDeposit!),
+        _ConfirmRequestsButton(state: state),
       ],
+    );
+  }
+}
+
+/// Bottom "تأكيد الحجز" button for the current-requests tab: confirms all the
+/// available requests at once via the confirm-booking screen. Hidden when there
+/// are no available requests.
+class _ConfirmRequestsButton extends StatelessWidget {
+  final MyBookingsState state;
+  const _ConfirmRequestsButton({required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final pd = state.pendingDeposit;
+    final availableIds = pd != null
+        ? pd.items
+            .where((e) => e.isAvailable && e.id != null)
+            .map((e) => e.id!)
+            .toList()
+        : state.requests
+            .where((r) =>
+                (r.reservationStatus ?? '').contains('متاح') && r.id != null)
+            .map((r) => r.id!)
+            .toList();
+    if (availableIds.isEmpty) return const SizedBox.shrink();
+
+    final depositTotal = pd?.totalDeposit ??
+        state.requests
+            .where((r) => (r.reservationStatus ?? '').contains('متاح'))
+            .fold<num>(0, (sum, r) => sum + (r.deposit ?? 0));
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, kFloatingNavBarSpace.r),
+      child: CustomButton(
+        text: 'تأكيد الحجز',
+        height: 54.h,
+        onTap: () => NavigationHelper.pushNamed(
+          Routes.confirmBookingScreen,
+          arguments: ConfirmBookingArgs(
+            reservationRequestIds: availableIds,
+            depositAmount: depositTotal,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -150,21 +192,12 @@ class _ReservationsTab extends StatelessWidget {
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
-                  onEdit: r.id == null
+                  // Confirmed cards: no edit/trash — just download (DownloadInfo).
+                  onDownload: r.id == null
                       ? null
-                      : () => _openEdit(
-                            EditReservationArgs(
-                              reservationId: r.id!,
-                              isConfirmed: true,
-                              portId: r.portId,
-                              serviceId: r.serviceId,
-                              occasionId: r.occasionId,
-                              governorate: r.governorate,
-                              city: r.city,
-                              occasionDate:
-                                  DateFormatHelper.parse(r.occasionDate),
-                            ),
-                          ),
+                      : () => context
+                          .read<MyBookingsCubit>()
+                          .downloadReservation(r.id!),
                 );
               },
             ),
@@ -206,6 +239,12 @@ class _CancelledTab extends StatelessWidget {
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  // Cancelled cards: no edit/trash — just download (DownloadInfo).
+                  onDownload: r.id == null
+                      ? null
+                      : () => context
+                          .read<MyBookingsCubit>()
+                          .downloadReservation(r.id!),
                 );
               },
             ),

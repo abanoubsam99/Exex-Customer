@@ -203,9 +203,8 @@ class _FavItem extends StatelessWidget {
           children: [
             Positioned.fill(
               child: CustomImageHandler(
-                _firstImageUrl(item) ?? AppImages.imagesWedding5,
+                _firstImageUrl(item),
                 fit: BoxFit.cover,
-                errorIcon: const Icon(Icons.image_not_supported),
               ),
             ),
             Positioned(

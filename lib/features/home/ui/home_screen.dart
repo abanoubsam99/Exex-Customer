@@ -13,6 +13,7 @@ import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:evex_user/features/home/ui/widgets/join_us_section.dart';
 import 'package:evex_user/features/home/ui/widgets/new_suggestion_section.dart';
 import 'package:evex_user/features/home/ui/widgets/other_services_section.dart';
@@ -145,14 +146,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 context)) {
                                               return;
                                             }
+                                            // Opening the screen marks all as
+                                            // read, so clear the badge now.
+                                            context
+                                                .read<HomeCubit>()
+                                                .clearUnreadNotifications();
                                             NavigationHelper.pushNamed(
                                               Routes.notificationsScreen,
                                             );
                                           },
-                                          icon: CustomImageHandler(
-                                            AppImages.iconsNotification,
-                                            width: 22.r,
-                                            height: 22.r,
+                                          icon: BlocBuilder<HomeCubit,
+                                              HomeState>(
+                                            buildWhen: (p, c) =>
+                                                p.unreadNotifications !=
+                                                c.unreadNotifications,
+                                            builder: (context, state) =>
+                                                _NotificationBell(
+                                              count: state.unreadNotifications,
+                                            ),
                                           ),
                                         ),
 
@@ -199,10 +210,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   BorderRadius.circular(16.r),
                                               child: Transform.scale(
                                                 scale: 1.1,
-                                                child: Image.asset(
-                                                  AppImages.imagesWedding0,
+                                                child: const CustomImageHandler(
+                                                  null,
                                                   fit: BoxFit.cover,
-                                                  alignment: const Alignment(
+                                                  alignment: Alignment(
                                                     0,
                                                     -0.58,
                                                   ),
@@ -306,8 +317,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.circular(
                                             16.r,
                                           ),
-                                          child: Image.asset(
-                                            AppImages.imagesWedding2,
+                                          child: const CustomImageHandler(
+                                            null,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -324,8 +335,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.circular(
                                             16.r,
                                           ),
-                                          child: Image.asset(
-                                            AppImages.imagesWedding3,
+                                          child: const CustomImageHandler(
+                                            null,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -342,8 +353,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.circular(
                                             16.r,
                                           ),
-                                          child: Image.asset(
-                                            AppImages.imagesWedding4,
+                                          child: const CustomImageHandler(
+                                            null,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -432,6 +443,52 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       ),
+    );
+  }
+}
+
+/// The bell icon with a red unread-count badge on top (hidden when [count] 0).
+class _NotificationBell extends StatelessWidget {
+  final int count;
+  const _NotificationBell({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    final bell = CustomImageHandler(
+      AppImages.iconsNotification,
+      width: 22.r,
+      height: 22.r,
+    );
+    if (count <= 0) return bell;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        bell,
+        Positioned(
+          top: -6.r,
+          right: -6.r,
+          child: Container(
+            constraints: BoxConstraints(minWidth: 16.r, minHeight: 16.r),
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.red2,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Text(
+              count > 99 ? '99+' : '$count',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 9.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

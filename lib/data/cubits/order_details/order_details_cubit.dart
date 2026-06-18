@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/helpers/file_download_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/order_details_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'order_details_state.dart';
 
@@ -59,18 +56,7 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
     if (id == null) return;
     ToastManager.showSuccess('جاري تحميل الملف...');
     final bytes = await _repo.downloadInfo(id);
-    if (bytes == null) {
-      ToastManager.showError('تعذّر تحميل الملف');
-      return;
-    }
-    try {
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/reservation_$id.pdf');
-      await file.writeAsBytes(bytes);
-      await OpenFilex.open(file.path);
-    } catch (_) {
-      ToastManager.showError('تعذّر فتح الملف');
-    }
+    await FileDownloadHelper.openReservationPdf(id: id, bytes: bytes);
   }
 
   /// Submits a review (stars + comment) for this reservation (POST /api/Reviews).

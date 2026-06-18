@@ -1,5 +1,4 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
@@ -184,94 +183,115 @@ class _TypeTabs extends StatelessWidget {
   }
 }
 
-/// بانر "عروض مميزة" — ثابت مؤقتاً (مفيش API مخصص للعروض هنا).
+/// بانر "عروض مميزة" — أول عرض مميز للنوع المختار من
+/// `GetAllServicesByClient?specialOffer=true&portTypeId=...`. يختفي لو مفيش عروض.
 class _PromoBanner extends StatelessWidget {
   const _PromoBanner();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: SizedBox(
-          height: 140.h,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CustomImageHandler(AppImages.imagesWedding5, fit: BoxFit.cover),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.0),
-                      Colors.black.withValues(alpha: 0.55),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 16.w,
-                bottom: 20.h,
-                child: SizedBox(
-                  width: 220.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'قاعه البارون',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w800,
+    return BlocBuilder<DirectServicesListCubit, DirectServicesListState>(
+      buildWhen: (p, c) => p.specialOffers != c.specialOffers,
+      builder: (context, state) {
+        if (state.specialOffers.isEmpty) return const SizedBox.shrink();
+        final offer = state.specialOffers.first;
+        final imageUrl = offer.serviceImages.isNotEmpty
+            ? ImageUrlHelper.full(offer.serviceImages.first)
+            : null;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: GestureDetector(
+            onTap: () => NavigationHelper.pushNamed(
+              Routes.bookingServiceDetailsScreen,
+              arguments: offer,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.r),
+              child: SizedBox(
+                height: 140.h,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CustomImageHandler(imageUrl, fit: BoxFit.cover),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.0),
+                            Colors.black.withValues(alpha: 0.55),
+                          ],
                         ),
                       ),
-                      4.verticalSpace,
-                      Text(
-                        'الذكر مبيعاً, استمتع بخصم يصل الى 50% على جميع قاعات البارون',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 12.w,
-                bottom: 16.h,
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                  child: Text(
-                    'عروض مميزة',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
                     ),
-                  ),
+                    Positioned(
+                      right: 16.w,
+                      bottom: 20.h,
+                      child: SizedBox(
+                        width: 220.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              offer.name,
+                              textAlign: TextAlign.right,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            4.verticalSpace,
+                            Text(
+                              offer.details,
+                              textAlign: TextAlign.right,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w400,
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 12.w,
+                      bottom: 16.h,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        child: Text(
+                          'عروض مميزة',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -282,21 +302,29 @@ class _PortListItem extends StatelessWidget {
   final int index;
   const _PortListItem({required this.item, required this.index});
 
+  // Image dimensions and how far it overlaps the panel — estimated from the
+  // Figma screenshot (exact specs unavailable: Figma API was rate-limited).
+  static const double _imageW = 120;
+  static const double _imageH = 140;
+  static const double _panelH = 116;
+  static const double _overlap = 16;
+
   @override
   Widget build(BuildContext context) {
-    final imageOnRight = index % 2 == 0;
+    // Figma: the first card shows the image on the right, then alternates.
+    final imageRight = index % 2 == 0;
+
     final image = ClipRRect(
       borderRadius: BorderRadius.circular(16.r),
       child: SizedBox(
-        width: 113.w,
-        height: 137.h,
+        width: _imageW.w,
+        height: _imageH.h,
         child: Stack(
           children: [
             Positioned.fill(
               child: CustomImageHandler(
-                _firstImageUrl(item) ?? AppImages.imagesWedding5,
+                _firstImageUrl(item),
                 fit: BoxFit.cover,
-                errorIcon: const Icon(Icons.image_not_supported),
               ),
             ),
             Positioned(
@@ -310,62 +338,86 @@ class _PortListItem extends StatelessWidget {
       ),
     );
 
-    final panel = Expanded(
-      child: Container(
-        height: 110.h,
-        decoration: ShapeDecoration(
-          color: AppColors.dividerGreyAlpha33,
-          shape: RoundedRectangleBorder(
-            borderRadius: imageOnRight
-                ? BorderRadius.horizontal(left: Radius.circular(16.r))
-                : BorderRadius.horizontal(right: Radius.circular(16.r)),
-          ),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              item.portName ?? '',
-              textAlign: TextAlign.right,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: AppColors.blacksoft,
-                fontSize: 15.r,
-                fontFamily: 'Almarai',
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.24,
-              ),
-            ),
-            6.verticalSpace,
-            Expanded(
-              child: Text(
-                _subtitle(item),
-                textAlign: TextAlign.right,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.grey2,
-                  fontSize: 12.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    // The panel slides under the image by [_overlap]; its text is padded on
+    // that side so it stays clear of the floating image.
+    final imageSidePad = (_overlap + 14).w;
 
     return GestureDetector(
       onTap: () => NavigationHelper.pushNamed(
         Routes.directServiceDetailsScreen,
         arguments: item,
       ),
-      child: Row(
-        children: imageOnRight ? [panel, image] : [image, panel],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final panel = Container(
+            width: constraints.maxWidth - _imageW.w + _overlap.w,
+            height: _panelH.h,
+            decoration: ShapeDecoration(
+              color: AppColors.fillGrey2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+            ),
+            padding: EdgeInsets.only(
+              top: 14.h,
+              bottom: 14.h,
+              right: imageRight ? imageSidePad : 14.w,
+              left: imageRight ? 14.w : imageSidePad,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  item.portName ?? '',
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.blacksoft,
+                    fontSize: 15.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.24,
+                  ),
+                ),
+                8.verticalSpace,
+                Text(
+                  _subtitle(item),
+                  textAlign: TextAlign.right,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.grey2,
+                    fontSize: 12.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w400,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          );
+
+          return SizedBox(
+            height: _imageH.h,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment:
+                      imageRight ? Alignment.centerLeft : Alignment.centerRight,
+                  child: panel,
+                ),
+                Align(
+                  alignment:
+                      imageRight ? Alignment.centerRight : Alignment.centerLeft,
+                  child: image,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -382,10 +434,9 @@ class _PortListItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomImageHandler(
-            AppImages.iconsFolder,
-            width: 13.r,
-            height: 13.r,
+          Icon(
+            Icons.image_outlined,
+            size: 14.r,
             color: AppColors.primaryColor,
           ),
           4.horizontalSpace,

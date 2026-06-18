@@ -39,7 +39,8 @@ class SpecialOffer {
         isDrafted = json['isDrafted'] as bool,
         picturesAlbumName = json['picturesAlbumName'] as String,
         serviceImages =
-            (json['serviceImages'] as List).map((e) => e as String).toList(),
+            (json['serviceImages'] as List?)?.map((e) => e as String).toList() ??
+                const [],
         portId = (json['portId'] as num).toInt();
 
   Map<String, dynamic> toJson() {

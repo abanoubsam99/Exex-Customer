@@ -94,6 +94,21 @@ class DateFormatHelper {
     return '$hour12:$minute ${isPm ? 'م' : 'ص'}';
   }
 
+  /// Relative Arabic label for how long ago [date] was: "الان" for the last
+  /// minute, "منذ 5 دقيقة" / "منذ 3 ساعات" within the last day, otherwise the
+  /// full date ("6 اكتوبر 2026"). Returns [fallback] when [date] is null.
+  static String relativeArabic(DateTime? date, {String fallback = ''}) {
+    if (date == null) return fallback;
+    final diff = DateTime.now().difference(date);
+    if (diff.inSeconds < 60) return 'الان';
+    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
+    if (diff.inHours < 24) {
+      final h = diff.inHours;
+      return h <= 10 ? 'منذ $h ساعات' : 'منذ $h ساعة';
+    }
+    return '${date.day} ${_months[date.month - 1]} ${date.year}';
+  }
+
   /// "مساءا 9:27" — period word followed by h:mm (empty when invalid).
   static String arabicClock(String? value) {
     final d = parse(value);
