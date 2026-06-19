@@ -1,7 +1,9 @@
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/data/models/general_response.dart';
 import 'package:evex_user/data/models/net_cost_model.dart';
 import 'package:evex_user/data/models/occasion.dart';
+import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/models/pending_deposit_model.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -85,8 +87,9 @@ class ConfirmBookingRepo {
 
   /// POST /api/Reservations/ConfirmClientReservation — the card-payment variant.
   /// body: { "depositAmount": ..., "reservationRequestIds": [...] }
-  /// Returns the payment-gateway URL to open in a WebView, or null on failure.
-  Future<String?> confirmClientReservationGateway({
+  /// Returns the payment-gateway URL + paymobOrderId (needed for VerifyPayment),
+  /// or null on failure.
+  Future<PaymentGatewayResult?> confirmClientReservationGateway({
     required num depositAmount,
     required List<int> reservationRequestIds,
   }) async {
@@ -99,42 +102,12 @@ class ConfirmBookingRepo {
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return _extractUrl(response.data);
+        return PaymentGatewayResult.fromJson(response.data);
       }
       return null;
     } catch (_) {
       return null;
     }
-  }
-
-  /// The gateway response shape isn't pinned down, so we pull the first http(s)
-  /// link out of whatever the backend returns (raw string, common url keys, or
-  /// a nested object / message).
-  String? _extractUrl(dynamic data) {
-    bool isLink(Object? v) =>
-        v is String && v.trim().toLowerCase().startsWith('http');
-
-    if (isLink(data)) return (data as String).trim();
-    if (data is Map) {
-      const keys = [
-        'url',
-        'iframeUrl',
-        'iframe_url',
-        'paymentUrl',
-        'payment_url',
-        'redirectUrl',
-        'redirect_url',
-        'gatewayUrl',
-        'link',
-        'message',
-      ];
-      for (final k in keys) {
-        if (isLink(data[k])) return (data[k] as String).trim();
-      }
-      final nested = data['data'] ?? data['result'];
-      if (nested != null) return _extractUrl(nested);
-    }
-    return null;
   }
 
   /// GET /api/Reservations/CheckReservationAvailabilityByClient/{portId}?date=
@@ -158,17 +131,21 @@ class ConfirmBookingRepo {
     }
   }
 
-  /// POST /api/Reservations/VerifyPayment — verifies a Paymob card payment.
-  /// body: { "paymobOrderId": ... }
-  Future<bool> verifyPayment(int paymobOrderId) async {
+  /// POST /api/Reservations/VerifyPayment — verifies a Paymob card payment after
+  /// the user finishes paying. Returns the server envelope (its `isSuccess` says
+  /// whether the booking was confirmed; HTTP can be 200 even when it failed).
+  Future<GeneralResponse?> verifyPayment(int paymobOrderId) async {
     try {
       final response = await DioHelper.postData(
         url: AppEndpoints.verifyPayment,
         data: {'paymobOrderId': paymobOrderId},
       );
-      return response.statusCode! >= 200 && response.statusCode! < 300;
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return GeneralResponse.fromJson(response.data);
+      }
+      return null;
     } catch (_) {
-      return false;
+      return null;
     }
   }
 

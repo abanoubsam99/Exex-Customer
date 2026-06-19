@@ -52,14 +52,26 @@ class EditReservationCubit extends Cubit<EditReservationState> {
 
     notesController.text = model.userNotes;
     final counts = _seedAdditionCounts(model);
+    final date = _parse(model.occasionDate) ?? args.occasionDate;
     emit(state.copyWith(
       isLoading: false,
       model: model,
-      occasionDate: _parse(model.occasionDate) ?? args.occasionDate,
+      occasionDate: date,
       selectedOccasionId: model.occasionId > 0 ? model.occasionId : null,
       additionCounts: counts,
     ));
+    if (date != null) _checkAvailability(date);
     _loadLists(model);
+  }
+
+  /// Checks whether the port is available on [date]
+  /// (CheckReservationAvailabilityByClient) so the screen can show متاح / غير متاح.
+  Future<void> _checkAvailability(DateTime date) async {
+    final portId = state.model?.portId ?? args.portId ?? 0;
+    if (portId == 0) return;
+    emit(state.copyWith(isCheckingAvailability: true));
+    final result = await _repo.checkAvailability(portId: portId, date: date);
+    emit(state.copyWith(isCheckingAvailability: false, availability: result));
   }
 
   /// Seeds the chosen-addition counts (and remembers their row ids) from the bill.
@@ -152,7 +164,10 @@ class EditReservationCubit extends Cubit<EditReservationState> {
     emit(state.copyWith(additionCounts: next));
   }
 
-  void setDate(DateTime date) => emit(state.copyWith(occasionDate: date));
+  void setDate(DateTime date) {
+    emit(state.copyWith(occasionDate: date));
+    _checkAvailability(date);
+  }
 
   Future<void> save() async {
     final model = state.model;

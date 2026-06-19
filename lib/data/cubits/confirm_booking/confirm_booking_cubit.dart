@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
+import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -88,7 +89,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
   /// Card payment: confirms via ConfirmClientReservation and returns the
   /// payment-gateway URL for the caller to open in a WebView. Returns null when
   /// the terms aren't accepted, the ids are invalid, or the request fails.
-  Future<String?> confirmCardPayment() async {
+  Future<PaymentGatewayResult?> confirmCardPayment() async {
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return null;
@@ -99,16 +100,16 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       return null;
     }
     emit(state.copyWith(isLoading: true));
-    final url = await _repo.confirmClientReservationGateway(
+    final result = await _repo.confirmClientReservationGateway(
       depositAmount: state.depositAmount,
       reservationRequestIds: ids,
     );
     emit(state.copyWith(isLoading: false));
-    if (url == null || url.isEmpty) {
+    if (result == null || result.paymentUrl.isEmpty) {
       ToastManager.showError('تعذّر بدء عملية الدفع، حاول مرة أخرى');
       return null;
     }
-    return url;
+    return result;
   }
 
   Future<void> confirmPayment() async {
@@ -136,19 +137,8 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
     }
   }
 
-  /// Verifies a Paymob card payment once the gateway returns its order id.
-  /// TODO: wire [paymobOrderId] from the Paymob checkout result.
-  Future<bool> verifyPayment(int paymobOrderId) async {
-    emit(state.copyWith(isLoading: true));
-    final ok = await _repo.verifyPayment(paymobOrderId);
-    emit(state.copyWith(isLoading: false));
-    if (ok) {
-      ToastManager.showSuccess('تم تأكيد الدفع بنجاح');
-    } else {
-      ToastManager.showError('تعذّر تأكيد الدفع، حاول مرة أخرى');
-    }
-    return ok;
-  }
+  // VerifyPayment is called by the PaymentWebViewScreen after the user pays
+  // (it has the paymobOrderId), via ConfirmBookingRepo.verifyPayment directly.
 
   @override
   Future<void> close() {

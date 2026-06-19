@@ -29,18 +29,23 @@ class _MainScreenState extends State<MainScreen> {
     MoreScreen(),
   ];
 
+  /// Tabs that have been opened. Only these are actually built — so e.g. the
+  /// wallet tab's API call doesn't fire until the user opens it (important for
+  /// guests).
+  final Set<int> _visited = {0};
+  bool _handledArg = false;
+
   @override
-  void initState() {
-    super.initState();
-    // Allow callers to open a specific tab (e.g. after a booking →
-    // "حجوزاتي" / tab 1). Done post-frame so the PageController is attached.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final arg = ModalRoute.of(context)?.settings.arguments;
-      if (arg is int && arg > 0) {
-        context.read<MainCubit>().goToTab(arg);
-      }
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_handledArg) return;
+    _handledArg = true;
+    // Open a specific tab when asked (e.g. after a booking → "حجوزاتي" / tab 1).
+    // Runs before the first build, so the IndexedStack shows it immediately.
+    final arg = ModalRoute.of(context)?.settings.arguments;
+    if (arg is int && arg > 0) {
+      context.read<MainCubit>().goToTab(arg);
+    }
   }
 
   @override
@@ -52,11 +57,21 @@ class _MainScreenState extends State<MainScreen> {
           // Pages fill the full height; each scrollable page reserves
           // kFloatingNavBarSpace at its bottom so content clears the floating
           // bar without leaving a dead white band behind it.
-          PageView(
-            controller: cubit.pageController,
-            physics: const BouncingScrollPhysics(),
-            onPageChanged: cubit.animateToTab,
-            children: _pages,
+          // IndexedStack (not PageView) so the shown page always matches the
+          // selected tab — index-based, no controller-timing races on rebuild.
+          BlocBuilder<MainCubit, MainState>(
+            buildWhen: (p, c) => p.currentPage != c.currentPage,
+            builder: (context, state) {
+              _visited.add(state.currentPage);
+              return IndexedStack(
+                index: state.currentPage,
+                children: List.generate(
+                  _pages.length,
+                  (i) =>
+                      _visited.contains(i) ? _pages[i] : const SizedBox.shrink(),
+                ),
+              );
+            },
           ),
           Positioned(
             bottom: 0,

@@ -51,6 +51,9 @@ class _RequestsTab extends StatelessWidget {
     if (state.isLoadingRequests && state.requests.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
+    // When the "تأكيد الحجز" button is hidden, the list itself must clear the
+    // floating nav bar so the last card isn't cut off.
+    final hasButton = _confirmableIds(state).isNotEmpty;
     return Column(
       children: [
         Expanded(
@@ -61,7 +64,8 @@ class _RequestsTab extends StatelessWidget {
                 : ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.fromLTRB(0, 20.h, 0, 12.h),
+              padding: EdgeInsets.fromLTRB(
+                  0, 20.h, 0, hasButton ? 12.h : kFloatingNavBarSpace.r),
               itemCount: state.requests.length,
               itemBuilder: (context, index) {
                 final r = state.requests[index];
@@ -122,20 +126,10 @@ class _ConfirmRequestsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pd = state.pendingDeposit;
-    final availableIds = pd != null
-        ? pd.items
-            .where((e) => e.isAvailable && e.id != null)
-            .map((e) => e.id!)
-            .toList()
-        : state.requests
-            .where((r) =>
-                (r.reservationStatus ?? '').contains('متاح') && r.id != null)
-            .map((r) => r.id!)
-            .toList();
+    final availableIds = _confirmableIds(state);
     if (availableIds.isEmpty) return const SizedBox.shrink();
 
-    final depositTotal = pd?.totalDeposit ??
+    final depositTotal = state.pendingDeposit?.totalDeposit ??
         state.requests
             .where((r) => (r.reservationStatus ?? '').contains('متاح'))
             .fold<num>(0, (sum, r) => sum + (r.deposit ?? 0));
@@ -395,6 +389,23 @@ class _PendingDepositFooter extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ids of the current requests that can be confirmed now (status "متاح").
+/// Empty → the "تأكيد الحجز" button is hidden.
+List<int> _confirmableIds(MyBookingsState state) {
+  final pd = state.pendingDeposit;
+  if (pd != null) {
+    return pd.items
+        .where((e) => e.isAvailable && e.id != null)
+        .map((e) => e.id!)
+        .toList();
+  }
+  return state.requests
+      .where((r) =>
+          (r.reservationStatus ?? '').contains('متاح') && r.id != null)
+      .map((r) => r.id!)
+      .toList();
 }
 
 String _location(String? governorate, String? city) {

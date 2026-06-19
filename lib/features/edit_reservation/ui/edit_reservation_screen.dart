@@ -1,6 +1,7 @@
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_cubit.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/models/addition_model.dart';
@@ -88,6 +89,7 @@ class EditReservationScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        _availabilityStatus(state),
                         20.verticalSpace,
                         // ── Governorate ──
                         _label('المحافظة'),
@@ -144,6 +146,8 @@ class EditReservationScreen extends StatelessWidget {
                             if (v != null) cubit.selectOccasion(v);
                           },
                         ),
+                        // ── Basic service (read-only) ──
+                        _basicServiceSection(state),
                         // ── Additions & buffet (same styled rows as the
                         // booking/"adding" screen) ──
                         ..._additionsAndBuffet(cubit, state),
@@ -188,21 +192,229 @@ class EditReservationScreen extends StatelessWidget {
                 },
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h),
-              child: BlocBuilder<EditReservationCubit, EditReservationState>(
-                buildWhen: (p, c) => p.isSaving != c.isSaving,
-                builder: (context, state) => CustomButton(
-                  text: 'حفظ التعديلات',
-                  height: 54.h,
-                  isLoading: state.isSaving,
-                  onTap: cubit.save,
+            // ── Bottom bar: total cost + save button (like the booking screen) ──
+            Container(
+              width: 1.sw,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadow,
+                    blurRadius: 48,
+                    offset: const Offset(0, -7),
+                    spreadRadius: -6,
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 16.h),
+                child: BlocBuilder<EditReservationCubit, EditReservationState>(
+                  builder: (context, state) {
+                    final total = _additionsTotal(state);
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'إجمالي التكلفة',
+                              style: TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 18.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w800,
+                                height: 1.50,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: total.toStringAsFixed(2),
+                                    style: TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontSize: 20.r,
+                                      fontFamily: 'Almarai',
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.50,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' جنيه',
+                                    style: TextStyle(
+                                      color: AppColors.unitGrey,
+                                      fontSize: 14.r,
+                                      fontFamily: 'Almarai',
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.50,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        12.verticalSpace,
+                        CustomButton(
+                          text: 'حفظ التعديلات',
+                          height: 52.h,
+                          isLoading: state.isSaving,
+                          onTap: cubit.save,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  /// Total shown in the bottom bar = the base service cost + the chosen
+  /// additions/buffet (price × count).
+  num _additionsTotal(EditReservationState state) {
+    num total = state.model?.totalCost ?? 0;
+    for (final a in state.additions) {
+      total += (a.price ?? 0) * (state.additionCounts[a.id] ?? 0);
+    }
+    return total;
+  }
+
+  static String _money(num v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+
+  /// "متاح / غير متاح" status for the chosen date (CheckReservationAvailability).
+  Widget _availabilityStatus(EditReservationState state) {
+    if (state.isCheckingAvailability) {
+      return Padding(
+        padding: EdgeInsets.only(top: 10.h),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 14.r,
+              height: 14.r,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            ),
+            8.horizontalSpace,
+            Text(
+              'جاري التحقق من الإتاحة...',
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    final av = state.availability;
+    if (av == null) return const SizedBox.shrink();
+    final available = av.allowedToReservation == true;
+    final color = available ? AppColors.green : AppColors.coral;
+    return Padding(
+      padding: EdgeInsets.only(top: 10.h),
+      child: Row(
+        children: [
+          Container(
+            width: 8.r,
+            height: 8.r,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          8.horizontalSpace,
+          Expanded(
+            child: Text(
+              available
+                  ? 'متاح للحجز في هذا الميعاد'
+                  : (av.verificationResultMessage ??
+                      'غير متاح في هذا الميعاد'),
+              style: TextStyle(
+                color: color,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Read-only "الخدمات الأساسية" card — shows the booked service + its price.
+  Widget _basicServiceSection(EditReservationState state) {
+    final model = state.model;
+    if (model == null) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        24.verticalSpace,
+        _sectionHeader('الخدمات الأساسية'),
+        12.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(12.r),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: AppColors.fillGrey2),
+          ),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: SizedBox(
+                  width: 64.r,
+                  height: 64.r,
+                  child: const CustomImageHandler(null, fit: BoxFit.cover),
+                ),
+              ),
+              12.horizontalSpace,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      model.portName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: _itemStyle,
+                    ),
+                    6.verticalSpace,
+                    Text.rich(
+                      textDirection: TextDirection.rtl,
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${_money(model.totalCost)} ',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 16.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'جنيه',
+                            style: TextStyle(
+                              color: AppColors.unitGrey,
+                              fontSize: 12.r,
+                              fontFamily: 'Almarai',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

@@ -2,6 +2,8 @@ import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
 import 'package:evex_user/data/models/occasion.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart'
+    show CheckReservationResponse;
 import 'package:evex_user/data/models/reservation_update_model.dart';
 
 /// Data passed to the edit-reservation screen.
@@ -60,6 +62,10 @@ class EditReservationState {
   final List<AdditionModel> additions;
   final Map<int, int> additionCounts;
 
+  // ── Availability of the selected date (CheckReservationAvailability) ──
+  final CheckReservationResponse? availability;
+  final bool isCheckingAvailability;
+
   const EditReservationState({
     this.isLoading = false,
     this.model,
@@ -74,6 +80,8 @@ class EditReservationState {
     this.selectedOccasionId,
     this.additions = const [],
     this.additionCounts = const {},
+    this.availability,
+    this.isCheckingAvailability = false,
   });
 
   EditReservationState copyWith({
@@ -90,6 +98,8 @@ class EditReservationState {
     int? selectedOccasionId,
     List<AdditionModel>? additions,
     Map<int, int>? additionCounts,
+    Object? availability = _unset,
+    bool? isCheckingAvailability,
   }) {
     return EditReservationState(
       isLoading: isLoading ?? this.isLoading,
@@ -108,6 +118,11 @@ class EditReservationState {
       selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
       additions: additions ?? this.additions,
       additionCounts: additionCounts ?? this.additionCounts,
+      availability: availability == _unset
+          ? this.availability
+          : availability as CheckReservationResponse?,
+      isCheckingAvailability:
+          isCheckingAvailability ?? this.isCheckingAvailability,
     );
   }
 }

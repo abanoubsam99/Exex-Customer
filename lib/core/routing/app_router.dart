@@ -10,6 +10,7 @@ import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 // import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
+import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -403,9 +404,9 @@ class AppRouter {
       case Routes.paymentWebViewScreen:
         return _page(
           PaymentWebViewScreen(
-            url: settings.arguments is String
-                ? settings.arguments as String
-                : '',
+            result: settings.arguments is PaymentGatewayResult
+                ? settings.arguments as PaymentGatewayResult
+                : null,
           ),
           settings,
         );

@@ -133,11 +133,11 @@ class ConfirmBookingScreen extends StatelessWidget {
                         height: 54.h,
                         isLoading: state.isLoading,
                         onTap: () async {
-                          final url = await cubit.confirmCardPayment();
-                          if (url != null && url.isNotEmpty) {
+                          final result = await cubit.confirmCardPayment();
+                          if (result != null) {
                             NavigationHelper.pushNamed(
                               Routes.paymentWebViewScreen,
-                              arguments: url,
+                              arguments: result,
                             );
                           }
                         },
