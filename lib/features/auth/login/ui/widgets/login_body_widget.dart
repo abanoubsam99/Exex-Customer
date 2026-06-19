@@ -3,7 +3,6 @@ import 'package:evex_user/core/ui/widgets/evex_filled_button.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:evex_user/data/cubits/auth/login/login_state.dart';
-import 'package:evex_user/features/auth/login/ui/widgets/biometric_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,28 +39,24 @@ class LoginBodyWidget extends StatelessWidget {
               controller: cubit.passwordController,
               fillColor: AppColors.boarderFillColor,
             ),
-            13.verticalSpace,
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                minimumSize: Size.zero,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.forgetPasswordScreen);
-              },
-              child: Text(
-                AppStrings.forgotPassword.tr(),
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 14.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w700,
-                  height: 1.50,
+            12.verticalSpace,
+            // ── "نسيت كلمة المرور؟" + "ليس لدي حساب؟" on one row ──
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _link(
+                  AppStrings.forgotPassword.tr(),
+                  () => Navigator.pushNamed(
+                      context, Routes.forgetPasswordScreen),
                 ),
-              ),
+                _link(
+                  'ليس لدي حساب؟',
+                  () => Navigator.pushReplacementNamed(
+                      context, Routes.registerScreen),
+                ),
+              ],
             ),
-            28.verticalSpace,
+            22.verticalSpace,
             BlocBuilder<LoginCubit, LoginState>(
               builder: (context, state) {
                 return EvexFilledButton(
@@ -75,94 +70,56 @@ class LoginBodyWidget extends StatelessWidget {
                 );
               },
             ),
-            8.verticalSpace,
-            Center(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  minimumSize: Size.zero,
-                ),
-                onPressed: () => cubit.continueAsGuest(),
-                child: Text(
-                  'تخطّي والتصفّح كزائر',
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
-                    decoration: TextDecoration.underline,
-                    height: 1.50,
-                  ),
-                ),
-              ),
-            ),
-            // 25.verticalSpace,
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     Expanded(child: _Divider()),
-            //     Padding(
-            //       padding: EdgeInsets.symmetric(horizontal: 8.w),
-            //       child: Text(
-            //         'أو تسجيل سريع بـ',
-            //         style: TextStyle(
-            //           color: AppColors.grey,
-            //           fontSize: 14.r,
-            //           fontFamily: 'Almarai',
-            //           fontWeight: FontWeight.w400,
-            //           height: 1.50,
-            //         ),
-            //       ),
-            //     ),
-            //     Expanded(child: _Divider()),
-            //   ],
-            // ),
-            // 16.verticalSpace,
-            // const AllSocalMediaWidget(),
             24.verticalSpace,
+            // ── "أو دخول سريع بـ" divider ──
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'ليس لدي حساب  ؟ ',
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w400,
-                    height: 1.50,
-                  ),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minimumSize: Size.zero,
-                  ),
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, Routes.registerScreen),
+                const Expanded(child: _Divider()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: Text(
-                    'انشاء حساب',
+                    'أو دخول سريع بـ',
                     style: TextStyle(
-                      color: AppColors.primaryColor,
+                      color: AppColors.grey,
                       fontSize: 14.r,
                       fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w400,
                       height: 1.50,
                     ),
                   ),
                 ),
+                const Expanded(child: _Divider()),
               ],
             ),
-            SizedBox(height: 16.h),
-            const BiometricAuthWidget(),
-            SizedBox(height: 16.h),
+            20.verticalSpace,
+            const AllSocalMediaWidget(),
+            16.verticalSpace,
           ],
         ),
       ),
     );
   }
+
+  /// An orange text link used for the forgot-password / no-account actions.
+  Widget _link(String text, VoidCallback onTap) => TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          minimumSize: Size.zero,
+        ),
+        onPressed: onTap,
+        child: Text(
+          text,
+          style: TextStyle(
+            color: AppColors.primaryColor,
+            fontSize: 14.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w700,
+            height: 1.50,
+          ),
+        ),
+      );
 }
 
 class _Divider extends StatelessWidget {

@@ -155,29 +155,32 @@ class ConfirmBookingScreen extends StatelessWidget {
   Widget _header(ConfirmBookingState state) {
     return Row(
       children: [
+        InkWell( onTap: () => NavigationHelper.pop(),
+    child: Container(
+    width: 40.r,
+    height: 40.r,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+    border: Border.all(color: Colors.black, width: 1.4),
+    borderRadius: BorderRadius.circular(10.r),
+    ),
+    child: Icon(Icons.arrow_back_ios, color: Colors.black, size: 16.r),
+    ),
+    ),
+        SizedBox(width: 10,),
+        // const Spacer(),
         Text(
           'تأكيد الحجز',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w800,
           ),
         ),
-        const Spacer(),
-        InkWell(
-          onTap: () => NavigationHelper.pop(),
-          child: Container(
-            width: 40.r,
-            height: 40.r,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 1.4),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16.r),
-          ),
-        ),
+
+
+
       ],
     );
   }

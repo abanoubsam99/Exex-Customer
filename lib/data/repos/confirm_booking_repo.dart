@@ -231,23 +231,25 @@ class ConfirmBookingRepo {
     }
   }
 
-  /// GET /api/Reservations/CalculateNetCost/{id} — returns the cost breakdown
-  /// (price after discount, net cost, deposit, tax) for a reservation.
+  /// GET /api/Reservations/Client/CalculateNetCost/{id}
+  ///   ?servicePrice=&totalCost=&additionalCost=&buffetCost=
+  /// Returns the cost breakdown (price after discount, net cost, deposit, tax)
+  /// for a reservation.
   Future<NetCostModel?> calculateNetCost({
     required int id,
+    num? servicePrice,
     num? totalCost,
     num? additionalCost,
-    num? discount,
-    num? vat,
+    num? buffetCost,
   }) async {
     try {
       final response = await DioHelper.getData(
         url: '${AppEndpoints.calculateNetCost}/$id',
         query: {
+          if (servicePrice != null) 'servicePrice': servicePrice,
           if (totalCost != null) 'totalCost': totalCost,
           if (additionalCost != null) 'additionalCost': additionalCost,
-          if (discount != null) 'discount': discount,
-          if (vat != null) 'vat': vat,
+          if (buffetCost != null) 'buffetCost': buffetCost,
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

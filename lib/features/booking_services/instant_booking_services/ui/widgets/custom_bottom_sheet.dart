@@ -559,7 +559,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       final f = context.read<PortsFilterCubit>().state;
                       final atMax = _currentValue.round() >= _max.round();
                       context.read<InstantBookingCubit>().applyFilters(
-                            govId: f.selectedGovernorate?.id,
+                            gov: f.selectedGovernorate?.governorateNameAr,
+                            city: f.selectedCity?.cityNameAr,
                             occasionId: f.selectedOccasionId,
                             numberAllowed: count > 0 ? count : null,
                             maxPrice: atMax ? null : _currentValue.round(),

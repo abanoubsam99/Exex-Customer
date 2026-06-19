@@ -1,5 +1,5 @@
 class GetPortsRequest {
-  /// Governorate id — sent as `Id` to /api/Ports/Filter (the location filter).
+  /// Generic filter id sent as `Id` to /api/Ports/Filter.
   int? id;
   int? portType;
   int? occasionId;
@@ -9,6 +9,13 @@ class GetPortsRequest {
   int? index;
   int? size;
   DateTime? date;
+
+  /// Location filter (governorate / city names) — defaults to the user's saved
+  /// onboarding location, overridable from the filter sheet.
+  String? gov;
+  String? city;
+  int? companyId;
+  bool? fav;
 
   GetPortsRequest({
     this.id,
@@ -20,6 +27,10 @@ class GetPortsRequest {
     this.index = 0,
     this.size = 20,
     this.date,
+    this.gov,
+    this.city,
+    this.companyId,
+    this.fav,
   });
 
   GetPortsRequest.fromJson(Map<String, dynamic> json) {
@@ -34,6 +45,10 @@ class GetPortsRequest {
     index = (json['index'] as num?)?.toInt();
     size = (json['size'] as num?)?.toInt();
     date = json['date'] != null ? DateTime.parse(json['date'] as String) : null;
+    gov = json['gov'] as String?;
+    city = json['city'] as String?;
+    companyId = (json['companyId'] as num?)?.toInt();
+    fav = json['fav'] as bool?;
   }
 
   // Mirrors json_serializable(includeIfNull: false): null fields are omitted.
@@ -48,6 +63,10 @@ class GetPortsRequest {
     if (index != null) data['index'] = index;
     if (size != null) data['size'] = size;
     if (date != null) data['date'] = date!.toIso8601String();
+    if ((gov ?? '').isNotEmpty) data['gov'] = gov;
+    if ((city ?? '').isNotEmpty) data['city'] = city;
+    if (companyId != null) data['companyId'] = companyId;
+    if (fav != null) data['fav'] = fav;
     return data;
   }
 }

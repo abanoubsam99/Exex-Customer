@@ -1,7 +1,9 @@
 import 'package:evex_user/core/ui/widgets/top_backround.dart';
+import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_body_widget.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_top_part.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
@@ -96,6 +98,41 @@ class LoginScreen extends StatelessWidget {
                         child: LoginBodyWidget(),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              // ── "تخطي" — browse as guest (anchored to the bottom-right) ──
+              Positioned(
+                right: 0,
+                bottom: 36.h,
+                child: GestureDetector(
+                  onTap: () => context.read<LoginCubit>().continueAsGuest(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.blacksoft,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.r),
+                        bottomLeft: Radius.circular(30.r),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.arrow_back_ios_new_sharp,
+                            color: AppColors.primaryColor, size: 14.r),
+                        8.horizontalSpace,
+                        Text(
+                          'تخطي',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

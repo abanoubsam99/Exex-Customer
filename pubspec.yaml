@@ -47,7 +47,11 @@ dependencies:
   path_provider: ^2.1.5
   open_filex: ^4.5.0
   webview_flutter: ^4.10.0
+  # Social sign-in — prepared but disabled for now (hidden for the store).
+  # Uncomment these + their service files to enable Google / Facebook / Apple.
 #  google_sign_in: ^6.2.1
+#  flutter_facebook_auth: ^7.1.1
+#  sign_in_with_apple: ^6.1.4
   upgrader: ^11.3.1
 
 

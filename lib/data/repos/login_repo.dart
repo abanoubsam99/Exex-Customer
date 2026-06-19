@@ -26,20 +26,23 @@ class LoginRepo {
     }
   }
 
-  // Google login disabled — removed for App Store guideline 4.8.
-  // /// External (Google) login. POST /EVEX/Account/ExternalLogin
+  // External social login (Google / Facebook / Apple) — fully prepared but
+  // disabled for now (hidden for the store; App Store guideline 4.8). To enable:
+  // uncomment this + AppEndpoints.externalLogin and the LoginCubit methods.
+  //
+  // /// Exchanges a provider token for the app's user. POST /EVEX/Account/ExternalLogin
   // Future<UserModel?> externalLogin({
-  //   required String idToken,
-  //   required String provider,
-  //   required String email,
-  //   required String name,
+  //   required String provider, // 'google' | 'facebook' | 'apple'
+  //   required String token,    // idToken / accessToken / identityToken
+  //   String? email,
+  //   String? name,
   // }) async {
   //   try {
   //     final response = await DioHelper.postData(
   //       url: AppEndpoints.externalLogin,
   //       data: {
-  //         'idToken': idToken,
   //         'provider': provider,
+  //         'token': token,
   //         'email': email,
   //         'name': name,
   //       },

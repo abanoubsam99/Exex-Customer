@@ -4,21 +4,17 @@ import 'package:evex_user/data/models/general_response.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 
 class FavoritesRepo {
-  /// GET /api/Favorites — the client's favorite ports.
-  /// Parsing is defensive (handles a raw list or a paged `{ items: [...] }`)
-  /// until the exact response shape is confirmed.
+  /// GET /api/Ports/Filter?fav=true — the client's favorite ports. There's no
+  /// dedicated GetFavorites endpoint; the backend reuses the ports filter with
+  /// `fav=true`, so the response is the standard [PortsRespondModel].
   Future<List<Item>?> getFavorites() async {
     try {
-      final response = await DioHelper.getData(url: AppEndpoints.favorites);
+      final response = await DioHelper.getData(
+        url: AppEndpoints.ports,
+        query: {'fav': true},
+      );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final data = response.data;
-        final list = data is List
-            ? data
-            : (data is Map ? (data['items'] ?? data['favorites']) : null);
-        if (list is List) {
-          return list.map((e) => Item.fromJson(e)).toList();
-        }
-        return [];
+        return PortsRespondModel.fromJson(response.data).items ?? [];
       }
       return null;
     } catch (_) {

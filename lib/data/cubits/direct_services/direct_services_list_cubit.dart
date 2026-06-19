@@ -1,3 +1,4 @@
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -12,14 +13,22 @@ class DirectServicesListCubit extends Cubit<DirectServicesListState> {
   final BookingServicesPortsRepo _repo;
   final HomeRepo _homeRepo;
   final HomeCubit _homeCubit;
+  final LocationService _locationService;
 
-  DirectServicesListCubit(this._repo, this._homeRepo, this._homeCubit)
-      : super(const DirectServicesListState());
+  DirectServicesListCubit(
+    this._repo,
+    this._homeRepo,
+    this._homeCubit,
+    this._locationService,
+  ) : super(const DirectServicesListState());
 
   final GetPortsRequest _request = GetPortsRequest();
 
   Future<void> loadPorts() async {
     _request.portType = _homeCubit.state.selectedPaymentPortType?.id;
+    // Filter by the user's saved (onboarding) location by default.
+    _request.gov = _locationService.govName;
+    _request.city = _locationService.cityName;
     await Future.wait([_fetch(), _fetchSpecialOffers()]);
   }
 

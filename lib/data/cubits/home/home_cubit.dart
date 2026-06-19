@@ -56,10 +56,26 @@ class HomeCubit extends Cubit<HomeState> {
     if (ports != null) {
       final booking = ports.where((p) => p.subscriptionType == 0).toList();
       final payment = ports.where((p) => p.subscriptionType == 1).toList();
+      // Default the selection to the first category (so the section shows a
+      // selected card + its types), but keep the user's pick across refreshes.
+      final selBooking =
+          state.selectedBookingPort ?? (booking.isNotEmpty ? booking.first : null);
+      final selPayment =
+          state.selectedPaymentPort ?? (payment.isNotEmpty ? payment.first : null);
       emit(state.copyWith(
         isLoadingPorts: false,
         bookingPorts: booking,
         paymentPorts: payment,
+        selectedBookingPort: selBooking,
+        selectedBookingPortType: state.selectedBookingPortType ??
+            (selBooking != null && selBooking.portTypeDtos.isNotEmpty
+                ? selBooking.portTypeDtos.first
+                : null),
+        selectedPaymentPort: selPayment,
+        selectedPaymentPortType: state.selectedPaymentPortType ??
+            (selPayment != null && selPayment.portTypeDtos.isNotEmpty
+                ? selPayment.portTypeDtos.first
+                : null),
       ));
     } else {
       emit(state.copyWith(isLoadingPorts: false, errorMessage: 'حدث خطأ'));
