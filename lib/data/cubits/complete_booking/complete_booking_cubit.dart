@@ -1,7 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/reservation_models.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -103,13 +102,12 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     );
     emit(state.copyWith(isSubmitting: false));
     if (result != null && (result.reservationRequestId ?? 0) > 0) {
-      NavigationHelper.pushNamed(
-        Routes.confirmBookingScreen,
-        arguments: ConfirmBookingArgs(
-          reservationRequestId: result.reservationRequestId!,
-          depositAmount: result.depositAmount ?? 0,
-          totalAmount: args.totalCost,
-        ),
+      ToastManager.showSuccess('تم الحجز بنجاح');
+      // Go to "حجوزاتي" (tab 1) — not the confirm screen. The fresh MainScreen
+      // rebuilds MyBookings, so it loads the latest requests (auto-refresh).
+      NavigationHelper.pushNamedAndRemoveUntil(
+        Routes.mainScreen,
+        arguments: 1,
       );
     } else {
       emit(state.copyWith(errorMessage: 'تعذّر إضافة الحجز، حاول مرة أخرى'));

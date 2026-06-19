@@ -3,11 +3,15 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/special_offers_carousel.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_state.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/repos/confirm_booking_repo.dart';
+import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,8 +86,18 @@ class InstantBookingServicesScreen extends StatelessWidget {
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<InstantBookingCubit>(),
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<InstantBookingCubit>(),
+                                  ),
+                                  BlocProvider(
+                                    create: (_) => PortsFilterCubit(
+                                      context.read<LocationRepo>(),
+                                      context.read<ConfirmBookingRepo>(),
+                                    ),
+                                  ),
+                                ],
                                 child: const CustomBottomSheet(),
                               ),
                             );
@@ -113,7 +127,11 @@ class InstantBookingServicesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const _SpecialOfferBanner(),
+              BlocBuilder<InstantBookingCubit, InstantBookingState>(
+                buildWhen: (p, c) => p.specialOffers != c.specialOffers,
+                builder: (context, state) =>
+                    SpecialOffersCarousel(offers: state.specialOffers),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: BlocBuilder<InstantBookingCubit, InstantBookingState>(
@@ -159,11 +177,24 @@ class InstantBookingServicesScreen extends StatelessWidget {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(16.r),
-                                  child: CustomImageHandler(
-                                    _portImageUrl(item),
-                                    fit: BoxFit.cover,
+                                  child: SizedBox(
                                     width: 113.w,
                                     height: 137.h,
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: CustomImageHandler(
+                                            _portImageUrl(item),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 8.h,
+                                          left: 8.w,
+                                          child: _imagesBadge(item),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -338,6 +369,44 @@ String? _portImageUrl(Item item) {
   return null;
 }
 
+/// Number of images the port has (for the "+N صوره" badge).
+int _portImagesCount(Item item) {
+  final imgs = item.portImages;
+  if (imgs is List) {
+    return imgs.where((e) => e.toString().trim().isNotEmpty).length;
+  }
+  return 0;
+}
+
+/// "+N صوره" pill shown on the port card image (hidden when there are none).
+Widget _imagesBadge(Item item) {
+  final count = _portImagesCount(item);
+  if (count <= 0) return const SizedBox.shrink();
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: 0.92),
+      borderRadius: BorderRadius.circular(20.r),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.image_outlined, size: 14.r, color: AppColors.primaryColor),
+        4.horizontalSpace,
+        Text(
+          '+$count صوره',
+          style: TextStyle(
+            color: AppColors.primaryColor,
+            fontSize: 11.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 /// Subtitle line for a port card: its description, or its location as a fallback.
 String _portSubtitle(Item item) {
   final desc = item.portDescription?.toString().trim();
@@ -347,250 +416,5 @@ String _portSubtitle(Item item) {
       .join('، ');
 }
 
-/// The featured "عروض مميزة" banner — driven by the first special offer for the
-/// selected port type (`GetAllServicesByClient?specialOffer=true&portTypeId=...`).
-/// Falls back to the static design while offers are still loading / empty.
-class _SpecialOfferBanner extends StatelessWidget {
-  const _SpecialOfferBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<InstantBookingCubit, InstantBookingState>(
-      buildWhen: (p, c) => p.specialOffers != c.specialOffers,
-      builder: (context, state) {
-        final offer =
-            state.specialOffers.isNotEmpty ? state.specialOffers.first : null;
-        final title = offer?.name ?? 'قاعه البارون';
-        final subtitle = offer?.details ??
-            'الاكثر مبيعاً, استمتع بخصم يصل الى 50% على جميع قاعات البارون';
-        final image = (offer != null && offer.serviceImages.isNotEmpty)
-            ? ImageUrlHelper.full(offer.serviceImages.first)
-            : null;
-
-        return GestureDetector(
-          onTap: offer == null
-              ? null
-              : () => NavigationHelper.pushNamed(
-                    Routes.bookingServiceDetailsScreen,
-                    arguments: offer,
-                  ),
-          child: Stack(
-            alignment: Alignment.topLeft,
-            children: [
-              Container(
-                width: 315.w,
-                height: 144.h,
-                decoration: ShapeDecoration(
-                  color: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                ),
-              ),
-              CustomPaint(
-                size: Size(305.w, 144.h),
-                painter: RPSCustomPainter(),
-              ),
-              ClipPath(
-                clipper: RPSClipper(),
-                child: CustomImageHandler(
-                  image,
-                  fit: BoxFit.cover,
-                  height: 159.h,
-                  width: 292.w,
-                ),
-              ),
-              ClipPath(
-                clipper: RPSClipper(),
-                child: Container(
-                  height: 159.h,
-                  width: 292.w,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment(-1.0, 1),
-                      end: Alignment(1, 0.0),
-                      stops: [0, 22.0],
-                      colors: [
-                        Colors.black.withValues(alpha: 0.00),
-                        Colors.black.withValues(alpha: 0.44),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 4.w,
-                bottom: 10.h,
-                child: CustomImageHandler(
-                  AppImages.iconsSpecialOffers,
-                  fit: BoxFit.contain,
-                  width: 78.r,
-                ),
-              ),
-              Positioned(
-                right: 11.w,
-                bottom: 24.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.right,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.24.w,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 4.r),
-                            blurRadius: 24.r,
-                            color: AppColors.pureBlack.withOpacity(0.50),
-                          ),
-                        ],
-                      ),
-                    ),
-                    2.verticalSpace,
-                    SizedBox(
-                      width: 225.w,
-                      child: Text(
-                        subtitle,
-                        textAlign: TextAlign.right,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.30,
-                          letterSpacing: -0.24.w,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0, 2.r),
-                              blurRadius: 20.r,
-                              color: AppColors.pureBlack.withOpacity(1.00),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-//Copy this CustomPainter code to the Bottom of the File
-class RPSCustomPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path_0 = Path();
-    path_0.moveTo(size.width * 0.6487222, 0);
-    path_0.cubicTo(
-      size.width * 0.8379510,
-      size.height * 0.08532639,
-      size.width * 0.9908660,
-      size.height * 0.2106528,
-      size.width * 0.9966830,
-      size.height * 0.3933681,
-    );
-    path_0.cubicTo(
-      size.width * 1.007242,
-      size.height * 0.7248403,
-      size.width * 0.5231013,
-      size.height * 0.9145139,
-      size.width * 0.2233627,
-      size.height,
-    );
-    path_0.lineTo(size.width * 0.05228758, size.height);
-    path_0.cubicTo(
-      size.width * 0.02341176,
-      size.height,
-      0,
-      size.height * 0.9502500,
-      0,
-      size.height * 0.8888889,
-    );
-    path_0.lineTo(0, size.height * 0.1111111);
-    path_0.cubicTo(
-      0,
-      size.height * 0.04975000,
-      size.width * 0.02341176,
-      0,
-      size.width * 0.05228758,
-      0,
-    );
-    path_0.lineTo(size.width * 0.6487222, 0);
-    path_0.close();
-
-    Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = AppColors.lightOrangeColor.withOpacity(1.0);
-    canvas.drawPath(path_0, paint0Fill);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class RPSClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    double r = 16.r;
-
-    Path path = Path();
-
-    // ---- TOP ----
-    path.moveTo(size.width * 0.6025797, 0);
-    path.cubicTo(
-      size.width * 0.8141356,
-      size.height * 0.08167296,
-      size.width * 0.9934949,
-      size.height * 0.2064843,
-      size.width * 0.9998271,
-      size.height * 0.3954214,
-    );
-
-    // ---- RIGHT / BOTTOM ----
-    path.cubicTo(
-      size.width * 1.011668,
-      size.height * 0.7487358,
-      size.width * 0.4052847,
-      size.height * 0.9336730,
-      size.width * 0.1260508,
-      size.height,
-    );
-
-    // ---- Bottom edge (before bottom-left corner) ----
-    path.lineTo(r, size.height);
-
-    // ---- Bottom-left rounded corner ----
-    path.quadraticBezierTo(0, size.height, 0, size.height - r);
-
-    // ---- Left edge ----
-    path.lineTo(0, r);
-
-    // ---- Top-left rounded corner ----
-    path.quadraticBezierTo(0, 0, r, 0);
-
-    // ---- Back to start ----
-    path.lineTo(size.width * 0.6025797, 0);
-
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
-}
+// The special-offers banner + its painters now live in the shared
+// [SpecialOffersCarousel] widget (core/ui/widgets/special_offers_carousel.dart).

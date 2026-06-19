@@ -14,15 +14,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _pages = [
     HomeScreen(),
     MyBookingsScreen(),
     WalletScreen(),
     MoreScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Allow callers to open a specific tab (e.g. after a booking →
+    // "حجوزاتي" / tab 1). Done post-frame so the PageController is attached.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final arg = ModalRoute.of(context)?.settings.arguments;
+      if (arg is int && arg > 0) {
+        context.read<MainCubit>().goToTab(arg);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

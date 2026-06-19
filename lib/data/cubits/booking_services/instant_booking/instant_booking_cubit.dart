@@ -44,13 +44,15 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
   }
 
   /// Applies the filter-sheet values onto the current request (keeping the
-  /// already-selected port type and date) and re-fetches.
+  /// already-selected port type and date) and re-fetches via /api/Ports/Filter.
   Future<void> applyFilters({
+    int? govId,
     int? occasionId,
     int? numberAllowed,
     int? minPrice,
     int? maxPrice,
   }) async {
+    _request.id = govId;
     _request.occasionId = occasionId;
     _request.numberAllowed = numberAllowed;
     _request.minPrice = minPrice;
@@ -61,6 +63,7 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
   /// Clears the filter-sheet values (keeping the port type + date) and
   /// re-fetches.
   Future<void> resetFilters() async {
+    _request.id = null;
     _request.occasionId = null;
     _request.numberAllowed = null;
     _request.minPrice = null;

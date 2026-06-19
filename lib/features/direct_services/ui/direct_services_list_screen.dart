@@ -4,6 +4,7 @@ import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/special_offers_carousel.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_services_list_cubit.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_services_list_state.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
@@ -71,7 +72,11 @@ class DirectServicesListScreen extends StatelessWidget {
               16.verticalSpace,
               const _TypeTabs(),
               18.verticalSpace,
-              const _PromoBanner(),
+              BlocBuilder<DirectServicesListCubit, DirectServicesListState>(
+                buildWhen: (p, c) => p.specialOffers != c.specialOffers,
+                builder: (context, state) =>
+                    SpecialOffersCarousel(offers: state.specialOffers),
+              ),
               20.verticalSpace,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -176,119 +181,6 @@ class _TypeTabs extends StatelessWidget {
                 ),
               );
             },
-          ),
-        );
-      },
-    );
-  }
-}
-
-/// بانر "عروض مميزة" — أول عرض مميز للنوع المختار من
-/// `GetAllServicesByClient?specialOffer=true&portTypeId=...`. يختفي لو مفيش عروض.
-class _PromoBanner extends StatelessWidget {
-  const _PromoBanner();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<DirectServicesListCubit, DirectServicesListState>(
-      buildWhen: (p, c) => p.specialOffers != c.specialOffers,
-      builder: (context, state) {
-        if (state.specialOffers.isEmpty) return const SizedBox.shrink();
-        final offer = state.specialOffers.first;
-        final imageUrl = offer.serviceImages.isNotEmpty
-            ? ImageUrlHelper.full(offer.serviceImages.first)
-            : null;
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: GestureDetector(
-            onTap: () => NavigationHelper.pushNamed(
-              Routes.bookingServiceDetailsScreen,
-              arguments: offer,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
-              child: SizedBox(
-                height: 140.h,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CustomImageHandler(imageUrl, fit: BoxFit.cover),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerRight,
-                          end: Alignment.centerLeft,
-                          colors: [
-                            Colors.black.withValues(alpha: 0.0),
-                            Colors.black.withValues(alpha: 0.55),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 16.w,
-                      bottom: 20.h,
-                      child: SizedBox(
-                        width: 220.w,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              offer.name,
-                              textAlign: TextAlign.right,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            4.verticalSpace,
-                            Text(
-                              offer.details,
-                              textAlign: TextAlign.right,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 12.w,
-                      bottom: 16.h,
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                        child: Text(
-                          'عروض مميزة',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
         );
       },

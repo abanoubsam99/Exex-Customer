@@ -5,6 +5,10 @@ import 'package:evex_user/core/ui/widgets/country_picker.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
+import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
+import 'package:evex_user/data/cubits/ports_filter/ports_filter_state.dart';
+import 'package:evex_user/data/models/city.dart';
+import 'package:evex_user/data/models/governate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +23,8 @@ class CustomBottomSheet extends StatefulWidget {
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
   bool isAvilableOnly = true;
   double myValue = 5;
-  double _currentValue = 170000;
+  // Starts at the max so an untouched slider means "no price cap".
+  double _currentValue = 500000;
   final double _min = 0;
   final double _max = 500000;
   int count = 0;
@@ -150,74 +155,76 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               onChanged: (value) {},
             ),
             16.verticalSpace,
-            Row(
-              children: [
-                Expanded(
-                  child: CustomDropDownFormField(
-                    // title: AppStrings.governnorate.tr(),
-                    hintText: AppStrings.governnorate.tr(),
-
-                    items: [],
-                    // items: controller.governates.value
-                    //     .map((g) => DropdownMenuItem(
-                    //           value: g.governorateNameAr,
-                    //           // alignment: Alignment.center,
-                    //           child: Text(
-                    //             g.governorateNameAr ?? "",
-                    //             style: CustomTextTheme.font16BlackMedium,
-                    //           ),
-                    //         ),)
-                    //     .toList(),
-                    onChanged: (p0) {
-                      // controller.selectedCity.value = null;
-                      // controller.selectedGovernateName.value = p0;
-                      // controller.getCities(gName: p0);
-                    },
-                    // value: controller.selectedGovernateName.value,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'يرجي اختيار محافظة';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                11.horizontalSpace,
-                Expanded(
-                  child: CustomDropDownFormField(
-                    // title: AppStrings.city.tr(),
-                    hintText: AppStrings.city.tr(),
-                    // value: controller.selectedCity.value,
-                    items: [],
-                    // items: controller.cities.value
-                    //     .map((g) => DropdownMenuItem(
-                    //           value: g.cityNameAr,
-                    //           // alignment: Alignment.center,
-                    //           child: Text(
-                    //             g.cityNameAr ?? "",
-                    //             style: CustomTextTheme.font16BlackMedium,
-                    //           ),
-                    //         ))
-                    //     .toList(),
-                    onChanged: (city) {
-                      // controller.selectedCity.value = city;
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'يرجي اختيار مدينة';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
-            ),
-            20.verticalSpace,
-            CustomDropDownFormField(
-              title: "حدد نوع المناسبة",
-              hintText: "حدد نوع المناسبة",
-              items: [],
-              onChanged: (value) {},
+            BlocBuilder<PortsFilterCubit, PortsFilterState>(
+              builder: (context, fState) {
+                final filterCubit = context.read<PortsFilterCubit>();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomDropDownFormField(
+                            hintText: fState.isLoading
+                                ? 'جاري التحميل...'
+                                : AppStrings.governnorate.tr(),
+                            value: fState.selectedGovernorate,
+                            items: fState.governorates
+                                .map((g) => DropdownMenuItem(
+                                      value: g,
+                                      child: Text(g.governorateNameAr),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              if (value is Governate) {
+                                filterCubit.selectGovernorate(value);
+                              }
+                            },
+                          ),
+                        ),
+                        11.horizontalSpace,
+                        Expanded(
+                          child: CustomDropDownFormField(
+                            hintText: fState.isLoadingCities
+                                ? 'جاري التحميل...'
+                                : AppStrings.city.tr(),
+                            value: fState.selectedCity,
+                            items: fState.cities
+                                .map((c) => DropdownMenuItem(
+                                      value: c,
+                                      child: Text(c.cityNameAr),
+                                    ))
+                                .toList(),
+                            onChanged: fState.selectedGovernorate == null
+                                ? null
+                                : (value) {
+                                    if (value is City) {
+                                      filterCubit.selectCity(value);
+                                    }
+                                  },
+                          ),
+                        ),
+                      ],
+                    ),
+                    20.verticalSpace,
+                    CustomDropDownFormField(
+                      title: "حدد نوع المناسبة",
+                      hintText: "حدد نوع المناسبة",
+                      value: fState.selectedOccasionId,
+                      items: fState.occasions
+                          .where((o) => o.id != null)
+                          .map((o) => DropdownMenuItem(
+                                value: o.id,
+                                child: Text(o.name ?? ''),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        if (value is int) filterCubit.selectOccasion(value);
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
             18.verticalSpace,
             Row(
@@ -549,6 +556,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   child: CustomButton(
                     text: 'تأكيد',
                     onTap: () {
+                      final f = context.read<PortsFilterCubit>().state;
+                      final atMax = _currentValue.round() >= _max.round();
+                      context.read<InstantBookingCubit>().applyFilters(
+                            govId: f.selectedGovernorate?.id,
+                            occasionId: f.selectedOccasionId,
+                            numberAllowed: count > 0 ? count : null,
+                            maxPrice: atMax ? null : _currentValue.round(),
+                          );
                       Navigator.pop(context);
                     },
                   ),
@@ -560,6 +575,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     // backgroundColor: Colors.transparent,
                     text: 'إعادة التعيين',
                     onTap: () {
+                      context.read<PortsFilterCubit>().clearSelections();
+                      setState(() {
+                        _currentValue = _max;
+                        count = 0;
+                        countController.clear();
+                        isAvilableOnly = true;
+                      });
+                      context.read<InstantBookingCubit>().resetFilters();
                       Navigator.pop(context);
                     },
                   ),

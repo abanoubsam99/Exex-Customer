@@ -1,4 +1,6 @@
 class GetPortsRequest {
+  /// Governorate id — sent as `Id` to /api/Ports/Filter (the location filter).
+  int? id;
   int? portType;
   int? occasionId;
   int? numberAllowed;
@@ -9,6 +11,7 @@ class GetPortsRequest {
   DateTime? date;
 
   GetPortsRequest({
+    this.id,
     this.portType,
     this.occasionId,
     this.numberAllowed,
@@ -20,6 +23,9 @@ class GetPortsRequest {
   });
 
   GetPortsRequest.fromJson(Map<String, dynamic> json) {
+    id = (json['Id'] ?? json['id']) is num
+        ? (json['Id'] ?? json['id'] as num).toInt()
+        : null;
     portType = (json['portType'] as num?)?.toInt();
     occasionId = (json['occasionId'] as num?)?.toInt();
     numberAllowed = (json['numberAllowed'] as num?)?.toInt();
@@ -33,6 +39,7 @@ class GetPortsRequest {
   // Mirrors json_serializable(includeIfNull: false): null fields are omitted.
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    if (id != null) data['Id'] = id;
     if (portType != null) data['portType'] = portType;
     if (occasionId != null) data['occasionId'] = occasionId;
     if (numberAllowed != null) data['numberAllowed'] = numberAllowed;
