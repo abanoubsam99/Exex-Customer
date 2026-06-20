@@ -30,7 +30,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final cacheHelper = context.read<CacheHelper>();
     final userService = context.read<UserService>();
     final deepLinkService = context.read<DeepLinkService>();
-    Timer(const Duration(seconds: 3), () {
+    // Keep the splash short — the home screen only starts fetching its data
+    // after this delay, so a long splash directly delays the first paint.
+    Timer(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
       final isOnboardingCompleted =
           cacheHelper.getData('onboardingCompleted') as bool? ?? false;

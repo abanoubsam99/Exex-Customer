@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:evex_user/app/helpers/cache_helper.dart';
+import 'package:evex_user/core/constants/cash_keys.dart';
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/models/port_category_with_port_types.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart'
     show CheckReservationResponse;
+import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,12 +19,14 @@ class HomeCubit extends Cubit<HomeState> {
   final NotificationsRepo _notificationsRepo;
   final UserService _userService;
   final LocationService _locationService;
+  final CacheHelper _cacheHelper;
 
   HomeCubit(
     this._homeRepo,
     this._notificationsRepo,
     this._userService,
     this._locationService,
+    this._cacheHelper,
   ) : super(const HomeState());
 
   /// Clears all home state so the next signed-in account starts fresh.
@@ -48,51 +55,123 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(unreadNotifications: 0));
 
   Future<void> getHomeUserAppInfo() async {
-    emit(state.copyWith(isLoadingPorts: true));
+    // Stale-while-revalidate: paint the last cached categories immediately so a
+    // returning user sees content at once instead of a multi-second shimmer,
+    // then refresh from the network in the background. Only the very first
+    // launch (no cache) shows the shimmer.
+    final cached = _readCachedPorts();
+    if (cached != null) {
+      _emitPorts(cached, isLoading: false);
+    } else {
+      emit(state.copyWith(isLoadingPorts: true));
+    }
+
     final ports = await _homeRepo.getHomeUserAppInfo(
       gov: _locationService.govName,
       city: _locationService.cityName,
     );
     if (ports != null) {
-      final booking = ports.where((p) => p.subscriptionType == 0).toList();
-      final payment = ports.where((p) => p.subscriptionType == 1).toList();
-      // Default the selection to the first category (so the section shows a
-      // selected card + its types), but keep the user's pick across refreshes.
-      final selBooking =
-          state.selectedBookingPort ?? (booking.isNotEmpty ? booking.first : null);
-      final selPayment =
-          state.selectedPaymentPort ?? (payment.isNotEmpty ? payment.first : null);
+      _cachePorts(ports);
+      _emitPorts(ports, isLoading: false);
+    } else {
+      // Network failed: stop the shimmer but keep any cached content visible.
       emit(state.copyWith(
         isLoadingPorts: false,
-        bookingPorts: booking,
-        paymentPorts: payment,
-        selectedBookingPort: selBooking,
-        selectedBookingPortType: state.selectedBookingPortType ??
-            (selBooking != null && selBooking.portTypeDtos.isNotEmpty
-                ? selBooking.portTypeDtos.first
-                : null),
-        selectedPaymentPort: selPayment,
-        selectedPaymentPortType: state.selectedPaymentPortType ??
-            (selPayment != null && selPayment.portTypeDtos.isNotEmpty
-                ? selPayment.portTypeDtos.first
-                : null),
+        errorMessage: cached == null ? 'حدث خطأ' : null,
       ));
-    } else {
-      emit(state.copyWith(isLoadingPorts: false, errorMessage: 'حدث خطأ'));
     }
   }
 
+  /// Splits ports into booking/payment lists and defaults the selection to the
+  /// first category (keeping the user's pick across refreshes), then emits.
+  void _emitPorts(
+    List<PortCategoryWithPortTypes> ports, {
+    required bool isLoading,
+  }) {
+    final booking = ports.where((p) => p.subscriptionType == 0).toList();
+    final payment = ports.where((p) => p.subscriptionType == 1).toList();
+    final selBooking =
+        state.selectedBookingPort ?? (booking.isNotEmpty ? booking.first : null);
+    final selPayment =
+        state.selectedPaymentPort ?? (payment.isNotEmpty ? payment.first : null);
+    emit(state.copyWith(
+      isLoadingPorts: isLoading,
+      bookingPorts: booking,
+      paymentPorts: payment,
+      selectedBookingPort: selBooking,
+      selectedBookingPortType: state.selectedBookingPortType ??
+          (selBooking != null && selBooking.portTypeDtos.isNotEmpty
+              ? selBooking.portTypeDtos.first
+              : null),
+      selectedPaymentPort: selPayment,
+      selectedPaymentPortType: state.selectedPaymentPortType ??
+          (selPayment != null && selPayment.portTypeDtos.isNotEmpty
+              ? selPayment.portTypeDtos.first
+              : null),
+    ));
+  }
+
   Future<void> getSpecialOffers() async {
-    emit(state.copyWith(isLoadingOffers: true));
+    // Same stale-while-revalidate strategy as the categories above.
+    final cached = _readCachedOffers();
+    if (cached != null) {
+      emit(state.copyWith(isLoadingOffers: false, specialOffers: cached));
+    } else {
+      emit(state.copyWith(isLoadingOffers: true));
+    }
+
     final offers = await _homeRepo.getSpecialOffers(
       gov: _locationService.govName,
       city: _locationService.cityName,
     );
     if (offers != null) {
+      _cacheOffers(offers);
       emit(state.copyWith(isLoadingOffers: false, specialOffers: offers));
     } else {
-      emit(state.copyWith(isLoadingOffers: false, errorMessage: 'حدث خطأ'));
+      emit(state.copyWith(
+        isLoadingOffers: false,
+        errorMessage: cached == null ? 'حدث خطأ' : null,
+      ));
     }
+  }
+
+  // ── Home payload cache (stale-while-revalidate) ──
+  List<PortCategoryWithPortTypes>? _readCachedPorts() {
+    final raw = _cacheHelper.getData(CacheKeys.homePorts) as String?;
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      return (jsonDecode(raw) as List)
+          .map((e) => PortCategoryWithPortTypes.fromJson(e))
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _cachePorts(List<PortCategoryWithPortTypes> ports) {
+    _cacheHelper.saveData(
+      key: CacheKeys.homePorts,
+      value: jsonEncode(ports.map((e) => e.toJson()).toList()),
+    );
+  }
+
+  List<SpecialOffer>? _readCachedOffers() {
+    final raw = _cacheHelper.getData(CacheKeys.homeOffers) as String?;
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      return (jsonDecode(raw) as List)
+          .map((e) => SpecialOffer.fromJson(e))
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _cacheOffers(List<SpecialOffer> offers) {
+    _cacheHelper.saveData(
+      key: CacheKeys.homeOffers,
+      value: jsonEncode(offers.map((e) => e.toJson()).toList()),
+    );
   }
 
   void selectBookingPort(PortCategoryWithPortTypes port) {

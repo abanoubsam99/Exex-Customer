@@ -61,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
             children: [
               SizedBox(
-                height: 340.h,
+                height: 368.h,
                 child: Stack(
                   children: [
                     Container(
                       width: 1.sw,
-                      height: 229.h,
+                      height: 256.h,
                       color: Colors.white,
                       child: Stack(
                         children: [
@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Container(
                               width: 1.sw,
-                              height: 229.h,
+                              height: 256.h,
                               decoration: BoxDecoration(
                                 color: AppColors.bgLightGrey.withOpacity(0.5),
                               ),
@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     EdgeInsets.symmetric(horizontal: 24.w),
                                 child: Column(
                                   children: [
-                                    40.verticalSpace,
+                                    64.verticalSpace,
                                     const UserDataSection(),
                                     14.verticalSpace,
                                     Row(
@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                     Positioned.fill(
-                      top: 160.h,
+                      top: 188.h,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,

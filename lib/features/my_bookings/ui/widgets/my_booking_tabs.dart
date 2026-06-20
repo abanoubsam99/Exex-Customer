@@ -1,5 +1,7 @@
 import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyBookingTabs extends StatelessWidget {
@@ -8,6 +10,16 @@ class MyBookingTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TabBar(
+      // Re-fetch the tapped tab's data so it auto-refreshes on every tap.
+      onTap: (index) {
+        final cubit = context.read<MyBookingsCubit>();
+        if (index == 0) {
+          cubit.loadRequests();
+        } else {
+          // Confirmed + cancelled tabs are both filled from GetMyReservations.
+          cubit.loadReservations();
+        }
+      },
       dividerColor: AppColors.grey6,
       indicatorSize: TabBarIndicatorSize.label,
       indicatorWeight: 4.r,

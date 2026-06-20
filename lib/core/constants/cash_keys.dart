@@ -15,6 +15,11 @@ class CacheKeys {
   static const String countryName = "countryName";
   static const String countryImage = "countryImage";
 
+  // Last home payload, cached so the home screen paints instantly on reopen
+  // (stale-while-revalidate) instead of showing a shimmer for the whole fetch.
+  static const String homePorts = "homePorts";
+  static const String homeOffers = "homeOffers";
+
   // Location chosen on onboarding (reused as gov/city in the data APIs).
   static const String selectedGovId = "selectedGovId";
   static const String selectedGovName = "selectedGovName";

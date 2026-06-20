@@ -89,7 +89,7 @@ class ServiceCategorySection extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
               itemCount: types.length,
-              separatorBuilder: (_, __) => 10.horizontalSpace,
+              separatorBuilder: (_, __) => 12.horizontalSpace,
               itemBuilder: (context, index) {
                 final type = types[index];
                 final isSelected = selectedType?.id == type.id;
@@ -99,9 +99,13 @@ class ServiceCategorySection extends StatelessWidget {
                       onSelectType(type);
                       onOpenPorts();
                     },
+                    // Width + spacing mirror the category card above so the two
+                    // rows line up.
                     child: Container(
+                      width: 104.w,
+                      alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(
-                          vertical: 6.h, horizontal: 18.w),
+                          vertical: 6.h, horizontal: 8.w),
                       decoration: ShapeDecoration(
                         color: isSelected ? AppColors.blacksoft : Colors.white,
                         shape: RoundedRectangleBorder(
@@ -113,10 +117,12 @@ class ServiceCategorySection extends StatelessWidget {
                       child: Text(
                         type.nameAr ?? type.nameEn ?? '',
                         textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color:
                               isSelected ? Colors.white : AppColors.blacksoft,
-                          fontSize: 13.r,
+                          fontSize: 14.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w400,
                           letterSpacing: -0.24,
@@ -176,8 +182,8 @@ class _CategoryCard extends StatelessWidget {
     final icon = CustomImageHandler(
       ImageUrlHelper.full(category.iconePath),
       fit: BoxFit.contain,
-      height: 48.r,
-      width: 48.r,
+      height: 45.r,
+      width: 45.r,
     );
     return GestureDetector(
       onTap: onTap,
@@ -186,7 +192,9 @@ class _CategoryCard extends StatelessWidget {
           width: 104.w,
           height: 100.h,
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+          // Horizontal padding kept tight so the label has ~94w to render —
+          // long service names need the room to avoid early truncation.
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
           decoration: isSelected
               ? ShapeDecoration(
                   color: Colors.white,
@@ -210,30 +218,29 @@ class _CategoryCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                 ),
-          // Selected card shows its label; the rest show the icon only.
-          child: isSelected
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    icon,
-                    6.verticalSpace,
-                    Text(
-                      category.nameAr ?? category.nameEn ?? '',
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.24,
-                      ),
-                    ),
-                  ],
-                )
-              : icon,
+          // Every card shows its label now (selected or not); only the border
+          // style differs between selected/unselected.
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icon,
+              6.verticalSpace,
+              Text(
+                category.nameAr ?? category.nameEn ?? '',
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.24,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
