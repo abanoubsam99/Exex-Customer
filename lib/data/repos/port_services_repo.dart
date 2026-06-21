@@ -58,6 +58,25 @@ class PortServicesRepo {
     }
   }
 
+  /// GET /api/Ports/GetPortImages/{portId} — the port's gallery image paths
+  /// (relative paths under Uploads/...). Returns null on failure.
+  Future<List<String>?> getPortImages(int portId) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.getPortImages}/$portId',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return (response.data as List)
+            .map((e) => e.toString())
+            .where((e) => e.trim().isNotEmpty)
+            .toList();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<ServiceDetailsModel?> getServiceData(int id) async {
     try {
       final response = await DioHelper.getData(

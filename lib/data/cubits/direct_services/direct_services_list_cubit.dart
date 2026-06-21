@@ -33,8 +33,10 @@ class DirectServicesListCubit extends Cubit<DirectServicesListState> {
   }
 
   /// تغيير نوع الخدمة من الـ tabs اللي فوق (يعيد الفلترة بدون navigation جديد).
+  /// بيمسح القايمة القديمة الأول عشان مؤشر التحميل يظهر لحد ما النوع الجديد يحمّل.
   Future<void> changeType(int? portTypeId) async {
     _request.portType = portTypeId;
+    emit(state.copyWith(isLoading: true, clearPorts: true));
     await Future.wait([_fetch(), _fetchSpecialOffers()]);
   }
 

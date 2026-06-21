@@ -90,24 +90,30 @@ class HomeCubit extends Cubit<HomeState> {
   }) {
     final booking = ports.where((p) => p.subscriptionType == 0).toList();
     final payment = ports.where((p) => p.subscriptionType == 1).toList();
-    final selBooking =
-        state.selectedBookingPort ?? (booking.isNotEmpty ? booking.first : null);
-    final selPayment =
-        state.selectedPaymentPort ?? (payment.isNotEmpty ? payment.first : null);
+
+    // The two sections are mutually exclusive. On a fresh launch (nothing
+    // selected yet) default to the first booking category so its types open
+    // below it; the direct-services section starts with no selection. We never
+    // auto-select a payment category, and a background refresh keeps whatever
+    // the user currently has selected.
+    final hasSelection =
+        state.selectedBookingPort != null || state.selectedPaymentPort != null;
+    var selBooking = state.selectedBookingPort;
+    var selBookingType = state.selectedBookingPortType;
+    if (!hasSelection && booking.isNotEmpty) {
+      selBooking = booking.first;
+      selBookingType = booking.first.portTypeDtos.isNotEmpty
+          ? booking.first.portTypeDtos.first
+          : null;
+    }
+
     emit(state.copyWith(
       isLoadingPorts: isLoading,
       bookingPorts: booking,
       paymentPorts: payment,
       selectedBookingPort: selBooking,
-      selectedBookingPortType: state.selectedBookingPortType ??
-          (selBooking != null && selBooking.portTypeDtos.isNotEmpty
-              ? selBooking.portTypeDtos.first
-              : null),
-      selectedPaymentPort: selPayment,
-      selectedPaymentPortType: state.selectedPaymentPortType ??
-          (selPayment != null && selPayment.portTypeDtos.isNotEmpty
-              ? selPayment.portTypeDtos.first
-              : null),
+      selectedBookingPortType: selBookingType,
+      // Payment selection is left exactly as-is (null on first launch).
     ));
   }
 
@@ -180,11 +186,16 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(
       selectedBookingPort: port,
       selectedBookingPortType: firstType,
+      // Unchecks the direct-services section and hides its chips.
+      clearPaymentSelection: true,
     ));
   }
 
   void selectBookingPortType(PortTypeDto type) {
-    emit(state.copyWith(selectedBookingPortType: type));
+    emit(state.copyWith(
+      selectedBookingPortType: type,
+      clearPaymentSelection: true,
+    ));
   }
 
   void selectPaymentPort(PortCategoryWithPortTypes port) {
@@ -193,11 +204,16 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(
       selectedPaymentPort: port,
       selectedPaymentPortType: firstType,
+      // Unchecks the instant-booking section and hides its chips.
+      clearBookingSelection: true,
     ));
   }
 
   void selectPaymentPortType(PortTypeDto type) {
-    emit(state.copyWith(selectedPaymentPortType: type));
+    emit(state.copyWith(
+      selectedPaymentPortType: type,
+      clearBookingSelection: true,
+    ));
   }
 
   /// Stores the occasion date picked in the instant-booking filter so the

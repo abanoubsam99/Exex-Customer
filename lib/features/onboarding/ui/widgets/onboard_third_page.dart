@@ -4,7 +4,6 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_state.dart';
 import 'package:evex_user/data/models/city.dart';
-import 'package:evex_user/data/models/governate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -100,7 +99,7 @@ class _OnboardThirdPageState extends State<OnboardThirdPage>
                               ),
                             ),
                             20.verticalSpace,
-                            const _LocationDropdowns(),
+                            const _CityDropdown(),
                           ],
                         ),
                       ),
@@ -124,54 +123,32 @@ class _OnboardThirdPageState extends State<OnboardThirdPage>
   }
 }
 
-/// The mandatory governorate + city dropdowns (wired to [OnboardingLocationCubit]).
-/// The city dropdown is disabled until a governorate is picked.
-class _LocationDropdowns extends StatelessWidget {
-  const _LocationDropdowns();
+/// The mandatory city dropdown (wired to [OnboardingLocationCubit]). The
+/// governorate is chosen on the previous page, so its cities are already loaded
+/// by the time this page is reached.
+class _CityDropdown extends StatelessWidget {
+  const _CityDropdown();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OnboardingLocationCubit, OnboardingLocationState>(
       builder: (context, state) {
         final cubit = context.read<OnboardingLocationCubit>();
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomDropDownFormField(
-              title: 'المحافظة',
-              hintText: state.isLoadingGovernorates
-                  ? 'جاري التحميل...'
-                  : 'اختر المحافظة',
-              value: state.selectedGovernorate,
-              items: state.governorates
-                  .map((g) => DropdownMenuItem(
-                        value: g,
-                        child: Text(g.governorateNameAr),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value is Governate) cubit.selectGovernorate(value);
-              },
-            ),
-            12.verticalSpace,
-            CustomDropDownFormField(
-              title: 'المدينة',
-              hintText:
-                  state.isLoadingCities ? 'جاري التحميل...' : 'اختر المدينة',
-              value: state.selectedCity,
-              items: state.cities
-                  .map((c) => DropdownMenuItem(
-                        value: c,
-                        child: Text(c.cityNameAr),
-                      ))
-                  .toList(),
-              onChanged: state.selectedGovernorate == null
-                  ? null
-                  : (value) {
-                      if (value is City) cubit.selectCity(value);
-                    },
-            ),
-          ],
+        return CustomDropDownFormField(
+          title: 'اختار مدينتك',
+          hintText: state.isLoadingCities ? 'جاري التحميل...' : 'اختر المدينة',
+          value: state.selectedCity,
+          items: state.cities
+              .map((c) => DropdownMenuItem(
+                    value: c,
+                    child: Text(c.cityNameAr),
+                  ))
+              .toList(),
+          onChanged: state.selectedGovernorate == null
+              ? null
+              : (value) {
+                  if (value is City) cubit.selectCity(value);
+                },
         );
       },
     );

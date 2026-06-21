@@ -39,103 +39,122 @@ class ServiceCategorySection extends StatelessWidget {
     required this.onOpenPorts,
   });
 
+  /// How many cards fit across the row. The fraction is deliberate: it leaves
+  /// part of the next card peeking at the edge so the user can tell the row
+  /// scrolls horizontally (instead of looking like a fixed set of 3).
+  static const double _visibleCards = 3.3;
+
   @override
   Widget build(BuildContext context) {
     final types = selectedCategory?.portTypeDtos ?? const <PortTypeDto>[];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _header(),
-        12.verticalSpace,
-        if (isLoading)
-          SizedBox(
-            height: 116.h,
-            child: ListView.separated(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              itemCount: 3,
-              separatorBuilder: (_, __) => 12.horizontalSpace,
-              itemBuilder: (_, __) => ShimmerSkelton(width: 104.w, height: 100.h),
-            ),
-          )
-        else
-          SizedBox(
-            height: 116.h,
-            child: ListView.separated(
-              clipBehavior: Clip.none,
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length,
-              separatorBuilder: (_, __) => 12.horizontalSpace,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                return _CategoryCard(
-                  category: category,
-                  isSelected: selectedCategory?.id == category.id,
-                  onTap: () {
-                    onSelectCategory(category);
-                    // No port types → open the ports list directly (general).
-                    if (category.portTypeDtos.isEmpty) onOpenPorts();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final separator = 12.w;
+        // Size each card so ~3.3 fit the available width → a partial card
+        // always peeks, hinting the row is scrollable.
+        final itemWidth =
+            (constraints.maxWidth - 3 * separator) / _visibleCards;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _header(),
+            12.verticalSpace,
+            if (isLoading)
+              SizedBox(
+                height: 116.h,
+                child: ListView.separated(
+                  clipBehavior: Clip.none,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  separatorBuilder: (_, __) => SizedBox(width: separator),
+                  itemBuilder: (_, __) =>
+                      ShimmerSkelton(width: itemWidth, height: 100.h),
+                ),
+              )
+            else
+              SizedBox(
+                height: 116.h,
+                child: ListView.separated(
+                  clipBehavior: Clip.none,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  separatorBuilder: (_, __) => SizedBox(width: separator),
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return _CategoryCard(
+                      width: itemWidth,
+                      category: category,
+                      isSelected: selectedCategory?.id == category.id,
+                      onTap: () {
+                        onSelectCategory(category);
+                        // No port types → open the ports list directly.
+                        if (category.portTypeDtos.isEmpty) onOpenPorts();
+                      },
+                    );
                   },
-                );
-              },
-            ),
-          ),
-        // ── Port-type chips for the selected category (if it has any) ──
-        if (types.isNotEmpty) ...[
-          14.verticalSpace,
-          SizedBox(
-            height: 34.h,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              clipBehavior: Clip.none,
-              itemCount: types.length,
-              separatorBuilder: (_, __) => 12.horizontalSpace,
-              itemBuilder: (context, index) {
-                final type = types[index];
-                final isSelected = selectedType?.id == type.id;
-                return Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      onSelectType(type);
-                      onOpenPorts();
-                    },
-                    // Width + spacing mirror the category card above so the two
-                    // rows line up.
-                    child: Container(
-                      width: 104.w,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 6.h, horizontal: 8.w),
-                      decoration: ShapeDecoration(
-                        color: isSelected ? AppColors.blacksoft : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                              width: 1.5, color: AppColors.blacksoft),
-                          borderRadius: BorderRadius.circular(10.r),
+                ),
+              ),
+            // ── Port-type chips for the selected category (if it has any) ──
+            if (types.isNotEmpty) ...[
+              14.verticalSpace,
+              SizedBox(
+                height: 34.h,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  clipBehavior: Clip.none,
+                  itemCount: types.length,
+                  separatorBuilder: (_, __) => SizedBox(width: separator),
+                  itemBuilder: (context, index) {
+                    final type = types[index];
+                    final isSelected = selectedType?.id == type.id;
+                    return Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          onSelectType(type);
+                          onOpenPorts();
+                        },
+                        // Width + spacing mirror the category card above so the
+                        // two rows line up (and peek the same way).
+                        child: Container(
+                          width: itemWidth,
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 6.h, horizontal: 8.w),
+                          decoration: ShapeDecoration(
+                            color: isSelected
+                                ? AppColors.blacksoft
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  width: 1.5, color: AppColors.blacksoft),
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                          child: Text(
+                            type.nameAr ?? type.nameEn ?? '',
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.blacksoft,
+                              fontSize: 10.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -0.24,
+                            ),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        type.nameAr ?? type.nameEn ?? '',
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color:
-                              isSelected ? Colors.white : AppColors.blacksoft,
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: -0.24,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 
@@ -168,10 +187,12 @@ class ServiceCategorySection extends StatelessWidget {
 }
 
 class _CategoryCard extends StatelessWidget {
+  final double width;
   final PortCategoryWithPortTypes category;
   final bool isSelected;
   final VoidCallback onTap;
   const _CategoryCard({
+    required this.width,
     required this.category,
     required this.isSelected,
     required this.onTap,
@@ -189,7 +210,7 @@ class _CategoryCard extends StatelessWidget {
       onTap: onTap,
       child: Center(
         child: Container(
-          width: 104.w,
+          width: width,
           height: 100.h,
           alignment: Alignment.center,
           // Horizontal padding kept tight so the label has ~94w to render —
@@ -233,7 +254,7 @@ class _CategoryCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 14.r,
+                  fontSize: 10.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.24,

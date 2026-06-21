@@ -79,127 +79,133 @@ class SpecialOffersSection extends StatelessWidget {
             return CarouselSlider(
               items: state.specialOffers
                   .map(
-                    (offer) => Stack(
-                      children: [
-                        Container(
-                          width: 1.sw,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16.r),
-                            child: Transform.scale(
-                              scale: 1.1,
-                              child: CustomImageHandler(
-                                offer.serviceImages.isNotEmpty
-                                    ? ImageUrlHelper.full(
-                                        offer.serviceImages.first,
-                                      )
-                                    : null,
-                                fit: BoxFit.cover,
-                                alignment: const Alignment(0, -0.58),
-                              ),
+                    (offer) => InkWell(
+                      onTap: () => NavigationHelper.pushNamed(
+                        Routes.bookingServiceDetailsScreen,
+                        arguments: offer,
+                      ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 1.sw,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColors.blacksoft.withValues(alpha: 0),
-                                Colors.black.withValues(alpha: 0.5),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                        ),
-                        Positioned(
-                          top: 6.r,
-                          left: 6.r,
-                          child: Container(
-                            width: 74.r,
-                            height: 19.r,
-                            decoration: ShapeDecoration(
-                              color: AppColors.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(13.r),
-                                  topRight: Radius.circular(4.r),
-                                  bottomLeft: Radius.circular(4.r),
-                                  bottomRight: Radius.circular(4.r),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Transform.scale(
+                                scale: 1.1,
+                                child: CustomImageHandler(
+                                  offer.serviceImages.isNotEmpty
+                                      ? ImageUrlHelper.full(
+                                          offer.serviceImages.first,
+                                        )
+                                      : null,
+                                  fit: BoxFit.cover,
+                                  alignment: const Alignment(0, -0.58),
                                 ),
                               ),
                             ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'الاكثر طلبا ً',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.24,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.blacksoft.withValues(alpha: 0),
+                                  Colors.black.withValues(alpha: 0.5),
+                                ],
                               ),
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 14.h,
-                          right: 0,
-                          left: 0,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 12.r, left: 10.r),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        offer.name,
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18.r,
-                                          fontFamily: 'Almarai',
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                      Text(
-                                        offer.details,
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 13.r,
-                                          fontWeight: FontWeight.w400,
-                                          letterSpacing: -0.24.w,
-                                        ),
-                                      ),
-                                    ],
+                          Positioned(
+                            top: 6.r,
+                            left: 6.r,
+                            child: Container(
+                              width: 74.r,
+                              height: 19.r,
+                              decoration: ShapeDecoration(
+                                color: AppColors.primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(13.r),
+                                    topRight: Radius.circular(4.r),
+                                    bottomLeft: Radius.circular(4.r),
+                                    bottomRight: Radius.circular(4.r),
                                   ),
                                 ),
-                                13.horizontalSpaceRadius,
-                                CustomButton(
-                                  height: 40.h,
-                                  width: 75.w,
-                                  bordereColor: AppColors.blacksoft,
-                                  fontSize: 14.r,
-                                  text: "تفاصيل",
-                                  onTap: () => NavigationHelper.pushNamed(
-                                    Routes.bookingServiceDetailsScreen,
-                                    arguments: offer,
-                                  ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                'الاكثر طلبا ً',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.24,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          Positioned(
+                            bottom: 14.h,
+                            right: 0,
+                            left: 0,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 12.r, left: 10.r),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          offer.name,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.r,
+                                            fontFamily: 'Almarai',
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        Text(
+                                          offer.details,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.r,
+                                            fontWeight: FontWeight.w400,
+                                            letterSpacing: -0.24.w,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  13.horizontalSpaceRadius,
+                                  // CustomButton(
+                                  //   height: 40.h,
+                                  //   width: 75.w,
+                                  //   bordereColor: AppColors.blacksoft,
+                                  //   fontSize: 14.r,
+                                  //   text: "تفاصيل",
+                                  //   onTap: () => NavigationHelper.pushNamed(
+                                  //     Routes.bookingServiceDetailsScreen,
+                                  //     arguments: offer,
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
                   .toList(),

@@ -82,6 +82,9 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
     if (result != null) {
       final user = _userService.currentUser!;
       user.userViewModel?.phoneNumber = _sentPhone;
+      // Persist the verified flag so re-opening the app doesn't send the user
+      // back to this OTP screen (getInitialRoute checks isPhoneVerified).
+      user.userViewModel?.phoneVerified = true;
       await _userService.saveUser(user);
       emit(OtpConfirmSuccess());
       NavigationHelper.pushNamedAndRemoveUntil(Routes.addClientScreen);

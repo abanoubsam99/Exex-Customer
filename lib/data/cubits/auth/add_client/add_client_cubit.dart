@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/city.dart';
@@ -15,19 +16,58 @@ class AddClientCubit extends Cubit<AddClientState> {
   final AddClientRepo _addClientRepo;
   final LocationRepo _locationRepo;
   final UserService _userService;
+  final LocationService _locationService;
 
-  AddClientCubit(this._addClientRepo, this._locationRepo, this._userService)
-      : super(const AddClientState());
+  AddClientCubit(
+    this._addClientRepo,
+    this._locationRepo,
+    this._userService,
+    this._locationService,
+  ) : super(const AddClientState());
 
   final nameController = TextEditingController();
 
   Future<void> loadGovernorates() async {
     emit(state.copyWith(isLoading: true));
     final result = await _locationRepo.getGovernorates();
-    if (result != null) {
-      emit(state.copyWith(isLoading: false, governorates: result));
-    } else {
+    if (result == null) {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+      return;
+    }
+    emit(state.copyWith(isLoading: false, governorates: result));
+    // Pre-fill with the location the user already picked during onboarding so
+    // they don't have to choose the governorate/city again.
+    await _preselectSavedLocation(result);
+  }
+
+  /// Selects the saved onboarding governorate + city (from [LocationService])
+  /// by matching their ids against the freshly loaded lists. No-ops when no
+  /// location was saved or the saved ids aren't found.
+  Future<void> _preselectSavedLocation(List<Governate> governorates) async {
+    final savedGovId = _locationService.govId;
+    if (savedGovId == null) return;
+
+    Governate? gov;
+    for (final g in governorates) {
+      if (g.id == savedGovId) {
+        gov = g;
+        break;
+      }
+    }
+    if (gov == null) return;
+    emit(state.copyWith(selectedGovernorate: gov));
+
+    final cities = await _locationRepo.getCities(gov.id);
+    if (cities == null) return;
+    emit(state.copyWith(cities: cities));
+
+    final savedCityId = _locationService.cityId;
+    if (savedCityId == null) return;
+    for (final c in cities) {
+      if (c.id == savedCityId) {
+        emit(state.copyWith(selectedCity: c));
+        break;
+      }
     }
   }
 

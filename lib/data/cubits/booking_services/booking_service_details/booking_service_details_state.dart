@@ -8,6 +8,10 @@ class BookingServiceDetailsState {
   final bool isLoading;
   final Item? port;
   final bool isFavorite;
+
+  /// Gallery image paths fetched from /api/Ports/GetPortImages — preferred over
+  /// the (often empty) [Item.portImages] that comes with the ports list.
+  final List<String> portImages;
   final List<PortService> services;
   final PortService? selectedService;
   final List<AdditionModel> additions;
@@ -23,6 +27,7 @@ class BookingServiceDetailsState {
     this.isLoading = false,
     this.port,
     this.isFavorite = false,
+    this.portImages = const [],
     this.services = const [],
     this.selectedService,
     this.additions = const [],
@@ -39,6 +44,7 @@ class BookingServiceDetailsState {
     bool? isLoading,
     Item? port,
     bool? isFavorite,
+    List<String>? portImages,
     List<PortService>? services,
     PortService? selectedService,
     List<AdditionModel>? additions,
@@ -54,6 +60,7 @@ class BookingServiceDetailsState {
       isLoading: isLoading ?? this.isLoading,
       port: port ?? this.port,
       isFavorite: isFavorite ?? this.isFavorite,
+      portImages: portImages ?? this.portImages,
       services: services ?? this.services,
       selectedService: selectedService ?? this.selectedService,
       additions: additions ?? this.additions,

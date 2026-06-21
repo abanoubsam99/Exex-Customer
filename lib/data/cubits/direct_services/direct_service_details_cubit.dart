@@ -26,10 +26,12 @@ class DirectServiceDetailsCubit extends Cubit<DirectServiceDetailsState> {
     emit(state.copyWith(isLoading: true));
     final services = await _servicesRepo.getAllPortServices(port?.id ?? 0);
     final wallet = await _walletRepo.getWalletData();
+    final images = await _servicesRepo.getPortImages(port?.id ?? 0);
     emit(state.copyWith(
       isLoading: false,
       services: services ?? const [],
       wallet: wallet,
+      portImages: images ?? const [],
     ));
   }
 }

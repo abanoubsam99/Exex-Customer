@@ -1,7 +1,11 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
+import 'package:evex_user/data/cubits/onboarding/onboarding_location_state.dart';
+import 'package:evex_user/data/models/governate.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
@@ -90,21 +94,7 @@ class _OnboardSecondPageState extends State<OnboardSecondPage> with AutomaticKee
                               ),
                             ),
                             28.verticalSpace,
-                            CustomDropDownFormField(
-                              title: 'اختار محافظتك',
-                              hintText: 'اختار محافظتك',
-                              items: [
-                                const DropdownMenuItem(
-                                  value: 'القاهرة',
-                                  child: Text('القاهرة'),
-                                ),
-                                const DropdownMenuItem(
-                                  value: 'الجيزة',
-                                  child: Text('الجيزة'),
-                                ),
-                              ],
-                              onChanged: (value) {},
-                            ),
+                            const _GovernorateDropdown(),
                           ],
                         ),
                       ),
@@ -124,6 +114,36 @@ class _OnboardSecondPageState extends State<OnboardSecondPage> with AutomaticKee
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The mandatory governorate dropdown (wired to [OnboardingLocationCubit]).
+/// Picking a governorate loads its cities for the next page.
+class _GovernorateDropdown extends StatelessWidget {
+  const _GovernorateDropdown();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<OnboardingLocationCubit, OnboardingLocationState>(
+      builder: (context, state) {
+        final cubit = context.read<OnboardingLocationCubit>();
+        return CustomDropDownFormField(
+          title: 'اختار محافظتك',
+          hintText:
+              state.isLoadingGovernorates ? 'جاري التحميل...' : 'اختر المحافظة',
+          value: state.selectedGovernorate,
+          items: state.governorates
+              .map((g) => DropdownMenuItem(
+                    value: g,
+                    child: Text(g.governorateNameAr),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            if (value is Governate) cubit.selectGovernorate(value);
+          },
+        );
+      },
     );
   }
 }

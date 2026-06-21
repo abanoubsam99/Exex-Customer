@@ -97,42 +97,47 @@ class LoginScreen extends StatelessWidget {
                         ),
                         child: LoginBodyWidget(),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              // ── "تخطي" — browse as guest (anchored to the bottom-right) ──
-              Positioned(
-                right: 0,
-                bottom: 36.h,
-                child: GestureDetector(
-                  onTap: () => context.read<LoginCubit>().continueAsGuest(),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.blacksoft,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.r),
-                        bottomLeft: Radius.circular(30.r),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.arrow_back_ios_new_sharp,
-                            color: AppColors.primaryColor, size: 14.r),
-                        8.horizontalSpace,
-                        Text(
-                          'تخطي',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w700,
+                      // ── "تخطي" — browse as guest. Kept inside the scroll
+                      // view (right-aligned) so it scrolls with the page
+                      // instead of floating above the keyboard when a field is
+                      // focused. The user scrolls down to reach it.
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () =>
+                              context.read<LoginCubit>().continueAsGuest(),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 18.w, vertical: 12.h),
+                            decoration: BoxDecoration(
+                              color: AppColors.blacksoft,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(30.r),
+                                bottomLeft: Radius.circular(30.r),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.arrow_back_ios_new_sharp,
+                                    color: AppColors.primaryColor, size: 14.r),
+                                8.horizontalSpace,
+                                Text(
+                                  'تخطي',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.r,
+                                    fontFamily: 'Almarai',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      24.verticalSpace,
+                    ],
                   ),
                 ),
               ),

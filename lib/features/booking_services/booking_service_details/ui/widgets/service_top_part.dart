@@ -66,8 +66,11 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
   }
 
   /// The port's images as full URLs (empty when the backend returned none).
+  /// Prefers the dedicated /api/Ports/GetPortImages gallery, falling back to the
+  /// inline images that came with the ports list.
   List<String> _portImages(BookingServiceDetailsState state) {
-    final imgs = state.port?.portImages;
+    final dynamic imgs =
+        state.portImages.isNotEmpty ? state.portImages : state.port?.portImages;
     if (imgs is List) {
       return imgs
           .map((e) => ImageUrlHelper.full(e.toString()))
@@ -84,7 +87,8 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
       alignment: Alignment.bottomCenter,
       children: [
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
-          buildWhen: (p, c) => p.port != c.port,
+          buildWhen: (p, c) =>
+              p.port != c.port || p.portImages != c.portImages,
           builder: (context, state) {
             final images = _portImages(state);
             // No backend images → a single logo placeholder slide (no stock photo).
@@ -214,7 +218,8 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
           bottom: 40.h,
           child: BlocBuilder<BookingServiceDetailsCubit,
               BookingServiceDetailsState>(
-            buildWhen: (p, c) => p.port != c.port,
+            buildWhen: (p, c) =>
+                p.port != c.port || p.portImages != c.portImages,
             builder: (context, state) {
               final count = _portImages(state).length;
               if (count <= 1) return const SizedBox.shrink();

@@ -1,6 +1,6 @@
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
+import 'package:evex_user/data/cubits/onboarding/onboarding_location_state.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_first_page.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_second_page.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_third_page.dart';
@@ -23,6 +23,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
+  /// The "التالى" button is gated per page: the governorate page needs a
+  /// governorate picked, the city page needs a city picked. The first
+  /// (country) page defaults to Egypt, so it's always enabled.
+  bool _isNextEnabled(OnboardingLocationState state) {
+    switch (_currentPage) {
+      case 1:
+        return state.selectedGovernorate != null;
+      case 2:
+        return state.selectedCity != null;
+      default:
+        return true;
+    }
+  }
+
+  Future<void> _onNextPressed() async {
+    if (_pageController.page!.toInt() < 2) {
+      _pageController.animateToPage(
+        _pageController.page!.toInt() + 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
+    // Last page: persist the chosen location and finish onboarding. The button
+    // is only enabled once a city is selected, so the pair is always complete.
+    final locationCubit = context.read<OnboardingLocationCubit>();
+    final cache = context.read<CacheHelper>();
+    await locationCubit.persist();
+    cache.saveData(key: 'onboardingCompleted', value: true);
+    NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,67 +72,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           Positioned(
-            bottom: 63.r,
+            bottom: 45.r,
             left: 0.r,
             right: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                SizedBox(
-                  height: 46.h,
-                  width: 97.w,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: AppColors.blacksoft,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16.r),
-                          bottomLeft: Radius.circular(16.r),
+                BlocBuilder<OnboardingLocationCubit, OnboardingLocationState>(
+                  builder: (context, state) {
+                    final enabled = _isNextEnabled(state);
+                    return SizedBox(
+                      height: 46.h,
+                      width: 97.w,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: AppColors.blacksoft,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: AppColors.bgLightGrey,
+                          disabledForegroundColor:
+                              Colors.black.withValues(alpha: 0.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16.r),
+                              bottomLeft: Radius.circular(16.r),
+                            ),
+                          ),
+                        ),
+                        // Disabled until the current page's dropdown is chosen,
+                        // so the user can't skip the governorate/city step.
+                        onPressed: enabled ? _onNextPressed : null,
+                        child: Text(
+                          'التالى',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.24,
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () async {
-                      if (_pageController.page!.toInt() < 2) {
-                        _pageController.animateToPage(
-                          _pageController.page!.toInt() + 1,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        // Location is mandatory before finishing onboarding.
-                        final locationCubit =
-                            context.read<OnboardingLocationCubit>();
-                        if (!locationCubit.state.canFinish) {
-                          ToastManager.showError(
-                              'من فضلك اختر المحافظة والمدينة');
-                          return;
-                        }
-                        final cache = context.read<CacheHelper>();
-                        await locationCubit.persist();
-                        cache.saveData(
-                          key: 'onboardingCompleted',
-                          value: true,
-                        );
-                        NavigationHelper.pushNamedAndRemoveUntil(
-                          Routes.loginScreen,
-                        );
-                      }
-                    },
-                    child: Text(
-                      'التالى',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.24,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 11.h),

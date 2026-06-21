@@ -106,8 +106,12 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
   final PageController _controller = PageController();
   int _active = 0;
 
-  List<String> get _images {
-    final imgs = widget.port?.portImages;
+  /// Prefers the dedicated /api/Ports/GetPortImages gallery (from the cubit),
+  /// falling back to the inline images that came with the port.
+  List<String> _imagesFrom(DirectServiceDetailsState state) {
+    final dynamic imgs = state.portImages.isNotEmpty
+        ? state.portImages
+        : widget.port?.portImages;
     if (imgs is List) {
       return imgs
           .map((e) => e.toString())
@@ -132,7 +136,8 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final images = _images;
+    final images =
+        _imagesFrom(context.watch<DirectServiceDetailsCubit>().state);
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,

@@ -30,6 +30,15 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 
+  /// Switches the selected booking port type and re-filters the list + offers
+  /// in place (no navigation). Clears the old list first so the loading
+  /// indicator shows while the new type loads.
+  Future<void> changeType(int? portTypeId) async {
+    _request.portType = portTypeId;
+    emit(state.copyWith(isLoading: true, clearPorts: true));
+    await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
+  }
+
   /// Featured offers filtered by the currently selected booking port type.
   Future<void> _fetchSpecialOffers() async {
     final offers =

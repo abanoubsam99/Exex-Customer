@@ -17,12 +17,13 @@ class DirectServicesListState {
   DirectServicesListState copyWith({
     bool? isLoading,
     PortsRespondModel? portsModel,
+    bool clearPorts = false,
     List<SpecialOffer>? specialOffers,
     String? errorMessage,
   }) {
     return DirectServicesListState(
       isLoading: isLoading ?? this.isLoading,
-      portsModel: portsModel ?? this.portsModel,
+      portsModel: clearPorts ? null : (portsModel ?? this.portsModel),
       specialOffers: specialOffers ?? this.specialOffers,
       errorMessage: errorMessage ?? this.errorMessage,
     );

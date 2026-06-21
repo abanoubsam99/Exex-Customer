@@ -2,6 +2,7 @@ import 'package:alice/alice.dart';
 import 'package:alice/model/alice_configuration.dart';
 import 'package:alice_dio/alice_dio_adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/cash_keys.dart';
@@ -12,10 +13,17 @@ import 'curl_logger_interceptor.dart';
 
 // Alice يستخدم نفس الـ navigatorKey بتاع التطبيق، والإشعار مقفول
 // عشان ميعملش crash (AliceCore._onCallsChanged null check).
+//
+// The shake gesture is enabled only in debug builds — both shake-to-open and
+// the notification default to `true` in AliceConfiguration, which would pop the
+// HTTP inspector in front of end users (e.g. an accidental phone shake while
+// switching apps). In release we keep Alice wired as a dio adapter but with no
+// way to surface its UI.
 final Alice alice = Alice(
   configuration: AliceConfiguration(
     navigatorKey: NavigationHelper.navigatorKey,
     showNotification: false,
+    showInspectorOnShake: kDebugMode,
   ),
 );
 

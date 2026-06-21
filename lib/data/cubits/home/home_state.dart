@@ -54,6 +54,10 @@ class HomeState {
     DateTime? bookingDate,
     CheckReservationResponse? availability,
     bool clearAvailability = false,
+    // Clear a whole section's selection (category + type). Used to keep the
+    // instant-booking and direct-services sections mutually exclusive.
+    bool clearBookingSelection = false,
+    bool clearPaymentSelection = false,
     int? unreadNotifications,
     String? errorMessage,
   }) {
@@ -63,12 +67,18 @@ class HomeState {
       bookingPorts: bookingPorts ?? this.bookingPorts,
       paymentPorts: paymentPorts ?? this.paymentPorts,
       specialOffers: specialOffers ?? this.specialOffers,
-      selectedBookingPort: selectedBookingPort ?? this.selectedBookingPort,
-      selectedBookingPortType:
-          selectedBookingPortType ?? this.selectedBookingPortType,
-      selectedPaymentPort: selectedPaymentPort ?? this.selectedPaymentPort,
-      selectedPaymentPortType:
-          selectedPaymentPortType ?? this.selectedPaymentPortType,
+      selectedBookingPort: clearBookingSelection
+          ? null
+          : (selectedBookingPort ?? this.selectedBookingPort),
+      selectedBookingPortType: clearBookingSelection
+          ? null
+          : (selectedBookingPortType ?? this.selectedBookingPortType),
+      selectedPaymentPort: clearPaymentSelection
+          ? null
+          : (selectedPaymentPort ?? this.selectedPaymentPort),
+      selectedPaymentPortType: clearPaymentSelection
+          ? null
+          : (selectedPaymentPortType ?? this.selectedPaymentPortType),
       bookingDate: bookingDate ?? this.bookingDate,
       availability:
           clearAvailability ? null : (availability ?? this.availability),

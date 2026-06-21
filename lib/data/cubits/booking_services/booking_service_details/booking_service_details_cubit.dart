@@ -29,6 +29,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   })  : _offerPortId = portId,
         super(BookingServiceDetailsState(port: port)) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      getPortImages();
       await getAllPortServices();
       await getAdditions();
       await getReviews();
@@ -63,6 +64,15 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       emit(state.copyWith(isFavorite: wasFavorite));
     } else if (response.message != null && response.message!.isNotEmpty) {
       ToastManager.showSuccess(response.message!);
+    }
+  }
+
+  /// Loads the port's gallery from /api/Ports/GetPortImages and stores it on the
+  /// state (the carousel prefers it over the port's inline images).
+  Future<void> getPortImages() async {
+    final images = await _repo.getPortImages(_portId);
+    if (images != null && images.isNotEmpty) {
+      emit(state.copyWith(portImages: images));
     }
   }
 

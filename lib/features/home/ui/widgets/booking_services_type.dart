@@ -1,6 +1,5 @@
-import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
-import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +26,10 @@ class BookingServicesType extends StatelessWidget {
               return Center(
                 child: GestureDetector(
                   onTap: () {
+                    // Filter in place on the instant-booking screen instead of
+                    // pushing a new copy of it onto the stack each tap.
                     context.read<HomeCubit>().selectBookingPortType(type);
-                    NavigationHelper.pushNamed(
-                      Routes.instantBookingServicesScreen,
-                    );
+                    context.read<InstantBookingCubit>().changeType(type.id);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(

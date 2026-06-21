@@ -89,16 +89,17 @@ import '../../data/cubits/request_to_join/request_to_join_cubit.dart';
 
 class AppRouter {
   /// Decides where to land on startup based on the cached user.
+  /// Where the splash sends the user on launch (onboarding is handled earlier
+  /// in the splash). Only three outcomes:
+  ///   • signed-in before (or browsing as guest) → home
+  ///   • otherwise                               → login
+  /// The intermediate auth states (add phone / OTP / complete profile) are part
+  /// of the sign-in flow itself and are no longer used as launch destinations.
   static String getInitialRoute(UserService userService) {
-    final user = userService.currentUser;
-    if (user == null) {
-      // Guests skip login and browse the app; everyone else signs in.
-      return userService.isGuest ? Routes.mainScreen : Routes.loginScreen;
+    if (userService.currentUser != null || userService.isGuest) {
+      return Routes.mainScreen;
     }
-    if (!user.hasPhone) return Routes.addPhoneScreen;
-    if (!user.isPhoneVerified) return Routes.addPhoneOptScreen;
-    if (!user.isAccountComplete) return Routes.addClientScreen;
-    return Routes.mainScreen;
+    return Routes.loginScreen;
   }
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
@@ -175,6 +176,7 @@ class AppRouter {
               context.read<AddClientRepo>(),
               context.read<LocationRepo>(),
               context.read<UserService>(),
+              context.read<LocationService>(),
             )..loadGovernorates(),
             child: const AddClientScreen(),
           ),

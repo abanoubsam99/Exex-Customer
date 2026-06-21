@@ -7,6 +7,8 @@ import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/favorites/favorites_cubit.dart';
 import 'package:evex_user/data/cubits/favorites/favorites_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,7 +82,12 @@ class FavoritesScreen extends StatelessWidget {
               ),
               const Expanded(
                 child: TabBarView(
-                  children: [_FavList(), _FavList()],
+                  children: [
+                    // الحجز الفوري (subscriptionType == 0)
+                    _FavList(isDirect: false),
+                    // الخدمات المباشرة (subscriptionType == 1)
+                    _FavList(isDirect: true),
+                  ],
                 ),
               ),
             ],
@@ -148,18 +155,25 @@ class _IntroCard extends StatelessWidget {
 }
 
 class _FavList extends StatelessWidget {
-  const _FavList();
+  /// `false` → instant-booking tab (subscriptionType 0),
+  /// `true`  → direct-services tab (subscriptionType 1).
+  final bool isDirect;
+  const _FavList({required this.isDirect});
 
   @override
   Widget build(BuildContext context) {
+    // Categories tell us which favorite belongs to which tab. They live in the
+    // app-wide HomeCubit, so watch it to re-split once they finish loading.
+    final home = context.watch<HomeCubit>().state;
     return BlocBuilder<FavoritesCubit, FavoritesState>(
       builder: (context, state) {
         if (state.isLoading && state.favorites.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
+        final items = _filterByType(state.favorites, home, isDirect: isDirect);
         return RefreshIndicator(
           onRefresh: () => context.read<FavoritesCubit>().loadFavorites(),
-          child: state.favorites.isEmpty
+          child: items.isEmpty
               ? ListView(
                   padding: EdgeInsets.symmetric(vertical: 80.h),
                   children: [
@@ -177,15 +191,31 @@ class _FavList extends StatelessWidget {
                 )
               : ListView.separated(
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                  itemCount: state.favorites.length,
+                  itemCount: items.length,
                   separatorBuilder: (_, __) => 16.verticalSpace,
-                  itemBuilder: (context, index) =>
-                      _FavItem(item: state.favorites[index]),
+                  itemBuilder: (context, index) => _FavItem(item: items[index]),
                 ),
         );
       },
     );
   }
+}
+
+/// Splits favorites by their port category's subscription type. Direct-service
+/// categories carry `subscriptionType == 1` (HomeCubit.paymentPorts); anything
+/// else (including instant-booking and unclassifiable items) belongs to the
+/// instant-booking tab. When the categories haven't loaded yet we can't split,
+/// so both tabs show everything rather than appearing empty.
+List<Item> _filterByType(List<Item> all, HomeState home, {required bool isDirect}) {
+  final directCategoryIds = home.paymentPorts.map((c) => c.id).toSet();
+  final bookingCategoryIds = home.bookingPorts.map((c) => c.id).toSet();
+  if (directCategoryIds.isEmpty && bookingCategoryIds.isEmpty) return all;
+  return all.where((item) {
+    final categoryId = item.portTypeDto?.portCategoryId;
+    final isItemDirect =
+        categoryId != null && directCategoryIds.contains(categoryId);
+    return isDirect ? isItemDirect : !isItemDirect;
+  }).toList();
 }
 
 class _FavItem extends StatelessWidget {

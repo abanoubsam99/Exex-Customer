@@ -75,7 +75,7 @@ class JoinUsSection extends StatelessWidget {
                   children: [
                     8.verticalSpace,
                     Text(
-                      'انضم الينا الآن ..',
+                      'انضم الينا  كتاجر ..',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: AppColors.blacksoft,

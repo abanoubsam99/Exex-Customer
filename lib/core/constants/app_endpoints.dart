@@ -51,6 +51,7 @@ class AppEndpoints {
 
   // Ports
   static const portPolicy = "/api/Ports/GetPortPolicy"; // + /{portId}
+  static const getPortImages = "/api/Ports/GetPortImages"; // + /{portId}
 
   // Reservations
   static const myReservations = "/api/Reservations/GetMyReservations";
