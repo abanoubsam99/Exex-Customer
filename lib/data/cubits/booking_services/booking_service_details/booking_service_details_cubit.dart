@@ -4,10 +4,12 @@ import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.da
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
+import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/reservation_update_model.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
+import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
@@ -21,6 +23,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final FavoritesRepo _favoritesRepo;
   final HomeCubit _homeCubit;
   final ConfirmBookingRepo _confirmRepo;
+  final BookingServicesPortsRepo _portsRepo;
 
   /// When non-null the screen is in "edit" mode: it pre-fills an existing
   /// reservation's selections and the bottom button updates it in place.
@@ -34,7 +37,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     this._repo,
     this._favoritesRepo,
     this._homeCubit,
-    this._confirmRepo, {
+    this._confirmRepo,
+    this._portsRepo, {
     Item? port,
     int? portId,
     this.editArgs,
@@ -45,10 +49,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         )) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getPortImages();
+      getOtherPorts();
+      getOccasions();
       await getAllPortServices();
       await getAdditions();
       await getReviews();
-      if (editArgs != null) await _applyEdit(editArgs!);
+      if (editArgs != null) {
+        await _applyEdit(editArgs!);
+      } else {
+        _ensureAvailability();
+      }
     });
   }
 
@@ -107,6 +117,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       occasionId: args.occasionId,
     );
     _editBill = bill;
+
+    // Pre-select the occasion type that was on the reservation.
+    if (bill != null && bill.occasionId > 0) {
+      emit(state.copyWith(selectedOccasionId: bill.occasionId));
+    }
 
     // Remember existing addition row ids for the diff on save.
     if (bill != null) {
@@ -194,6 +209,9 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       bill.occasionDate = '${date.month}/${date.day}/${date.year}';
     }
     bill.serviceId = state.selectedService!.id;
+    if ((state.selectedOccasionId ?? 0) > 0) {
+      bill.occasionId = state.selectedOccasionId!;
+    }
     bill.additions = [...state.selectedAdditions, ...state.selectedBuffets]
         .where((a) => a.id != null && (a.count ?? 0) > 0)
         .map((a) => {
@@ -227,6 +245,49 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       if (m != null && d != null && y != null) return DateTime(y, m, d);
     }
     return DateTime.tryParse(s);
+  }
+
+  /// Loads occasion types (نوع المناسبة) for the picker on this screen.
+  Future<void> getOccasions() async {
+    final occasions = await _confirmRepo.getOccasions();
+    if (occasions != null) emit(state.copyWith(occasions: occasions));
+  }
+
+  /// Sets the chosen occasion type (mandatory before adding to bookings).
+  void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
+
+  /// Checks instant-booking availability when the screen opens with a date
+  /// already picked (otherwise the status line would stay on "جاري التحقق").
+  Future<void> _ensureAvailability() async {
+    final date = _homeCubit.state.bookingDate;
+    if (date == null || _homeCubit.state.availability != null) return;
+    final portId = _portId;
+    if (portId <= 0) return;
+    _homeCubit.setAvailability(
+      await _confirmRepo.checkAvailability(
+        portId: portId,
+        date: date,
+        governorate: _homeCubit.state.eventGovernorate,
+        city: _homeCubit.state.eventCity,
+      ),
+    );
+  }
+
+  /// Loads other ports owned by the same vendor for the "خدمات أخرى" section
+  /// via /api/Ports/Filter?companyId=. Needs the current port's companyId, so
+  /// it's skipped when we only have a portId (offer/edit/deep-link).
+  Future<void> getOtherPorts() async {
+    final companyId = state.port?.companyId;
+    if (companyId == null) return;
+    final model =
+        await _portsRepo.getAllPortServices(GetPortsRequest(companyId: companyId));
+    final items = model?.items;
+    if (items == null) return;
+    // Drop the port currently being viewed from the list.
+    final currentId = state.port?.id;
+    emit(state.copyWith(
+      otherPorts: items.where((p) => p.id != currentId).toList(),
+    ));
   }
 
   Future<void> getAllPortServices() async {

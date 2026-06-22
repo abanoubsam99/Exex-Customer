@@ -1,4 +1,5 @@
 import 'package:evex_user/data/models/addition_model.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/review.dart';
@@ -20,6 +21,15 @@ class BookingServiceDetailsState {
   final List<AdditionModel> selectedBuffets;
   final ServiceDetailsModel? serviceDetails;
   final List<Review> reviews;
+
+  /// Other ports owned by the same vendor (companyId) — shown in the
+  /// "خدمات أخرى" section. Loaded from /api/Ports/Filter?companyId=.
+  final List<Item> otherPorts;
+
+  /// Occasion types (نوع المناسبة) + the one the user picked. The selection is
+  /// mandatory before "إضافة لحجوزاتي" and is passed on to the booking request.
+  final List<Occasion> occasions;
+  final int? selectedOccasionId;
   final double totalCost;
 
   /// Edit mode: the screen pre-fills an existing reservation and the bottom
@@ -45,6 +55,9 @@ class BookingServiceDetailsState {
     this.selectedBuffets = const [],
     this.serviceDetails,
     this.reviews = const [],
+    this.otherPorts = const [],
+    this.occasions = const [],
+    this.selectedOccasionId,
     this.totalCost = 0.0,
     this.errorMessage,
   });
@@ -62,6 +75,9 @@ class BookingServiceDetailsState {
     List<AdditionModel>? selectedBuffets,
     ServiceDetailsModel? serviceDetails,
     List<Review>? reviews,
+    List<Item>? otherPorts,
+    List<Occasion>? occasions,
+    int? selectedOccasionId,
     double? totalCost,
     bool? isEditMode,
     bool? isSaving,
@@ -80,6 +96,9 @@ class BookingServiceDetailsState {
       selectedBuffets: selectedBuffets ?? this.selectedBuffets,
       serviceDetails: serviceDetails ?? this.serviceDetails,
       reviews: reviews ?? this.reviews,
+      otherPorts: otherPorts ?? this.otherPorts,
+      occasions: occasions ?? this.occasions,
+      selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
       totalCost: totalCost ?? this.totalCost,
       isEditMode: isEditMode ?? this.isEditMode,
       isSaving: isSaving ?? this.isSaving,

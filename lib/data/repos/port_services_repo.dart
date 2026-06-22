@@ -45,8 +45,8 @@ class PortServicesRepo {
       {int index = 0, int size = 20}) async {
     try {
       final response = await DioHelper.getData(
-        url: '${AppEndpoints.reviews}/$portId',
-        query: {'index': index, 'size': size},
+        url: '${AppEndpoints.reviews}',
+        query: {'id': portId, 'index': index, 'size': size},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final items = response.data['items'] as List?;

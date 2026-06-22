@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:evex_user/core/localization/app_strings.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
@@ -51,6 +52,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Guests can only filter by location (مكان المناسبة). The rest of the
+    // filters stay visible but inactive until they sign in.
+    final isLoggedIn = context.read<UserService>().currentUser != null;
+    Widget guestLock(Widget child) => Opacity(
+          opacity: isLoggedIn ? 1 : 0.5,
+          child: AbsorbPointer(absorbing: !isLoggedIn, child: child),
+        );
     return Container(
       width: 1.sw,
       padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 21.w),
@@ -207,20 +215,22 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       ],
                     ),
                     20.verticalSpace,
-                    CustomDropDownFormField(
-                      title: "حدد نوع المناسبة",
-                      hintText: "حدد نوع المناسبة",
-                      value: fState.selectedOccasionId,
-                      items: fState.occasions
-                          .where((o) => o.id != null)
-                          .map((o) => DropdownMenuItem(
-                                value: o.id,
-                                child: Text(o.name ?? ''),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        if (value is int) filterCubit.selectOccasion(value);
-                      },
+                    guestLock(
+                      CustomDropDownFormField(
+                        title: "حدد نوع المناسبة",
+                        hintText: "حدد نوع المناسبة",
+                        value: fState.selectedOccasionId,
+                        items: fState.occasions
+                            .where((o) => o.id != null)
+                            .map((o) => DropdownMenuItem(
+                                  value: o.id,
+                                  child: Text(o.name ?? ''),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          if (value is int) filterCubit.selectOccasion(value);
+                        },
+                      ),
                     ),
                   ],
                 );
@@ -261,11 +271,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
                     return Colors.transparent;
                   }),
-                  onChanged: (value) {
-                    setState(() {
-                      isAvilableOnly = value;
-                    });
-                  },
+                  onChanged: isLoggedIn
+                      ? (value) {
+                          setState(() {
+                            isAvilableOnly = value;
+                          });
+                        }
+                      : null,
                 ),
               ],
             ),
@@ -303,11 +315,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
                     return Colors.transparent;
                   }),
-                  onChanged: (value) {
-                    setState(() {
-                      isAvilableOnly = !value;
-                    });
-                  },
+                  onChanged: isLoggedIn
+                      ? (value) {
+                          setState(() {
+                            isAvilableOnly = !value;
+                          });
+                        }
+                      : null,
                 ),
               ],
             ),
@@ -408,15 +422,18 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 padding: EdgeInsets.symmetric(horizontal: 0),
 
                 thumbColor: Colors.white,
-                onChanged: (value) {
-                  setState(() {
-                    _currentValue = value;
-                  });
-                },
+                onChanged: isLoggedIn
+                    ? (value) {
+                        setState(() {
+                          _currentValue = value;
+                        });
+                      }
+                    : null,
               ),
             ),
             23.verticalSpace,
-            TextFormField(
+            guestLock(
+              TextFormField(
               onTapOutside: (PointerDownEvent event) {
                 FocusManager.instance.primaryFocus?.unfocus();
                 _focusNode.unfocus();
@@ -548,6 +565,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   borderSide: BorderSide(color: Colors.red.shade700),
                 ),
               ),
+            ),
             ),
             45.verticalSpace,
             Row(

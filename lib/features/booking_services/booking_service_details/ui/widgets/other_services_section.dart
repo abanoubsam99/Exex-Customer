@@ -1,5 +1,8 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_service_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,19 +57,28 @@ class OtherServicesSection extends StatelessWidget {
         ),
         4.verticalSpace,
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+          buildWhen: (p, c) => p.otherPorts != c.otherPorts,
           builder: (context, state) {
+            final ports = state.otherPorts;
             return SizedBox(
               height: 150.h,
               child: ListView.separated(
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
-                itemCount: state.services.length,
+                itemCount: ports.length,
                 separatorBuilder: (context, index) => 16.horizontalSpace,
                 itemBuilder: (context, index) {
-                  final service = state.services[index];
-                  return OtherServiceCardItem(
-                    images: service.serviceImages ?? [],
-                    title: service.name ?? '',
+                  final port = ports[index];
+                  return GestureDetector(
+                    // Open the selected vendor port in its own details screen.
+                    onTap: () => NavigationHelper.pushNamed(
+                      Routes.bookingServiceDetailsScreen,
+                      arguments: port,
+                    ),
+                    child: OtherServiceCardItem(
+                      images: _portImages(port),
+                      title: port.portName ?? '',
+                    ),
                   );
                 },
               ),
@@ -75,5 +87,17 @@ class OtherServicesSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// The port's image paths as plain strings (portImages is dynamic).
+  List<String> _portImages(Item port) {
+    final imgs = port.portImages;
+    if (imgs is List) {
+      return imgs
+          .map((e) => e.toString())
+          .where((e) => e.trim().isNotEmpty)
+          .toList();
+    }
+    return const [];
   }
 }

@@ -60,7 +60,7 @@ class OtherServiceCardItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: AppColors.blacksoft,
-                fontSize: 14.r,
+                fontSize: 13.r,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
                 height: 1.50,

@@ -112,15 +112,23 @@ class ConfirmBookingRepo {
 
   /// GET /api/Reservations/CheckReservationAvailabilityByClient/{portId}?date=
   /// Returns whether the port is available for instant booking on [date].
+  /// [governorate]/[city] (the event location) are sent when known so the
+  /// backend can flag "غير متاح في هذه المنطقة" for out-of-working-area events.
   Future<CheckReservationResponse?> checkAvailability({
     required int portId,
     required DateTime date,
+    String? governorate,
+    String? city,
   }) async {
     try {
       final d = '${date.year}/${date.month}/${date.day}';
       final response = await DioHelper.getData(
         url: '${AppEndpoints.checkReservationAvailability}/$portId',
-        query: {'date': d},
+        query: {
+          'date': d,
+          if ((governorate ?? '').isNotEmpty) 'governorate': governorate,
+          if ((city ?? '').isNotEmpty) 'city': city,
+        },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return CheckReservationResponse.fromJson(response.data);

@@ -288,6 +288,7 @@ class AppRouter {
               context.read<FavoritesRepo>(),
               context.read<HomeCubit>(),
               context.read<ConfirmBookingRepo>(),
+              context.read<BookingServicesPortsRepo>(),
               port: bookingArg is Item ? bookingArg : null,
               // Opened from a special offer (SpecialOffer) or a shared deep
               // link (int) — only the portId is available in both cases.

@@ -222,6 +222,14 @@ class HomeCubit extends Cubit<HomeState> {
   void setBookingDate(DateTime date) =>
       emit(state.copyWith(bookingDate: date, clearAvailability: true));
 
+  /// Stores the event location (مكان المناسبة) chosen in the edit sheet. Clears
+  /// the cached availability so it's re-checked against the new location.
+  void setEventLocation(String governorate, String city) => emit(state.copyWith(
+        eventGovernorate: governorate,
+        eventCity: city,
+        clearAvailability: true,
+      ));
+
   /// Stores the availability result for the selected port + date.
   void setAvailability(CheckReservationResponse? availability) =>
       emit(state.copyWith(availability: availability));

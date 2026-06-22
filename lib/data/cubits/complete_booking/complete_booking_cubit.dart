@@ -17,7 +17,6 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   CompleteBookingCubit(this._repo, this._homeCubit, {required this.args})
       : super(const CompleteBookingState()) {
     getPortPolicy();
-    getOccasions();
   }
 
   final notesController = TextEditingController();
@@ -30,14 +29,6 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     final policy = await _repo.getPortPolicy(portId);
     emit(state.copyWith(isLoadingPolicy: false, policy: policy));
   }
-
-  /// Occasion types for the "نوع المناسبة" picker (required by the backend).
-  Future<void> getOccasions() async {
-    final occasions = await _repo.getOccasions();
-    if (occasions != null) emit(state.copyWith(occasions: occasions));
-  }
-
-  void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
 
   void toggleTerms(bool value) => emit(state.copyWith(termsAccepted: value));
 
@@ -52,8 +43,8 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       ToastManager.showError('السعر يجب أن يكون أكبر من صفر');
       return;
     }
-    if ((state.selectedOccasionId ?? 0) <= 0) {
-      ToastManager.showError('برجاء اختيار نوع المناسبة');
+    if ((args.occasionId ?? 0) <= 0) {
+      ToastManager.showError('حدد نوع المناسبة لإستكمال الحجز');
       return;
     }
     final port = args.port;
@@ -64,8 +55,10 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
           args.occasionDate ??
           port?.checkReservationResponse?.date,
     );
-    final governorate = port?.governorate;
-    final city = port?.city;
+    // Prefer the event location the user picked (edit sheet); fall back to the
+    // port's own location.
+    final governorate = _homeCubit.state.eventGovernorate ?? port?.governorate;
+    final city = _homeCubit.state.eventCity ?? port?.city;
     // Backend requires governorate, city and occasionDate.
     if (occasionDate == null ||
         (governorate ?? '').isEmpty ||
@@ -91,7 +84,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       AddReservationRequest(
         portId: port?.id,
         serviceId: args.service?.id,
-        occasionId: state.selectedOccasionId,
+        occasionId: args.occasionId,
         governorate: governorate,
         city: city,
         occasionDate: occasionDate,

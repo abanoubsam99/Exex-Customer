@@ -18,6 +18,12 @@ class HomeState {
   /// as the reservation's occasionDate later in the flow.
   final DateTime? bookingDate;
 
+  /// The event location (مكان المناسبة) picked in the edit sheet — defaults to
+  /// the user's profile location and is sent with the availability check + the
+  /// reservation. Null until the user edits it (UI falls back to the profile).
+  final String? eventGovernorate;
+  final String? eventCity;
+
   /// Instant-booking availability for the selected port + [bookingDate].
   final CheckReservationResponse? availability;
 
@@ -36,6 +42,8 @@ class HomeState {
     this.selectedPaymentPort,
     this.selectedPaymentPortType,
     this.bookingDate,
+    this.eventGovernorate,
+    this.eventCity,
     this.availability,
     this.unreadNotifications = 0,
     this.errorMessage,
@@ -52,6 +60,8 @@ class HomeState {
     PortCategoryWithPortTypes? selectedPaymentPort,
     PortTypeDto? selectedPaymentPortType,
     DateTime? bookingDate,
+    String? eventGovernorate,
+    String? eventCity,
     CheckReservationResponse? availability,
     bool clearAvailability = false,
     // Clear a whole section's selection (category + type). Used to keep the
@@ -80,6 +90,8 @@ class HomeState {
           ? null
           : (selectedPaymentPortType ?? this.selectedPaymentPortType),
       bookingDate: bookingDate ?? this.bookingDate,
+      eventGovernorate: eventGovernorate ?? this.eventGovernorate,
+      eventCity: eventCity ?? this.eventCity,
       availability:
           clearAvailability ? null : (availability ?? this.availability),
       unreadNotifications: unreadNotifications ?? this.unreadNotifications,

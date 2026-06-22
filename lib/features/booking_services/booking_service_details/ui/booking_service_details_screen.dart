@@ -11,6 +11,7 @@ import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
+import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/occasion_picker.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_services_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/reviews_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_top_part.dart';
@@ -87,8 +88,28 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                         ),
                         20.verticalSpace,
                         ChangeOccasion(
+                          port: context
+                              .read<BookingServiceDetailsCubit>()
+                              .state
+                              .port,
                           occasionDate:
                               context.read<HomeCubit>().state.bookingDate,
+                        ),
+                        20.verticalSpace,
+                        // نوع المناسبة — moved here from the complete-booking
+                        // screen; mandatory before "إضافة لحجوزاتي".
+                        BlocBuilder<BookingServiceDetailsCubit,
+                            BookingServiceDetailsState>(
+                          buildWhen: (p, c) =>
+                              p.occasions != c.occasions ||
+                              p.selectedOccasionId != c.selectedOccasionId,
+                          builder: (context, state) => OccasionPicker(
+                            occasions: state.occasions,
+                            selectedId: state.selectedOccasionId,
+                            onSelected: context
+                                .read<BookingServiceDetailsCubit>()
+                                .selectOccasion,
+                          ),
                         ),
                         24.verticalSpace,
                         ServicesSection(),
@@ -121,7 +142,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                             sectionBlock(const BuffetsSection()),
                           // if (state.reviews.isNotEmpty)
                             sectionBlock(const ReviewsSection()),
-                          // if (state.services.isNotEmpty)
+                          // Only when the vendor has other ports to show.
+                          if (state.otherPorts.isNotEmpty)
                             sectionBlock(const OtherServicesSection()),
                           45.verticalSpace,
 
@@ -229,6 +251,12 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           ToastManager.showError('من فضلك اختر خدمة أولاً');
                           return;
                         }
+                        // نوع المناسبة مطلوب لاستكمال الحجز.
+                        if ((st.selectedOccasionId ?? 0) <= 0) {
+                          ToastManager.showError(
+                              'حدد نوع المناسبة لإستكمال الحجز');
+                          return;
+                        }
                         // Edit → update the reservation in place (no new booking).
                         if (st.isEditMode) {
                           cubit.submitEdit();
@@ -241,6 +269,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                             service: st.selectedService,
                             additions: cubit.prepareFinalAdditions(),
                             totalCost: st.totalCost,
+                            occasionId: st.selectedOccasionId,
                             occasionDate:
                                 context.read<HomeCubit>().state.bookingDate,
                           ),
