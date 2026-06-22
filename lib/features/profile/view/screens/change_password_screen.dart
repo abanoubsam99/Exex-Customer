@@ -41,7 +41,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         const CustomBackButtonWidget(),
                         16.verticalSpace,
                         Text(
-                          'تغيير كلمه المرور',
+                          'تغيير كلمة المرور',
                           style: TextStyle(
                             fontSize: 20.r,
                             color: AppColors.black,
@@ -51,7 +51,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         ),
                         4.verticalSpace,
                         Text(
-                          'يمكنك تغير كلمه المرور فى اى وقت واعاده التسجيل',
+                          'يمكنك تغيير كلمة المرور في أى وقت وإعادة التسجيل',
                           style: TextStyle(
                             fontSize: 12.r,
                             color: AppColors.grey,
@@ -67,8 +67,8 @@ class ChangePasswordScreen extends StatelessWidget {
                                 isPassword: true,
                                 fillColor: AppColors.buttonSecondaryColor,
                                 controller: cubit.currentPasswordController,
-                                title: 'كلمه المرور الحاليه',
-                                hintText: 'اكتب كلمه المرور الحاليه',
+                                title: 'كلمة المرور الحالية',
+                                hintText: 'اكتب كلمة المرور الحالية',
                                 validator: (value) =>
                                     (value == null || value.isEmpty)
                                         ? 'يرجى إدخال كلمة المرور الحالية'
@@ -79,8 +79,8 @@ class ChangePasswordScreen extends StatelessWidget {
                                 isPassword: true,
                                 fillColor: AppColors.buttonSecondaryColor,
                                 controller: cubit.newPasswordController,
-                                title: 'كلمه المرور الجديده',
-                                hintText: 'اكتب كلمه المرور الجديده',
+                                title: 'كلمة المرور الجديدة',
+                                hintText: 'اكتب كلمة المرور الجديدة',
                                 validator: (value) =>
                                     (value == null || value.length < 6)
                                         ? 'كلمة المرور 6 أحرف على الأقل'
@@ -91,8 +91,8 @@ class ChangePasswordScreen extends StatelessWidget {
                                 isPassword: true,
                                 fillColor: AppColors.buttonSecondaryColor,
                                 controller: cubit.confirmPasswordController,
-                                title: 'تأكيد كلمة المرور',
-                                hintText: 'اكتب كلمه المرور الجديده',
+                                title: 'إعادة كلمة المرور الجديدة',
+                                hintText: 'اكتب كلمة المرور الجديدة مرة أخرى',
                                 validator: (value) =>
                                     value == cubit.newPasswordController.text
                                         ? null
@@ -105,7 +105,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         32.verticalSpace,
                         BlocBuilder<ProfileCubit, ProfileState>(
                           builder: (context, state) => CustomButton(
-                            text: 'حفظ كلمه المرور',
+                            text: 'حفظ كلمة المرور',
                             isLoading: state.isLoading,
                             onTap: () {
                               if (cubit.changePasswordFormKey.currentState!

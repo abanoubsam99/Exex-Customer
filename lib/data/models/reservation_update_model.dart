@@ -26,7 +26,9 @@ class ReservationUpdateModel {
   final String? portName;
   final String? reservationDate;
   final int portId;
-  final int serviceId;
+
+  /// Editable — the chosen base service (can change when editing a reservation).
+  int serviceId;
   final int clientId;
 
   /// Editable — occasion type.

@@ -21,6 +21,13 @@ class BookingServiceDetailsState {
   final ServiceDetailsModel? serviceDetails;
   final List<Review> reviews;
   final double totalCost;
+
+  /// Edit mode: the screen pre-fills an existing reservation and the bottom
+  /// button confirms the edit (update in place) instead of adding a new booking.
+  final bool isEditMode;
+
+  /// True while the edit is being saved (update API in flight).
+  final bool isSaving;
   final String? errorMessage;
 
   const BookingServiceDetailsState({
@@ -29,6 +36,8 @@ class BookingServiceDetailsState {
     this.isFavorite = false,
     this.portImages = const [],
     this.services = const [],
+    this.isEditMode = false,
+    this.isSaving = false,
     this.selectedService,
     this.additions = const [],
     this.selectedAdditions = const [],
@@ -54,6 +63,8 @@ class BookingServiceDetailsState {
     ServiceDetailsModel? serviceDetails,
     List<Review>? reviews,
     double? totalCost,
+    bool? isEditMode,
+    bool? isSaving,
     String? errorMessage,
   }) {
     return BookingServiceDetailsState(
@@ -70,6 +81,8 @@ class BookingServiceDetailsState {
       serviceDetails: serviceDetails ?? this.serviceDetails,
       reviews: reviews ?? this.reviews,
       totalCost: totalCost ?? this.totalCost,
+      isEditMode: isEditMode ?? this.isEditMode,
+      isSaving: isSaving ?? this.isSaving,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

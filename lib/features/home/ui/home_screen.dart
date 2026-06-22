@@ -10,7 +10,6 @@ import 'package:evex_user/core/ui/widgets/custom_circle.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
-import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
@@ -116,13 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     14.verticalSpace,
                                     Row(
                                       children: [
-                                        Expanded(
-                                          child: TextFieldBuilder(
-                                            bgColor: Colors.white,
-                                            fillColor: Colors.white,
-                                            hintText: "بحث ...",
-                                          ),
-                                        ),
+                                        const Expanded(child: _HomeSearchField()),
                                         IconButton(
                                           onPressed: () {
                                             if (!AuthGuard.requireLogin(
@@ -442,6 +435,47 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         ),
       ),
+      ),
+    );
+  }
+}
+
+/// Home search box — matches Figma exactly: 40h, white fill, 1px orange border,
+/// 16r radius, "بحث ..." hint in #99A2AC (Almarai 14).
+class _HomeSearchField extends StatelessWidget {
+  const _HomeSearchField();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40.h,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.primaryColor, width: 1),
+      ),
+      alignment: Alignment.center,
+      child: TextField(
+        textAlign: TextAlign.right,
+        textAlignVertical: TextAlignVertical.center,
+        style: TextStyle(
+          fontFamily: 'Almarai',
+          fontSize: 14.r,
+          color: AppColors.blacksoft,
+        ),
+        decoration: InputDecoration(
+          isCollapsed: true,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          hintText: 'بحث ...',
+          hintStyle: TextStyle(
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w400,
+            fontSize: 14.r,
+            // Figma hint colour (#99A2AC).
+            color: const Color(0xFF99A2AC),
+          ),
+        ),
       ),
     );
   }

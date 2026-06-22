@@ -48,6 +48,7 @@ class AppColors {
   static const Color textLightGreyColor = Color(0xffB0B0B0);
   static const Color textDarkGreyColor = Color(0xffE8E8E8);
   static const Color navigationUnSelected = Color(0xff8C8C8C);
+  static const Color bgProfileItems = Color.fromRGBO(242, 244, 247, 1);
   static const Color textWhiteSubtitleColor = Color(0xffB7D7FF);
   static Color textInputBorderColor = const Color.fromRGBO(
     0,
@@ -134,6 +135,7 @@ class AppColors {
   static const Color green3 = Color(0xFF2CAC61);
   static const Color green4 = Color(0xFF55A07E);
   static const Color green5 = Color(0xFF3FC086);
+  static const Color numberOfBookColors = Color.fromRGBO(44, 172, 98, 1);
   static const Color green6 = Color(0xFF2BA577);
   static const Color green7 = Color(0xFF27AE60);
   static const Color green8 = Color(0xFF1F9D55);
@@ -143,6 +145,7 @@ class AppColors {
   // ── Blues / cyan ──
   static const Color blue1 = Color(0xFF2F80ED);
   static const Color blue2 = Color(0xFF4A7CF7);
+  static const Color inviteCodeColor = Color.fromRGBO(135, 157, 255, 1);
   static const Color blue3 = Color(0xFF4764E8);
   static const Color blue4 = Color(0xFF3F8CFF);
   static const Color cyan = Color(0xFF40C4D6);

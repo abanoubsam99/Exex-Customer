@@ -173,6 +173,16 @@ class SpecialOffersSection extends StatelessWidget {
                                             fontSize: 18.r,
                                             fontFamily: 'Almarai',
                                             fontWeight: FontWeight.w800,
+                                            // Tight drop shadow (no spread) so the
+                                            // text reads over the photo behind it.
+                                            shadows: [
+                                              Shadow(
+                                                offset: Offset(0, 1.5.r),
+                                                blurRadius: 4.r,
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.6),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Text(
@@ -183,6 +193,14 @@ class SpecialOffersSection extends StatelessWidget {
                                             fontSize: 13.r,
                                             fontWeight: FontWeight.w400,
                                             letterSpacing: -0.24.w,
+                                            shadows: [
+                                              Shadow(
+                                                offset: Offset(0, 1.r),
+                                                blurRadius: 3.r,
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.55),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],

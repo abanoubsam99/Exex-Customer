@@ -51,6 +51,22 @@ class _AdditionItemState extends State<AdditionItem> {
     }
   }
 
+  @override
+  void didUpdateWidget(covariant AdditionItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync the displayed count when the parent supplies a new initialCount
+    // (e.g. edit-mode autofill), but never while the user is editing the field.
+    if (widget.hasCount &&
+        widget.initialCount != oldWidget.initialCount &&
+        !(_focusNode?.hasFocus ?? false)) {
+      final next = widget.initialCount ?? 0;
+      if (next != count) {
+        count = next;
+        countController?.text = count.toString();
+      }
+    }
+  }
+
   void _onFocusChange() {
     if (_focusNode != null && !_focusNode!.hasFocus) {
       _validateCount();

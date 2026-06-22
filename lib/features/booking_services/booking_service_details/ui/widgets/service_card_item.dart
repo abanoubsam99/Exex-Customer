@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
+import 'BlinkingDot.dart';
+
 class ServiceCardItem extends StatefulWidget {
   final String title;
   final int price;
@@ -91,16 +93,30 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                           color: Colors.white,
                         ),
                         alignment: Alignment.center,
-                        child: Container(
-                          width: 13.r,
-                          height: 13.r,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.greenSoft,
-                          ),
-                        ),
+                        child: const BlinkingDot(),
                       ),
                     ),
+                    // Positioned(
+                    //   top: -1.r,
+                    //   right: -1.r,
+                    //   child: Container(
+                    //     width: 21.r,
+                    //     height: 21.r,
+                    //     decoration: const BoxDecoration(
+                    //       shape: BoxShape.circle,
+                    //       color: Colors.white,
+                    //     ),
+                    //     alignment: Alignment.center,
+                    //     child: Container(
+                    //       width: 13.r,
+                    //       height: 13.r,
+                    //       decoration: const BoxDecoration(
+                    //         shape: BoxShape.circle,
+                    //         color: AppColors.greenSoft,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     if (widget.images.length > 1)
                       Positioned(
                         bottom: 4.h,
@@ -184,28 +200,71 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                     ),
                   ),
                   const Spacer(),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    width: 25.r,
-                    height: 25.r,
-                    decoration: ShapeDecoration(
-                      color: widget.isSelected
-                          ? AppColors.primaryColor
-                          : AppColors.primaryAlpha33,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
+                  Row(
+                    children: [
+                      Text(
+                        'LE',
+                        style: TextStyle(
+                          color: AppColors.salmon,
+                          fontSize: 14.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                          height: 1.50,
+                          letterSpacing: -0.24,
+                        ),
                       ),
-                    ),
-                    child: Center(
-                      child: CustomImageHandler(
-                        width: 17.r,
-                        height: 17.r,
-                        widget.isSelected
-                            ? AppImages.iconsMinus
-                            : AppImages.iconsPlus,
+                      SizedBox(width: 5,),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Text(
+                            "12",
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              color: AppColors.salmon,
+                              fontSize: 14.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w400,
+                              height: 1.50,
+                              letterSpacing: -0.24,
+                            ),
+                          ),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 2.25.h,
+                            child: CustomPaint(
+                              size: Size(32.w, 10.h),
+                              painter: StrikethroughPainter(),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+
+                    ],
                   ),
+                  // AnimatedContainer(
+                  //   duration: const Duration(milliseconds: 300),
+                  //   width: 25.r,
+                  //   height: 25.r,
+                  //   decoration: ShapeDecoration(
+                  //     color: widget.isSelected
+                  //         ? AppColors.primaryColor
+                  //         : AppColors.primaryAlpha33,
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(8.r),
+                  //     ),
+                  //   ),
+                  //   child: Center(
+                  //     child: CustomImageHandler(
+                  //       width: 17.r,
+                  //       height: 17.r,
+                  //       widget.isSelected
+                  //           ? AppImages.iconsMinus
+                  //           : AppImages.iconsPlus,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ],

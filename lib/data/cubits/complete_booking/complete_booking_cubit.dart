@@ -102,7 +102,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     );
     emit(state.copyWith(isSubmitting: false));
     if (result != null && (result.reservationRequestId ?? 0) > 0) {
-      ToastManager.showSuccess('تم الحجز بنجاح');
+      ToastManager.showSuccess('تمت الإضافة الى قائمة الطلبات الحالية');
       // Go to "حجوزاتي" (tab 1) — not the confirm screen. The fresh MainScreen
       // rebuilds MyBookings, so it loads the latest requests (auto-refresh).
       NavigationHelper.pushNamedAndRemoveUntil(

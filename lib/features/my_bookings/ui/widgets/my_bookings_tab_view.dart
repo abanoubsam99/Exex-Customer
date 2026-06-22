@@ -16,6 +16,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
+import '../../../../core/ui/helpers/toast_manager.dart';
+
 const _green = AppColors.green;
 const _red = AppColors.coral;
 
@@ -71,6 +73,22 @@ class _RequestsTab extends StatelessWidget {
                 final r = state.requests[index];
                 final available =
                     (r.reservationStatus ?? '').contains('متاح');
+                // A pending request opens the edit-reservation screen (both on
+                // card tap and via the edit icon). The order-details/invoice
+                // screen is reserved for confirmed/cancelled reservations only.
+                final editArgs = r.id == null
+                    ? null
+                    : EditReservationArgs(
+                        reservationId: r.id!,
+                        isConfirmed: false,
+                        portId: r.portId,
+                        serviceId: r.serviceId,
+                        occasionId: r.occasionId,
+                        governorate: r.governorate,
+                        city: r.city,
+                        occasionDate: DateFormatHelper.parse(r.occasionDate),
+                        userNotes: r.userNotes,
+                      );
                 return MyBookingItem(
                   portName: r.portName ?? '',
                   statusText:
@@ -83,29 +101,13 @@ class _RequestsTab extends StatelessWidget {
                   deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
-                  // Tapping the card opens the booking details (the confirm/pay
-                  // flow lives in the booking-creation journey, not here).
-                  onTap: r.id == null ? null : () => _openDetails(r.id!),
+                  // Tapping a request → edit it (not the invoice screen).
+                  onTap: editArgs == null ? null : () => _openEdit(editArgs),
                   // Trash icon → confirm, then delete the request.
                   onDelete: r.id == null
                       ? null
                       : () => _confirmDeleteRequest(context, r.id!),
-                  onEdit: r.id == null
-                      ? null
-                      : () => _openEdit(
-                            EditReservationArgs(
-                              reservationId: r.id!,
-                              isConfirmed: false,
-                              portId: r.portId,
-                              serviceId: r.serviceId,
-                              occasionId: r.occasionId,
-                              governorate: r.governorate,
-                              city: r.city,
-                              occasionDate:
-                                  DateFormatHelper.parse(r.occasionDate),
-                              userNotes: r.userNotes,
-                            ),
-                          ),
+                  onEdit: editArgs == null ? null : () => _openEdit(editArgs),
                 );
               },
             ),
@@ -122,12 +124,12 @@ class _RequestsTab extends StatelessWidget {
 /// are no available requests.
 class _ConfirmRequestsButton extends StatelessWidget {
   final MyBookingsState state;
+
   const _ConfirmRequestsButton({required this.state});
 
   @override
   Widget build(BuildContext context) {
     final availableIds = _confirmableIds(state);
-    if (availableIds.isEmpty) return const SizedBox.shrink();
 
     final depositTotal = state.pendingDeposit?.totalDeposit ??
         state.requests
@@ -139,13 +141,20 @@ class _ConfirmRequestsButton extends StatelessWidget {
       child: CustomButton(
         text: 'تأكيد الحجز',
         height: 54.h,
-        onTap: () => NavigationHelper.pushNamed(
-          Routes.confirmBookingScreen,
-          arguments: ConfirmBookingArgs(
-            reservationRequestIds: availableIds,
-            depositAmount: depositTotal,
-          ),
-        ),
+        onTap: () {
+          if (availableIds.isEmpty) {
+            ToastManager.showError(' يلزم وجود خدمة واحدة على الأقل متاحة للحجز');
+            return;
+          }
+
+          NavigationHelper.pushNamed(
+            Routes.confirmBookingScreen,
+            arguments: ConfirmBookingArgs(
+              reservationRequestIds: availableIds,
+              depositAmount: depositTotal,
+            ),
+          );
+        },
       ),
     );
   }
@@ -251,7 +260,12 @@ void _openDetails(int id) {
 }
 
 void _openEdit(EditReservationArgs args) {
-  NavigationHelper.pushNamed(Routes.editReservationScreen, arguments: args);
+  // Editing reuses the booking-details module (autofilled), not a separate
+  // screen — the only difference there is a "تأكيد التعديل" button.
+  NavigationHelper.pushNamed(
+    Routes.bookingServiceDetailsScreen,
+    arguments: args,
+  );
 }
 
 /// Asks for confirmation, then deletes the pending request via the cubit.

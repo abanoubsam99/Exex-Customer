@@ -215,7 +215,7 @@ class MyBookingItem extends StatelessWidget {
                                     Text(
                                       serviceDetails,
                                       textAlign: TextAlign.right,
-                                      maxLines: 2,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         color: AppColors.blueGrey,
@@ -366,7 +366,7 @@ class MyBookingItem extends StatelessWidget {
                             textDirection: TextDirection.rtl,
                             style: TextStyle(
                               color: AppColors.salmon,
-                              fontSize: 12.r,
+                              fontSize: 14.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
                               height: 1.50,
@@ -394,7 +394,7 @@ class MyBookingItem extends StatelessWidget {
                             text: '${_money(finalCost)} ',
                             style: TextStyle(
                               color: AppColors.coral,
-                              fontSize: 12.r,
+                              fontSize: 14.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w700,
                               height: 1.67,
@@ -405,7 +405,7 @@ class MyBookingItem extends StatelessWidget {
                             text: 'جنيه',
                             style: TextStyle(
                               color: AppColors.blueGrey,
-                              fontSize: 12.r,
+                              fontSize: 14.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w400,
                               height: 1.67,

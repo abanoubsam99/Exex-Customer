@@ -280,22 +280,26 @@ class AppRouter {
         );
 
       case Routes.bookingServiceDetailsScreen:
+        final bookingArg = settings.arguments;
         return _page(
           BlocProvider(
             create: (context) => BookingServiceDetailsCubit(
               context.read<PortServicesRepo>(),
               context.read<FavoritesRepo>(),
               context.read<HomeCubit>(),
-              port: settings.arguments is Item
-                  ? settings.arguments as Item
-                  : null,
+              context.read<ConfirmBookingRepo>(),
+              port: bookingArg is Item ? bookingArg : null,
               // Opened from a special offer (SpecialOffer) or a shared deep
               // link (int) — only the portId is available in both cases.
-              portId: settings.arguments is SpecialOffer
-                  ? (settings.arguments as SpecialOffer).portId
-                  : settings.arguments is int
-                      ? settings.arguments as int
+              portId: bookingArg is SpecialOffer
+                  ? bookingArg.portId
+                  : bookingArg is int
+                      ? bookingArg
                       : null,
+              // Opened from "حجوزاتي" to edit an existing reservation: the same
+              // module pre-fills the selections and confirms an update instead.
+              editArgs:
+                  bookingArg is EditReservationArgs ? bookingArg : null,
             ),
             child: const BookingServiceDetailsScreen(),
           ),

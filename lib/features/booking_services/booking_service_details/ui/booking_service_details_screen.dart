@@ -115,14 +115,16 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           );
                       return Column(
                         children: [
-                          if (state.additions.isNotEmpty)
+                          // if (state.additions.isNotEmpty)
                             sectionBlock(const AdditionsSection()),
-                          if (state.buffets.isNotEmpty)
+                          // if (state.buffets.isNotEmpty)
                             sectionBlock(const BuffetsSection()),
-                          if (state.reviews.isNotEmpty)
+                          // if (state.reviews.isNotEmpty)
                             sectionBlock(const ReviewsSection()),
-                          if (state.services.isNotEmpty)
+                          // if (state.services.isNotEmpty)
                             sectionBlock(const OtherServicesSection()),
+                          45.verticalSpace,
+
                         ],
                       );
                     },
@@ -131,11 +133,10 @@ class BookingServiceDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
-          45.verticalSpace,
 
           Container(
             width: 1.sw,
-            height: 154.h,
+            height: 130.h,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -148,7 +149,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               child: Column(
                 children: [
                   Row(
@@ -208,31 +209,44 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  16.verticalSpace,
-                  CustomButton(
-                    height: 52.h,
-                    text: "إضافة لحجوزاتي",
-                    onTap: () {
-                      // Account action — guests must sign in first.
-                      if (!AuthGuard.requireLogin(context)) return;
-                      final cubit = context.read<BookingServiceDetailsCubit>();
-                      final st = cubit.state;
-                      if (st.totalCost <= 0) {
-                        ToastManager.showError('من فضلك اختر خدمة أولاً');
-                        return;
-                      }
-                      NavigationHelper.pushNamed(
-                        Routes.completeBookingScreen,
-                        arguments: CompleteBookingArgs(
-                          port: st.port,
-                          service: st.selectedService,
-                          additions: cubit.prepareFinalAdditions(),
-                          totalCost: st.totalCost,
-                          occasionDate:
-                              context.read<HomeCubit>().state.bookingDate,
-                        ),
-                      );
-                    },
+                  8.verticalSpace,
+                  BlocBuilder<BookingServiceDetailsCubit,
+                      BookingServiceDetailsState>(
+                    buildWhen: (p, c) =>
+                        p.isEditMode != c.isEditMode || p.isSaving != c.isSaving,
+                    builder: (context, state) => CustomButton(
+                      height: 52.h,
+                      isLoading: state.isSaving,
+                      // Same module for add + edit; only the button differs.
+                      text: state.isEditMode ? 'تأكيد التعديل' : 'إضافة لحجوزاتي',
+                      onTap: () {
+                        // Account action — guests must sign in first.
+                        if (!AuthGuard.requireLogin(context)) return;
+                        final cubit =
+                            context.read<BookingServiceDetailsCubit>();
+                        final st = cubit.state;
+                        if (st.totalCost <= 0) {
+                          ToastManager.showError('من فضلك اختر خدمة أولاً');
+                          return;
+                        }
+                        // Edit → update the reservation in place (no new booking).
+                        if (st.isEditMode) {
+                          cubit.submitEdit();
+                          return;
+                        }
+                        NavigationHelper.pushNamed(
+                          Routes.completeBookingScreen,
+                          arguments: CompleteBookingArgs(
+                            port: st.port,
+                            service: st.selectedService,
+                            additions: cubit.prepareFinalAdditions(),
+                            totalCost: st.totalCost,
+                            occasionDate:
+                                context.read<HomeCubit>().state.bookingDate,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

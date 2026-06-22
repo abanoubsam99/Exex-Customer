@@ -24,14 +24,14 @@ class UserDataSection extends StatelessWidget {
             NavigationHelper.pushNamed(Routes.profileScreen);
           },
           child: Container(
-            width: 40.r,
-            height: 40.r,
+            width: 46.r,
+            height: 46.r,
             clipBehavior: Clip.antiAlias,
             decoration: ShapeDecoration(
               color: Colors.grey.shade200,
               shape: RoundedRectangleBorder(
                 side: const BorderSide(width: 1, color: AppColors.grey9),
-                borderRadius: BorderRadius.circular(20.r),
+                borderRadius: BorderRadius.circular(23.r),
               ),
             ),
             child: CustomImageHandler(
@@ -39,8 +39,8 @@ class UserDataSection extends StatelessWidget {
                   ? '${AppEndpoints.baseUrl}${user!.imageName}'
                   : AppImages.imagesNewLogo2,
               fit: BoxFit.cover,
-              width: 40.r,
-              height: 40.r,
+              width: 46.r,
+              height: 46.r,
             ),
           ),
         ),

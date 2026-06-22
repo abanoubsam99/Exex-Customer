@@ -93,7 +93,7 @@ class ServicesSection extends StatelessWidget {
             ),
           ],
         ),
-        4.verticalSpace,
+        10.verticalSpace,
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();

@@ -1,9 +1,14 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart'
+    show EditReservationArgs;
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/models/reservation_update_model.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
+import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:flutter/widgets.dart';
@@ -15,6 +20,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final PortServicesRepo _repo;
   final FavoritesRepo _favoritesRepo;
   final HomeCubit _homeCubit;
+  final ConfirmBookingRepo _confirmRepo;
+
+  /// When non-null the screen is in "edit" mode: it pre-fills an existing
+  /// reservation's selections and the bottom button updates it in place.
+  final EditReservationArgs? editArgs;
 
   /// [port] is the port selected on the previous screen. Its id drives the
   /// services/additions/reviews requests; the object feeds the header UI.
@@ -23,21 +33,32 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   BookingServiceDetailsCubit(
     this._repo,
     this._favoritesRepo,
-    this._homeCubit, {
+    this._homeCubit,
+    this._confirmRepo, {
     Item? port,
     int? portId,
-  })  : _offerPortId = portId,
-        super(BookingServiceDetailsState(port: port)) {
+    this.editArgs,
+  })  : _offerPortId = portId ?? editArgs?.portId,
+        super(BookingServiceDetailsState(
+          port: port,
+          isEditMode: editArgs != null,
+        )) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getPortImages();
       await getAllPortServices();
       await getAdditions();
       await getReviews();
+      if (editArgs != null) await _applyEdit(editArgs!);
     });
   }
 
   /// Port id passed directly (without a full [Item]) — e.g. from an offer.
   final int? _offerPortId;
+
+  /// The reservation bill echoed back on save (edit mode) + the existing
+  /// addition row ids (additionId → row id) so the backend can diff on update.
+  ReservationUpdateModel? _editBill;
+  final Map<int, int> _existingAdditionRowIds = {};
 
   static const int _defaultPortId = 3;
 
@@ -74,6 +95,138 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     if (images != null && images.isNotEmpty) {
       emit(state.copyWith(portImages: images));
     }
+  }
+
+  /// Edit mode: loads the reservation bill and pre-fills the same selections the
+  /// client made before (service + additions/buffet + occasion date), so the
+  /// booking module opens autofilled. Runs after services/additions are loaded.
+  Future<void> _applyEdit(EditReservationArgs args) async {
+    final bill = await _confirmRepo.getReservationBill(
+      args.reservationId,
+      serviceId: args.serviceId,
+      occasionId: args.occasionId,
+    );
+    _editBill = bill;
+
+    // Remember existing addition row ids for the diff on save.
+    if (bill != null) {
+      for (final a in bill.oldAdditions) {
+        final additionId = (a['additionId'] as num?)?.toInt() ?? 0;
+        final rowId = (a['id'] as num?)?.toInt() ?? 0;
+        if (additionId > 0 && rowId > 0) {
+          _existingAdditionRowIds[additionId] = rowId;
+        }
+      }
+    }
+
+    // Occasion date drives ChangeOccasion + the availability badge (shared via
+    // HomeCubit, exactly like the add flow).
+    final date = _parseBillDate(bill?.occasionDate) ?? args.occasionDate;
+    if (date != null) {
+      _homeCubit.setBookingDate(date);
+      final portId = bill?.portId ?? args.portId ?? 0;
+      if (portId > 0) {
+        _homeCubit.setAvailability(
+          await _confirmRepo.checkAvailability(portId: portId, date: date),
+        );
+      }
+    }
+
+    // Pre-select the booked base service so its price seeds the total.
+    final serviceId = args.serviceId;
+    if (serviceId != null) {
+      for (final s in state.services) {
+        if (s.id == serviceId) {
+          emit(state.copyWith(selectedService: s));
+          await getServiceData();
+          break;
+        }
+      }
+    }
+
+    // Pre-select the additions/buffet that were on the reservation.
+    final billCounts = <int, int>{};
+    if (bill != null) {
+      for (final a in bill.additions) {
+        final id = (a['additionId'] as num?)?.toInt() ?? 0;
+        final n = (a['number'] as num?)?.toInt() ?? 0;
+        if (id > 0 && n > 0) billCounts[id] = n;
+      }
+    }
+    final selAdds = <AdditionModel>[];
+    for (final a in state.additions) {
+      final id = a.id;
+      final n = id == null ? null : billCounts[id];
+      if (n != null && n > 0) {
+        a.count = n;
+        selAdds.add(a);
+      }
+    }
+    final selBuffets = <AdditionModel>[];
+    for (final b in state.buffets) {
+      final id = b.id;
+      final n = id == null ? null : billCounts[id];
+      if (n != null && n > 0) {
+        b.count = n;
+        selBuffets.add(b);
+      }
+    }
+    emit(state.copyWith(selectedAdditions: selAdds, selectedBuffets: selBuffets));
+    _recalcTotal();
+  }
+
+  /// Confirms the edit: applies the current selections onto the echoed bill and
+  /// updates the reservation in place (no new booking / payment), then returns.
+  Future<void> submitEdit() async {
+    final bill = _editBill;
+    final args = editArgs;
+    if (bill == null || args == null) {
+      ToastManager.showError('تعذّر تحميل بيانات الحجز، حاول مرة أخرى');
+      return;
+    }
+    if (state.selectedService == null) {
+      ToastManager.showError('من فضلك اختر خدمة أولاً');
+      return;
+    }
+
+    final date = _homeCubit.state.bookingDate;
+    if (date != null) {
+      bill.occasionDate = '${date.month}/${date.day}/${date.year}';
+    }
+    bill.serviceId = state.selectedService!.id;
+    bill.additions = [...state.selectedAdditions, ...state.selectedBuffets]
+        .where((a) => a.id != null && (a.count ?? 0) > 0)
+        .map((a) => {
+              'id': _existingAdditionRowIds[a.id] ?? 0,
+              'number': a.count ?? 1,
+              'additionId': a.id,
+            })
+        .toList();
+
+    emit(state.copyWith(isSaving: true));
+    final ok = args.isConfirmed
+        ? await _confirmRepo.updateReservationByClient(args.reservationId, bill)
+        : await _confirmRepo.updateReservationRequest(args.reservationId, bill);
+    emit(state.copyWith(isSaving: false));
+    if (ok) {
+      ToastManager.showSuccess('تم تعديل الحجز بنجاح');
+      NavigationHelper.pop();
+    } else {
+      ToastManager.showError('تعذّر تعديل الحجز، حاول مرة أخرى');
+    }
+  }
+
+  /// Parses the bill's M/d/yyyy occasion date (ignores any trailing time).
+  static DateTime? _parseBillDate(String? s) {
+    if (s == null || s.trim().isEmpty) return null;
+    final parts = s.split('/');
+    if (parts.length == 3) {
+      final m = int.tryParse(parts[0].trim());
+      final d = int.tryParse(parts[1].trim());
+      final y = int.tryParse(parts[2].trim().split(' ').first);
+      if (m != null && d != null && y != null) return DateTime(y, m, d);
+    }
+    return DateTime.tryParse(s);
   }
 
   Future<void> getAllPortServices() async {

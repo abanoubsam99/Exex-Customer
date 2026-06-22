@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/constants/layout_constants.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
@@ -72,6 +74,33 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               );
             },
+          ),
+          // Frosted band behind the floating nav bar: blurs the page content
+          // sitting underneath it so the bottom of every tab feels less
+          // crowded. Faded from the top (transparent → opaque) so the blur
+          // eases in instead of cutting a hard edge across the content.
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: (kFloatingNavBarSpace + 28).r,
+            child: IgnorePointer(
+              child: ShaderMask(
+                blendMode: BlendMode.dstIn,
+                shaderCallback: (rect) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black],
+                  stops: [0.0, 0.55],
+                ).createShader(rect),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ),
+            ),
           ),
           Positioned(
             bottom: 0,

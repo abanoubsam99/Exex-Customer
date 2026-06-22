@@ -115,7 +115,7 @@ class ProfileScreenBody extends StatelessWidget {
                           ),
                           8.verticalSpace,
                           Text(
-                            profile?.userName ?? '',
+                            profile?.name ?? '',
                             textAlign: TextAlign.right,
                             style: TextStyle(
                               color: Colors.black,
@@ -144,9 +144,9 @@ class ProfileScreenBody extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _statCard(
-                                  'لايوجد',
-                                  'كود الدعوة',
-                                  AppColors.blue2,
+                                  profile?.planDto?.name ?? 'مجاني',
+                                  'نظام الإشتراك',
+                                  AppColors.primaryColor,
                                 ),
                               ),
                               10.horizontalSpace,
@@ -154,17 +154,19 @@ class ProfileScreenBody extends StatelessWidget {
                                 child: _statCard(
                                   '${profile?.bookingsCount ?? 0} حجز',
                                   'عدد الحجوزات',
-                                  AppColors.blacksoft,
+                                  AppColors.numberOfBookColors,
                                 ),
                               ),
                               10.horizontalSpace,
                               Expanded(
                                 child: _statCard(
-                                  profile?.planDto?.name ?? 'مجاني',
-                                  'نظام الإشتراك',
-                                  AppColors.primaryColor,
+                                  'لايوجد',
+                                  'كود الدعوة',
+                                  AppColors.inviteCodeColor,
                                 ),
                               ),
+
+
                             ],
                           ),
                           16.verticalSpace,
@@ -343,7 +345,7 @@ class ProfileScreenBody extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 6.w),
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: AppColors.bgProfileItems,
         shape: RoundedRectangleBorder(
           side: const BorderSide(width: 1, color: AppColors.boarderColor),
           borderRadius: BorderRadius.circular(12.r),
@@ -358,9 +360,9 @@ class ProfileScreenBody extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: valueColor,
-              fontSize: 14.r,
+              fontSize: 15.r,
               fontFamily: 'Almarai',
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.bold,
             ),
           ),
           4.verticalSpace,
@@ -370,10 +372,10 @@ class ProfileScreenBody extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: AppColors.blueGrey,
-              fontSize: 12.r,
+              color: AppColors.black,
+              fontSize: 13.r,
               fontFamily: 'Almarai',
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
