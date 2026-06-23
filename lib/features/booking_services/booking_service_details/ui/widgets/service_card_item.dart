@@ -1,4 +1,3 @@
-import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,10 @@ import 'BlinkingDot.dart';
 class ServiceCardItem extends StatefulWidget {
   final String title;
   final int price;
+
+  /// Original price before the discount. When it's higher than [price] the card
+  /// shows a discount badge and a struck-through old price.
+  final int? priceBeforeDiscount;
   final String subtitle;
   final List<String> images;
   final bool isSelected;
@@ -20,6 +23,7 @@ class ServiceCardItem extends StatefulWidget {
     super.key,
     required this.title,
     required this.price,
+    this.priceBeforeDiscount,
     required this.subtitle,
     this.images = const [],
     this.isSelected = false,
@@ -33,6 +37,14 @@ class ServiceCardItem extends StatefulWidget {
 class _ServiceCardItemState extends State<ServiceCardItem> {
   final PageController _pageController = PageController();
   int _activeImage = 0;
+
+  /// Discount percentage derived from the before/after prices (0 when there is
+  /// no real discount, so the badge stays hidden).
+  int get _discountPercent {
+    final before = widget.priceBeforeDiscount ?? 0;
+    if (before <= 0 || before <= widget.price) return 0;
+    return (((before - widget.price) / before) * 100).round();
+  }
 
   @override
   void dispose() {
@@ -96,6 +108,31 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         child: const BlinkingDot(),
                       ),
                     ),
+                    // Discount badge (top-left) — only when there's a real discount.
+                    if (_discountPercent > 0)
+                      Positioned(
+                        top: 4.h,
+                        left: 4.w,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.salmon,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Text(
+                            '$_discountPercent%',
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w700,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ),
                     // Positioned(
                     //   top: -1.r,
                     //   right: -1.r,
@@ -170,6 +207,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
               const Spacer(),
               Row(
                 children: [
+                  // السعر الحالي (بعد الخصم)
                   Text.rich(
                     textDirection: TextDirection.ltr,
                     TextSpan(
@@ -199,50 +237,25 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                       ],
                     ),
                   ),
+                  // السعر قبل الخصم (مشطوب) — يظهر فقط عند وجود خصم فعلي.
+                  if (_discountPercent > 0) ...[
+                    6.horizontalSpace,
+                    Text(
+                      '${widget.priceBeforeDiscount} LE',
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: AppColors.salmon,
+                        fontSize: 13.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w400,
+                        height: 1.50,
+                        letterSpacing: -0.24,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: AppColors.salmon,
+                      ),
+                    ),
+                  ],
                   const Spacer(),
-                  Row(
-                    children: [
-                      Text(
-                        'LE',
-                        style: TextStyle(
-                          color: AppColors.salmon,
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                          letterSpacing: -0.24,
-                        ),
-                      ),
-                      SizedBox(width: 5,),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Text(
-                            "12",
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                              color: AppColors.salmon,
-                              fontSize: 14.r,
-                              fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w400,
-                              height: 1.50,
-                              letterSpacing: -0.24,
-                            ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 2.25.h,
-                            child: CustomPaint(
-                              size: Size(32.w, 10.h),
-                              painter: StrikethroughPainter(),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
                   // AnimatedContainer(
                   //   duration: const Duration(milliseconds: 300),
                   //   width: 25.r,

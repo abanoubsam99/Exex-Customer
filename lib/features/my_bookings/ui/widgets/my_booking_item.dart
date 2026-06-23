@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MyBookingItem extends StatelessWidget {
   final String portName;
@@ -121,9 +122,44 @@ class MyBookingItem extends StatelessWidget {
                       ),
                     ),
                     5.horizontalSpace,
-                    // Confirmed / cancelled cards: a single download (DownloadInfo)
-                    // action. Otherwise (current requests): edit + trash.
-                    if (onDownload != null)
+                    // Confirmed / cancelled cards: total price (old struck-through
+                    // + final) next to a single download (DownloadInfo) action.
+                    // Otherwise (current requests): edit + trash.
+                    if (onDownload != null) ...[
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (hasDiscount)
+                            Text(
+                              _money(apparentPrice),
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                color: AppColors.salmon,
+                                fontSize: 12.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w400,
+                                height: 1.2,
+                                letterSpacing: -0.24,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: AppColors.salmon,
+                              ),
+                            ),
+                          Text(
+                            _money(finalCost),
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 15.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w800,
+                              height: 1.2,
+                              letterSpacing: -0.24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      8.horizontalSpace,
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: Material(
@@ -132,15 +168,18 @@ class MyBookingItem extends StatelessWidget {
                             onTap: onDownload,
                             child: Padding(
                               padding: const EdgeInsets.all(5),
-                              child: Icon(
-                                Icons.download_rounded,
-                                size: 22.r,
-                                color: AppColors.primaryColor,
-                              ),
+                              child:
+                                SvgPicture.asset(AppImages.iconsDownload,width:22.r ,height: 22.r,)
+                              // Icon(
+                              //   Icons.download_rounded,
+                              //   size: 22.r,
+                              //   color: AppColors.primaryColor,
+                              // ),
                             ),
                           ),
                         ),
-                      )
+                      ),
+                    ]
                     else ...[
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),

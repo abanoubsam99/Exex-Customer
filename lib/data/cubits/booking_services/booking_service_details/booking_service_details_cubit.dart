@@ -147,16 +147,31 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       }
     }
 
-    // Pre-select the booked base service so its price seeds the total.
-    final serviceId = args.serviceId;
-    if (serviceId != null) {
+    // Pre-select the booked base service so its price seeds the total. The bill
+    // doesn't always carry a serviceId (e.g. coming from order details), so we
+    // match by id first, then fall back to matching by the service name.
+    final targetServiceId = args.serviceId ?? bill?.serviceId ?? 0;
+    final targetServiceName = bill?.serviceName?.trim() ?? '';
+    PortService? matchedService;
+    if (targetServiceId > 0) {
       for (final s in state.services) {
-        if (s.id == serviceId) {
-          emit(state.copyWith(selectedService: s));
-          await getServiceData();
+        if (s.id == targetServiceId) {
+          matchedService = s;
           break;
         }
       }
+    }
+    if (matchedService == null && targetServiceName.isNotEmpty) {
+      for (final s in state.services) {
+        if ((s.name ?? '').trim() == targetServiceName) {
+          matchedService = s;
+          break;
+        }
+      }
+    }
+    if (matchedService != null) {
+      emit(state.copyWith(selectedService: matchedService));
+      await getServiceData();
     }
 
     // Pre-select the additions/buffet that were on the reservation.

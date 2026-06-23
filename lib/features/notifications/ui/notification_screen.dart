@@ -3,6 +3,7 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/data/cubits/notifications/notifications_cubit.dart';
 import 'package:evex_user/data/cubits/notifications/notifications_state.dart';
@@ -45,6 +46,12 @@ class NotificationScreen extends StatelessWidget {
                   }
                   final recent = state.recent;
                   final others = state.others;
+                  if (recent.isEmpty && others.isEmpty) {
+                    return const EmptyListWidget(
+                      message: 'لا توجد اشعارات',
+                      icon: Icons.notifications_none,
+                    );
+                  }
                   return LoadMoreListener(
                     onLoadMore: () =>
                         context.read<NotificationsCubit>().loadMore(),

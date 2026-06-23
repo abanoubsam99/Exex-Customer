@@ -1,5 +1,6 @@
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/review_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,16 +46,11 @@ class ReviewsSection extends StatelessWidget {
           buildWhen: (p, c) => p.reviews != c.reviews,
           builder: (context, state) {
             if (state.reviews.isEmpty) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                child: Text(
-                  'لا توجد تقييمات بعد',
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 13.r,
-                    fontFamily: 'Almarai',
-                  ),
-                ),
+              return EmptyListWidget(
+                message: 'لا توجد تقييمات بعد',
+                icon: Icons.star_border_rounded,
+                iconSize: 44.r,
+                padding: EdgeInsets.symmetric(vertical: 20.h),
               );
             }
             return SizedBox(

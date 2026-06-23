@@ -95,10 +95,29 @@ class OrderDetailsModel {
     final address = [s('governorate'), s('city'), s('address')]
         .where((e) => e.isNotEmpty)
         .join(' , ');
-    final venue = [s('governorate'), s('city')]
-        .where((e) => e.isNotEmpty)
-        .join(' , ');
+    final venue =
+        [s('governorate'), s('city')].where((e) => e.isNotEmpty).join(' , ');
     final serviceDetails = s('serviceDetails');
+
+    // Fully dynamic path: if the backend returns the cost components as a list,
+    // render them straight from the API (any new component shows automatically).
+    // Falls back to building the breakdown from the known flat fields below.
+    final rawCosts =
+        json['costBreakdown'] ?? json['costDetails'] ?? json['costs'];
+    final apiBreakdown = rawCosts is List
+        ? rawCosts
+            .whereType<Map>()
+            .map((e) => CostRow.fromJson(Map<String, dynamic>.from(e)))
+            .where((row) => row.value != 0)
+            .toList()
+        : null;
+
+    // Totals come from the API; remaining is derived (total − paid) only when
+    // the backend doesn't send it explicitly.
+    final totalValue = n('totalCost');
+    final paidValue = n('totalAmountReceivedFromCustomer');
+    final remainingValue =
+        (json['remainingAmount'] as num?) ?? (totalValue - paidValue);
 
     return OrderDetailsModel(
       bookingNumber: (json['reservationId'] as num?)?.toInt().toString() ?? '',
@@ -119,7 +138,8 @@ class OrderDetailsModel {
       eventType: s('occasionType'),
       venueLocation: venue,
       eventDay: DateFormatHelper.arabicWeekday(s('occasionDate')),
-      eventDate: DateFormatHelper.arabicDateWithComa(s('occasionDate'), fallback: ''),
+      eventDate:
+          DateFormatHelper.arabicDateWithComa(s('occasionDate'), fallback: ''),
       basicService: OrderLineItem(
         name: s('serviceName'),
         price: n('servicePrice').round(),
@@ -128,41 +148,47 @@ class OrderDetailsModel {
       additions: additions,
       buffet: buffet,
       // Labels/units are translation keys — screens render them with `.tr()`.
-      costBreakdown: [
-        CostRow(label: 'evex commission', value: n('evexCommission').round()),
-        CostRow(
-            label: 'administrative fees',
-            value: n('administrativeFees').round()),
-        CostRow(label: 'tax', value: n('tax').round()),
-        CostRow(label: 'insurance amount', value: n('insuranceAmount').round()),
-        CostRow(label: 'booking deposit', value: n('deposit').round()),
-        CostRow(
-          label: 'cashback',
-          value: n('cashbackPointsValue').round(),
-          unit: 'point',
-        ),
-        CostRow(
-          label: 'additional discount from vendor',
-          value: n('additionalDiscountFromVendor').round(),
-        ),
-        CostRow(
-          label: 'additional discount from evex',
-          value: n('additionalDiscountFromEVEX').round(),
-        ),
-        CostRow(
-          label: 'additional cost from vendor',
-          value: n('additionalCostFromVendor').round(),
-          subtitle: json['detailsAdditionalCostFromVendor']?.toString(),
-        ),
-        CostRow(
-          label: 'additional cost from evex',
-          value: n('additionalCostFromEVEX').round(),
-          subtitle: json['detailsAdditionalCostFromEVEX']?.toString(),
-        ),
-      ],
-      totalCost: n('totalCost').round(),
-      paid: n('totalAmountReceivedFromCustomer').round(),
-      remaining: n('remainingAmount').round(),
+      // Dynamic: prefer the API's cost list; otherwise build from the known
+      // flat fields and show only the non-zero components, so the breakdown
+      // adapts per reservation instead of always listing every row with zeros.
+      costBreakdown: apiBreakdown ??
+          [
+            CostRow(
+                label: 'evex commission', value: n('evexCommission').round()),
+            CostRow(
+                label: 'administrative fees',
+                value: n('administrativeFees').round()),
+            CostRow(label: 'tax', value: n('tax').round()),
+            CostRow(
+                label: 'insurance amount', value: n('insuranceAmount').round()),
+            CostRow(label: 'booking deposit', value: n('deposit').round()),
+            CostRow(
+              label: 'cashback',
+              value: n('cashbackPointsValue').round(),
+              unit: 'point',
+            ),
+            CostRow(
+              label: 'additional discount from vendor',
+              value: n('additionalDiscountFromVendor').round(),
+            ),
+            CostRow(
+              label: 'additional discount from evex',
+              value: n('additionalDiscountFromEVEX').round(),
+            ),
+            CostRow(
+              label: 'additional cost from vendor',
+              value: n('additionalCostFromVendor').round(),
+              subtitle: json['detailsAdditionalCostFromVendor']?.toString(),
+            ),
+            CostRow(
+              label: 'additional cost from evex',
+              value: n('additionalCostFromEVEX').round(),
+              subtitle: json['detailsAdditionalCostFromEVEX']?.toString(),
+            ),
+          ].where((row) => row.value != 0).toList(),
+      totalCost: totalValue.round(),
+      paid: paidValue.round(),
+      remaining: remainingValue.round(),
       refunded: n('totalAmountRefundedToCustomer').round(),
     );
   }
@@ -234,12 +260,14 @@ class CostRow {
     this.subtitle,
   });
 
+  /// Tolerant of the common field-name variants a backend might use for a
+  /// dynamic cost-components list (label/name/title, value/amount, ...).
   factory CostRow.fromJson(Map<String, dynamic> json) {
     return CostRow(
-      label: json['label'] ?? '',
-      value: json['value'] ?? 0,
-      unit: json['unit'] ?? 'pound',
-      subtitle: json['subtitle'],
+      label: (json['label'] ?? json['name'] ?? json['title'] ?? '').toString(),
+      value: ((json['value'] ?? json['amount'] ?? 0) as num).round(),
+      unit: (json['unit'] ?? 'pound').toString(),
+      subtitle: (json['subtitle'] ?? json['details'])?.toString(),
     );
   }
 }

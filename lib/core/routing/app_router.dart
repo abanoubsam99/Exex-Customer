@@ -42,7 +42,8 @@ import 'package:evex_user/features/booking_services/booking_service_details/ui/c
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/instant_booking_services_screen.dart';
 import 'package:evex_user/features/contact_us/ui/contact_us_screen.dart';
 import 'package:evex_user/features/confirm_booking/ui/confirm_booking_screen.dart';
-import 'package:evex_user/features/edit_reservation/ui/edit_reservation_screen.dart';
+// صفحة "تعديل الحجز" المنفصلة معطّلة — التعديل بقى عبر صفحة تفاصيل البوابة.
+// import 'package:evex_user/features/edit_reservation/ui/edit_reservation_screen.dart';
 import 'package:evex_user/features/favorites/ui/favorites_screen.dart';
 import 'package:evex_user/features/direct_services/ui/contact_info_screen.dart';
 import 'package:evex_user/features/direct_services/ui/direct_service_details_screen.dart';
@@ -74,7 +75,10 @@ import '../../data/cubits/complete_booking/complete_booking_cubit.dart';
 import '../../data/cubits/complete_booking/complete_booking_state.dart';
 import '../../data/cubits/confirm_booking/confirm_booking_cubit.dart';
 import '../../data/cubits/confirm_booking/confirm_booking_state.dart';
-import '../../data/cubits/edit_reservation/edit_reservation_cubit.dart';
+// EditReservationCubit معطّل مع الـ route بتاعه (التعديل بقى عبر تفاصيل البوابة).
+// import '../../data/cubits/edit_reservation/edit_reservation_cubit.dart';
+// edit_reservation_state.dart لسه مطلوب لأنه بيعرّف EditReservationArgs المستخدم
+// في bookingServiceDetailsScreen.
 import '../../data/cubits/edit_reservation/edit_reservation_state.dart';
 import '../../data/cubits/favorites/favorites_cubit.dart';
 import '../../data/cubits/direct_services/direct_service_details_cubit.dart';
@@ -429,21 +433,24 @@ class AppRouter {
           settings,
         );
 
-      case Routes.editReservationScreen:
-        return _page(
-          BlocProvider(
-            create: (context) => EditReservationCubit(
-              context.read<ConfirmBookingRepo>(),
-              context.read<LocationRepo>(),
-              context.read<PortServicesRepo>(),
-              args: settings.arguments is EditReservationArgs
-                  ? settings.arguments as EditReservationArgs
-                  : const EditReservationArgs(reservationId: 0),
-            ),
-            child: const EditReservationScreen(),
-          ),
-          settings,
-        );
+      // ── صفحة "تعديل الحجز" المنفصلة معطّلة ──
+      // التعديل بقى بيتم عبر صفحة تفاصيل البوابة (BookingServiceDetailsScreen)
+      // مع autofill للاختيارات السابقة، فالـ route ده مش مستخدم.
+      // case Routes.editReservationScreen:
+      //   return _page(
+      //     BlocProvider(
+      //       create: (context) => EditReservationCubit(
+      //         context.read<ConfirmBookingRepo>(),
+      //         context.read<LocationRepo>(),
+      //         context.read<PortServicesRepo>(),
+      //         args: settings.arguments is EditReservationArgs
+      //             ? settings.arguments as EditReservationArgs
+      //             : const EditReservationArgs(reservationId: 0),
+      //       ),
+      //       child: const EditReservationScreen(),
+      //     ),
+      //     settings,
+      //   );
 
       case Routes.directServicesListScreen:
         return _page(

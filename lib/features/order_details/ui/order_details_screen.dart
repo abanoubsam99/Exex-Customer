@@ -158,13 +158,18 @@ class OrderDetailsScreen extends StatelessWidget {
                           onTap: () {
                             final id = order.reservationId;
                             if (id == null) return;
+                            // Editing reuses the booking-details (port) module
+                            // autofilled — it pre-fills the previous selections
+                            // and the bottom button confirms an update instead
+                            // of adding a new booking (no separate edit screen).
                             NavigationHelper.pushNamed(
-                              Routes.editReservationScreen,
+                              Routes.bookingServiceDetailsScreen,
                               arguments: EditReservationArgs(
                                 reservationId: id,
                                 isConfirmed:
                                   ReservationStatusHelper.isConfirmed(
                                       order.status),
+                                portId: order.portId,
                               ),
                             );
                           },

@@ -1,5 +1,6 @@
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_details_bottom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -97,6 +98,14 @@ class ServicesSection extends StatelessWidget {
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();
+            if (state.services.isEmpty) {
+              return EmptyListWidget(
+                message: 'لا توجد خدمات متاحة',
+                icon: Icons.design_services_outlined,
+                iconSize: 44.r,
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+              );
+            }
             return SizedBox(
               // Headroom for the global 1.1 text scaling so the card content
               // (image + title + price row) never overflows.
@@ -113,6 +122,7 @@ class ServicesSection extends StatelessWidget {
                     title: service.name ?? '',
                     subtitle: service.details ?? '',
                     price: service.price ?? 0,
+                    priceBeforeDiscount: service.priceBeforDiscount,
                     isSelected: state.selectedService?.id == service.id,
                     onSelectionChanged: () {
                       // اختيار الخدمة (بيجيب بياناتها للحساب) + فتح bottom sheet

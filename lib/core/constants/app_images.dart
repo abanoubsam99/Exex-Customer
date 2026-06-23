@@ -225,6 +225,7 @@ class AppImages {
   /// Assets for iconsWhatsapp
   /// assets/icons/whatsapp.png
   static const String iconsWhatsapp = "assets/icons/whatsapp.png";
+  static const String iconsDownload = "assets/icons/download.svg";
   static const String iconsFavicon = "assets/icons/favicon.png";
   static const String iconsIc = "assets/icons/idicon.svg";
   /// Assets for iconsSocialTelegram

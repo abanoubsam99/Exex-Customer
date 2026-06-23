@@ -1,4 +1,5 @@
 import 'package:evex_user/core/ui/helpers/custom_loader.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/data/cubits/posts/post_cubit.dart';
 import 'package:evex_user/data/cubits/posts/post_state.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,9 @@ class PostsScreenBody extends StatelessWidget {
           return const Center(child: CustomLoader());
         }
         if (state is PostSuccess) {
+          if (state.posts.isEmpty) {
+            return const EmptyListWidget();
+          }
           return ListView.builder(
             itemCount: state.posts.length,
             itemBuilder: (context, index) {

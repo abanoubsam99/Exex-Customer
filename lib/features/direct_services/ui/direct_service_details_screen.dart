@@ -6,6 +6,7 @@ import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_service_details_cubit.dart';
@@ -384,18 +385,9 @@ class _ProductsSection extends StatelessWidget {
               );
             }
             if (state.services.isEmpty) {
-              return SizedBox(
-                height: 80.h,
-                child: Center(
-                  child: Text(
-                    'لا توجد منتجات متاحة',
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 13.r,
-                      fontFamily: 'Almarai',
-                    ),
-                  ),
-                ),
+              return const EmptyListWidget(
+                message: 'لا توجد منتجات متاحة',
+                icon: Icons.shopping_bag_outlined,
               );
             }
             return SizedBox(

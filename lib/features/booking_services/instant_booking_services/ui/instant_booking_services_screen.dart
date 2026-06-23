@@ -6,6 +6,7 @@ import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/core/ui/widgets/special_offers_carousel.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
@@ -166,16 +167,9 @@ class InstantBookingServicesScreen extends StatelessWidget {
                       );
                     }
                     if (items.isEmpty) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 40.h),
-                        child: Text(
-                          'لا توجد نتائج متاحة',
-                          style: TextStyle(
-                            color: AppColors.grey,
-                            fontSize: 14.r,
-                            fontFamily: 'Almarai',
-                          ),
-                        ),
+                      return const EmptyListWidget(
+                        message: 'لا توجد نتائج متاحة',
+                        icon: Icons.search_off,
                       );
                     }
                     return ListView.separated(

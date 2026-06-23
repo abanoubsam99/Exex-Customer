@@ -2,6 +2,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_service_card_item.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,14 @@ class OtherServicesSection extends StatelessWidget {
           buildWhen: (p, c) => p.otherPorts != c.otherPorts,
           builder: (context, state) {
             final ports = state.otherPorts;
+            if (ports.isEmpty) {
+              return EmptyListWidget(
+                message: 'لا توجد خدمات أخرى',
+                icon: Icons.widgets_outlined,
+                iconSize: 44.r,
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+              );
+            }
             return SizedBox(
               height: 150.h,
               child: ListView.separated(

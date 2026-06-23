@@ -160,7 +160,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           // if (state.reviews.isNotEmpty)
                             sectionBlock(const ReviewsSection()),
                           // Only when the vendor has other ports to show.
-                          if (state.otherPorts.isNotEmpty)
+                          // if (state.otherPorts.isNotEmpty)
                             sectionBlock(const OtherServicesSection()),
                           45.verticalSpace,
 

@@ -1,5 +1,6 @@
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/addition_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +45,14 @@ class BuffetsSection extends StatelessWidget {
         BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();
+            if (state.buffets.isEmpty) {
+              return EmptyListWidget(
+                message: 'لا يوجد بوفيه متاح',
+                icon: Icons.restaurant_outlined,
+                iconSize: 44.r,
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+              );
+            }
             return ListView.separated(
               shrinkWrap: true,
               padding: EdgeInsets.zero,

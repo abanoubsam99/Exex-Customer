@@ -51,7 +51,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
       ),
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
@@ -84,7 +84,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                             child: AnimatedSmoothIndicator(
                               activeIndex: _activeImage,
                               count: images.length,
-                              textDirection: TextDirection.ltr,
+                              textDirection: TextDirection.rtl,
                               effect: ExpandingDotsEffect(
                                 dotHeight: 7.r,
                                 dotWidth: 7.r,
@@ -103,8 +103,21 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Expanded(
+                    child: Text(
+                      widget.service.name ?? '',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: AppColors.blacksoft,
+                        fontSize: 18.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w800,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                  12.horizontalSpace,
                   Text.rich(
-                    textDirection: TextDirection.ltr,
                     TextSpan(
                       children: [
                         TextSpan(
@@ -119,29 +132,16 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                         TextSpan(
                           text: ' جنيه',
                           style: TextStyle(
-                            color: AppColors.unitGrey,
-                            fontSize: 13.r,
+                            color: AppColors.black,
+                            fontSize: 14.r,
                             fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  12.horizontalSpace,
-                  Expanded(
-                    child: Text(
-                      widget.service.name ?? '',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: AppColors.blacksoft,
-                        fontSize: 18.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w800,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
               16.verticalSpace,
@@ -179,7 +179,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
 
   Widget _buildImages(List<String> images) {
     if (images.isEmpty) {
-      return const CustomImageHandler(null, fit: BoxFit.cover);
+      return const CustomImageHandler(null, fit: BoxFit.fill);
     }
     return PageView.builder(
       controller: _pageController,
@@ -187,7 +187,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
       onPageChanged: (i) => setState(() => _activeImage = i),
       itemBuilder: (context, i) => CustomImageHandler(
         ImageUrlHelper.full(images[i]),
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }

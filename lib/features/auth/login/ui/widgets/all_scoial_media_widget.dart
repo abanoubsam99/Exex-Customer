@@ -17,6 +17,26 @@ class AllSocalMediaWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // ── Fingerprint / biometric ──
+        _SocialButton(
+          onTap: () => cubit.loginWithBiometrics(),
+          child: CustomImageHandler(
+            AppImages.iconsLocalAuth,
+            height: 28.r,
+            width: 28.r,
+          ),
+        ),
+        14.horizontalSpace,
+        // ── Google ──
+        _SocialButton(
+          onTap: () => cubit.loginWithGoogle(),
+          child: CustomImageHandler(
+            AppImages.iconsGoogel,
+            height: 28.r,
+            width: 28.r,
+          ),
+        ),
+        14.horizontalSpace,
         // ── Facebook (prepared — disabled) ──
         // _SocialButton(
         //   onTap: () => cubit.loginWithFacebook(),
@@ -32,26 +52,8 @@ class AllSocalMediaWidget extends StatelessWidget {
           onTap: () => cubit.loginWithApple(),
           child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
         ),
-        14.horizontalSpace,
-        // ── Google ──
-        _SocialButton(
-          onTap: () => cubit.loginWithGoogle(),
-          child: CustomImageHandler(
-            AppImages.iconsGoogel,
-            height: 28.r,
-            width: 28.r,
-          ),
-        ),
-        14.horizontalSpace,
-        // ── Fingerprint / biometric ──
-        _SocialButton(
-          onTap: () => cubit.loginWithBiometrics(),
-          child: CustomImageHandler(
-            AppImages.iconsLocalAuth,
-            height: 28.r,
-            width: 28.r,
-          ),
-        ),
+
+
       ],
     );
   }

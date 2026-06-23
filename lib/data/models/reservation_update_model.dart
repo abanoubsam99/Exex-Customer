@@ -29,6 +29,10 @@ class ReservationUpdateModel {
 
   /// Editable — the chosen base service (can change when editing a reservation).
   int serviceId;
+
+  /// Service display name from the bill — used to re-select the base service on
+  /// the edit screen when the bill doesn't carry a serviceId.
+  final String? serviceName;
   final int clientId;
 
   /// Editable — occasion type.
@@ -67,6 +71,7 @@ class ReservationUpdateModel {
     this.reservationDate,
     this.portId = 0,
     this.serviceId = 0,
+    this.serviceName,
     this.clientId = 0,
     this.occasionId = 0,
     this.totalCost = 0,
@@ -112,6 +117,7 @@ class ReservationUpdateModel {
       reservationDate: s('reservationDate'),
       portId: i('portId'),
       serviceId: serviceId ?? i('serviceId'),
+      serviceName: s('serviceName'),
       clientId: clientId ?? i('clientId'),
       occasionId: occasionId ?? i('occasionId'),
       totalCost: nu('totalCost'),

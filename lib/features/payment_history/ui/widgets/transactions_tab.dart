@@ -1,4 +1,5 @@
 import 'package:evex_user/core/ui/helpers/custom_loader.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/data/cubits/payment_history/payment_history_cubit.dart';
 import 'package:evex_user/data/cubits/payment_history/payment_history_state.dart';
 import 'package:evex_user/features/payment_history/ui/widgets/transaction_item.dart';
@@ -25,23 +26,13 @@ class TransactionsTab extends StatelessWidget {
         }
 
         if (items.isEmpty) {
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              return RefreshIndicator(
-                onRefresh: () => cubit.loadFirstPage(filter),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Center(child: Text('لا يوجد سجلات'))],
-                    ),
-                  ),
-                ),
-              );
-            },
+          return RefreshIndicator(
+            onRefresh: () => cubit.loadFirstPage(filter),
+            child: const EmptyListWidget(
+              scrollable: true,
+              message: 'لا يوجد سجلات',
+              icon: Icons.receipt_long_outlined,
+            ),
           );
         }
 

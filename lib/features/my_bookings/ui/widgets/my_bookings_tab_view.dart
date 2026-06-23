@@ -5,6 +5,7 @@ import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
@@ -477,22 +478,7 @@ String _location(String? governorate, String? city) {
       .join('، ');
 }
 
-/// قائمة فاضية بس قابلة للسحب (عشان الـ RefreshIndicator يشتغل).
+/// Pull-to-refreshable empty placeholder (so RefreshIndicator keeps working).
 Widget _emptyList(String message) {
-  return ListView(
-    padding: EdgeInsets.symmetric(vertical: 80.h),
-    children: [
-      Center(
-        child: Text(
-          message,
-          style: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14.r,
-            fontFamily: 'Almarai',
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ),
-    ],
-  );
+  return EmptyListWidget(scrollable: true, message: message);
 }

@@ -5,6 +5,7 @@ import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/data/cubits/favorites/favorites_cubit.dart';
 import 'package:evex_user/data/cubits/favorites/favorites_state.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
@@ -13,7 +14,6 @@ import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
 const _orange = AppColors.primaryColor;
@@ -174,20 +174,10 @@ class _FavList extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: () => context.read<FavoritesCubit>().loadFavorites(),
           child: items.isEmpty
-              ? ListView(
-                  padding: EdgeInsets.symmetric(vertical: 80.h),
-                  children: [
-                    Center(
-                      child: Text(
-                        'لا توجد مفضلات',
-                        style: TextStyle(
-                          color: AppColors.grey,
-                          fontSize: 14.r,
-                          fontFamily: 'Almarai',
-                        ),
-                      ),
-                    ),
-                  ],
+              ? const EmptyListWidget(
+                  scrollable: true,
+                  message: 'لا توجد مفضلات',
+                  icon: Icons.favorite_border,
                 )
               : ListView.separated(
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),

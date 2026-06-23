@@ -28,7 +28,7 @@ class ReviewCardItem extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
-        child: Column(
+        child: Column( crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +132,7 @@ class ReviewCardItem extends StatelessWidget {
             6.verticalSpace,
             Expanded(
               child: Text(
-                comment,
+                comment ,
                 textAlign: TextAlign.right,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
