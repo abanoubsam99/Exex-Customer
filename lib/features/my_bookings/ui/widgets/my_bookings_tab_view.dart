@@ -5,6 +5,7 @@ import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
@@ -31,10 +32,22 @@ class MyBookingsTabView extends StatelessWidget {
       builder: (context, state) {
         return TabBarView(
           children: [
-            _RequestsTab(state: state, onRefresh: cubit.loadRequests),
-            _ReservationsTab(state: state, onRefresh: cubit.loadReservations),
+            _RequestsTab(
+              state: state,
+              onRefresh: cubit.loadRequests,
+              onLoadMore: cubit.loadMoreRequests,
+            ),
+            _ReservationsTab(
+              state: state,
+              onRefresh: cubit.loadReservations,
+              onLoadMore: cubit.loadMoreReservations,
+            ),
             // Cancelled reservations — filtered from GetMyReservations by status.
-            _CancelledTab(state: state, onRefresh: cubit.loadReservations),
+            _CancelledTab(
+              state: state,
+              onRefresh: cubit.loadReservations,
+              onLoadMore: cubit.loadMoreReservations,
+            ),
           ],
         );
       },
@@ -46,7 +59,12 @@ class MyBookingsTabView extends StatelessWidget {
 class _RequestsTab extends StatelessWidget {
   final MyBookingsState state;
   final Future<void> Function() onRefresh;
-  const _RequestsTab({required this.state, required this.onRefresh});
+  final VoidCallback onLoadMore;
+  const _RequestsTab({
+    required this.state,
+    required this.onRefresh,
+    required this.onLoadMore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,13 +81,19 @@ class _RequestsTab extends StatelessWidget {
             onRefresh: onRefresh,
             child: state.requests.isEmpty
                 ? _emptyList('لا توجد طلبات حالية')
-                : ListView.separated(
+                : LoadMoreListener(
+                  onLoadMore: onLoadMore,
+                  child: ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
               padding: EdgeInsets.fromLTRB(
                   0, 20.h, 0, hasButton ? 12.h : kFloatingNavBarSpace.r),
-              itemCount: state.requests.length,
+              itemCount:
+                  state.requests.length + (state.requestsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index >= state.requests.length) {
+                  return const PaginationLoader();
+                }
                 final r = state.requests[index];
                 final available =
                     (r.reservationStatus ?? '').contains('متاح');
@@ -111,6 +135,7 @@ class _RequestsTab extends StatelessWidget {
                 );
               },
             ),
+                ),
           ),
         ),
         _ConfirmRequestsButton(state: state),
@@ -164,7 +189,12 @@ class _ConfirmRequestsButton extends StatelessWidget {
 class _ReservationsTab extends StatelessWidget {
   final MyBookingsState state;
   final Future<void> Function() onRefresh;
-  const _ReservationsTab({required this.state, required this.onRefresh});
+  final VoidCallback onLoadMore;
+  const _ReservationsTab({
+    required this.state,
+    required this.onRefresh,
+    required this.onLoadMore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -175,12 +205,18 @@ class _ReservationsTab extends StatelessWidget {
       onRefresh: onRefresh,
       child: state.reservations.isEmpty
           ? _emptyList('لا توجد حجوزات مؤكدة')
-          : ListView.separated(
+          : LoadMoreListener(
+            onLoadMore: onLoadMore,
+            child: ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
               padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
-              itemCount: state.reservations.length,
+              itemCount: state.reservations.length +
+                  (state.reservationsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index >= state.reservations.length) {
+                  return const PaginationLoader();
+                }
                 final r = state.reservations[index];
                 return MyBookingItem(
                   portName: r.portName ?? '',
@@ -204,6 +240,7 @@ class _ReservationsTab extends StatelessWidget {
                 );
               },
             ),
+          ),
     );
   }
 }
@@ -212,7 +249,12 @@ class _ReservationsTab extends StatelessWidget {
 class _CancelledTab extends StatelessWidget {
   final MyBookingsState state;
   final Future<void> Function() onRefresh;
-  const _CancelledTab({required this.state, required this.onRefresh});
+  final VoidCallback onLoadMore;
+  const _CancelledTab({
+    required this.state,
+    required this.onRefresh,
+    required this.onLoadMore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -223,12 +265,18 @@ class _CancelledTab extends StatelessWidget {
       onRefresh: onRefresh,
       child: state.cancelled.isEmpty
           ? _emptyList('لا توجد حجوزات ملغاه')
-          : ListView.separated(
+          : LoadMoreListener(
+            onLoadMore: onLoadMore,
+            child: ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
               padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
-              itemCount: state.cancelled.length,
+              itemCount:
+                  state.cancelled.length + (state.reservationsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index >= state.cancelled.length) {
+                  return const PaginationLoader();
+                }
                 final r = state.cancelled[index];
                 return MyBookingItem(
                   portName: r.portName ?? '',
@@ -251,6 +299,7 @@ class _CancelledTab extends StatelessWidget {
                 );
               },
             ),
+          ),
     );
   }
 }

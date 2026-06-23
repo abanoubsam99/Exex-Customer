@@ -6,6 +6,7 @@ import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/core/ui/widgets/special_offers_carousel.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
@@ -32,7 +33,9 @@ class InstantBookingServicesScreen extends StatelessWidget {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => context.read<InstantBookingCubit>().loadPorts(),
-        child: SingleChildScrollView(
+        child: LoadMoreListener(
+          onLoadMore: () => context.read<InstantBookingCubit>().loadMorePorts(),
+          child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
@@ -368,8 +371,17 @@ class InstantBookingServicesScreen extends StatelessWidget {
                   },
                 ),
               ),
+              // Footer spinner while the next page of ports loads.
+              BlocBuilder<InstantBookingCubit, InstantBookingState>(
+                buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+                builder: (context, state) => state.isLoadingMore
+                    ? const PaginationLoader()
+                    : const SizedBox.shrink(),
+              ),
+              24.verticalSpace,
             ],
           ),
+        ),
         ),
       ),
     );

@@ -18,6 +18,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       : super(CompleteBookingState(selectedOccasionId: args.occasionId)) {
     getPortPolicy();
     getOccasions();
+    getNetCost();
   }
 
   final notesController = TextEditingController();
@@ -35,6 +36,20 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   Future<void> getOccasions() async {
     final occasions = await _repo.getOccasions();
     if (occasions != null) emit(state.copyWith(occasions: occasions));
+  }
+
+  /// Cost breakdown for the "تفاصيل تكلفة الخدمة" section (عمولة evex، رسوم
+  /// إدارية، ضريبة، مقدم الحجز، الإجمالي) — computed from the chosen service +
+  /// total so nothing on that section is hardcoded.
+  Future<void> getNetCost() async {
+    final serviceId = args.service?.id;
+    if (serviceId == null) return;
+    final netCost = await _repo.calculateNetCost(
+      id: serviceId,
+      servicePrice: args.service?.price,
+      totalCost: args.totalCost,
+    );
+    if (netCost != null) emit(state.copyWith(netCost: netCost));
   }
 
   /// Updates the chosen occasion type when changed from the edit sheet.

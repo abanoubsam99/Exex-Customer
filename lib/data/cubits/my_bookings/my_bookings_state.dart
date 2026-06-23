@@ -13,6 +13,15 @@ class MyBookingsState {
   final String? reservationsError;
   final String? requestsError;
 
+  /// Infinite-scroll flags for the requests tab.
+  final bool requestsLoadingMore;
+  final bool requestsHasMore;
+
+  /// Infinite-scroll flags for the reservations source (drives both the
+  /// confirmed and the cancelled tabs, which split the same paginated list).
+  final bool reservationsLoadingMore;
+  final bool reservationsHasMore;
+
   /// Deposit summary for all pending requests (CalculatePendingDeposit).
   final PendingDepositModel? pendingDeposit;
 
@@ -24,6 +33,10 @@ class MyBookingsState {
     this.requests = const [],
     this.reservationsError,
     this.requestsError,
+    this.requestsLoadingMore = false,
+    this.requestsHasMore = true,
+    this.reservationsLoadingMore = false,
+    this.reservationsHasMore = true,
     this.pendingDeposit,
   });
 
@@ -35,6 +48,10 @@ class MyBookingsState {
     List<ReservationRequestModel>? requests,
     String? reservationsError,
     String? requestsError,
+    bool? requestsLoadingMore,
+    bool? requestsHasMore,
+    bool? reservationsLoadingMore,
+    bool? reservationsHasMore,
     PendingDepositModel? pendingDeposit,
   }) {
     return MyBookingsState(
@@ -46,6 +63,11 @@ class MyBookingsState {
       requests: requests ?? this.requests,
       reservationsError: reservationsError,
       requestsError: requestsError,
+      requestsLoadingMore: requestsLoadingMore ?? this.requestsLoadingMore,
+      requestsHasMore: requestsHasMore ?? this.requestsHasMore,
+      reservationsLoadingMore:
+          reservationsLoadingMore ?? this.reservationsLoadingMore,
+      reservationsHasMore: reservationsHasMore ?? this.reservationsHasMore,
       pendingDeposit: pendingDeposit ?? this.pendingDeposit,
     );
   }

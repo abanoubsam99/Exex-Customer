@@ -1,3 +1,4 @@
+import 'package:evex_user/data/models/net_cost_model.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,13 +8,18 @@ class ServiceCostDetailsSection extends StatelessWidget {
   /// سياسات التاجر — منها بنجيب مبلغ التأمين.
   final PortPolicy? policy;
 
-  /// إجمالي التكلفة الجاي من الشاشة السابقة (سعر الخدمة + الإضافات).
+  /// إجمالي التكلفة الجاي من الشاشة السابقة (سعر الخدمة + الإضافات) — يُستخدم كقيمة
+  /// احتياطية للإجمالي لحين رجوع [netCost].
   final num totalCost;
+
+  /// تفصيل التكلفة من CalculateNetCost (عمولة/رسوم/ضريبة/مقدم/صافي).
+  final NetCostModel? netCost;
 
   const ServiceCostDetailsSection({
     super.key,
     this.policy,
     this.totalCost = 0,
+    this.netCost,
   });
 
   @override
@@ -59,18 +65,18 @@ class ServiceCostDetailsSection extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
               child: Column(
                 children: [
-                  _costRow('عمولة evex', '0'),
+                  _costRow('عمولة evex', _fmt(netCost?.commission)),
                   6.verticalSpace,
-                  _costRow('رسوم إدارية', '0'),
+                  _costRow('رسوم إدارية', _fmt(netCost?.adminFees)),
                   6.verticalSpace,
-                  _costRow('ضريبة', '0'),
+                  _costRow('ضريبة', _fmt(netCost?.tax)),
                   6.verticalSpace,
                   _costRow('مبلغ التأمين', _fmt(policy?.insuranceAmount)),
                   const Spacer(),
-                  _costRow('مقدم الحجز', '1000'),
+                  _costRow('مقدم الحجز', _fmt(netCost?.deposit)),
                   _costRow(
                     'إجمالى التكلفة',
-                    totalCost.toStringAsFixed(2),
+                    (netCost?.netCost ?? totalCost).toStringAsFixed(2),
                     isTotal: true,
                   ),
                 ],

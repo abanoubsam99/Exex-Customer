@@ -39,6 +39,10 @@ class CompleteBookingState {
   /// service-details screen so both stay identical.
   final List<Occasion> occasions;
   final int? selectedOccasionId;
+
+  /// Cost breakdown (عمولة/رسوم/ضريبة/مقدم) from CalculateNetCost — drives the
+  /// "تفاصيل تكلفة الخدمة" section so nothing there is hardcoded.
+  final NetCostModel? netCost;
   final String? errorMessage;
 
   const CompleteBookingState({
@@ -48,6 +52,7 @@ class CompleteBookingState {
     this.isSubmitting = false,
     this.occasions = const [],
     this.selectedOccasionId,
+    this.netCost,
     this.errorMessage,
   });
 
@@ -58,6 +63,7 @@ class CompleteBookingState {
     bool? isSubmitting,
     List<Occasion>? occasions,
     int? selectedOccasionId,
+    NetCostModel? netCost,
     String? errorMessage,
   }) {
     return CompleteBookingState(
@@ -67,6 +73,7 @@ class CompleteBookingState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       occasions: occasions ?? this.occasions,
       selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
+      netCost: netCost ?? this.netCost,
       errorMessage: errorMessage,
     );
   }

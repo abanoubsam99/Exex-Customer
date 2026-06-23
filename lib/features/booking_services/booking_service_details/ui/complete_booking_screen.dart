@@ -70,6 +70,7 @@ class CompleteBookingScreen extends StatelessWidget {
                           child: ServiceCostDetailsSection(
                             policy: state.policy,
                             totalCost: args.totalCost,
+                            netCost: state.netCost,
                           ),
                         ),
                         22.verticalSpace,

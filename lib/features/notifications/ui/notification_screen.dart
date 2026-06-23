@@ -3,6 +3,7 @@ import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
 import 'package:evex_user/data/cubits/notifications/notifications_cubit.dart';
 import 'package:evex_user/data/cubits/notifications/notifications_state.dart';
 import 'package:evex_user/data/models/app_notification.dart';
@@ -44,28 +45,35 @@ class NotificationScreen extends StatelessWidget {
                   }
                   final recent = state.recent;
                   final others = state.others;
-                  return ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    children: [
-                      if (recent.isNotEmpty) ...[
-                        _sectionLabel('مؤخراً'),
-                        for (int i = 0; i < recent.length; i++) ...[
-                          _NotificationTile(item: recent[i]),
-                          if (i != recent.length - 1)
-                            Divider(
-                                color: AppColors.fillGrey1, height: 1.h),
+                  return LoadMoreListener(
+                    onLoadMore: () =>
+                        context.read<NotificationsCubit>().loadMore(),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      children: [
+                        if (recent.isNotEmpty) ...[
+                          _sectionLabel('مؤخراً'),
+                          for (int i = 0; i < recent.length; i++) ...[
+                            _NotificationTile(item: recent[i]),
+                            if (i != recent.length - 1)
+                              Divider(
+                                  color: AppColors.fillGrey1, height: 1.h),
+                          ],
                         ],
-                      ],
-                      if (others.isNotEmpty) ...[
-                        16.verticalSpace,
-                        _sectionLabel('اخري'),
-                        for (int i = 0; i < others.length; i++) ...[
-                          _NotificationTile(item: others[i], highlighted: true),
-                          if (i != others.length - 1) 4.verticalSpace,
+                        if (others.isNotEmpty) ...[
+                          16.verticalSpace,
+                          _sectionLabel('اخري'),
+                          for (int i = 0; i < others.length; i++) ...[
+                            _NotificationTile(
+                                item: others[i], highlighted: true),
+                            if (i != others.length - 1) 4.verticalSpace,
+                          ],
                         ],
+                        if (state.isLoadingMore) const PaginationLoader(),
+                        24.verticalSpace,
                       ],
-                      24.verticalSpace,
-                    ],
+                    ),
                   );
                 },
               ),
