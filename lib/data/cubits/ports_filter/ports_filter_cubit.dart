@@ -1,3 +1,5 @@
+import 'package:evex_user/core/services/location_service.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -12,9 +14,15 @@ import 'ports_filter_state.dart';
 class PortsFilterCubit extends Cubit<PortsFilterState> {
   final LocationRepo _locationRepo;
   final ConfirmBookingRepo _bookingRepo;
+  final LocationService _locationService;
+  final UserService _userService;
 
-  PortsFilterCubit(this._locationRepo, this._bookingRepo)
-      : super(const PortsFilterState()) {
+  PortsFilterCubit(
+    this._locationRepo,
+    this._bookingRepo,
+    this._locationService,
+    this._userService,
+  ) : super(const PortsFilterState()) {
     load();
   }
 
@@ -29,6 +37,59 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
       governorates: govs,
       occasions: occasions,
     ));
+    await _autofillUserLocation(govs);
+  }
+
+  /// Pre-fills the governorate/city the user entered before — from
+  /// [LocationService] (onboarding, for guests and registered users) and, as a
+  /// fallback, their profile — so the filter opens already set to their area.
+  Future<void> _autofillUserLocation(List<Governate> govs) async {
+    // Don't override a selection the user already made in this session.
+    if (state.selectedGovernorate != null) return;
+    final user = _userService.currentUser?.userViewModel;
+    final govName =
+        _firstNonEmpty([_locationService.govName, user?.governorate]);
+    final cityName = _firstNonEmpty([_locationService.cityName, user?.city]);
+    if (govName == null) return;
+
+    Governate? gov;
+    for (final g in govs) {
+      if (g.governorateNameAr == govName || g.governorateNameEn == govName) {
+        gov = g;
+        break;
+      }
+    }
+    if (gov == null) return;
+
+    emit(state.copyWith(
+      selectedGovernorate: gov,
+      selectedCity: null,
+      cities: const [],
+      isLoadingCities: true,
+    ));
+    final cities = await _locationRepo.getCities(gov.id) ?? const [];
+    City? city;
+    if (cityName != null) {
+      for (final c in cities) {
+        if (c.cityNameAr == cityName || c.cityNameEn == cityName) {
+          city = c;
+          break;
+        }
+      }
+    }
+    emit(state.copyWith(
+      isLoadingCities: false,
+      cities: cities,
+      selectedCity: city,
+    ));
+  }
+
+  static String? _firstNonEmpty(List<String?> values) {
+    for (final v in values) {
+      final t = v?.trim();
+      if (t != null && t.isNotEmpty) return t;
+    }
+    return null;
   }
 
   Future<void> selectGovernorate(Governate gov) async {

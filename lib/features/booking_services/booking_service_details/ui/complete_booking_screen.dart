@@ -55,6 +55,11 @@ class CompleteBookingScreen extends StatelessWidget {
                           child: ChangeOccasion(
                             port: args.port,
                             occasionDate: args.occasionDate,
+                            occasions: state.occasions,
+                            selectedOccasionId: state.selectedOccasionId,
+                            onOccasionSelected: (id) {
+                              if (id != null) cubit.selectOccasion(id);
+                            },
                           ),
                         ),
                         16.verticalSpace,

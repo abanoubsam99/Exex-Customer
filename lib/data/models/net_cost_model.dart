@@ -1,4 +1,4 @@
-/// Response of GET /api/Reservations/CalculateNetCost/{id}.
+/// Response of GET /api/Reservations/Client/CalculateNetCost/{id}.
 class NetCostModel {
   final num totalCost;
   final num additionalCost;
@@ -8,6 +8,12 @@ class NetCostModel {
   final num deposit;
   final num tax;
 
+  /// عمولة evex.
+  final num commission;
+
+  /// رسوم إدارية.
+  final num adminFees;
+
   const NetCostModel({
     this.totalCost = 0,
     this.additionalCost = 0,
@@ -16,14 +22,38 @@ class NetCostModel {
     this.netCost = 0,
     this.deposit = 0,
     this.tax = 0,
+    this.commission = 0,
+    this.adminFees = 0,
   });
 
   NetCostModel.fromJson(Map<String, dynamic> json)
-      : totalCost = (json['totalCost'] as num?) ?? 0,
-        additionalCost = (json['additionalCost'] as num?) ?? 0,
-        discountAmount = (json['discountAmount'] as num?) ?? 0,
-        priceAfterDiscount = (json['priceAfterDiscount'] as num?) ?? 0,
-        netCost = (json['netCost'] as num?) ?? 0,
-        deposit = (json['deposit'] as num?) ?? 0,
-        tax = (json['tax'] as num?) ?? 0;
+      : totalCost = _num(json, const ['totalCost']),
+        additionalCost = _num(json, const ['additionalCost']),
+        discountAmount = _num(json, const ['discountAmount']),
+        priceAfterDiscount = _num(json, const ['priceAfterDiscount']),
+        netCost = _num(json, const ['netCost']),
+        deposit = _num(json, const ['deposit']),
+        tax = _num(json, const ['tax', 'vat']),
+        commission = _num(json, const [
+          'commission',
+          'evexCommission',
+          'evexCommissionAmount',
+          'evexComission',
+        ]),
+        adminFees = _num(json, const [
+          'adminFees',
+          'administrativeFees',
+          'administrationFees',
+          'managementFees',
+        ]);
+
+  /// Reads the first key that holds a numeric value (tolerant to the exact
+  /// field name the backend uses), defaulting to 0 when none is present.
+  static num _num(Map<String, dynamic> json, List<String> keys) {
+    for (final k in keys) {
+      final v = json[k];
+      if (v is num) return v;
+    }
+    return 0;
+  }
 }

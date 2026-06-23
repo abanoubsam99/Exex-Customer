@@ -1,6 +1,7 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
@@ -109,6 +110,8 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                     create: (_) => PortsFilterCubit(
                                       context.read<LocationRepo>(),
                                       context.read<ConfirmBookingRepo>(),
+                                      context.read<LocationService>(),
+                                      context.read<UserService>(),
                                     ),
                                   ),
                                 ],

@@ -1,4 +1,6 @@
 import 'package:evex_user/data/models/addition.dart';
+import 'package:evex_user/data/models/net_cost_model.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -32,6 +34,11 @@ class CompleteBookingState {
   final PortPolicy? policy;
   final bool termsAccepted;
   final bool isSubmitting;
+
+  /// نوع المناسبة options + the chosen one — shown in the same edit sheet as the
+  /// service-details screen so both stay identical.
+  final List<Occasion> occasions;
+  final int? selectedOccasionId;
   final String? errorMessage;
 
   const CompleteBookingState({
@@ -39,6 +46,8 @@ class CompleteBookingState {
     this.policy,
     this.termsAccepted = false,
     this.isSubmitting = false,
+    this.occasions = const [],
+    this.selectedOccasionId,
     this.errorMessage,
   });
 
@@ -47,6 +56,8 @@ class CompleteBookingState {
     PortPolicy? policy,
     bool? termsAccepted,
     bool? isSubmitting,
+    List<Occasion>? occasions,
+    int? selectedOccasionId,
     String? errorMessage,
   }) {
     return CompleteBookingState(
@@ -54,6 +65,8 @@ class CompleteBookingState {
       policy: policy ?? this.policy,
       termsAccepted: termsAccepted ?? this.termsAccepted,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      occasions: occasions ?? this.occasions,
+      selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
       errorMessage: errorMessage,
     );
   }
