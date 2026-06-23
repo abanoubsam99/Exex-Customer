@@ -9,6 +9,9 @@ class DirectServiceDetailsState {
   /// Gallery image paths fetched from /api/Ports/GetPortImages — preferred over
   /// the (often empty) [Item.portImages] passed in with the port.
   final List<String> portImages;
+
+  /// Whether the current port is in the client's favorites (optimistic, local).
+  final bool isFavorite;
   final String? errorMessage;
 
   const DirectServiceDetailsState({
@@ -16,6 +19,7 @@ class DirectServiceDetailsState {
     this.services = const [],
     this.wallet,
     this.portImages = const [],
+    this.isFavorite = false,
     this.errorMessage,
   });
 
@@ -24,6 +28,7 @@ class DirectServiceDetailsState {
     List<PortService>? services,
     ClientWalletData? wallet,
     List<String>? portImages,
+    bool? isFavorite,
     String? errorMessage,
   }) {
     return DirectServiceDetailsState(
@@ -31,6 +36,7 @@ class DirectServiceDetailsState {
       services: services ?? this.services,
       wallet: wallet ?? this.wallet,
       portImages: portImages ?? this.portImages,
+      isFavorite: isFavorite ?? this.isFavorite,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

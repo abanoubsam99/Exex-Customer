@@ -6,8 +6,8 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/helpers/launcher_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
-import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
@@ -30,19 +30,11 @@ class ServiceTopPart extends StatefulWidget {
 class _ServiceTopPartState extends State<ServiceTopPart> {
   int activeIndex = 0;
 
-  /// Calls the port's phone number.
-  Future<void> _callPort() async {
-    final phone = context
-        .read<BookingServiceDetailsCubit>()
-        .state
-        .port
-        ?.phoneNumber1
-        ?.trim();
-    if (phone == null || phone.isEmpty) {
-      ToastManager.showError('رقم الهاتف غير متاح');
-      return;
-    }
-    await LauncherHelper.call(phone);
+  /// Opens the "معلومات التواصل" screen with the port's contact details
+  /// (phone numbers, address, work days) where the user can call or open maps.
+  void _openContact() {
+    final port = context.read<BookingServiceDetailsCubit>().state.port;
+    NavigationHelper.pushNamed(Routes.contactInfoScreen, arguments: port);
   }
 
   /// Opens the port's location on the maps app (GPS, else the address text).
@@ -204,10 +196,13 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                 6.horizontalSpace,
                 SocialNavButton(
                   icon: AppImages.iconsPhone2,
-                  onTap: _callPort,
+                  onTap: _openContact,
                 ),
                 6.horizontalSpace,
-                SocialNavButton(icon: AppImages.iconsFolder, onTap: () {}),
+                SocialNavButton(
+                  icon: AppImages.iconsFolder,
+                  onTap: _openContact,
+                ),
                 6.horizontalSpace,
                 SocialNavButton(icon: AppImages.iconsShare, onTap: _sharePort),
               ],

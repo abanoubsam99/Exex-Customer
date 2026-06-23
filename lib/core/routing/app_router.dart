@@ -464,6 +464,7 @@ class AppRouter {
             create: (context) => DirectServiceDetailsCubit(
               context.read<PortServicesRepo>(),
               context.read<WalletRepo>(),
+              context.read<FavoritesRepo>(),
               port: settings.arguments is Item
                   ? settings.arguments as Item
                   : null,

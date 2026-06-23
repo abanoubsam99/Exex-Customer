@@ -1,9 +1,13 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
+import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/section_seperator.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_service_details_state.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -134,10 +138,35 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
     );
   }
 
+  /// Opens the port's location on the maps app (GPS, else the address text).
+  void _openMap() {
+    final port = widget.port;
+    final address = [port?.governorate, port?.city, port?.address]
+        .whereType<String>()
+        .where((e) => e.trim().isNotEmpty)
+        .join(' ');
+    LauncherHelper.openMaps(gps: port?.gps, address: address);
+  }
+
+  /// Shares the port (name + deep link) via the system share sheet.
+  void _share() {
+    final name = widget.port?.portName ?? 'EVEX';
+    final link = AppDeepLink.portLink(widget.port?.id ?? 0);
+    SharePlus.instance.share(
+      ShareParams(text: '$name\n$link\n- عبر تطبيق EVEX'),
+    );
+  }
+
+  /// Toggles the favorite state of this port (requires login).
+  void _toggleFavorite() {
+    if (!AuthGuard.requireLogin(context)) return;
+    context.read<DirectServiceDetailsCubit>().toggleFavorite();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final images =
-        _imagesFrom(context.watch<DirectServiceDetailsCubit>().state);
+    final state = context.watch<DirectServiceDetailsCubit>().state;
+    final images = _imagesFrom(state);
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
@@ -189,11 +218,15 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                     onTap: () => NavigationHelper.pop(),
                   ),
                   const Spacer(),
-                  SocialNavButton(icon: AppImages.iconsHeart, onTap: () {}),
+                  SocialNavButton(
+                    icon: AppImages.iconsHeart,
+                    iconColor: state.isFavorite ? AppColors.red2 : null,
+                    onTap: _toggleFavorite,
+                  ),
                   6.horizontalSpace,
                   SocialNavButton(
                     icon: AppImages.iconsMarker,
-                    onTap: _openContact,
+                    onTap: _openMap,
                   ),
                   6.horizontalSpace,
                   SocialNavButton(
@@ -201,9 +234,12 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                     onTap: _openContact,
                   ),
                   6.horizontalSpace,
-                  SocialNavButton(icon: AppImages.iconsFolder, onTap: () {}),
+                  SocialNavButton(
+                    icon: AppImages.iconsFolder,
+                    onTap: _openContact,
+                  ),
                   6.horizontalSpace,
-                  SocialNavButton(icon: AppImages.iconsShare, onTap: () {}),
+                  SocialNavButton(icon: AppImages.iconsShare, onTap: _share),
                 ],
               ),
             ),

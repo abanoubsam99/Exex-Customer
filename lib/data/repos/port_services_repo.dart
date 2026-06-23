@@ -40,7 +40,7 @@ class PortServicesRepo {
     }
   }
 
-  /// GET /api/Reviews/{portId}?index=0&size=20 — returns the review items.
+  /// GET /api/Reviews/?id={portId}&index=0&size=20 — returns the review items.
   Future<List<Review>?> getReviews(int portId,
       {int index = 0, int size = 20}) async {
     try {
