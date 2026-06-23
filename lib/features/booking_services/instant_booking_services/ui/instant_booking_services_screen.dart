@@ -1,6 +1,8 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/special_offers_carousel.dart';
@@ -70,14 +72,26 @@ class InstantBookingServicesScreen extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: DatePicker(
-                            title: 'تاريخ المناسبة',
-                            onChanged: (date) {
-                              context
-                                  .read<InstantBookingCubit>()
-                                  .setDate(date);
-                              context.read<HomeCubit>().setBookingDate(date);
-                            },
+                          // Picking the occasion date is a logged-in-only action;
+                          // guests see it dimmed and get a login prompt on tap.
+                          child: Opacity(
+                            opacity:
+                                context.watch<UserService>().currentUser != null
+                                    ? 1
+                                    : 0.5,
+                            child: DatePicker(
+                              title: 'تاريخ المناسبة',
+                              onBeforePick: () =>
+                                  AuthGuard.requireLogin(context),
+                              onChanged: (date) {
+                                context
+                                    .read<InstantBookingCubit>()
+                                    .setDate(date);
+                                context
+                                    .read<HomeCubit>()
+                                    .setBookingDate(date);
+                              },
+                            ),
                           ),
                         ),
                         12.horizontalSpace,

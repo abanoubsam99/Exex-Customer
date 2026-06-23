@@ -6,12 +6,21 @@ import 'package:intl/intl.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
 class DatePicker extends StatefulWidget {
-  const DatePicker({super.key, required this.title, this.onChanged});
+  const DatePicker({
+    super.key,
+    required this.title,
+    this.onChanged,
+    this.onBeforePick,
+  });
 
   final String title;
 
   /// Called when the user picks a date.
   final ValueChanged<DateTime>? onChanged;
+
+  /// Optional gate run before the calendar opens. Return `false` to block it
+  /// (e.g. guests are prompted to sign in instead of picking a date).
+  final bool Function()? onBeforePick;
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -23,6 +32,7 @@ class _DatePickerState extends State<DatePicker> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        if (widget.onBeforePick != null && !widget.onBeforePick!()) return;
         final DateTime? picked = await showDatePicker(
           context: context,
           locale: const Locale('ar'),

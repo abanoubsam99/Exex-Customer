@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,21 +12,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 const _orange = AppColors.primaryColor;
 
-/// "تعديل تاريخ ومكان المناسبة" — edits the occasion date + location (the
+/// "تعديل تاريخ ومكان المناسبة" — edits the occasion date + type + location (the
 /// country is fixed to Egypt). All fields are mandatory. Opened from the pen
 /// icon on the booking header (logged-in users only). Calls [onConfirm] with
-/// the chosen date + governorate/city names.
+/// the chosen date + occasion type + governorate/city names.
 class EditOccasionSheet extends StatefulWidget {
   final DateTime? initialDate;
   final String? initialGovernorate;
   final String? initialCity;
-  final void Function(DateTime date, String governorate, String city) onConfirm;
+
+  /// نوع المناسبة options + the currently chosen one. When empty the occasion
+  /// type field is hidden (e.g. the complete-booking screen reuses this sheet
+  /// only to edit the date/location).
+  final List<Occasion> occasions;
+  final int? initialOccasionId;
+  final void Function(
+    DateTime date,
+    String governorate,
+    String city,
+    int? occasionId,
+  ) onConfirm;
 
   const EditOccasionSheet({
     super.key,
     this.initialDate,
     this.initialGovernorate,
     this.initialCity,
+    this.occasions = const [],
+    this.initialOccasionId,
     required this.onConfirm,
   });
 
@@ -37,6 +51,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
   late final LocationRepo _repo = context.read<LocationRepo>();
 
   DateTime? _date;
+  int? _selectedOccasionId;
   List<Governate> _governorates = const [];
   List<City> _cities = const [];
   Governate? _selectedGov;
@@ -48,6 +63,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
   void initState() {
     super.initState();
     _date = widget.initialDate;
+    _selectedOccasionId = widget.initialOccasionId;
     _loadGovernorates();
   }
 
@@ -116,6 +132,10 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
       ToastManager.showError('برجاء تحديد تاريخ المناسبة');
       return;
     }
+    if (widget.occasions.isNotEmpty && (_selectedOccasionId ?? 0) <= 0) {
+      ToastManager.showError('برجاء اختيار نوع المناسبة');
+      return;
+    }
     if (_selectedGov == null) {
       ToastManager.showError('برجاء اختيار المحافظة');
       return;
@@ -128,6 +148,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
       _date!,
       _selectedGov!.governorateNameAr,
       _selectedCity!.cityNameAr,
+      _selectedOccasionId,
     );
     Navigator.pop(context);
   }
@@ -146,13 +167,9 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(height: 10,),
             Row(
               children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.close, size: 24.r, color: AppColors.blacksoft),
-                ),
-                const Spacer(),
                 Text(
                   'تعديل تاريخ ومكان المناسبة',
                   textAlign: TextAlign.right,
@@ -162,6 +179,11 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w800,
                   ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(Icons.close, size: 24.r, color: AppColors.blacksoft),
                 ),
               ],
             ),
@@ -174,9 +196,8 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
               child: _fieldBox(
                 child: Row(
                   children: [
-                    Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.blueGrey, size: 22.r),
-                    const Spacer(),
+                    Icon(Icons.calendar_today_outlined, color: _orange, size: 18.r),
+                    8.horizontalSpace,
                     Text(
                       _date != null
                           ? DateFormatHelper.arabicDate(_date!.toIso8601String())
@@ -191,13 +212,41 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    8.horizontalSpace,
-                    Icon(Icons.calendar_today_outlined, color: _orange, size: 18.r),
+                    const Spacer(),
+                    Icon(Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.blueGrey, size: 22.r),
+
                   ],
                 ),
               ),
             ),
             20.verticalSpace,
+            // ── Occasion type (نوع المناسبة) ──
+            if (widget.occasions.isNotEmpty) ...[
+              _label('نوع المناسبة'),
+              8.verticalSpace,
+              _dropdown<int>(
+                hint: 'حدد نوع المناسبة',
+                value: _selectedOccasionId,
+                items: widget.occasions
+                    .where((o) => o.id != null)
+                    .map((o) => DropdownMenuItem<int>(
+                          value: o.id,
+                          child: Text(
+                            o.name ?? '',
+                            style: TextStyle(
+                              color: AppColors.blacksoft,
+                              fontSize: 14.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (v) => setState(() => _selectedOccasionId = v),
+              ),
+              20.verticalSpace,
+            ],
             // ── Location ──
             _label('مكان المناسبة'),
             8.verticalSpace,
@@ -205,19 +254,6 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
             _fieldBox(
               child: Row(
                 children: [
-                  Icon(Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.blueGrey, size: 22.r),
-                  const Spacer(),
-                  Text(
-                    'مصر',
-                    style: TextStyle(
-                      color: AppColors.blacksoft,
-                      fontSize: 14.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  8.horizontalSpace,
                   Container(
                     width: 30.r,
                     height: 30.r,
@@ -232,6 +268,20 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                       ),
                     ),
                   ),
+                  8.horizontalSpace,
+                  Text(
+                    'مصر',
+                    style: TextStyle(
+                      color: AppColors.blacksoft,
+                      fontSize: 14.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.blueGrey, size: 22.r),
+
                 ],
               ),
             ),

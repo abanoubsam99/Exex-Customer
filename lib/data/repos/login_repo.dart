@@ -26,35 +26,33 @@ class LoginRepo {
     }
   }
 
-  // External social login (Google / Facebook / Apple) — fully prepared but
-  // disabled for now (hidden for the store; App Store guideline 4.8). To enable:
-  // uncomment this + AppEndpoints.externalLogin and the LoginCubit methods.
+  // External social login (Google / Apple). Facebook stays disabled.
   //
-  // /// Exchanges a provider token for the app's user. POST /EVEX/Account/ExternalLogin
-  // Future<UserModel?> externalLogin({
-  //   required String provider, // 'google' | 'facebook' | 'apple'
-  //   required String token,    // idToken / accessToken / identityToken
-  //   String? email,
-  //   String? name,
-  // }) async {
-  //   try {
-  //     final response = await DioHelper.postData(
-  //       url: AppEndpoints.externalLogin,
-  //       data: {
-  //         'provider': provider,
-  //         'token': token,
-  //         'email': email,
-  //         'name': name,
-  //       },
-  //     );
-  //     if (response.statusCode! >= 200 && response.statusCode! < 300) {
-  //       final user = UserModel.fromJson(response.data);
-  //       await cacheHelper.saveData(key: CacheKeys.token, value: user.token);
-  //       return user;
-  //     }
-  //     return null;
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
+  /// Exchanges a provider token for the app's user. POST /EVEX/Account/ExternalLogin
+  Future<UserModel?> externalLogin({
+    required String provider, // 'google' | 'apple'
+    required String token, // idToken / identityToken
+    String? email,
+    String? name,
+  }) async {
+    try {
+      final response = await DioHelper.postData(
+        url: AppEndpoints.externalLogin,
+        data: {
+          'provider': provider,
+          'token': token,
+          'email': email,
+          'name': name,
+        },
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final user = UserModel.fromJson(response.data);
+        await cacheHelper.saveData(key: CacheKeys.token, value: user.token);
+        return user;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
 }

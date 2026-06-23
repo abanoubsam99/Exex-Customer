@@ -11,7 +11,8 @@ import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/additions_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/buffets_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/change_occasion.dart';
-import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/occasion_picker.dart';
+// OccasionPicker moved into the edit sheet (تعديل تاريخ ومكان المناسبة).
+// import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/occasion_picker.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_services_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/reviews_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_top_part.dart';
@@ -87,31 +88,47 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           },
                         ),
                         20.verticalSpace,
-                        ChangeOccasion(
-                          port: context
-                              .read<BookingServiceDetailsCubit>()
-                              .state
-                              .port,
-                          occasionDate:
-                              context.read<HomeCubit>().state.bookingDate,
-                        ),
-                        20.verticalSpace,
-                        // نوع المناسبة — moved here from the complete-booking
-                        // screen; mandatory before "إضافة لحجوزاتي".
+                        // نوع المناسبة is picked inside this card's edit sheet
+                        // ("تعديل تاريخ ومكان المناسبة"), so it stays in sync
+                        // with the cubit's occasions/selectedOccasionId.
                         BlocBuilder<BookingServiceDetailsCubit,
                             BookingServiceDetailsState>(
                           buildWhen: (p, c) =>
+                              p.port != c.port ||
                               p.occasions != c.occasions ||
                               p.selectedOccasionId != c.selectedOccasionId,
-                          builder: (context, state) => OccasionPicker(
+                          builder: (context, state) => ChangeOccasion(
+                            port: state.port,
+                            occasionDate:
+                                context.read<HomeCubit>().state.bookingDate,
                             occasions: state.occasions,
-                            selectedId: state.selectedOccasionId,
-                            onSelected: context
-                                .read<BookingServiceDetailsCubit>()
-                                .selectOccasion,
+                            selectedOccasionId: state.selectedOccasionId,
+                            onOccasionSelected: (id) {
+                              if (id != null) {
+                                context
+                                    .read<BookingServiceDetailsCubit>()
+                                    .selectOccasion(id);
+                              }
+                            },
                           ),
                         ),
                         24.verticalSpace,
+                        // نوع المناسبة moved into the edit sheet (per design) —
+                        // no longer a standalone field on this screen.
+                        // BlocBuilder<BookingServiceDetailsCubit,
+                        //     BookingServiceDetailsState>(
+                        //   buildWhen: (p, c) =>
+                        //       p.occasions != c.occasions ||
+                        //       p.selectedOccasionId != c.selectedOccasionId,
+                        //   builder: (context, state) => OccasionPicker(
+                        //     occasions: state.occasions,
+                        //     selectedId: state.selectedOccasionId,
+                        //     onSelected: context
+                        //         .read<BookingServiceDetailsCubit>()
+                        //         .selectOccasion,
+                        //   ),
+                        // ),
+                        // 24.verticalSpace,
                         ServicesSection(),
                       ],
                     ),

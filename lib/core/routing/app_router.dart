@@ -1,4 +1,6 @@
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/apple_auth_service.dart';
+import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
@@ -8,7 +10,6 @@ import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/forget_password_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
-// import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/data/cubits/contact_us/contact_us_cubit.dart';
 import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -126,10 +127,10 @@ class AppRouter {
               context.read<LoginRepo>(),
               context.read<UserService>(),
               context.read<LocalAuthService>(),
-              // Social services — enable when un-hiding social login:
-              // GoogleAuthService(),
+              // Social services (Facebook stays disabled):
+              GoogleAuthService(),
               // FacebookAuthService(),
-              // AppleAuthService(),
+              AppleAuthService(),
             ),
             child: const LoginScreen(),
           ),

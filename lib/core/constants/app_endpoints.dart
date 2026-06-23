@@ -43,8 +43,8 @@ class AppEndpoints {
   static const notificationsUnreadCount = "/api/Notifications/GetUnreadCount";
   static const markAllNotificationsRead = "/api/Notifications/MarkAllAsRead";
 
-  // Auth — external (Google) login — disabled (App Store guideline 4.8).
-  // static const externalLogin = "/EVEX/Account/ExternalLogin";
+  // Auth — external (Google / Apple) login.
+  static const externalLogin = "/EVEX/Account/ExternalLogin";
 
   // Offices / branches
   static const allOffices = "/api/Home/GetAllOffices";

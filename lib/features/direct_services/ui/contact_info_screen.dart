@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
@@ -67,6 +69,15 @@ class ContactInfoScreen extends StatelessWidget {
               _card(
                 child: Row(
                   children: [
+                    _circleIconButton(
+                      icon: AppImages.iconsPhone,
+                      iconColor: AppColors.callIconColor,
+                      bg: AppColors.callbg,
+                      onTap: phones.isEmpty
+                          ? null
+                          : () => LauncherHelper.call(phones.first),
+                    ),
+                    12.horizontalSpace,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,28 +91,26 @@ class ContactInfoScreen extends StatelessWidget {
                                 .toList(),
                       ),
                     ),
-                    12.horizontalSpace,
-                    _circleIconButton(
-                      icon: AppImages.iconsPhone,
-                      bg: AppColors.cyan,
-                      onTap: phones.isEmpty
-                          ? null
-                          : () => LauncherHelper.call(phones.first),
-                    ),
+
                   ],
                 ),
               ),
               24.verticalSpace,
               _sectionTitle(
                 'العنوان',
-                trailing: _showLink(
-                  onTap: () => _openMap(address),
-                ),
+                // trailing: ,
               ),
               12.verticalSpace,
               _card(
                 child: Row(
                   children: [
+                    _circleIconButton(
+                      icon: AppImages.iconsMarker,
+                      bg: AppColors.primaryAlpha1A,
+                      iconColor: _orange,
+                      onTap: () => _openMap(address),
+                    ),
+                    12.horizontalSpace,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -115,13 +124,9 @@ class ContactInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    12.horizontalSpace,
-                    _circleIconButton(
-                      icon: AppImages.iconsMarker,
-                      bg: AppColors.primaryAlpha1A,
-                      iconColor: _orange,
+                    _showLink(
                       onTap: () => _openMap(address),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -131,15 +136,19 @@ class ContactInfoScreen extends StatelessWidget {
               _card(
                 child: Row(
                   children: [
+                    _circleIconButton(
+                      materialIcon: Icons.access_time_rounded,
+                      bg: AppColors.cyanAlpha1A,
+                      iconColor: AppColors.cyan,
+                      onTap: null,
+                    ),
+                    12.horizontalSpace,
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _value(
-                            (port?.workDays?.trim().isNotEmpty ?? false)
-                                ? port!.workDays!
-                                : 'مواعيد العمل',
-                          ),
+                          _value(_workDaysText(port?.workDays)),
                           if (_hours != null) ...[
                             4.verticalSpace,
                             _subValue(_hours!),
@@ -147,13 +156,7 @@ class ContactInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    12.horizontalSpace,
-                    _circleIconButton(
-                      materialIcon: Icons.access_time_rounded,
-                      bg: AppColors.cyanAlpha1A,
-                      iconColor: AppColors.cyan,
-                      onTap: null,
-                    ),
+
                   ],
                 ),
               ),
@@ -162,6 +165,28 @@ class ContactInfoScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// The backend stores work days as a JSON-array string, e.g.
+  /// `["السبت","الاحد","الجمعة"]`. We show it as a plain, comma-separated list
+  /// (`السبت، الاحد، الجمعة`) — stripping the brackets/quotes — or a prompt when
+  /// it's empty.
+  String _workDaysText(String? raw) {
+    final value = raw?.trim() ?? '';
+    if (value.isEmpty) return 'مواعيد العمل';
+    Iterable<String> days;
+    try {
+      final decoded = jsonDecode(value);
+      days = decoded is List
+          ? decoded.map((e) => e.toString())
+          : value.split(',');
+    } catch (_) {
+      // Not valid JSON — strip the brackets/quotes manually.
+      days = value.replaceAll(RegExp(r'[\[\]"]'), '').split(',');
+    }
+    final cleaned =
+        days.map((e) => e.trim()).where((e) => e.isNotEmpty).join('، ');
+    return cleaned.isEmpty ? 'مواعيد العمل' : cleaned;
   }
 
   String? get _hours {
@@ -255,7 +280,7 @@ class ContactInfoScreen extends StatelessWidget {
         textDirection: TextDirection.rtl,
         style: TextStyle(
           color: AppColors.blacksoft,
-          fontSize: 15.r,
+          fontSize: 12.r,
           fontFamily: 'Almarai',
           fontWeight: FontWeight.w700,
           height: 1.5,

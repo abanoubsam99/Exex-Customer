@@ -1,13 +1,13 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Quick-login row. Only the fingerprint/biometric button is shown for now.
-/// Google / Facebook / Apple are fully prepared but commented out (hidden for
-/// the store) — uncomment the buttons here + their LoginCubit methods to enable.
+/// Quick-login row: Google, Apple and the fingerprint/biometric button.
+/// Facebook is fully prepared but kept commented out (disabled).
 class AllSocalMediaWidget extends StatelessWidget {
   const AllSocalMediaWidget({super.key});
 
@@ -17,7 +17,7 @@ class AllSocalMediaWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // ── Facebook (prepared — hidden for the store) ──
+        // ── Facebook (prepared — disabled) ──
         // _SocialButton(
         //   onTap: () => cubit.loginWithFacebook(),
         //   child: CustomImageHandler(
@@ -27,23 +27,23 @@ class AllSocalMediaWidget extends StatelessWidget {
         //   ),
         // ),
         // 14.horizontalSpace,
-        // ── Apple (prepared — hidden for the store) ──
-        // _SocialButton(
-        //   onTap: () => cubit.loginWithApple(),
-        //   child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
-        // ),
-        // 14.horizontalSpace,
-        // ── Google (prepared — hidden for the store) ──
-        // _SocialButton(
-        //   onTap: () => cubit.loginWithGoogle(),
-        //   child: CustomImageHandler(
-        //     AppImages.iconsGoogel,
-        //     height: 28.r,
-        //     width: 28.r,
-        //   ),
-        // ),
-        // 14.horizontalSpace,
-        // ── Fingerprint / biometric (enabled) ──
+        // ── Apple ──
+        _SocialButton(
+          onTap: () => cubit.loginWithApple(),
+          child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
+        ),
+        14.horizontalSpace,
+        // ── Google ──
+        _SocialButton(
+          onTap: () => cubit.loginWithGoogle(),
+          child: CustomImageHandler(
+            AppImages.iconsGoogel,
+            height: 28.r,
+            width: 28.r,
+          ),
+        ),
+        14.horizontalSpace,
+        // ── Fingerprint / biometric ──
         _SocialButton(
           onTap: () => cubit.loginWithBiometrics(),
           child: CustomImageHandler(

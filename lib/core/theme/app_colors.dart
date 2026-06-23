@@ -8,6 +8,7 @@ class AppColors {
   // the properties are static so that we can use them without a class instance
   // e.g. can be retrieved by `LocalStorageKey.saveUserId`.
   static const Color whiteColor = Color(0xFFFFFFFF);
+  static const Color callIconColor = Color.fromRGBO(90, 200, 200, 1);
   static const Color primaryColor = Color(0xffF38B4A);
 
   static const Color backgroundColor = Color(0xFFFFFFFF);
@@ -21,6 +22,7 @@ class AppColors {
   static const Color black = Color(0xFF121212);
   static const Color blacksoft = Color(0xff2C262C);
   static const Color blacksoftHint = Color(0xFFC4C4C4);
+  static const Color bg = Color.fromRGBO(247, 247, 247, 1);
   static const Color offBlackColor = Color(0xff433D42);
   static const Color grey = Color(0xFF6F767E);
 
@@ -149,6 +151,7 @@ class AppColors {
   static const Color blue3 = Color(0xFF4764E8);
   static const Color blue4 = Color(0xFF3F8CFF);
   static const Color cyan = Color(0xFF40C4D6);
+  static const Color callbg = Color.fromRGBO(90, 200, 200, 0.1);
   static const Color periwinkle = Color(0xFF879DFF);
   static const Color lightBlue1 = Color(0xFFB6DAEE);
   static const Color lightBlue2 = Color(0xFFBFD9EC);

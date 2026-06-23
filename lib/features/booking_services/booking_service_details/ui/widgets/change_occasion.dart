@@ -4,9 +4,9 @@ import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/core/ui/widgets/gradient_text.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/edit_occasion_sheet.dart';
@@ -23,7 +23,21 @@ class ChangeOccasion extends StatelessWidget {
   /// The picked occasion date; shown instead of the placeholder when provided.
   final DateTime? occasionDate;
 
-  const ChangeOccasion({super.key, this.port, this.occasionDate});
+  /// نوع المناسبة options + the currently chosen one, surfaced inside the edit
+  /// sheet. Left empty (with a null callback) when the host screen doesn't let
+  /// the user pick an occasion type (e.g. complete-booking).
+  final List<Occasion> occasions;
+  final int? selectedOccasionId;
+  final ValueChanged<int?>? onOccasionSelected;
+
+  const ChangeOccasion({
+    super.key,
+    this.port,
+    this.occasionDate,
+    this.occasions = const [],
+    this.selectedOccasionId,
+    this.onOccasionSelected,
+  });
 
   /// The event location shown in the header: the value picked in the edit sheet
   /// ([eventGov]/[eventCity]) if any, otherwise the signed-in user's own
@@ -61,9 +75,12 @@ class ChangeOccasion extends StatelessWidget {
         initialDate: st.bookingDate ?? occasionDate,
         initialGovernorate: st.eventGovernorate ?? user?.governorate,
         initialCity: st.eventCity ?? user?.city,
-        onConfirm: (date, gov, city) async {
+        occasions: occasions,
+        initialOccasionId: selectedOccasionId,
+        onConfirm: (date, gov, city, occasionId) async {
           homeCubit.setBookingDate(date);
           homeCubit.setEventLocation(gov, city);
+          onOccasionSelected?.call(occasionId);
           final portId = port?.id;
           if (portId != null) {
             homeCubit.setAvailability(
@@ -130,100 +147,70 @@ class ChangeOccasion extends StatelessWidget {
     );
   }
 
+  /// The chosen occasion type's name (e.g. "كتب كتاب"), or null when nothing
+  /// is selected yet — shown as the last chip on the date/location row.
+  String? get _selectedOccasionName {
+    final id = selectedOccasionId;
+    if (id == null) return null;
+    for (final o in occasions) {
+      if (o.id == id) {
+        final name = o.name?.trim();
+        return (name != null && name.isNotEmpty) ? name : null;
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final portName = port?.portName?.trim();
-    final hasName = portName != null && portName.isNotEmpty;
-    return Container(
-      // No fixed height: let the card size to its content so the global text
-      // scaling never overflows it.
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 11.w,
-        vertical: port == null ? 6.h : 8.h,
-      ),
-      decoration: ShapeDecoration(
-        color: AppColors.bgGrey2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+    final occasionName = _selectedOccasionName;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // ── Availability status line (standalone, no background) ──
+        BlocBuilder<HomeCubit, HomeState>(
+          buildWhen: (p, c) =>
+              p.availability != c.availability ||
+              p.bookingDate != c.bookingDate,
+          builder: (context, state) {
+            final view =
+                _statusFor(state.bookingDate ?? occasionDate, state.availability);
+            return Row(
+              children: [
+                _GlowingDot(color: view.dotColor),
+                6.horizontalSpace,
+                Expanded(
+                  child: Text(
+                    view.message,
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: view.textColor,
+                      fontSize: 14.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: BlocBuilder<HomeCubit, HomeState>(
-                  buildWhen: (p, c) =>
-                      p.availability != c.availability ||
-                      p.bookingDate != c.bookingDate,
-                  builder: (context, state) {
-                    final view = _statusFor(
-                        state.bookingDate ?? occasionDate, state.availability);
-                    return Row(
-                      children: [
-                        _GlowingDot(color: view.dotColor),
-                        6.horizontalSpace,
-                        Expanded(
-                          child: Text(
-                            view.message,
-                            textAlign: TextAlign.right,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: view.textColor,
-                              fontSize: 14.r,
-                              fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              GradientText(
-                'متجدد لحظه بلحظه',
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: [0, 0.64, 1],
-                  colors: [
-                    AppColors.greenSoft,
-                    AppColors.green4,
-                    AppColors.greenSoft,
-                  ],
-                ),
-                style: TextStyle(
-                  color: AppColors.blueGrey,
-                  fontSize: 12.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-          if (hasName) ...[
-            4.verticalSpace,
-            Text(
-              portName,
-              textAlign: TextAlign.right,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: AppColors.blacksoft,
-                fontSize: 15.r,
-                fontFamily: 'Almarai',
-                fontWeight: FontWeight.w800,
-              ),
+        10.verticalSpace,
+        // ── Date / location / occasion box (outlined, like the design) ──
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          decoration: ShapeDecoration(
+            color: AppColors.bg,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: AppColors.boarderColor),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-          ],
-          4.verticalSpace,
-          Row(
+          ),
+          child: Row(
             children: [
               Expanded(
                 child: Row(
@@ -234,7 +221,7 @@ class ChangeOccasion extends StatelessWidget {
                         final d = date ?? occasionDate;
                         return Text(
                           d != null
-                              ? DateFormatHelper.arabicDate(d.toIso8601String())
+                              ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
                               : 'حدد تاريخ المناسبة',
                           textAlign: TextAlign.right,
                           style: TextStyle(
@@ -271,25 +258,28 @@ class ChangeOccasion extends StatelessWidget {
                         ),
                       ),
                     ),
-                    6.horizontalSpace,
-                    Transform.translate(
-                      offset: Offset(0, 2.h),
-                      child:
-                          CustomCircle(radius: 5.r, color: AppColors.dividerGrey),
-                    ),
-                    6.horizontalSpace,
-                    const Text(
-                      'فرح',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: AppColors.blueGrey,
-                        fontSize: 14,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.43,
-                        letterSpacing: -0.24,
+                    // نوع المناسبة chip — only shown once a type is picked.
+                    if (occasionName != null) ...[
+                      6.horizontalSpace,
+                      Transform.translate(
+                        offset: Offset(0, 2.h),
+                        child: CustomCircle(
+                            radius: 5.r, color: AppColors.dividerGrey),
                       ),
-                    ),
+                      6.horizontalSpace,
+                      Text(
+                        occasionName,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: AppColors.blueGrey,
+                          fontSize: 14,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                          height: 1.43,
+                          letterSpacing: -0.24,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -302,14 +292,14 @@ class ChangeOccasion extends StatelessWidget {
                 },
                 child: CustomImageHandler(
                   AppImages.iconsEdit,
-                  width: 14.r,
-                  height: 14.r,
+                  width: 18.r,
+                  height: 18.r,
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

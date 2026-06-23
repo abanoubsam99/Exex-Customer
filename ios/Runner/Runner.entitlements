@@ -8,5 +8,10 @@
 	<array>
 		<string>applinks:evex.runasp.net</string>
 	</array>
+	<!-- Sign in with Apple capability. -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 </dict>
 </plist>

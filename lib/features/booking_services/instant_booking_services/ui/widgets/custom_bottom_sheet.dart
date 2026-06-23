@@ -42,6 +42,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   void initState() {
     super.initState();
+    // Guests can't restrict to "الخدمات المتاحه فقط" — default them to the
+    // unrestricted "جميع الخدمات" so they browse everything.
+    final isLoggedIn = context.read<UserService>().currentUser != null;
+    if (!isLoggedIn) isAvilableOnly = false;
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         _validate();
@@ -237,7 +241,10 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               },
             ),
             18.verticalSpace,
-            Row(
+            guestLock(
+              Column(
+                children: [
+                  Row(
               children: [
                 Text(
                   'الخدمات المتاحه فقط',
@@ -325,6 +332,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
               ],
             ),
+                ],
+              ),
+            ),
 
             // SliderTheme(
             //   data: SliderThemeData(
@@ -348,7 +358,11 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
             //   ),
             // ),
             18.verticalSpace,
-            Row(
+            guestLock(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
               children: [
                 Text(
                   'حدد سعر معين',
@@ -429,6 +443,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                         });
                       }
                     : null,
+              ),
+            ),
+                ],
               ),
             ),
             23.verticalSpace,
