@@ -47,7 +47,7 @@ class ReviewsSection extends StatelessWidget {
           builder: (context, state) {
             if (state.reviews.isEmpty) {
               return EmptyListWidget(
-                message: 'لا توجد تقييمات بعد',
+                message: 'رأيك يهمنا .. تقدر تشاركنا ب تقييمك لخدمة التاجر بعد إتمام مناسبتك',
                 icon: Icons.star_border_rounded,
                 iconSize: 44.r,
                 padding: EdgeInsets.symmetric(vertical: 20.h),

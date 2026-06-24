@@ -72,7 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           Positioned(
-            bottom: 45.r,
+            bottom: 20.r,
             left: 0.r,
             right: 0,
             child: Row(

@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            height: (kFloatingNavBarSpace + 28).r,
+            height: (kFloatingNavBarSpace + 80).r,
             child: IgnorePointer(
               child: ShaderMask(
                 blendMode: BlendMode.dstIn,
@@ -91,11 +91,11 @@ class _MainScreenState extends State<MainScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.transparent, Colors.black],
-                  stops: [0.0, 0.55],
+                  stops: [0.0, 5],
                 ).createShader(rect),
                 child: ClipRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    filter: ImageFilter.blur(sigmaX: 45, sigmaY: 45),
                     child: const SizedBox.expand(),
                   ),
                 ),

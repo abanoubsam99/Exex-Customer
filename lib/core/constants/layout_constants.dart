@@ -2,7 +2,7 @@
 /// itself (in MainScreen) and any scrollable page that needs to reserve room
 /// beneath it.
 const double kNavBarHeight = 74;
-const double kNavBarMargin = 22;
+const double kNavBarMargin = 20;
 
 /// Vertical space the floating nav bar occupies from the screen bottom
 /// (height + top & bottom margins). Scrollable pages add this much bottom

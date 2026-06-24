@@ -60,7 +60,7 @@ class _OnboardFirstPageState extends State<OnboardFirstPage>
                       ),
                     ),
                     Positioned(
-                      top: 505.r,
+                      top: 495.r,
                       left: 0,
                       right: 0,
                       child: Padding(

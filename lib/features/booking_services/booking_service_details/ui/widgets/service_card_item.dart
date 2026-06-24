@@ -57,7 +57,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
     return GestureDetector(
       onTap: () => widget.onSelectionChanged(),
       child: Container(
-        width: 141.w,
+        width: 145.w,
         clipBehavior: Clip.antiAlias,
         decoration: ShapeDecoration(
           color: Colors.white,

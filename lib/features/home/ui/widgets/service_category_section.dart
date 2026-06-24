@@ -119,7 +119,7 @@ class ServiceCategorySection extends StatelessWidget {
                           width: itemWidth,
                           alignment: Alignment.center,
                           padding: EdgeInsets.symmetric(
-                              vertical: 6.h, horizontal: 8.w),
+                              vertical: 6.h, horizontal: 1.w),
                           decoration: ShapeDecoration(
                             color: isSelected
                                 ? AppColors.blacksoft
@@ -202,9 +202,9 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon = CustomImageHandler(
       ImageUrlHelper.full(category.iconePath),
-      smartFill: true,
-      height: 45.r,
-      width: 45.r,
+      smartFill: false,
+      height: 60.r,
+      width: 60.r,
     );
     return GestureDetector(
       onTap: onTap,
@@ -215,7 +215,7 @@ class _CategoryCard extends StatelessWidget {
           alignment: Alignment.center,
           // Horizontal padding kept tight so the label has ~94w to render —
           // long service names need the room to avoid early truncation.
-          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 5.h),
           decoration: isSelected
               ? ShapeDecoration(
                   color: Colors.white,
@@ -246,7 +246,7 @@ class _CategoryCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               icon,
-              6.verticalSpace,
+              3.verticalSpace,
               Text(
                 category.nameAr ?? category.nameEn ?? '',
                 textAlign: TextAlign.center,
@@ -254,7 +254,7 @@ class _CategoryCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 10.r,
+                  fontSize: 11.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.24,
