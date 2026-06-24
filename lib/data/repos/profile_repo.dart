@@ -20,8 +20,8 @@ class ProfileRepo {
     }
   }
 
-  /// تعديل بيانات العميل. البيانات بتتبعت كـ query params،
-  /// والصورة بس (لو موجودة) بتتبعت في الـ multipart/form-data body.
+  /// تعديل بيانات العميل. كل الحقول بتتبعت كـ multipart/form-data (زي الـ API
+  /// المعتمد)، والصورة بتتبعت في نفس الـ body على الحقل `ImagePath`.
   /// PUT /api/Clients/UpdateClient
   Future<UserViewModel?> updateClient({
     int? id,
@@ -31,28 +31,25 @@ class ProfileRepo {
     String? address,
     String? gender,
     String? dateOfBirth,
-    String? imagePath,
     MultipartFile? image,
   }) async {
     try {
-      final query = <String, dynamic>{
+      final form = FormData.fromMap({
         if (id != null) 'Id': id,
         'Name': name,
         if (governorate != null && governorate.isNotEmpty)
           'Governorate': governorate,
         if (city != null && city.isNotEmpty) 'City': city,
-        if (imagePath != null && imagePath.isNotEmpty) 'ImagePath': imagePath,
         if (address != null && address.isNotEmpty) 'Address': address,
         if (gender != null && gender.isNotEmpty) 'Gender': gender,
         if (dateOfBirth != null && dateOfBirth.isNotEmpty)
           'DateOfBirth': dateOfBirth,
-      };
+        // The backend expects the uploaded file on the `ImagePath` field.
+        if (image != null) 'ImagePath': image,
+      });
       final response = await DioHelper.putData(
         url: AppEndpoints.updateClient,
-        query: query,
-        data: FormData.fromMap({
-          if (image != null) 'Image': image,
-        }),
+        data: form,
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return UserViewModel.fromJson(response.data);

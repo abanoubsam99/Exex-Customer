@@ -253,12 +253,12 @@ class _FavItem extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 8.h,
-              left: 8.w,
-              right: 8.w,
-              child: _imagesBadge(item),
-            ),
+            // Positioned(
+            //   bottom: 8.h,
+            //   left: 8.w,
+            //   right: 8.w,
+            //   child: _imagesBadge(item),
+            // ),
           ],
         ),
       ),

@@ -199,7 +199,7 @@ class WalletScreen extends StatelessWidget {
                           textAlign: TextAlign.right,
                         ),
                         Text(
-                          'قيمة النقاط',
+                          'عدد النقاط',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: AppColors.blacksoft,
@@ -263,7 +263,7 @@ class WalletScreen extends StatelessWidget {
                           textAlign: TextAlign.right,
                         ),
                         Text(
-                          'الرصيد النقدي',
+                          'قيمة النقاط',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: AppColors.blacksoft,

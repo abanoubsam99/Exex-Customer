@@ -163,7 +163,7 @@ class _ConfirmRequestsButton extends StatelessWidget {
             .fold<num>(0, (sum, r) => sum + (r.deposit ?? 0));
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, kNavBarHeight.r),
+      padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, 85.r),
       child: CustomButton(
         text: 'تأكيد الحجز',
         height: 54.h,

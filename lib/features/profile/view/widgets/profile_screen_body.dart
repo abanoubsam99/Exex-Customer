@@ -15,6 +15,7 @@ import 'package:evex_user/data/cubits/profile/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreenBody extends StatelessWidget {
   const ProfileScreenBody({super.key});
@@ -94,23 +95,50 @@ class ProfileScreenBody extends StatelessWidget {
                       return Column(
                         children: [
                           Center(
-                            child: Container(
-                              height: 100.r,
-                              width: 100.r,
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 3),
-                              ),
-                              child: ClipOval(
-                                child: CustomImageHandler(
-                                  profile?.imageName != null
-                                      ? '${AppEndpoints.baseUrl}${profile!.imageName}'
-                                      : AppImages.imagesNewLogo2,
-                                  smartFill: true,
-                                ),
+                            child: GestureDetector(
+                              onTap: () => _showImageSourcePicker(context),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    height: 100.r,
+                                    width: 100.r,
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.white, width: 3),
+                                    ),
+                                    child: ClipOval(
+                                      child: CustomImageHandler(
+                                        profile?.imageName != null
+                                            ? '${AppEndpoints.baseUrl}${profile!.imageName}'
+                                            : AppImages.imagesNewLogo2,
+                                        smartFill: true,
+                                      ),
+                                    ),
+                                  ),
+                                  // Camera badge so the avatar reads as editable.
+                                  Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Container(
+                                      padding: EdgeInsets.all(6.r),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: Colors.white, width: 2),
+                                      ),
+                                      child: Icon(
+                                        Icons.camera_alt_rounded,
+                                        color: Colors.white,
+                                        size: 16.r,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -274,6 +302,74 @@ class ProfileScreenBody extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Bottom sheet letting the user pick the new avatar source. The chosen image
+  /// is uploaded immediately by the cubit (UpdateClient → ImagePath).
+  void _showImageSourcePicker(BuildContext context) {
+    final cubit = context.read<ProfileCubit>();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            16.verticalSpace,
+            Text(
+              'تغيير الصورة الشخصية',
+              style: TextStyle(
+                color: AppColors.blacksoft,
+                fontSize: 16.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            8.verticalSpace,
+            ListTile(
+              leading: Icon(Icons.camera_alt_rounded,
+                  color: AppColors.primaryColor, size: 24.r),
+              title: Text(
+                'الكاميرا',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: AppColors.blacksoft,
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.changeProfileImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library_rounded,
+                  color: AppColors.primaryColor, size: 24.r),
+              title: Text(
+                'المعرض',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: AppColors.blacksoft,
+                  fontSize: 14.r,
+                  fontFamily: 'Almarai',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.changeProfileImage(ImageSource.gallery);
+              },
+            ),
+            8.verticalSpace,
+          ],
         ),
       ),
     );

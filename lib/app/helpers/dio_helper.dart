@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:alice/alice.dart';
 import 'package:alice/model/alice_configuration.dart';
 import 'package:alice_dio/alice_dio_adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/core/constants/cash_keys.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 
 import 'cache_helper.dart';
@@ -60,6 +64,12 @@ class DioHelper {
           if (message != null && message.isNotEmpty) {
             ToastManager.showError(message);
           }
+          // Session expired / not authenticated → drop the stale token and send
+          // the user to the login screen (also covers a guest hitting an
+          // account-only endpoint). Guarded so parallel 401s don't stack pushes.
+          if (error.response?.statusCode == 401) {
+            _redirectToLogin();
+          }
           handler.next(error);
         },
       ),
@@ -72,6 +82,30 @@ class DioHelper {
     final aliceAdapter = AliceDioAdapter();
     alice.addAdapter(aliceAdapter);
     _dio.interceptors.add(aliceAdapter);
+  }
+
+  /// True while a 401-triggered navigation to login is already underway, so
+  /// several requests failing at once don't push the login screen repeatedly.
+  static bool _redirectingToLogin = false;
+
+  /// Drops the stale auth token and routes the user to the login screen, wiping
+  /// the back stack so they can't return to the now-unauthorized screen.
+  static void _redirectToLogin() {
+    if (_redirectingToLogin) return;
+    _redirectingToLogin = true;
+    _cacheHelper.removeData(key: CacheKeys.token);
+
+    final nav = NavigationHelper.navigatorKey.currentState;
+    if (nav == null) {
+      _redirectingToLogin = false;
+      return;
+    }
+    // Defer to the next frame so we don't navigate mid-interceptor while the
+    // current route may still be building.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
+      _redirectingToLogin = false;
+    });
   }
 
   /// بيستخرج رسالة الخطأ من رد السيرفر، بيغطي كذا احتمال للشكل اللي بيرجع به الباك:
@@ -101,14 +135,21 @@ class DioHelper {
       if (title is String && title.isNotEmpty) return title;
     }
 
-    // 5) أخطاء الاتصال / التايم آوت
+    // 5) أخطاء الاتصال / التايم آوت — كلها رسائل واضحة إنها مشكلة إنترنت
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return 'انتهت مهلة الاتصال، حاول مرة أخرى';
+        return 'الإنترنت بطيء أو في مشكلة في الاتصال، تأكد من شبكتك وحاول تاني';
       case DioExceptionType.connectionError:
-        return 'تعذّر الاتصال بالخادم، تأكد من الإنترنت';
+        return 'في مشكلة في الإنترنت، تأكد من اتصالك وحاول تاني';
+      case DioExceptionType.unknown:
+        // No connectivity at all surfaces as `unknown` wrapping a
+        // SocketException — treat it as a clear internet problem too.
+        if (error.error is SocketException) {
+          return 'في مشكلة في الإنترنت، تأكد من اتصالك وحاول تاني';
+        }
+        break;
       default:
         break;
     }

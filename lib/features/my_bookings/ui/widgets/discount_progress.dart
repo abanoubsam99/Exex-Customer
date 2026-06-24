@@ -182,7 +182,7 @@ class DiscountProgress extends StatelessWidget {
 
   TextStyle get _titleStyle => TextStyle(
         color: AppColors.blacksoft,
-        fontSize: 12.r,
+        fontSize: 14.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w700,
         height: 1.43,
@@ -191,7 +191,7 @@ class DiscountProgress extends StatelessWidget {
 
   TextStyle get _subStyle => TextStyle(
         color: AppColors.grey,
-        fontSize: 10.r,
+        fontSize: 12.r,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w400,
         height: 1.67,

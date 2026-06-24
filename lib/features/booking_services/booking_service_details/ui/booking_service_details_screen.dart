@@ -155,7 +155,9 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                         children: [
                           // if (state.additions.isNotEmpty)
                             sectionBlock(const AdditionsSection()),
-                          // if (state.buffets.isNotEmpty)
+                          // البوفيه يظهر فقط في بورت القاعات (portCategoryNameEn == "Halls").
+                          if (state.port?.portTypeDto?.portCategoryNameEn ==
+                              'Halls')
                             sectionBlock(const BuffetsSection()),
                           // if (state.reviews.isNotEmpty)
                             sectionBlock(const ReviewsSection()),

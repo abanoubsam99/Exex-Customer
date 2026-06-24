@@ -121,7 +121,15 @@ class _NotificationTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StatusIcon(type: item.type),
+          Container(
+            width: 40.r,
+            height: 40.r,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: AppColors.primaryColor.withOpacity(.5), shape: BoxShape.circle),
+            child: Icon(Icons.notifications_active,
+                size: 18.r, color: AppColors.primaryColor),
+          ),
+          // _StatusIcon(type: item.type),
           12.horizontalSpace,
           Expanded(
             child: Column(

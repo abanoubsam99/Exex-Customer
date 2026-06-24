@@ -56,7 +56,8 @@ class SpecialOffersSection extends StatelessWidget {
               viewportFraction: 0.84,
               initialPage: 0,
               reverse: false,
-              autoPlay: false,
+              // Auto-rotate the offers one after another without user input.
+              autoPlay: true,
               autoPlayInterval: const Duration(seconds: 7),
               autoPlayAnimationDuration: const Duration(milliseconds: 800),
               autoPlayCurve: Curves.fastOutSlowIn,

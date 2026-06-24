@@ -113,6 +113,45 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  /// Picks a new avatar from [source] (camera/gallery) and uploads it right away
+  /// to UpdateClient → `ImagePath`, keeping the user's other data unchanged.
+  /// Used by the avatar tap on the profile screen.
+  Future<void> changeProfileImage(ImageSource source) async {
+    final picked = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 80,
+    );
+    if (picked == null) return;
+    selectedImage = File(picked.path);
+    emit(state.copyWith(isLoading: true));
+
+    final image = await MultipartFile.fromFile(
+      selectedImage!.path,
+      filename: selectedImage!.uri.pathSegments.last,
+    );
+    final profile = state.profile ?? _userService.currentUser?.userViewModel;
+    final result = await _profileRepo.updateClient(
+      id: profile?.clientId,
+      name: profile?.name ?? '',
+      governorate: profile?.governorate,
+      city: profile?.city,
+      address: profile?.address,
+      gender: profile?.gender,
+      dateOfBirth: profile?.dateOfBirth,
+      image: image,
+    );
+    if (result != null) {
+      // Pull the fresh user (with the new imageName) so the avatar updates here
+      // and everywhere else the cached user is shown.
+      await _refreshUserData();
+      emit(state.copyWith(isLoading: false));
+      ToastManager.showSuccess('تم تحديث الصورة بنجاح');
+    } else {
+      selectedImage = null;
+      emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
+    }
+  }
+
   Future<void> updateClient() async {
     emit(state.copyWith(isLoading: true));
     MultipartFile? image;

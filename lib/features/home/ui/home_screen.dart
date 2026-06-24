@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
             children: [
               SizedBox(
-                height: 368.h,
+                height: 320.h,
                 child: Stack(
                   children: [
                     Container(
@@ -112,56 +112,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     64.verticalSpace,
                                     const UserDataSection(),
-                                    14.verticalSpace,
-                                    Row(
-                                      children: [
-                                        const Expanded(child: _HomeSearchField()),
-                                        IconButton(
-                                          onPressed: () {
-                                            if (!AuthGuard.requireLogin(
-                                                context)) {
-                                              return;
-                                            }
-                                            NavigationHelper.pushNamed(
-                                              Routes.paymentHistoryScreen,
-                                            );
-                                          },
-                                          icon: CustomImageHandler(
-                                            AppImages.iconsReceipt,
-                                            width: 22.r,
-                                            height: 22.r,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            if (!AuthGuard.requireLogin(
-                                                context)) {
-                                              return;
-                                            }
-                                            // Opening the screen marks all as
-                                            // read, so clear the badge now.
-                                            context
-                                                .read<HomeCubit>()
-                                                .clearUnreadNotifications();
-                                            NavigationHelper.pushNamed(
-                                              Routes.notificationsScreen,
-                                            );
-                                          },
-                                          icon: BlocBuilder<HomeCubit,
-                                              HomeState>(
-                                            buildWhen: (p, c) =>
-                                                p.unreadNotifications !=
-                                                c.unreadNotifications,
-                                            builder: (context, state) =>
-                                                _NotificationBell(
-                                              count: state.unreadNotifications,
-                                            ),
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
+                                    // 14.verticalSpace,
+                                    // Row(
+                                    //   children: [
+                                    //     // Spacer(),
+                                    //     // const Expanded(child: _HomeSearchField()),
+                                    //     IconButton(
+                                    //       onPressed: () {
+                                    //         if (!AuthGuard.requireLogin(
+                                    //             context)) {
+                                    //           return;
+                                    //         }
+                                    //         NavigationHelper.pushNamed(
+                                    //           Routes.paymentHistoryScreen,
+                                    //         );
+                                    //       },
+                                    //       icon: CustomImageHandler(
+                                    //         AppImages.iconsReceipt,
+                                    //         width: 22.r,
+                                    //         height: 22.r,
+                                    //         color: Colors.black,
+                                    //       ),
+                                    //     ),
+                                    //     IconButton(
+                                    //       onPressed: () {
+                                    //         if (!AuthGuard.requireLogin(
+                                    //             context)) {
+                                    //           return;
+                                    //         }
+                                    //         // Opening the screen marks all as
+                                    //         // read, so clear the badge now.
+                                    //         context
+                                    //             .read<HomeCubit>()
+                                    //             .clearUnreadNotifications();
+                                    //         NavigationHelper.pushNamed(
+                                    //           Routes.notificationsScreen,
+                                    //         );
+                                    //       },
+                                    //       icon: BlocBuilder<HomeCubit,
+                                    //           HomeState>(
+                                    //         buildWhen: (p, c) =>
+                                    //             p.unreadNotifications !=
+                                    //             c.unreadNotifications,
+                                    //         builder: (context, state) =>
+                                    //             _NotificationBell(
+                                    //           count: state.unreadNotifications,
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //
+                                    //   ],
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                     Positioned.fill(
-                      top: 188.h,
+                      top: 140.h,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -364,7 +365,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       initialPage: 0,
                                       enableInfiniteScroll: true,
                                       reverse: false,
-                                      autoPlay: false,
+                                      // Auto-rotate the banners without user input.
+                                      autoPlay: true,
                                       autoPlayInterval:
                                           const Duration(seconds: 7),
                                       autoPlayAnimationDuration:

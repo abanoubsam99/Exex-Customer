@@ -49,7 +49,7 @@ class ServiceCategorySection extends StatelessWidget {
     final types = selectedCategory?.portTypeDtos ?? const <PortTypeDto>[];
     return LayoutBuilder(
       builder: (context, constraints) {
-        final separator = 12.w;
+        final separator = 8.w;
         // Size each card so ~3.3 fit the available width → a partial card
         // always peeks, hinting the row is scrollable.
         final itemWidth =

@@ -37,6 +37,12 @@ class _SpecialOffersCarouselState extends State<SpecialOffersCarousel> {
             height: 160.h,
             viewportFraction: 0.92,
             enableInfiniteScroll: offers.length > 1,
+            // Auto-rotate the offers one after another (only when there's more
+            // than one), matching the home-screen offers banner.
+            autoPlay: offers.length > 1,
+            autoPlayInterval: const Duration(seconds: 7),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            autoPlayCurve: Curves.fastOutSlowIn,
             onPageChanged: (i, _) => setState(() => _index = i),
           ),
         ),

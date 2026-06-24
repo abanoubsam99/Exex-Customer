@@ -1,3 +1,4 @@
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -116,6 +117,8 @@ class NewSuggestionSection extends StatelessWidget {
                   bordereColor: AppColors.lightBlue1,
                   text: 'اقترح الآن',
                   onTap: () {
+                    // Account action — a guest is prompted to sign in first.
+                    if (!AuthGuard.requireLogin(context)) return;
                     NavigationHelper.pushNamed(Routes.newSuggestionScreen);
                   },
                 ),
