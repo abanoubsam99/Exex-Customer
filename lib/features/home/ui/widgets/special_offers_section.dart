@@ -101,7 +101,7 @@ class SpecialOffersSection extends StatelessWidget {
                                           offer.serviceImages.first,
                                         )
                                       : null,
-                                  fit: BoxFit.cover,
+                                  smartFill: true,
                                   alignment: const Alignment(0, -0.58),
                                 ),
                               ),

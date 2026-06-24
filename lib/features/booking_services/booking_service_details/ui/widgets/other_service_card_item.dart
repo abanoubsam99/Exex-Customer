@@ -47,7 +47,7 @@ class OtherServiceCardItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.r),
                   child: CustomImageHandler(
                     images.isEmpty ? null : ImageUrlHelper.full(images[0]),
-                    fit: BoxFit.cover,
+                    smartFill: true,
                   ),
                 ),
               ),

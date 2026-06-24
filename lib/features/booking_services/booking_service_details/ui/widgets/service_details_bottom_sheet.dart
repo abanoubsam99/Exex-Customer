@@ -179,7 +179,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
 
   Widget _buildImages(List<String> images) {
     if (images.isEmpty) {
-      return const CustomImageHandler(null, fit: BoxFit.fill);
+      return const CustomImageHandler(null);
     }
     return PageView.builder(
       controller: _pageController,
@@ -187,7 +187,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
       onPageChanged: (i) => setState(() => _activeImage = i),
       itemBuilder: (context, i) => CustomImageHandler(
         ImageUrlHelper.full(images[i]),
-        fit: BoxFit.fill,
+        smartFill: true,
       ),
     );
   }

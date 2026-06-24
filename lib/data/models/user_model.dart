@@ -78,6 +78,8 @@ class UserViewModel {
   String? gender;
   String? dateOfBirth;
   int? bookingsCount;
+  String? subscriptionPlan;
+  String? referralCode;
 
   UserViewModel({
     this.userId,
@@ -103,6 +105,8 @@ class UserViewModel {
     this.gender,
     this.dateOfBirth,
     this.bookingsCount,
+    this.subscriptionPlan,
+    this.referralCode,
   });
 
   UserViewModel.fromJson(Map<String, dynamic> json)
@@ -129,7 +133,12 @@ class UserViewModel {
     address = json['address'];
     gender = json['gender'];
     dateOfBirth = json['dateOfBirth'];
-    bookingsCount = (json['bookingsCount'] as num?)?.toInt();
+    // The API sends this as `numberOfReservations`; keep `bookingsCount` as a
+    // fallback key for backward compatibility.
+    bookingsCount = (json['numberOfReservations'] as num?)?.toInt() ??
+        (json['bookingsCount'] as num?)?.toInt();
+    subscriptionPlan = json['subscriptionPlan'];
+    referralCode = json['referralCode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -155,7 +164,9 @@ class UserViewModel {
     data['address'] = address;
     data['gender'] = gender;
     data['dateOfBirth'] = dateOfBirth;
-    data['bookingsCount'] = bookingsCount;
+    data['numberOfReservations'] = bookingsCount;
+    data['subscriptionPlan'] = subscriptionPlan;
+    data['referralCode'] = referralCode;
     if (planDto != null) {
       data['planDto'] = planDto!.toJson();
     }

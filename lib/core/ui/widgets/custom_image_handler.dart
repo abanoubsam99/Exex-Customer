@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
@@ -18,6 +19,7 @@ class CustomImageHandler extends StatelessWidget {
     this.width,
     this.color,
     this.errorIcon,
+    this.smartFill = false,
   });
   final dynamic path;
   final BoxFit fit;
@@ -25,6 +27,12 @@ class CustomImageHandler extends StatelessWidget {
   final double? height, width;
   final Color? color;
   final Icon? errorIcon;
+
+  /// When true the image is shown in full (BoxFit.contain) on top of a blurred,
+  /// zoomed-in copy of itself. This fills the box with no distortion and no
+  /// empty bars, regardless of the image's aspect ratio — the right choice for
+  /// API images that arrive in unpredictable sizes/ratios.
+  final bool smartFill;
 
   /// Shown whenever there is no image to display (null/empty path) or one fails
   /// to load: the app logo centered on a light background — never a stock photo.
@@ -42,17 +50,14 @@ class CustomImageHandler extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // No image (null or empty url) → logo placeholder instead of a stock photo.
-    if (path == null || (path is String && (path as String).trim().isEmpty)) {
-      return _logoPlaceholder();
-    }
-
+  /// Builds the raw image widget for the given [boxFit]. Kept separate so
+  /// [smartFill] can render the same source twice (blurred cover + contain).
+  Widget _image(BoxFit boxFit) {
     if (path is File) {
       return Image.file(
         path,
-        fit: fit,
+        fit: boxFit,
+        alignment: alignment,
         color: color,
         height: height,
         width: width,
@@ -62,7 +67,8 @@ class CustomImageHandler extends StatelessWidget {
     if (path is Uint8List) {
       return Image.memory(
         path,
-        fit: fit,
+        fit: boxFit,
+        alignment: alignment,
         color: color,
         height: height,
         width: width,
@@ -74,11 +80,10 @@ class CustomImageHandler extends StatelessWidget {
         path.startsWith('www.')) {
       return CachedNetworkImage(
         imageUrl: path,
-        fit: fit,
+        fit: boxFit,
+        alignment: alignment is Alignment ? alignment as Alignment : Alignment.center,
         width: width,
         height: height,
-        // memCacheHeight: height?.toInt(),
-        // memCacheWidth: width?.toInt(),
         errorWidget: (BuildContext context, _, stackTrace) {
           return errorIcon != null
               ? Center(child: errorIcon)
@@ -95,13 +100,14 @@ class CustomImageHandler extends StatelessWidget {
         },
       );
     }
+
     if (path.endsWith('.svg')) {
       return SizedBox(
         height: height,
         width: width,
         child: SvgPicture.asset(
           path,
-          fit: fit,
+          fit: boxFit,
           alignment: alignment,
           height: height,
           width: width,
@@ -110,18 +116,51 @@ class CustomImageHandler extends StatelessWidget {
         ),
       );
     }
+
     return Image.asset(
       path,
-      fit: fit,
+      fit: boxFit,
       alignment: alignment,
       color: color,
       height: height,
       width: width,
-      // cacheHeight: height?.toInt(),
-      // cacheWidth: width?.toInt(),
       // new_logo.png is a PNG, so it must be loaded with Image.asset, not
       // SvgPicture.asset (which only renders SVG and silently fails on a PNG).
       errorBuilder: (context, error, stackTrace) => _logoPlaceholder(),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // No image (null or empty url) → logo placeholder instead of a stock photo.
+    if (path == null || (path is String && (path as String).trim().isEmpty)) {
+      return _logoPlaceholder();
+    }
+
+    // smartFill: blurred zoomed copy behind + the full image (contain) in front.
+    // Fills the box with no distortion and no empty bars for any aspect ratio.
+    if (smartFill) {
+      return SizedBox(
+        height: height,
+        width: width,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background: same image cropped to cover, then blurred + dimmed.
+            ClipRect(
+              child: ImageFiltered(
+                imageFilter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: _image(BoxFit.cover),
+              ),
+            ),
+            Container(color: Colors.black.withValues(alpha: 0.08)),
+            // Foreground: whole image, no crop, no stretch.
+            _image(BoxFit.contain),
+          ],
+        ),
+      );
+    }
+
+    return _image(fit);
   }
 }

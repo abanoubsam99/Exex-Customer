@@ -38,7 +38,7 @@ class UserDataSection extends StatelessWidget {
               user?.imageName != null
                   ? '${AppEndpoints.baseUrl}${user!.imageName}'
                   : AppImages.imagesNewLogo2,
-              fit: BoxFit.cover,
+              smartFill: true,
               width: 46.r,
               height: 46.r,
             ),

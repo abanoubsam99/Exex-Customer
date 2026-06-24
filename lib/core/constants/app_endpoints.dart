@@ -30,7 +30,8 @@ class AppEndpoints {
   static const contactInfo = "/api/Home/GetEVEXContactInfoAndSocialMedia";
   static const branches = "/api/Home/GetAllBranchs";
   //Services
-  static const services = "api/Services/GetAllServices";
+  // Port services are fetched via [getAllServicesByClient] with a `portTypeId`
+  // query param — there is no standalone `GetAllService` endpoint (it 404s).
   static const addition = "api/Additions/GetAllAdditions";
   static const serviceData = "api/Services/GetServiceData";
   static const reviews = "/api/Reviews";

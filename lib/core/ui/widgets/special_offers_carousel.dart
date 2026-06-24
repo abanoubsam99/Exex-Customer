@@ -97,7 +97,7 @@ class _OfferBanner extends StatelessWidget {
             clipper: _RPSClipper(),
             child: CustomImageHandler(
               image,
-              fit: BoxFit.cover,
+              smartFill: true,
               height: 159.h,
               width: 292.w,
             ),

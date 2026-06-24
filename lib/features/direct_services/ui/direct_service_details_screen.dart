@@ -183,7 +183,7 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                   onPageChanged: (i) => setState(() => _active = i),
                   itemBuilder: (_, i) => CustomImageHandler(
                     ImageUrlHelper.full(images[i]),
-                    fit: BoxFit.cover,
+                    smartFill: true,
                   ),
                 ),
         ),

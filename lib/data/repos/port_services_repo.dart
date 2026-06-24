@@ -6,11 +6,11 @@ import 'package:evex_user/data/models/review.dart';
 import 'package:evex_user/data/models/service_details_model.dart';
 
 class PortServicesRepo {
-  Future<List<PortService>?> getAllPortServices(int portId) async {
+  Future<List<PortService>?> getAllPortServices(int portTypeId) async {
     try {
       final response = await DioHelper.getData(
-        url: AppEndpoints.services,
-        query: {'portId': portId},
+        url: AppEndpoints.getAllServicesByClient,
+        query: {'portTypeId': portTypeId},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return (response.data as List)

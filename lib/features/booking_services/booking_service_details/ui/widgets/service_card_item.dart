@@ -291,7 +291,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
   /// لو مفيش صور بيعرض صورة افتراضية.
   Widget _buildImages() {
     if (widget.images.isEmpty) {
-      return const CustomImageHandler(null, fit: BoxFit.fill);
+      return const CustomImageHandler(null);
     }
     return PageView.builder(
       controller: _pageController,
@@ -299,7 +299,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
       onPageChanged: (i) => setState(() => _activeImage = i),
       itemBuilder: (context, i) => CustomImageHandler(
         ImageUrlHelper.full(widget.images[i]),
-        fit: BoxFit.fill,
+        smartFill: true,
       ),
     );
   }

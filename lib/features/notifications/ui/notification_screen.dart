@@ -62,19 +62,19 @@ class NotificationScreen extends StatelessWidget {
                         if (recent.isNotEmpty) ...[
                           _sectionLabel('مؤخراً'),
                           for (int i = 0; i < recent.length; i++) ...[
-                            _NotificationTile(item: recent[i]),
-                            if (i != recent.length - 1)
-                              Divider(
-                                  color: AppColors.fillGrey1, height: 1.h),
+                            _NotificationTile(
+                                item: recent[i], highlighted: true),
+                            if (i != recent.length - 1) 4.verticalSpace,
                           ],
                         ],
                         if (others.isNotEmpty) ...[
                           16.verticalSpace,
                           _sectionLabel('اخري'),
                           for (int i = 0; i < others.length; i++) ...[
-                            _NotificationTile(
-                                item: others[i], highlighted: true),
-                            if (i != others.length - 1) 4.verticalSpace,
+                            _NotificationTile(item: others[i]),
+                            if (i != others.length - 1)
+                              Divider(
+                                  color: AppColors.fillGrey1, height: 1.h),
                           ],
                         ],
                         if (state.isLoadingMore) const PaginationLoader(),
@@ -96,10 +96,10 @@ class NotificationScreen extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: AppColors.grey5,
-            fontSize: 13.r,
+            color: AppColors.black,
+            fontSize: 14.r,
             fontFamily: 'Almarai',
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.bold,
           ),
         ),
       );
@@ -134,7 +134,7 @@ class _NotificationTile extends StatelessWidget {
                     color: AppColors.black,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 4.verticalSpace,

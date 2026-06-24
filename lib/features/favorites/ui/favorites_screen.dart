@@ -224,7 +224,7 @@ class _FavItem extends StatelessWidget {
             Positioned.fill(
               child: CustomImageHandler(
                 _firstImageUrl(item),
-                fit: BoxFit.cover,
+                smartFill: true,
               ),
             ),
             Positioned(

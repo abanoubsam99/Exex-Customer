@@ -89,7 +89,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                 : images
                     .map((url) => SizedBox(
                           width: 1.sw,
-                          child: CustomImageHandler(url, fit: BoxFit.cover),
+                          child: CustomImageHandler(url, smartFill: true),
                         ))
                     .toList();
             return CarouselSlider(

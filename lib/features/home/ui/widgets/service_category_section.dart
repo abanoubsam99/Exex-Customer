@@ -202,7 +202,7 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final icon = CustomImageHandler(
       ImageUrlHelper.full(category.iconePath),
-      fit: BoxFit.contain,
+      smartFill: true,
       height: 45.r,
       width: 45.r,
     );

@@ -199,7 +199,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                         Positioned.fill(
                                           child: CustomImageHandler(
                                             _portImageUrl(item),
-                                            fit: BoxFit.cover,
+                                            smartFill: true,
                                           ),
                                         ),
                                         Positioned(

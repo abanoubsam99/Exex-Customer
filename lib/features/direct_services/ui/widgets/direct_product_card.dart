@@ -61,7 +61,7 @@ class DirectProductCard extends StatelessWidget {
                           images.isEmpty
                               ? null
                               : ImageUrlHelper.full(images.first),
-                          fit: BoxFit.cover,
+                          smartFill: true,
                         ),
                       ),
                     ),

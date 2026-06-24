@@ -109,6 +109,7 @@ class ProfileScreenBody extends StatelessWidget {
                                   profile?.imageName != null
                                       ? '${AppEndpoints.baseUrl}${profile!.imageName}'
                                       : AppImages.imagesNewLogo2,
+                                  smartFill: true,
                                 ),
                               ),
                             ),
@@ -144,7 +145,9 @@ class ProfileScreenBody extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: _statCard(
-                                  profile?.planDto?.name ?? 'مجاني',
+                                  profile?.subscriptionPlan ??
+                                      profile?.planDto?.name ??
+                                      'مجاني',
                                   'نظام الإشتراك',
                                   AppColors.primaryColor,
                                 ),
@@ -160,7 +163,9 @@ class ProfileScreenBody extends StatelessWidget {
                               10.horizontalSpace,
                               Expanded(
                                 child: _statCard(
-                                  'لايوجد',
+                                  (profile?.referralCode?.isNotEmpty ?? false)
+                                      ? profile!.referralCode!
+                                      : 'لايوجد',
                                   'كود الدعوة',
                                   AppColors.inviteCodeColor,
                                 ),
