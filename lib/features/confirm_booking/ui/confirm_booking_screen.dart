@@ -325,12 +325,12 @@ class _PaymentMethodsCard extends StatelessWidget {
           //   label: 'محفظة evex',
           //   logos: Image.asset(AppImages.imagesNewLogo, height: 20.r),
           // ),
-          _divider(),
-          _row(
-            method: BookingPaymentMethod.cash,
-            label: 'الدفع نقداً',
-            logos: Image.asset(AppImages.imagesDollars, height: 20.r),
-          ),
+          // _divider(),
+          // _row(
+          //   method: BookingPaymentMethod.cash,
+          //   label: 'الدفع نقداً',
+          //   logos: Image.asset(AppImages.imagesDollars, height: 20.r),
+          // ),
         ],
       ),
     );
@@ -652,7 +652,7 @@ class _PoliciesSection extends StatelessWidget {
         12.verticalSpace,
         Container(
           width: double.infinity,
-          height: 120.h,
+          height: 190.h,
           padding: EdgeInsets.all(14.r),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -663,7 +663,7 @@ class _PoliciesSection extends StatelessWidget {
             child: Text(
               _terms,
               style: TextStyle(
-                color: AppColors.grey4,
+                color: AppColors.grey5,
                 fontSize: 12.r,
                 fontFamily: 'Almarai',
                 height: 1.8,

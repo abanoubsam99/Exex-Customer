@@ -69,7 +69,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       return;
     }
     if ((state.selectedOccasionId ?? 0) <= 0) {
-      ToastManager.showError('حدد نوع المناسبة لإستكمال الحجز');
+      ToastManager.showError('حدد نوع وتاريخ المناسبة لاستكمال الحجز');
       return;
     }
     final port = args.port;

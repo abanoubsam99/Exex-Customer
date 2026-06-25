@@ -72,10 +72,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
 
   static const int _defaultPortId = 3;
 
+  // Only real port ids feed this chain. A port-type id is NOT a port id, so the
+  // selected booking type is never used here as a fallback.
   int get _portId =>
       state.port?.id ??
       _offerPortId ??
-      _homeCubit.state.selectedBookingPortType?.id ??
       _defaultPortId;
 
   /// The id of the port currently shown — used to build its share link.

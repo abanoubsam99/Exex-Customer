@@ -286,7 +286,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                         // نوع المناسبة مطلوب لاستكمال الحجز.
                         if ((st.selectedOccasionId ?? 0) <= 0) {
                           ToastManager.showError(
-                              'حدد نوع المناسبة لإستكمال الحجز');
+                              'حدد نوع وتاريخ المناسبة لاستكمال الحجز');
                           return;
                         }
                         // Edit → update the reservation in place (no new booking).

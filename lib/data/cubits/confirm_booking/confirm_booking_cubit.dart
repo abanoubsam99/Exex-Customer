@@ -38,7 +38,7 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       remainingSeconds: countdownSeconds,
     ));
     _startTimer();
-    _loadNetCost();
+    // _loadNetCost();
   }
 
   /// The request ids to confirm: the multi-id list when present, otherwise the

@@ -6,11 +6,23 @@ import 'package:evex_user/data/models/review.dart';
 import 'package:evex_user/data/models/service_details_model.dart';
 
 class PortServicesRepo {
-  Future<List<PortService>?> getAllPortServices(int portTypeId) async {
+  /// GET /api/Services/GetAllServicesByClient?portId={portId}&specialOffer=false&portTypeId=0
+  /// Loads the services of a specific port. [portId] identifies the port itself,
+  /// not its type — [portTypeId] (0 = no filter) filters by type, and
+  /// [specialOffer] limits the result to special offers.
+  Future<List<PortService>?> getAllPortServices(
+    int portId, {
+    bool specialOffer = false,
+    int portTypeId = 0,
+  }) async {
     try {
       final response = await DioHelper.getData(
         url: AppEndpoints.getAllServicesByClient,
-        query: {'portTypeId': portTypeId},
+        query: {
+          'portId': portId,
+          'specialOffer': specialOffer,
+          'portTypeId': portTypeId,
+        },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return (response.data as List)
@@ -45,7 +57,7 @@ class PortServicesRepo {
       {int index = 0, int size = 20}) async {
     try {
       final response = await DioHelper.getData(
-        url: '${AppEndpoints.reviews}',
+        url: AppEndpoints.reviews,
         query: {'id': portId, 'index': index, 'size': size},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
