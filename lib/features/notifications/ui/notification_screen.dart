@@ -60,7 +60,7 @@ class NotificationScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
                       children: [
                         if (recent.isNotEmpty) ...[
-                          _sectionLabel('مؤخراً'),
+                          // _sectionLabel('مؤخراً'),
                           for (int i = 0; i < recent.length; i++) ...[
                             _NotificationTile(
                                 item: recent[i], highlighted: true),
@@ -69,7 +69,7 @@ class NotificationScreen extends StatelessWidget {
                         ],
                         if (others.isNotEmpty) ...[
                           16.verticalSpace,
-                          _sectionLabel('اخري'),
+                          // _sectionLabel('اخري'),
                           for (int i = 0; i < others.length; i++) ...[
                             _NotificationTile(item: others[i]),
                             if (i != others.length - 1)
@@ -125,7 +125,7 @@ class _NotificationTile extends StatelessWidget {
             width: 40.r,
             height: 40.r,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: AppColors.primaryColor.withOpacity(.5), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: AppColors.primaryColor.withOpacity(.1), shape: BoxShape.circle),
             child: Icon(Icons.notifications_active,
                 size: 18.r, color: AppColors.primaryColor),
           ),

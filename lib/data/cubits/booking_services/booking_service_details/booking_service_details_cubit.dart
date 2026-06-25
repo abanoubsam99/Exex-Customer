@@ -154,10 +154,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     final city = bill?.city ?? args.city;
     if (date != null) {
       _homeCubit.setBookingDate(date);
-      if ((gov?.trim().isNotEmpty ?? false) &&
-          (city?.trim().isNotEmpty ?? false)) {
-        _homeCubit.setEventLocation(gov!, city!);
-      }
+      // Always reset the event location to the reservation's own one (even if
+      // empty), so a stale value from a previous flow can't break the
+      // "own original slot" comparison below and leave the badge stuck on
+      // "جاري التحقق".
+      _homeCubit.setEventLocation(gov ?? '', city ?? '');
     }
 
     // Pre-select the booked base service so its price seeds the total. The bill
