@@ -30,6 +30,15 @@ class ChangeOccasion extends StatelessWidget {
   final int? selectedOccasionId;
   final ValueChanged<int?>? onOccasionSelected;
 
+  /// Edit mode + the reservation's original date/place. When editing, if the
+  /// user keeps the same date + governorate + city, the only thing occupying
+  /// that slot is the user's own reservation, so it's shown as available for
+  /// instant booking instead of "غير متاح".
+  final bool isEditMode;
+  final DateTime? editOriginalDate;
+  final String? editOriginalGovernorate;
+  final String? editOriginalCity;
+
   const ChangeOccasion({
     super.key,
     this.port,
@@ -37,7 +46,28 @@ class ChangeOccasion extends StatelessWidget {
     this.occasions = const [],
     this.selectedOccasionId,
     this.onOccasionSelected,
+    this.isEditMode = false,
+    this.editOriginalDate,
+    this.editOriginalGovernorate,
+    this.editOriginalCity,
   });
+
+  /// True when editing and the chosen date + place still match the original
+  /// reservation, i.e. the conflicting booking is the user's own one.
+  bool _isOwnOriginalSlot(DateTime? date, String? gov, String? city) {
+    if (!isEditMode) return false;
+    final orig = editOriginalDate;
+    if (date == null || orig == null) return false;
+    if (date.year != orig.year ||
+        date.month != orig.month ||
+        date.day != orig.day) {
+      return false;
+    }
+    bool sameStr(String? a, String? b) =>
+        (a ?? '').trim().toLowerCase() == (b ?? '').trim().toLowerCase();
+    return sameStr(gov, editOriginalGovernorate) &&
+        sameStr(city, editOriginalCity);
+  }
 
   /// The event location shown in the header: the value picked in the edit sheet
   /// ([eventGov]/[eventCity]) if any, otherwise the signed-in user's own
@@ -172,10 +202,17 @@ class ChangeOccasion extends StatelessWidget {
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (p, c) =>
               p.availability != c.availability ||
-              p.bookingDate != c.bookingDate,
+              p.bookingDate != c.bookingDate ||
+              p.eventGovernorate != c.eventGovernorate ||
+              p.eventCity != c.eventCity,
           builder: (context, state) {
-            final view =
-                _statusFor(state.bookingDate ?? occasionDate, state.availability);
+            final date = state.bookingDate ?? occasionDate;
+            // Editing one's own reservation at the same slot → always available.
+            final view = _isOwnOriginalSlot(
+                    date, state.eventGovernorate, state.eventCity)
+                ? const _AvailabilityView('متاح للحجز الفوري',
+                    AppColors.green2, AppColors.greenSoft)
+                : _statusFor(date, state.availability);
             return Row(
               children: [
                 _GlowingDot(color: view.dotColor),

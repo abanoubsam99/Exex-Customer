@@ -96,13 +96,26 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           buildWhen: (p, c) =>
                               p.port != c.port ||
                               p.occasions != c.occasions ||
-                              p.selectedOccasionId != c.selectedOccasionId,
+                              p.selectedOccasionId != c.selectedOccasionId ||
+                              p.isEditMode != c.isEditMode ||
+                              p.editOriginalDate != c.editOriginalDate ||
+                              p.editOriginalGovernorate !=
+                                  c.editOriginalGovernorate ||
+                              p.editOriginalCity != c.editOriginalCity,
                           builder: (context, state) => ChangeOccasion(
                             port: state.port,
                             occasionDate:
                                 context.read<HomeCubit>().state.bookingDate,
                             occasions: state.occasions,
                             selectedOccasionId: state.selectedOccasionId,
+                            // Edit mode: keeping the original date + place means
+                            // the only conflict is the user's own reservation,
+                            // so the slot is shown as available (instant).
+                            isEditMode: state.isEditMode,
+                            editOriginalDate: state.editOriginalDate,
+                            editOriginalGovernorate:
+                                state.editOriginalGovernorate,
+                            editOriginalCity: state.editOriginalCity,
                             onOccasionSelected: (id) {
                               if (id != null) {
                                 context

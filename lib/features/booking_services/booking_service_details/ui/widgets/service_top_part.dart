@@ -241,12 +241,14 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: BlocBuilder<BookingServiceDetailsCubit,
                 BookingServiceDetailsState>(
-              buildWhen: (p, c) => p.port != c.port,
+              buildWhen: (p, c) =>
+                  p.port != c.port || p.editPortName != c.editPortName,
               builder: (context, state) => Row(
                 children: [
                   Expanded(
                     child: Text(
-                      state.port?.portName ?? '',
+                      // Edit mode has no full [Item]; use the bill's port name.
+                      state.port?.portName ?? state.editPortName ?? '',
                       textAlign: TextAlign.right,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

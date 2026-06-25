@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
             children: [
               SizedBox(
-                height: 320.h,
+                height: 368.h,
                 child: Stack(
                   children: [
                     Container(
@@ -112,57 +112,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     64.verticalSpace,
                                     const UserDataSection(),
-                                    // 14.verticalSpace,
-                                    // Row(
-                                    //   children: [
-                                    //     // Spacer(),
-                                    //     // const Expanded(child: _HomeSearchField()),
-                                    //     IconButton(
-                                    //       onPressed: () {
-                                    //         if (!AuthGuard.requireLogin(
-                                    //             context)) {
-                                    //           return;
-                                    //         }
-                                    //         NavigationHelper.pushNamed(
-                                    //           Routes.paymentHistoryScreen,
-                                    //         );
-                                    //       },
-                                    //       icon: CustomImageHandler(
-                                    //         AppImages.iconsReceipt,
-                                    //         width: 22.r,
-                                    //         height: 22.r,
-                                    //         color: Colors.black,
-                                    //       ),
-                                    //     ),
-                                    //     IconButton(
-                                    //       onPressed: () {
-                                    //         if (!AuthGuard.requireLogin(
-                                    //             context)) {
-                                    //           return;
-                                    //         }
-                                    //         // Opening the screen marks all as
-                                    //         // read, so clear the badge now.
-                                    //         context
-                                    //             .read<HomeCubit>()
-                                    //             .clearUnreadNotifications();
-                                    //         NavigationHelper.pushNamed(
-                                    //           Routes.notificationsScreen,
-                                    //         );
-                                    //       },
-                                    //       icon: BlocBuilder<HomeCubit,
-                                    //           HomeState>(
-                                    //         buildWhen: (p, c) =>
-                                    //             p.unreadNotifications !=
-                                    //             c.unreadNotifications,
-                                    //         builder: (context, state) =>
-                                    //             _NotificationBell(
-                                    //           count: state.unreadNotifications,
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //
-                                    //   ],
-                                    // ),
+                                    14.verticalSpace,
+                                    Row(
+                                      children: [
+                                        const Expanded(child: _HomeSearchField()),
+                                        IconButton(
+                                          onPressed: () {
+                                            if (!AuthGuard.requireLogin(
+                                                context)) {
+                                              return;
+                                            }
+                                            NavigationHelper.pushNamed(
+                                              Routes.paymentHistoryScreen,
+                                            );
+                                          },
+                                          icon: CustomImageHandler(
+                                            AppImages.iconsReceipt,
+                                            width: 22.r,
+                                            height: 22.r,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            if (!AuthGuard.requireLogin(
+                                                context)) {
+                                              return;
+                                            }
+                                            // Opening the screen marks all as
+                                            // read, so clear the badge now.
+                                            context
+                                                .read<HomeCubit>()
+                                                .clearUnreadNotifications();
+                                            NavigationHelper.pushNamed(
+                                              Routes.notificationsScreen,
+                                            );
+                                          },
+                                          icon: BlocBuilder<HomeCubit,
+                                              HomeState>(
+                                            buildWhen: (p, c) =>
+                                                p.unreadNotifications !=
+                                                c.unreadNotifications,
+                                            builder: (context, state) =>
+                                                _NotificationBell(
+                                              count: state.unreadNotifications,
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -173,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                     Positioned.fill(
-                      top: 140.h,
+                      top: 188.h,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -261,20 +260,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     letterSpacing: -0.24,
                                                   ),
                                                 ),
-                                                Text(
-                                                  'اوعى تترد انك تدينا اقترحاتك وتحدد اللى انت عايزه وتختار براحتك وادينا كل اقترحاتك',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                    color: const Color(
-                                                      0xFFD9D9D9,
+                                                Flexible(
+                                                  child: Text(
+                                                    'اوعى تترد انك تدينا اقترحاتك وتحدد اللى انت عايزه وتختار براحتك وادينا كل اقترحاتك',
+                                                    textAlign: TextAlign.right,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: const Color(
+                                                        0xFFD9D9D9,
+                                                      ),
+                                                      fontSize: 14.r,
+                                                      fontFamily: 'Almarai',
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      letterSpacing: -0.24,
                                                     ),
-                                                    fontSize: 14.r,
-                                                    fontFamily: 'Almarai',
-                                                    fontWeight: FontWeight.w400,
-                                                    letterSpacing: -0.24,
                                                   ),
                                                 ),
-                                                16.verticalSpace,
+                                                8.verticalSpace,
                                                 CustomButton(
                                                   backgroundColor: const Color(
                                                     0xFFF38B4A,

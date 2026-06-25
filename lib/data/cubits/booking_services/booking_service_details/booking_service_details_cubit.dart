@@ -118,6 +118,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     );
     _editBill = bill;
 
+    // Header title + original slot (no full [Item] is passed when editing, so
+    // the port name comes from the bill). The original date/place lets the
+    // availability badge treat the user's own slot as available (see below).
+    emit(state.copyWith(
+      editPortName: bill?.portName,
+      editOriginalDate: _parseBillDate(bill?.occasionDate) ?? args.occasionDate,
+      editOriginalGovernorate: bill?.governorate ?? args.governorate,
+      editOriginalCity: bill?.city ?? args.city,
+    ));
+
     // Pre-select the occasion type that was on the reservation.
     if (bill != null && bill.occasionId > 0) {
       emit(state.copyWith(selectedOccasionId: bill.occasionId));
@@ -134,16 +144,19 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       }
     }
 
-    // Occasion date drives ChangeOccasion + the availability badge (shared via
-    // HomeCubit, exactly like the add flow).
+    // Seed the original date + place onto HomeCubit so the header shows the
+    // reservation's own date/governorate/city. We deliberately DON'T call
+    // checkAvailability here: this is the user's own slot, so ChangeOccasion
+    // shows it as available directly (see _isOwnOriginalSlot). Availability is
+    // only re-checked from the edit sheet when the user changes the date/place.
     final date = _parseBillDate(bill?.occasionDate) ?? args.occasionDate;
+    final gov = bill?.governorate ?? args.governorate;
+    final city = bill?.city ?? args.city;
     if (date != null) {
       _homeCubit.setBookingDate(date);
-      final portId = bill?.portId ?? args.portId ?? 0;
-      if (portId > 0) {
-        _homeCubit.setAvailability(
-          await _confirmRepo.checkAvailability(portId: portId, date: date),
-        );
+      if ((gov?.trim().isNotEmpty ?? false) &&
+          (city?.trim().isNotEmpty ?? false)) {
+        _homeCubit.setEventLocation(gov!, city!);
       }
     }
 
@@ -162,13 +175,17 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       }
     }
     if (matchedService == null && targetServiceName.isNotEmpty) {
+      final target = targetServiceName.toLowerCase();
       for (final s in state.services) {
-        if ((s.name ?? '').trim() == targetServiceName) {
+        if ((s.name ?? '').trim().toLowerCase() == target) {
           matchedService = s;
           break;
         }
       }
     }
+    // Last resort: if the reservation has exactly one base service to choose
+    // from, pre-select it so the total isn't stuck at 0 in edit mode.
+    matchedService ??= state.services.length == 1 ? state.services.first : null;
     if (matchedService != null) {
       emit(state.copyWith(selectedService: matchedService));
       await getServiceData();
@@ -404,7 +421,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   }
 
   void _recalcTotal() {
-    double cost = state.serviceDetails?.price?.toDouble() ?? 0;
+    // Prefer the detailed price; fall back to the selected service's own price
+    // so the total still reflects the base service if its details didn't load.
+    double cost = (state.serviceDetails?.price ?? state.selectedService?.price)
+            ?.toDouble() ??
+        0;
     final oldGiftIds =
         state.serviceDetails?.oldGifts?.map((e) => e.id).toSet() ?? {};
 

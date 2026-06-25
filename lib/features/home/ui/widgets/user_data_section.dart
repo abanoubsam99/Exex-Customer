@@ -78,104 +78,104 @@ class UserDataSection extends StatelessWidget {
             ],
           ),
         ),
-        Row(
-          children: [
-            // Spacer(),
-            // const Expanded(child: _HomeSearchField()),
-            IconButton(
-              onPressed: () {
-                if (!AuthGuard.requireLogin(
-                    context)) {
-                  return;
-                }
-                NavigationHelper.pushNamed(
-                  Routes.paymentHistoryScreen,
-                );
-              },
-              icon: CustomImageHandler(
-                AppImages.iconsReceipt,
-                width: 22.r,
-                height: 22.r,
-                color: Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                if (!AuthGuard.requireLogin(
-                    context)) {
-                  return;
-                }
-                // Opening the screen marks all as
-                // read, so clear the badge now.
-                context
-                    .read<HomeCubit>()
-                    .clearUnreadNotifications();
-                NavigationHelper.pushNamed(
-                  Routes.notificationsScreen,
-                );
-              },
-              icon: BlocBuilder<HomeCubit,
-                  HomeState>(
-                buildWhen: (p, c) =>
-                p.unreadNotifications !=
-                    c.unreadNotifications,
-                builder: (context, state) =>
-                    _NotificationBell(
-                      count: state.unreadNotifications,
-                    ),
-              ),
-            ),
-
-          ],
-        ),
+        // Row(
+        //   children: [
+        //     // Spacer(),
+        //     // const Expanded(child: _HomeSearchField()),
+        //     IconButton(
+        //       onPressed: () {
+        //         if (!AuthGuard.requireLogin(
+        //             context)) {
+        //           return;
+        //         }
+        //         NavigationHelper.pushNamed(
+        //           Routes.paymentHistoryScreen,
+        //         );
+        //       },
+        //       icon: CustomImageHandler(
+        //         AppImages.iconsReceipt,
+        //         width: 22.r,
+        //         height: 22.r,
+        //         color: Colors.black,
+        //       ),
+        //     ),
+        //     IconButton(
+        //       onPressed: () {
+        //         if (!AuthGuard.requireLogin(
+        //             context)) {
+        //           return;
+        //         }
+        //         // Opening the screen marks all as
+        //         // read, so clear the badge now.
+        //         context
+        //             .read<HomeCubit>()
+        //             .clearUnreadNotifications();
+        //         NavigationHelper.pushNamed(
+        //           Routes.notificationsScreen,
+        //         );
+        //       },
+        //       icon: BlocBuilder<HomeCubit,
+        //           HomeState>(
+        //         buildWhen: (p, c) =>
+        //         p.unreadNotifications !=
+        //             c.unreadNotifications,
+        //         builder: (context, state) =>
+        //             _NotificationBell(
+        //               count: state.unreadNotifications,
+        //             ),
+        //       ),
+        //     ),
+        //
+        //   ],
+        // ),
 
       ],
     );
   }
 }
-
-/// The bell icon with a red unread-count badge on top (hidden when [count] 0).
-class _NotificationBell extends StatelessWidget {
-  final int count;
-  const _NotificationBell({required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    final bell = CustomImageHandler(
-      AppImages.iconsNotification,
-      width: 22.r,
-      height: 22.r,
-    );
-    if (count <= 0) return bell;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        bell,
-        Positioned(
-          top: -6.r,
-          right: -6.r,
-          child: Container(
-            constraints: BoxConstraints(minWidth: 16.r, minHeight: 16.r),
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Text(
-              count > 99 ? '99+' : '$count',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 9.r,
-                fontFamily: 'Almarai',
-                fontWeight: FontWeight.w700,
-                height: 1,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+//
+// /// The bell icon with a red unread-count badge on top (hidden when [count] 0).
+// class _NotificationBell extends StatelessWidget {
+//   final int count;
+//   const _NotificationBell({required this.count});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final bell = CustomImageHandler(
+//       AppImages.iconsNotification,
+//       width: 22.r,
+//       height: 22.r,
+//     );
+//     if (count <= 0) return bell;
+//     return Stack(
+//       clipBehavior: Clip.none,
+//       children: [
+//         bell,
+//         Positioned(
+//           top: -6.r,
+//           right: -6.r,
+//           child: Container(
+//             constraints: BoxConstraints(minWidth: 16.r, minHeight: 16.r),
+//             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+//             alignment: Alignment.center,
+//             decoration: BoxDecoration(
+//               color: AppColors.primaryColor,
+//               borderRadius: BorderRadius.circular(8.r),
+//             ),
+//             child: Text(
+//               count > 99 ? '99+' : '$count',
+//               textAlign: TextAlign.center,
+//               style: TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 9.r,
+//                 fontFamily: 'Almarai',
+//                 fontWeight: FontWeight.w700,
+//                 height: 1,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

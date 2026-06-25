@@ -36,6 +36,17 @@ class BookingServiceDetailsState {
   /// button confirms the edit (update in place) instead of adding a new booking.
   final bool isEditMode;
 
+  /// Edit mode: the reservation's port name from the bill — used for the header
+  /// title because no full [Item] (with [Item.portName]) is passed when editing.
+  final String? editPortName;
+
+  /// Edit mode: the reservation's original date/place. While editing, if the
+  /// user keeps the same date + governorate + city, the conflicting slot is the
+  /// user's own reservation, so we show it as available for instant booking.
+  final DateTime? editOriginalDate;
+  final String? editOriginalGovernorate;
+  final String? editOriginalCity;
+
   /// True while the edit is being saved (update API in flight).
   final bool isSaving;
   final String? errorMessage;
@@ -47,6 +58,10 @@ class BookingServiceDetailsState {
     this.portImages = const [],
     this.services = const [],
     this.isEditMode = false,
+    this.editPortName,
+    this.editOriginalDate,
+    this.editOriginalGovernorate,
+    this.editOriginalCity,
     this.isSaving = false,
     this.selectedService,
     this.additions = const [],
@@ -80,6 +95,10 @@ class BookingServiceDetailsState {
     int? selectedOccasionId,
     double? totalCost,
     bool? isEditMode,
+    String? editPortName,
+    DateTime? editOriginalDate,
+    String? editOriginalGovernorate,
+    String? editOriginalCity,
     bool? isSaving,
     String? errorMessage,
   }) {
@@ -101,6 +120,11 @@ class BookingServiceDetailsState {
       selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
       totalCost: totalCost ?? this.totalCost,
       isEditMode: isEditMode ?? this.isEditMode,
+      editPortName: editPortName ?? this.editPortName,
+      editOriginalDate: editOriginalDate ?? this.editOriginalDate,
+      editOriginalGovernorate:
+          editOriginalGovernorate ?? this.editOriginalGovernorate,
+      editOriginalCity: editOriginalCity ?? this.editOriginalCity,
       isSaving: isSaving ?? this.isSaving,
       errorMessage: errorMessage ?? this.errorMessage,
     );
