@@ -49,11 +49,11 @@ class ServiceCategorySection extends StatelessWidget {
     final types = selectedCategory?.portTypeDtos ?? const <PortTypeDto>[];
     return LayoutBuilder(
       builder: (context, constraints) {
-        final separator = 8.w;
+        final separator = 7.w;
         // Size each card so ~3.3 fit the available width → a partial card
         // always peeks, hinting the row is scrollable.
         final itemWidth =
-            (constraints.maxWidth - 3 * separator) / _visibleCards;
+            (constraints.maxWidth - 1 * separator) / _visibleCards;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -98,7 +98,7 @@ class ServiceCategorySection extends StatelessWidget {
             if (types.isNotEmpty) ...[
               14.verticalSpace,
               SizedBox(
-                height: 34.h,
+                height: 35.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   clipBehavior: Clip.none,
@@ -139,9 +139,9 @@ class ServiceCategorySection extends StatelessWidget {
                               color: isSelected
                                   ? Colors.white
                                   : AppColors.blacksoft,
-                              fontSize: 10.r,
+                              fontSize: 12.r,
                               fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.bold,
                               letterSpacing: -0.24,
                             ),
                           ),

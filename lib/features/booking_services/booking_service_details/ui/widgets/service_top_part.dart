@@ -7,6 +7,7 @@ import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/helpers/launcher_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/features/direct_services/ui/contact_info_screen.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
@@ -32,9 +33,25 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
 
   /// Opens the "معلومات التواصل" screen with the port's contact details
   /// (phone numbers, address, work days) where the user can call or open maps.
+  Future<void> _openDriveLink() async {
+    final link = context
+        .read<BookingServiceDetailsCubit>()
+        .state
+        .port
+        ?.goolgeDriveLink;
+    await LauncherHelper.openUrl(link);
+  }
+
   void _openContact() {
-    final port = context.read<BookingServiceDetailsCubit>().state.port;
-    NavigationHelper.pushNamed(Routes.contactInfoScreen, arguments: port);
+    final cubit = context.read<BookingServiceDetailsCubit>();
+    NavigationHelper.pushNamed(
+      Routes.contactInfoScreen,
+      arguments: ContactInfoArgs(
+        port: cubit.state.port,
+        isBookingService: true,
+        hasConfirmedBooking: cubit.state.hasConfirmedBooking,
+      ),
+    );
   }
 
   /// Opens the port's location on the maps app (GPS, else the address text).
@@ -61,13 +78,17 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
   /// Prefers the dedicated /api/Ports/GetPortImages gallery, falling back to the
   /// inline images that came with the ports list.
   List<String> _portImages(BookingServiceDetailsState state) {
-    final dynamic imgs =
-        state.portImages.isNotEmpty ? state.portImages : state.port?.portImages;
-    if (imgs is List) {
-      return imgs
-          .map((e) => ImageUrlHelper.full(e.toString()))
+    // Prefer the full gallery from GetPortImages; fall back to the single main
+    // image that comes with the Filter response.
+    if (state.portImages.isNotEmpty) {
+      return state.portImages
+          .map((e) => ImageUrlHelper.full(e))
           .whereType<String>()
           .toList();
+    }
+    final main = state.port?.theMainImageFileName?.trim();
+    if (main != null && main.isNotEmpty) {
+      return [ImageUrlHelper.full(main)].whereType<String>().toList();
     }
     return const [];
   }
@@ -201,7 +222,7 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                 6.horizontalSpace,
                 SocialNavButton(
                   icon: AppImages.iconsFolder,
-                  onTap: _openContact,
+                  onTap: _openDriveLink,
                 ),
                 6.horizontalSpace,
                 SocialNavButton(icon: AppImages.iconsShare, onTap: _sharePort),

@@ -7,6 +7,7 @@ class SpecialOffer {
     required this.name,
     required this.serviceKey,
     required this.details,
+    required this.portName,
     required this.price,
     required this.isDrafted,
     required this.picturesAlbumName,
@@ -21,6 +22,7 @@ class SpecialOffer {
   final String name;
   final String serviceKey;
   final String details;
+  final String portName;
   final int price;
   final bool isDrafted;
   final String picturesAlbumName;
@@ -34,6 +36,7 @@ class SpecialOffer {
         id = (json['id'] as num).toInt(),
         name = json['name'] as String,
         serviceKey = json['serviceKey'] as String,
+        portName = json['portName'] as String,
         details = json['details'] as String,
         price = (json['price'] as num).toInt(),
         isDrafted = json['isDrafted'] as bool,
@@ -51,6 +54,7 @@ class SpecialOffer {
     data['id'] = id;
     data['name'] = name;
     data['serviceKey'] = serviceKey;
+    data['portName'] = portName;
     data['details'] = details;
     data['price'] = price;
     data['isDrafted'] = isDrafted;

@@ -341,20 +341,14 @@ class _PortListItem extends StatelessWidget {
 }
 
 List<String> _portImages(Item item) {
-  final imgs = item.portImages;
-  if (imgs is List) {
-    return imgs
-        .map((e) => e.toString())
-        .where((e) => e.trim().isNotEmpty)
-        .toList();
-  }
-  return const [];
+  final main = item.theMainImageFileName?.trim();
+  return (main != null && main.isNotEmpty) ? [main] : const [];
 }
 
 String? _firstImageUrl(Item item) {
-  final imgs = _portImages(item);
-  if (imgs.isEmpty) return null;
-  return ImageUrlHelper.full(imgs.first);
+  final main = item.theMainImageFileName?.trim();
+  if (main == null || main.isEmpty) return null;
+  return ImageUrlHelper.full(main);
 }
 
 String _subtitle(Item item) {

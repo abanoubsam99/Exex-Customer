@@ -1,9 +1,11 @@
+import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/theme/app_text_styles.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
-import 'package:evex_user/core/ui/widgets/evex_text_form_field.dart';
-import 'package:evex_user/core/ui/widgets/phone_field_component.dart';
+import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
+import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/data/cubits/request_to_join/request_to_join_cubit.dart';
 import 'package:evex_user/data/cubits/request_to_join/request_to_join_state.dart';
 import 'package:evex_user/data/models/city.dart';
@@ -23,13 +25,11 @@ class RequestToJoinScreen extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<RequestToJoinCubit, RequestToJoinState>(
           builder: (context, state) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  16.verticalSpace,
-                  Row(
+            return Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 0),
+                  child: Row(
                     children: [
                       const CustomBackButtonWidget(),
                       12.horizontalSpace,
@@ -41,162 +41,154 @@ class RequestToJoinScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  12.verticalSpace,
-                  Text(
-                    'انضم لينا كشريك نجاح لـ evex , واعرض خدماتك وعروضك لكل المستخدمين واستفيد بمميزات حصرية',
-                    style: AppTextStyles.font14GreyRegularSubheader,
-                  ),
-                  20.verticalSpace,
-
-                  // ── الكارت اللي فيه الفورم ──
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 16.w, vertical: 20.h),
-                    decoration: ShapeDecoration(
-                      color: AppColors.whiteColor,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(color: AppColors.lineGrey),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                    ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        EvexTextFormField(
-                          label: 'الاسم (ثلاثي)',
-                          hint: 'مثال: الأول الأوسط الأخير',
-                          textEditingController: cubit.nameController,
-                          validator: (_) => null,
+                        12.verticalSpace,
+                        Text(
+                          'انضم لينا كشريك نجاح لـ evex , واعرض خدماتك وعروضك لكل المستخدمين واستفيد بمميزات حصرية',
+                          style: AppTextStyles.font12greyRegular
+                              .copyWith(height: 1.67),
                         ),
-                        16.verticalSpace,
-                        _DropdownField<String>(
-                          label: 'نوع الخدمة',
-                          hint: 'حدد النوع',
-                          value: state.selectedServiceType,
-                          items: RequestToJoinCubit.serviceTypes
-                              .map((e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(e),
-                                  ))
-                              .toList(),
-                          onChanged: cubit.selectServiceType,
+                        18.verticalSpace,
+
+                        // ── كارت الفورم ──
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(color: AppColors.borderGrey),
+                          ),
+                          padding: const EdgeInsets.all(14).r,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFieldBuilder(
+                                title: 'الاسم (ثلاثي)',
+                                hintText: 'مثال: الأول الأوسط الأخير',
+                                controller: cubit.nameController,
+                                validator: (_) => null,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                              12.verticalSpace,
+                              CustomDropDownFormField(
+                                title: 'نوع الخدمة',
+                                hintText: 'حدد النوع',
+                                value: state.selectedServiceType,
+                                items: state.serviceTypes
+                                    .map((e) => DropdownMenuItem(
+                                          value: e,
+                                          child: Text(e),
+                                        ))
+                                    .toList(),
+                                onChanged: (v) =>
+                                    cubit.selectServiceType(v as String?),
+                              ),
+                              12.verticalSpace,
+                              _GovCityRow(
+                                governorates: state.governorates,
+                                cities: state.cities,
+                                selectedGov: state.selectedGovernorate,
+                                selectedCity: state.selectedCity,
+                                onGov: cubit.selectGovernorate,
+                                onCity: cubit.selectCity,
+                              ),
+                              12.verticalSpace,
+                              TextFieldBuilder(
+                                title: 'العنوان',
+                                hintText: 'اكتب العنوان',
+                                controller: cubit.addressController,
+                                validator: (_) => null,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                              12.verticalSpace,
+                              TextFieldBuilder(
+                                title: 'رقم الهاتف',
+                                hintText: 'رقم الهاتف',
+                                isPhone: true,
+                                controller: cubit.phoneController,
+                                countryController: cubit.countryController,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                              12.verticalSpace,
+                              TextFieldBuilder(
+                                title: 'البريد الالكترونى',
+                                hintText: 'ادخل البريد الالكترونى',
+                                keyboardType: TextInputType.emailAddress,
+                                controller: cubit.emailController,
+                                validator: (_) => null,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                              12.verticalSpace,
+                              TextFieldBuilder(
+                                title: 'رابط الصفحة',
+                                hintText: 'مثال : صفحة فيس بوك',
+                                controller: cubit.pageLinkController,
+                                validator: (_) => null,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                              12.verticalSpace,
+                              TextFieldBuilder(
+                                title: 'معلومات اخرى',
+                                hintText: 'شاركنا بمعلومات أخرى عنك',
+                                maxLines: 3,
+                                controller: cubit.otherInfoController,
+                                validator: (_) => null,
+                                fillColor: AppColors.buttonSecondaryColor,
+                              ),
+                            ],
+                          ),
                         ),
+
                         16.verticalSpace,
+                        // ── سطر اتصل بنا ──
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: _DropdownField<Governate>(
-                                label: 'المحافظة',
-                                hint: 'المحافظة',
-                                value: state.selectedGovernorate,
-                                items: state.governorates
-                                    .map((g) => DropdownMenuItem(
-                                          value: g,
-                                          child: Text(g.governorateNameAr),
-                                        ))
-                                    .toList(),
-                                onChanged: cubit.selectGovernorate,
+                            GestureDetector(
+                              onTap: () => NavigationHelper.pushNamed(
+                                  Routes.contactUsScreen),
+                              child: Text(
+                                'اتصل بنا',
+                                style: TextStyle(
+                                  color: AppColors.blue1,
+                                  fontSize: 13.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w700,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.blue1,
+                                ),
                               ),
                             ),
-                            12.horizontalSpace,
-                            Expanded(
-                              child: _DropdownField<City>(
-                                label: 'المدينة',
-                                hint: 'المدينة',
-                                value: state.selectedCity,
-                                items: state.cities
-                                    .map((c) => DropdownMenuItem(
-                                          value: c,
-                                          child: Text(c.cityNameAr),
-                                        ))
-                                    .toList(),
-                                onChanged: cubit.selectCity,
-                              ),
+                            6.horizontalSpace,
+                            Text(
+                              'للاستفسار والمساعدة',
+                              style: AppTextStyles.font12greyRegular,
                             ),
+                            6.horizontalSpace,
+                            Icon(Icons.info_outline,
+                                size: 16.r, color: AppColors.grey),
                           ],
                         ),
-                        16.verticalSpace,
-                        EvexTextFormField(
-                          label: 'العنوان',
-                          hint: 'اكتب العنوان',
-                          textEditingController: cubit.addressController,
-                          validator: (_) => null,
-                        ),
-                        16.verticalSpace,
-                        Text('رقم الهاتف',
-                            style: AppTextStyles.font16BlackRegularHeader),
-                        4.verticalSpace,
-                        PhoneFieldComponent(
-                          hint: 'رقم الهاتف',
-                          controller: cubit.phoneController,
-                          countryController: cubit.countryController,
-                          radius: 16,
-                          fillColor: AppColors.boarderFillColor,
-                          borderColor: AppColors.boarderFillColor,
-                        ),
-                        16.verticalSpace,
-                        EvexTextFormField(
-                          label: 'البريد الالكترونى',
-                          hint: 'ادخل البريد الالكترونى',
-                          keyboardType: TextInputType.emailAddress,
-                          textEditingController: cubit.emailController,
-                          validator: (_) => null,
-                        ),
-                        16.verticalSpace,
-                        EvexTextFormField(
-                          label: 'رابط الصفحة',
-                          hint: 'مثال : صفحة فيس بوك',
-                          textEditingController: cubit.pageLinkController,
-                          validator: (_) => null,
-                        ),
-                        16.verticalSpace,
-                        EvexTextFormField(
-                          label: 'معلومات اخرى',
-                          hint: 'شاركنا بمعلومات أخرى عنك',
-                          maxlines: 3,
-                          textEditingController: cubit.otherInfoController,
-                          validator: (_) => null,
-                        ),
+                        20.verticalSpace,
                       ],
                     ),
                   ),
-
-                  16.verticalSpace,
-                  // ── سطر الاستفسار ──
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '(+20) 1220789797',
-                        style: TextStyle(
-                          color: AppColors.blue1,
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      6.horizontalSpace,
-                      Text(
-                        'للاستفسار والمساعدة',
-                        style: AppTextStyles.font12greyRegular,
-                      ),
-                      6.horizontalSpace,
-                      Icon(Icons.info_outline,
-                          size: 16.r, color: AppColors.grey),
-                    ],
-                  ),
-                  20.verticalSpace,
-                  CustomButton(
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 12.h),
+                  child: CustomButton(
                     text: 'إرسال الطلب',
                     width: double.infinity,
                     height: 54.h,
                     isLoading: state.isLoading,
                     onTap: cubit.submit,
                   ),
-                  24.verticalSpace,
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
@@ -205,52 +197,54 @@ class RequestToJoinScreen extends StatelessWidget {
   }
 }
 
-/// Dropdown بنفس شكل [EvexTextFormField] (label فوق + fill رمادي + radius 16).
-class _DropdownField<T> extends StatelessWidget {
-  final String label;
-  final String hint;
-  final T? value;
-  final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?> onChanged;
-  const _DropdownField({
-    required this.label,
-    required this.hint,
-    required this.value,
-    required this.items,
-    required this.onChanged,
+class _GovCityRow extends StatelessWidget {
+  final List<Governate> governorates;
+  final List<City> cities;
+  final Governate? selectedGov;
+  final City? selectedCity;
+  final ValueChanged<Governate?> onGov;
+  final ValueChanged<City?> onCity;
+  const _GovCityRow({
+    required this.governorates,
+    required this.cities,
+    required this.selectedGov,
+    required this.selectedCity,
+    required this.onGov,
+    required this.onCity,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.font16BlackRegularHeader),
-        4.verticalSpace,
-        DropdownButtonFormField<T>(
-          value: value,
-          items: items,
-          onChanged: onChanged,
-          isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down_rounded,
-              color: AppColors.blueGrey),
-          hint: Text(hint, style: AppTextStyles.font16GreyRegularHint),
-          style: AppTextStyles.font16BlackRegularHeader,
-          dropdownColor: AppColors.whiteColor,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppColors.boarderFillColor,
-            isDense: true,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.orangeColor),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
+        Expanded(
+          child: CustomDropDownFormField(
+            title: 'المحافظة',
+            hintText: 'المحافظة',
+            value: selectedGov,
+            items: governorates
+                .map((g) => DropdownMenuItem(
+                      value: g,
+                      child: Text(g.governorateNameAr),
+                    ))
+                .toList(),
+            onChanged: (v) => onGov(v as Governate?),
+          ),
+        ),
+        12.horizontalSpace,
+        Expanded(
+          child: CustomDropDownFormField(
+            title: 'المدينة',
+            hintText: 'المدينة',
+            value: selectedCity,
+            items: cities
+                .map((c) => DropdownMenuItem(
+                      value: c,
+                      child: Text(c.cityNameAr),
+                    ))
+                .toList(),
+            onChanged: (v) => onCity(v as City?),
           ),
         ),
       ],

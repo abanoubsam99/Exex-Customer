@@ -2,6 +2,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/request_to_join_repo.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +13,10 @@ import 'request_to_join_state.dart';
 class RequestToJoinCubit extends Cubit<RequestToJoinState> {
   final RequestToJoinRepo _repo;
   final LocationRepo _locationRepo;
+  final HomeRepo _homeRepo;
 
-  RequestToJoinCubit(this._repo, this._locationRepo)
+  RequestToJoinCubit(this._repo, this._locationRepo, this._homeRepo)
       : super(const RequestToJoinState());
-
-  // أنواع الخدمات المتاحة للانضمام.
-  static const List<String> serviceTypes = [
-    'قاعات',
-    'فوتوغرافى',
-    'ميك اب',
-    'اتيليه',
-    'خدمات ترفيهيه',
-    'ديكورات & هاند ميد',
-    'العنايه بالجمال',
-  ];
 
   final nameController = TextEditingController();
   final addressController = TextEditingController();
@@ -37,12 +28,24 @@ class RequestToJoinCubit extends Cubit<RequestToJoinState> {
 
   Future<void> loadGovernorates() async {
     emit(state.copyWith(isLoading: true));
-    final result = await _locationRepo.getGovernorates();
-    if (result != null) {
-      emit(state.copyWith(isLoading: false, governorates: result));
-    } else {
-      emit(state.copyWith(isLoading: false));
-    }
+    final govFuture = _locationRepo.getGovernorates();
+    final homeFuture = _homeRepo.getHomeUserAppInfo();
+    final govResult = await govFuture;
+    final homeResult = await homeFuture;
+    final serviceTypes = homeResult != null
+        ? homeResult
+            .expand((cat) => cat.portTypeDtos)
+            .map((t) => t.nameAr)
+            .whereType<String>()
+            .where((n) => n.trim().isNotEmpty)
+            .toSet()
+            .toList()
+        : <String>[];
+    emit(state.copyWith(
+      isLoading: false,
+      governorates: govResult ?? const [],
+      serviceTypes: serviceTypes,
+    ));
   }
 
   void selectServiceType(String? type) {
@@ -80,10 +83,6 @@ class RequestToJoinCubit extends Cubit<RequestToJoinState> {
     }
     if (state.selectedCity == null) {
       ToastManager.showError('الرجاء اختيار المدينة');
-      return;
-    }
-    if (addressController.text.trim().isEmpty) {
-      ToastManager.showError('الرجاء ادخال العنوان');
       return;
     }
     if (phoneController.text.trim().isEmpty) {

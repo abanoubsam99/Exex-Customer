@@ -9,11 +9,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
+/// Route arguments for [ContactInfoScreen].
+class ContactInfoArgs {
+  final Item? port;
+
+  /// True when opened from a booking (instant-booking) service.
+  /// Phone numbers are hidden unless [hasConfirmedBooking] is also true.
+  final bool isBookingService;
+
+  /// True when the user has at least one confirmed reservation for this port.
+  final bool hasConfirmedBooking;
+
+  const ContactInfoArgs({
+    this.port,
+    this.isBookingService = false,
+    this.hasConfirmedBooking = false,
+  });
+}
+
 /// شاشة "معلومات التواصل" — بتعرض أرقام التاجر وعنوانه ومواعيد عمله،
 /// كلها من بيانات الـ [Item] الجاية من شاشة التفاصيل.
 class ContactInfoScreen extends StatelessWidget {
   final Item? port;
-  const ContactInfoScreen({super.key, this.port});
+  final bool isBookingService;
+  final bool hasConfirmedBooking;
+
+  const ContactInfoScreen({
+    super.key,
+    this.port,
+    this.isBookingService = false,
+    this.hasConfirmedBooking = false,
+  });
 
   static const _orange = AppColors.primaryColor;
 
@@ -73,25 +99,14 @@ class ContactInfoScreen extends StatelessWidget {
                       icon: AppImages.iconsPhone,
                       iconColor: AppColors.callIconColor,
                       bg: AppColors.callbg,
-                      onTap: phones.isEmpty
-                          ? null
-                          : () => LauncherHelper.call(phones.first),
+                      onTap: _canCall(phones)
+                          ? () => LauncherHelper.call(phones.first)
+                          : null,
                     ),
                     12.horizontalSpace,
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: phones.isEmpty
-                            ? [_value('غير متوفر')]
-                            : phones
-                                .map((p) => Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 2.h),
-                                      child: _value(p),
-                                    ))
-                                .toList(),
-                      ),
+                      child: _phoneContent(phones),
                     ),
-
                   ],
                 ),
               ),
@@ -164,6 +179,26 @@ class ContactInfoScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  bool _canCall(List<String> phones) =>
+      phones.isNotEmpty && (!isBookingService || hasConfirmedBooking);
+
+  Widget _phoneContent(List<String> phones) {
+    // Booking service + no confirmed reservation → show restriction message.
+    if (isBookingService && !hasConfirmedBooking) {
+      return _value('تأسف ، لا يمكن التواصل المباشر مع التاجر إلا بعد إتمام الحجز');
+    }
+    if (phones.isEmpty) return _value('غير متوفر');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: phones
+          .map((p) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: _value(p),
+              ))
+          .toList(),
     );
   }
 

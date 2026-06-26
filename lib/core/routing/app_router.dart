@@ -15,6 +15,7 @@ import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
+import 'package:evex_user/data/repos/my_bookings_repo.dart';
 import 'package:evex_user/data/repos/contact_us_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
@@ -294,6 +295,7 @@ class AppRouter {
               context.read<HomeCubit>(),
               context.read<ConfirmBookingRepo>(),
               context.read<BookingServicesPortsRepo>(),
+              context.read<MyBookingsRepo>(),
               port: bookingArg is Item ? bookingArg : null,
               // Opened from a special offer (SpecialOffer) or a shared deep
               // link (int) — only the portId is available in both cases.
@@ -344,6 +346,8 @@ class AppRouter {
             create: (context) => NewSuggestionCubit(
               context.read<NewSuggestionRepo>(),
               context.read<LocationRepo>(),
+              context.read<ConfirmBookingRepo>(),
+              context.read<HomeRepo>(),
             )..loadGovernorates(),
             child: const NewSuggestionScreen(),
           ),
@@ -367,6 +371,7 @@ class AppRouter {
             create: (context) => RequestToJoinCubit(
               context.read<RequestToJoinRepo>(),
               context.read<LocationRepo>(),
+              context.read<HomeRepo>(),
             )..loadGovernorates(),
             child: const RequestToJoinScreen(),
           ),
@@ -483,11 +488,20 @@ class AppRouter {
         );
 
       case Routes.contactInfoScreen:
+        final contactArgs = settings.arguments;
         return _page(
           ContactInfoScreen(
-            port: settings.arguments is Item
-                ? settings.arguments as Item
-                : null,
+            port: contactArgs is ContactInfoArgs
+                ? contactArgs.port
+                : contactArgs is Item
+                    ? contactArgs
+                    : null,
+            isBookingService: contactArgs is ContactInfoArgs
+                ? contactArgs.isBookingService
+                : false,
+            hasConfirmedBooking: contactArgs is ContactInfoArgs
+                ? contactArgs.hasConfirmedBooking
+                : false,
           ),
           settings,
         );

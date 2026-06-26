@@ -8,6 +8,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
 import 'package:evex_user/core/ui/widgets/title_inbox.dart';
 import 'package:evex_user/data/cubits/new_suggestion/new_suggestion_cubit.dart';
+import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/cubits/new_suggestion/new_suggestion_state.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
@@ -69,7 +70,7 @@ class NewSuggestionScreen extends StatelessWidget {
                               title: 'نوع الخدمة',
                               hintText: 'حدد النوع',
                               value: state.selectedServiceType,
-                              items: NewSuggestionCubit.serviceTypes
+                              items: state.serviceTypes
                                   .map((e) => DropdownMenuItem(
                                         value: e,
                                         child: Text(e),
@@ -123,15 +124,15 @@ class NewSuggestionScreen extends StatelessWidget {
                             CustomDropDownFormField(
                               title: 'نوع المناسبة',
                               hintText: 'حدد نوع المناسبة',
-                              value: state.selectedOccasionType,
-                              items: NewSuggestionCubit.occasionTypes
+                              value: state.selectedOccasion,
+                              items: state.occasions
                                   .map((e) => DropdownMenuItem(
                                         value: e,
-                                        child: Text(e),
+                                        child: Text(e.name ?? ''),
                                       ))
                                   .toList(),
                               onChanged: (v) =>
-                                  cubit.selectOccasionType(v as String?),
+                                  cubit.selectOccasion(v as Occasion?),
                             ),
                             12.verticalSpace,
                             TextFieldBuilder(
@@ -142,6 +143,8 @@ class NewSuggestionScreen extends StatelessWidget {
                               controller: cubit.occasionDateController,
                               validator: (_) => null,
                               fillColor: AppColors.buttonSecondaryColor,
+                              minDate: DateTime.now().add(
+                                  const Duration(days: 7)),
                             ),
                             12.verticalSpace,
                             _GovCityRow(

@@ -2,6 +2,9 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/models/occasion.dart';
+import 'package:evex_user/data/repos/confirm_booking_repo.dart';
+import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/data/repos/new_suggestion_repo.dart';
 import 'package:flutter/material.dart';
@@ -12,27 +15,12 @@ import 'new_suggestion_state.dart';
 class NewSuggestionCubit extends Cubit<NewSuggestionState> {
   final NewSuggestionRepo _repo;
   final LocationRepo _locationRepo;
+  final ConfirmBookingRepo _confirmRepo;
+  final HomeRepo _homeRepo;
 
-  NewSuggestionCubit(this._repo, this._locationRepo)
+  NewSuggestionCubit(
+      this._repo, this._locationRepo, this._confirmRepo, this._homeRepo)
       : super(const NewSuggestionState());
-
-  static const List<String> serviceTypes = [
-    'قاعات',
-    'فوتوغرافى',
-    'ميك اب',
-    'اتيليه',
-    'خدمات ترفيهيه',
-    'ديكورات & هاند ميد',
-    'العنايه بالجمال',
-  ];
-
-  static const List<String> occasionTypes = [
-    'فرح',
-    'خطوبة',
-    'عيد ميلاد',
-    'حفل تخرج',
-    'مناسبة أخرى',
-  ];
 
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
@@ -43,15 +31,34 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
 
   Future<void> loadGovernorates() async {
     emit(state.copyWith(isLoading: true));
-    final result = await _locationRepo.getGovernorates();
-    emit(state.copyWith(isLoading: false, governorates: result ?? const []));
+    final govFuture = _locationRepo.getGovernorates();
+    final occFuture = _confirmRepo.getOccasions();
+    final homeFuture = _homeRepo.getHomeUserAppInfo();
+    final govResult = await govFuture;
+    final occResult = await occFuture;
+    final homeResult = await homeFuture;
+    final serviceTypes = homeResult != null
+        ? homeResult
+            .expand((cat) => cat.portTypeDtos)
+            .map((t) => t.nameAr)
+            .whereType<String>()
+            .where((n) => n.trim().isNotEmpty)
+            .toSet()
+            .toList()
+        : <String>[];
+    emit(state.copyWith(
+      isLoading: false,
+      governorates: govResult ?? const [],
+      occasions: occResult ?? const [],
+      serviceTypes: serviceTypes,
+    ));
   }
 
   void selectServiceType(String? type) =>
       emit(state.copyWith(selectedServiceType: type));
 
-  void selectOccasionType(String? type) =>
-      emit(state.copyWith(selectedOccasionType: type));
+  void selectOccasion(Occasion? occasion) =>
+      emit(state.copyWith(selectedOccasion: occasion));
 
   // ── موقع التاجر ──
   void selectMerchantGov(Governate? gov) {
@@ -96,6 +103,14 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
       ToastManager.showError('الرجاء اختيار نوع الخدمة');
       return;
     }
+    if (state.selectedMerchantGov == null) {
+      ToastManager.showError('الرجاء اختيار المحافظة');
+      return;
+    }
+    if (state.selectedMerchantCity == null) {
+      ToastManager.showError('الرجاء اختيار المدينة');
+      return;
+    }
     if (phoneController.text.trim().isEmpty) {
       ToastManager.showError('الرجاء ادخال رقم الهاتف');
       return;
@@ -104,14 +119,14 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
     emit(state.copyWith(isLoading: true));
     final ok = await _repo.submitSuggestion(
       vendorName: nameController.text.trim(),
-      serviceType: serviceTypes.indexOf(state.selectedServiceType!) + 1,
+      serviceType: state.serviceTypes.indexOf(state.selectedServiceType!) + 1,
       vendorGovernorate: state.selectedMerchantGov?.governorateNameAr ?? '',
       vendorCity: state.selectedMerchantCity?.cityNameAr ?? '',
       phoneNumber:
           '${countryController.text.trim()}${phoneController.text.trim()}',
       address: addressController.text.trim(),
       link: pageLinkController.text.trim(),
-      occasionType: state.selectedOccasionType ?? '',
+      occasionType: state.selectedOccasion?.name ?? '',
       occasionGovernorate: state.selectedEventGov?.governorateNameAr ?? '',
       occasionDate: occasionDateController.text.trim(),
     );

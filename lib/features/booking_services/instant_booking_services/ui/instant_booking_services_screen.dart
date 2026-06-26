@@ -199,7 +199,8 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                         Positioned.fill(
                                           child: CustomImageHandler(
                                             _portImageUrl(item),
-                                            smartFill: true,
+                                            smartFill: false,
+                                            fit: BoxFit.fill,
                                           ),
                                         ),
                                         // Positioned(
@@ -382,23 +383,20 @@ class InstantBookingServicesScreen extends StatelessWidget {
   }
 }
 
-/// Builds a full image URL for a port if it has any images, otherwise null
+/// Builds a full image URL for a port if it has a main image, otherwise null
 /// (the caller falls back to a placeholder asset).
 String? _portImageUrl(Item item) {
-  final imgs = item.portImages;
-  if (imgs is List && imgs.isNotEmpty) {
-    return ImageUrlHelper.full(imgs.first.toString());
+  final main = item.theMainImageFileName?.trim();
+  if (main != null && main.isNotEmpty) {
+    return ImageUrlHelper.full(main);
   }
   return null;
 }
 
 /// Number of images the port has (for the "+N صوره" badge).
 int _portImagesCount(Item item) {
-  final imgs = item.portImages;
-  if (imgs is List) {
-    return imgs.where((e) => e.toString().trim().isNotEmpty).length;
-  }
-  return 0;
+  final main = item.theMainImageFileName?.trim();
+  return (main != null && main.isNotEmpty) ? 1 : 0;
 }
 
 /// "+N صوره" pill shown on the port card image (hidden when there are none).

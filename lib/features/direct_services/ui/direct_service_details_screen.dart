@@ -114,15 +114,9 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
   /// Prefers the dedicated /api/Ports/GetPortImages gallery (from the cubit),
   /// falling back to the inline images that came with the port.
   List<String> _imagesFrom(DirectServiceDetailsState state) {
-    final dynamic imgs = state.portImages.isNotEmpty
-        ? state.portImages
-        : widget.port?.portImages;
-    if (imgs is List) {
-      return imgs
-          .map((e) => e.toString())
-          .where((e) => e.trim().isNotEmpty)
-          .toList();
-    }
+    if (state.portImages.isNotEmpty) return state.portImages;
+    final main = widget.port?.theMainImageFileName?.trim();
+    if (main != null && main.isNotEmpty) return [main];
     return const [];
   }
 

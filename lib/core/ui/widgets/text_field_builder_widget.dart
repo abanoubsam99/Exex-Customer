@@ -34,6 +34,7 @@ class TextFieldBuilder extends StatelessWidget {
   final Widget? suffix;
   final void Function()? onPressed;
   final String? hintText;
+  final DateTime? minDate;
   final TextAlign? textAlign;
   final TextDirection? textDirection;
   final TextStyle? textStyle;
@@ -63,6 +64,7 @@ class TextFieldBuilder extends StatelessWidget {
     this.padding,
     this.onPressed,
     this.hintText,
+    this.minDate,
     this.textStyle,
     this.hintStyle,
     this.textAlign,
@@ -131,17 +133,19 @@ class TextFieldBuilder extends StatelessWidget {
                   !isDatePicker
                       ? onPressed
                       : () {
+                        final effectiveMin = minDate ?? DateTime(1900);
+                        final effectiveInitial = (minDate != null && DateTime.now().isBefore(minDate!))
+                            ? minDate!
+                            : DateTime.now();
                         showDatePicker(
                           context: context,
-                          firstDate: DateTime(1900),
-                          initialDate: DateTime.now(),
+                          firstDate: effectiveMin,
+                          initialDate: effectiveInitial,
                           lastDate: DateTime.now().add(
-                            const Duration(days: 365),
+                            const Duration(days: 365 * 3),
                           ),
                         ).then((value) {
                           if (value != null) {
-                            // datePickerFunction!(value.toString());
-
                             controller?.text =
                                 DateFormat('yyyy-MM-dd')
                                     .parse(value.toString())
@@ -199,17 +203,19 @@ class TextFieldBuilder extends StatelessWidget {
                   !isDatePicker
                       ? onPressed
                       : () {
+                        final effectiveMin = minDate ?? DateTime(1900);
+                        final effectiveInitial = (minDate != null && DateTime.now().isBefore(minDate!))
+                            ? minDate!
+                            : DateTime.now();
                         showDatePicker(
                           context: context,
-                          firstDate: DateTime(1900),
-                          initialDate: DateTime.now(),
+                          firstDate: effectiveMin,
+                          initialDate: effectiveInitial,
                           lastDate: DateTime.now().add(
-                            const Duration(days: 365),
+                            const Duration(days: 365 * 3),
                           ),
                         ).then((value) {
                           if (value != null) {
-                            // datePickerFunction!(value.toString());
-
                             controller?.text =
                                 DateFormat('yyyy-MM-dd')
                                     .parse(value.toString())

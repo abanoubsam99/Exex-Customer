@@ -98,15 +98,9 @@ class OtherServicesSection extends StatelessWidget {
     );
   }
 
-  /// The port's image paths as plain strings (portImages is dynamic).
+  /// The port's image paths — uses the main image from the Filter response.
   List<String> _portImages(Item port) {
-    final imgs = port.portImages;
-    if (imgs is List) {
-      return imgs
-          .map((e) => e.toString())
-          .where((e) => e.trim().isNotEmpty)
-          .toList();
-    }
-    return const [];
+    final main = port.theMainImageFileName?.trim();
+    return (main != null && main.isNotEmpty) ? [main] : const [];
   }
 }

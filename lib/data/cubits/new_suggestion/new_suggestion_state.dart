@@ -1,5 +1,6 @@
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
+import 'package:evex_user/data/models/occasion.dart';
 
 class NewSuggestionState {
   final bool isLoading;
@@ -15,8 +16,10 @@ class NewSuggestionState {
   final Governate? selectedEventGov;
   final City? selectedEventCity;
 
+  final List<String> serviceTypes;
   final String? selectedServiceType;
-  final String? selectedOccasionType;
+  final List<Occasion> occasions;
+  final Occasion? selectedOccasion;
 
   final bool? success;
   final String? errorMessage;
@@ -30,8 +33,10 @@ class NewSuggestionState {
     this.eventCities = const [],
     this.selectedEventGov,
     this.selectedEventCity,
+    this.serviceTypes = const [],
     this.selectedServiceType,
-    this.selectedOccasionType,
+    this.occasions = const [],
+    this.selectedOccasion,
     this.success,
     this.errorMessage,
   });
@@ -45,8 +50,10 @@ class NewSuggestionState {
     List<City>? eventCities,
     Governate? selectedEventGov,
     City? selectedEventCity,
+    List<String>? serviceTypes,
     String? selectedServiceType,
-    String? selectedOccasionType,
+    List<Occasion>? occasions,
+    Occasion? selectedOccasion,
     bool? success,
     String? errorMessage,
     bool clearMerchantCity = false,
@@ -63,8 +70,10 @@ class NewSuggestionState {
       selectedEventGov: selectedEventGov ?? this.selectedEventGov,
       selectedEventCity:
           clearEventCity ? null : selectedEventCity ?? this.selectedEventCity,
+      serviceTypes: serviceTypes ?? this.serviceTypes,
       selectedServiceType: selectedServiceType ?? this.selectedServiceType,
-      selectedOccasionType: selectedOccasionType ?? this.selectedOccasionType,
+      occasions: occasions ?? this.occasions,
+      selectedOccasion: selectedOccasion ?? this.selectedOccasion,
       success: success,
       errorMessage: errorMessage,
     );

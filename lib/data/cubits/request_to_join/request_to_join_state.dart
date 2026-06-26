@@ -7,6 +7,7 @@ class RequestToJoinState {
   final List<City> cities;
   final Governate? selectedGovernorate;
   final City? selectedCity;
+  final List<String> serviceTypes;
   final String? selectedServiceType;
   final bool? success;
   final String? errorMessage;
@@ -17,6 +18,7 @@ class RequestToJoinState {
     this.cities = const [],
     this.selectedGovernorate,
     this.selectedCity,
+    this.serviceTypes = const [],
     this.selectedServiceType,
     this.success,
     this.errorMessage,
@@ -28,6 +30,7 @@ class RequestToJoinState {
     List<City>? cities,
     Governate? selectedGovernorate,
     City? selectedCity,
+    List<String>? serviceTypes,
     String? selectedServiceType,
     bool? success,
     String? errorMessage,
@@ -39,6 +42,7 @@ class RequestToJoinState {
       cities: cities ?? this.cities,
       selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
       selectedCity: clearCity ? null : selectedCity ?? this.selectedCity,
+      serviceTypes: serviceTypes ?? this.serviceTypes,
       selectedServiceType: selectedServiceType ?? this.selectedServiceType,
       success: success,
       errorMessage: errorMessage,

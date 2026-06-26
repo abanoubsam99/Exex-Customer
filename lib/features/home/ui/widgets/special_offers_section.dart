@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
@@ -121,6 +122,7 @@ class SpecialOffersSection extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16.r),
                             ),
                           ),
+                          // Top-left badge
                           Positioned(
                             top: 6.r,
                             left: 6.r,
@@ -152,75 +154,91 @@ class SpecialOffersSection extends StatelessWidget {
                               ),
                             ),
                           ),
+                          // Port name — blur pill at top right
                           Positioned(
-                            bottom: 14.h,
-                            right: 0,
-                            left: 0,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 12.r, left: 10.r),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          offer.name,
-                                          textAlign: TextAlign.right,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.r,
-                                            fontFamily: 'Almarai',
-                                            fontWeight: FontWeight.w800,
-                                            // Tight drop shadow (no spread) so the
-                                            // text reads over the photo behind it.
-                                            shadows: [
-                                              Shadow(
-                                                offset: Offset(0, 1.5.r),
-                                                blurRadius: 4.r,
-                                                color: Colors.black
-                                                    .withValues(alpha: 0.6),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Text(
-                                          offer.details,
-                                          textAlign: TextAlign.right,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 13.r,
-                                            fontWeight: FontWeight.w400,
-                                            letterSpacing: -0.24.w,
-                                            shadows: [
-                                              Shadow(
-                                                offset: Offset(0, 1.r),
-                                                blurRadius: 3.r,
-                                                color: Colors.black
-                                                    .withValues(alpha: 0.55),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                            top: 6.r,
+                            right: 8.r,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6.r),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                                child: Container(
+                                  color: Colors.white.withValues(alpha: 0.55),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 3.h),
+                                  child: Text(
+                                    offer.portName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12.r,
+                                      fontFamily: 'Almarai',
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.20,
                                     ),
                                   ),
-                                  13.horizontalSpaceRadius,
-                                  // CustomButton(
-                                  //   height: 40.h,
-                                  //   width: 75.w,
-                                  //   bordereColor: AppColors.blacksoft,
-                                  //   fontSize: 14.r,
-                                  //   text: "تفاصيل",
-                                  //   onTap: () => NavigationHelper.pushNamed(
-                                  //     Routes.bookingServiceDetailsScreen,
-                                  //     arguments: offer,
-                                  //   ),
-                                  // ),
-                                ],
+                                ),
                               ),
+                            ),
+                          ),
+                          // Description at bottom
+                          Positioned(
+                            bottom: 5.h,
+                            right: 8.r,
+                            left: 8.r,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        offer.name,
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.r,
+                                          fontFamily: 'Almarai',
+                                          fontWeight: FontWeight.w800,
+                                          // Tight drop shadow (no spread) so the
+                                          // text reads over the photo behind it.
+                                          shadows: [
+                                            Shadow(
+                                              offset: Offset(0, 1.5.r),
+                                              blurRadius: 4.r,
+                                              color: Colors.black
+                                                  .withValues(alpha: 0.6),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        offer.details,
+                                        textAlign: TextAlign.right,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.r,
+                                          fontFamily: 'Almarai',
+                                          fontWeight: FontWeight.w400,
+                                          height: 1.35,
+                                          letterSpacing: -0.24.w,
+                                          shadows: [
+                                            Shadow(
+                                              offset: Offset(0, 1.r),
+                                              blurRadius: 3.r,
+                                              color: Colors.black.withValues(alpha: 0.55),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

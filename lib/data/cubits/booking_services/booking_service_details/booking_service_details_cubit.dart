@@ -12,6 +12,7 @@ import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/favorites_repo.dart';
+import 'package:evex_user/data/repos/my_bookings_repo.dart';
 import 'package:evex_user/data/repos/port_services_repo.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final HomeCubit _homeCubit;
   final ConfirmBookingRepo _confirmRepo;
   final BookingServicesPortsRepo _portsRepo;
+  final MyBookingsRepo _bookingsRepo;
 
   /// When non-null the screen is in "edit" mode: it pre-fills an existing
   /// reservation's selections and the bottom button updates it in place.
@@ -38,7 +40,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     this._favoritesRepo,
     this._homeCubit,
     this._confirmRepo,
-    this._portsRepo, {
+    this._portsRepo,
+    this._bookingsRepo, {
     Item? port,
     int? portId,
     this.editArgs,
@@ -51,6 +54,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       getPortImages();
       getOtherPorts();
       getOccasions();
+      _checkConfirmedBooking();
       await getAllPortServices();
       await getAdditions();
       await getReviews();
@@ -97,6 +101,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     } else if (response.message != null && response.message!.isNotEmpty) {
       ToastManager.showSuccess(response.message!);
     }
+  }
+
+  /// Checks whether the user has a confirmed reservation for this port and
+  /// updates [BookingServiceDetailsState.hasConfirmedBooking] accordingly.
+  Future<void> _checkConfirmedBooking() async {
+    final portId = _portId;
+    final reservations = await _bookingsRepo.getMyReservations(size: 100);
+    if (reservations == null) return;
+    final has = reservations.any((r) => r.portId == portId);
+    emit(state.copyWith(hasConfirmedBooking: has));
   }
 
   /// Loads the port's gallery from /api/Ports/GetPortImages and stores it on the

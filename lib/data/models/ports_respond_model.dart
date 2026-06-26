@@ -67,6 +67,8 @@ class Item {
     required this.isAllowedForUploadFiles,
     required this.picturesAlbumName,
     required this.portImages,
+    required this.theMainImageFileName,
+    required this.goolgeDriveLink,
   });
 
   final int? cheapestServicePrice;
@@ -102,6 +104,8 @@ class Item {
   final bool? isAllowedForUploadFiles;
   final String? picturesAlbumName;
   final dynamic portImages;
+  final String? theMainImageFileName;
+  final String? goolgeDriveLink;
 
   Item.fromJson(Map<String, dynamic> json)
       : cheapestServicePrice =
@@ -154,7 +158,9 @@ class Item {
         portKey = json['portKey'] as String?,
         isAllowedForUploadFiles = json['isAllowedForUploadFiles'] as bool?,
         picturesAlbumName = json['picturesAlbumName'] as String?,
-        portImages = json['portImages'];
+        portImages = json['portImages'],
+        theMainImageFileName = json['theMainImageFileName'] as String?,
+        goolgeDriveLink = json['goolgeDriveLink'] as String?;
 }
 
 class CheckReservationResponse {
