@@ -143,7 +143,7 @@ class _OfferBanner extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  offer.name,
+                  offer.name ?? '',
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -166,7 +166,7 @@ class _OfferBanner extends StatelessWidget {
                 SizedBox(
                   width: 225.w,
                   child: Text(
-                    offer.details,
+                    offer.details ?? '',
                     textAlign: TextAlign.right,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

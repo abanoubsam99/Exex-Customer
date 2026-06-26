@@ -67,7 +67,7 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
       cities: const [],
       isLoadingCities: true,
     ));
-    final cities = await _locationRepo.getCities(gov.id) ?? const [];
+    final cities = await _locationRepo.getCities(gov.id!) ?? const [];
     City? city;
     if (cityName != null) {
       for (final c in cities) {
@@ -99,7 +99,7 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
       cities: const [],
       isLoadingCities: true,
     ));
-    final cities = await _locationRepo.getCities(gov.id) ?? const [];
+    final cities = await _locationRepo.getCities(gov.id!) ?? const [];
     emit(state.copyWith(isLoadingCities: false, cities: cities));
   }
 

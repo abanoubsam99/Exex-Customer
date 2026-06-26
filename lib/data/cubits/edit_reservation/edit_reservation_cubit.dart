@@ -117,7 +117,7 @@ class EditReservationCubit extends Cubit<EditReservationState> {
     ));
 
     if (selectedGov != null) {
-      await _loadCities(selectedGov.id, prefillCityName: model.city);
+      await _loadCities(selectedGov.id!, prefillCityName: model.city);
     }
   }
 
@@ -147,7 +147,7 @@ class EditReservationCubit extends Cubit<EditReservationState> {
       selectedCity: null,
       cities: const [],
     ));
-    _loadCities(gov.id);
+    _loadCities(gov.id!);
   }
 
   void selectCity(City? city) => emit(state.copyWith(selectedCity: city));

@@ -136,7 +136,7 @@ class _GovernorateDropdown extends StatelessWidget {
           items: state.governorates
               .map((g) => DropdownMenuItem(
                     value: g,
-                    child: Text(g.governorateNameAr),
+                    child: Text(g.governorateNameAr ?? ''),
                   ))
               .toList(),
           onChanged: (value) {

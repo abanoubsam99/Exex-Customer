@@ -86,7 +86,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
       _selectedGov = selected;
     });
     if (selected != null) {
-      _loadCities(selected.id, prefillCityName: widget.initialCity);
+      _loadCities(selected.id!, prefillCityName: widget.initialCity);
     }
   }
 
@@ -146,8 +146,8 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
     }
     widget.onConfirm(
       _date!,
-      _selectedGov!.governorateNameAr,
-      _selectedCity!.cityNameAr,
+      _selectedGov!.governorateNameAr ?? '',
+      _selectedCity!.cityNameAr ?? '',
       _selectedOccasionId,
     );
     Navigator.pop(context);
@@ -294,12 +294,12 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                     value: _selectedGov,
                     items: _governorates
                         .map((g) => DropdownMenuItem(
-                            value: g, child: Text(g.governorateNameAr)))
+                            value: g, child: Text(g.governorateNameAr ?? '')))
                         .toList(),
                     onChanged: (g) {
                       if (g != null) {
                         setState(() => _selectedGov = g);
-                        _loadCities(g.id);
+                        _loadCities(g.id!);
                       }
                     },
                   ),
@@ -311,7 +311,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                     value: _selectedCity,
                     items: _cities
                         .map((c) => DropdownMenuItem(
-                            value: c, child: Text(c.cityNameAr)))
+                            value: c, child: Text(c.cityNameAr ?? '')))
                         .toList(),
                     onChanged: _selectedGov == null
                         ? null

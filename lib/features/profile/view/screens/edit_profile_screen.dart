@@ -118,9 +118,9 @@ class EditProfileScreen extends StatelessWidget {
                                   items: state.governorates
                                       .map(
                                         (g) => DropdownMenuItem(
-                                          value: g.governorateNameAr,
+                                          value: g.governorateNameAr ?? '',
                                           alignment: Alignment.center,
-                                          child: Text(g.governorateNameAr),
+                                          child: Text(g.governorateNameAr ?? ''),
                                         ),
                                       )
                                       .toList(),
@@ -143,9 +143,9 @@ class EditProfileScreen extends StatelessWidget {
                                   items: state.cities
                                       .map(
                                         (c) => DropdownMenuItem(
-                                          value: c.cityNameAr,
+                                          value: c.cityNameAr ?? '',
                                           alignment: Alignment.center,
-                                          child: Text(c.cityNameAr),
+                                          child: Text(c.cityNameAr ?? ''),
                                         ),
                                       )
                                       .toList(),

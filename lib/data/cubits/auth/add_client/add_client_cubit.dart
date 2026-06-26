@@ -57,7 +57,7 @@ class AddClientCubit extends Cubit<AddClientState> {
     if (gov == null) return;
     emit(state.copyWith(selectedGovernorate: gov));
 
-    final cities = await _locationRepo.getCities(gov.id);
+    final cities = await _locationRepo.getCities(gov.id!);
     if (cities == null) return;
     emit(state.copyWith(cities: cities));
 
@@ -73,7 +73,7 @@ class AddClientCubit extends Cubit<AddClientState> {
 
   void selectGovernorate(Governate? gov) {
     emit(state.copyWith(selectedGovernorate: gov, clearCity: true, cities: []));
-    if (gov != null) _loadCities(gov.id);
+    if (gov != null) _loadCities(gov.id!);
   }
 
   void selectCity(City? city) {
@@ -107,8 +107,8 @@ class AddClientCubit extends Cubit<AddClientState> {
     emit(state.copyWith(isLoading: true));
     final response = await _addClientRepo.addClient(
       name: nameController.text.trim(),
-      governorate: state.selectedGovernorate!.governorateNameAr,
-      city: state.selectedCity!.cityNameAr,
+      governorate: state.selectedGovernorate!.governorateNameAr ?? '',
+      city: state.selectedCity!.cityNameAr ?? '',
     );
     if (response != null) {
       final user = _userService.currentUser;

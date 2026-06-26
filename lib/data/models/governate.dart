@@ -1,27 +1,27 @@
 class Governate {
-  final int id;
-  final String governorateNameEn;
-  final String governorateNameAr;
+  final int? id;
+  final String? governorateNameEn;
+  final String? governorateNameAr;
 
   Governate({
-    required this.id,
-    required this.governorateNameEn,
-    required this.governorateNameAr,
+    this.id,
+    this.governorateNameEn,
+    this.governorateNameAr,
   });
 
   Governate.fromJson(Map<String, dynamic> json)
-      : id = (json['id'] as num).toInt(),
-        governorateNameEn = json['governorate_name_en'] as String,
-        governorateNameAr = json['governorate_name_ar'] as String;
+      : id = (json['id'] as num?)?.toInt(),
+        governorateNameEn = json['governorate_name_en'] as String?,
+        governorateNameAr = json['governorate_name_ar'] as String?;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['governorate_name_en'] = governorateNameEn;
-    data['governorate_name_ar'] = governorateNameAr;
-    return data;
+    return {
+      'id': id,
+      'governorate_name_en': governorateNameEn,
+      'governorate_name_ar': governorateNameAr,
+    };
   }
 
   @override
-  String toString() => governorateNameAr;
+  String toString() => governorateNameAr ?? '';
 }

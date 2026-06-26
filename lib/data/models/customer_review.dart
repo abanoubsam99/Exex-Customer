@@ -1,33 +1,35 @@
 class CustomerReview {
-  String customerName;
-  DateTime date;
-  double rating;
-  String review;
+  String? customerName;
+  DateTime? date;
+  double? rating;
+  String? review;
   String? image;
 
   CustomerReview({
-    required this.customerName,
-    required this.date,
-    required this.rating,
-    required this.review,
+    this.customerName,
+    this.date,
+    this.rating,
+    this.review,
     this.image,
   });
 
   CustomerReview.fromJson(Map<String, dynamic> json)
-      : customerName = json['customerName'] as String,
-        date = DateTime.parse(json['date'] as String),
-        rating = (json['rating'] as num).toDouble(),
-        review = json['review'] as String,
+      : customerName = json['customerName'] as String?,
+        date = json['date'] != null
+            ? DateTime.tryParse(json['date'] as String)
+            : null,
+        rating = (json['rating'] as num?)?.toDouble(),
+        review = json['review'] as String?,
         image = json['image'] as String?;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['customerName'] = customerName;
-    data['date'] = date.toIso8601String();
-    data['rating'] = rating;
-    data['review'] = review;
-    data['image'] = image;
-    return data;
+    return {
+      'customerName': customerName,
+      'date': date?.toIso8601String(),
+      'rating': rating,
+      'review': review,
+      'image': image,
+    };
   }
 }
 

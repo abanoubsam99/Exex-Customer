@@ -55,7 +55,7 @@ class RequestToJoinCubit extends Cubit<RequestToJoinState> {
   void selectGovernorate(Governate? gov) {
     emit(state.copyWith(
         selectedGovernorate: gov, clearCity: true, cities: const []));
-    if (gov != null) _loadCities(gov.id);
+    if (gov != null) _loadCities(gov.id!);
   }
 
   void selectCity(City? city) {
@@ -98,8 +98,8 @@ class RequestToJoinCubit extends Cubit<RequestToJoinState> {
     final ok = await _repo.submitJoinRequest(
       name: nameController.text.trim(),
       serviceType: state.selectedServiceType!,
-      governorate: state.selectedGovernorate!.governorateNameAr,
-      city: state.selectedCity!.cityNameAr,
+      governorate: state.selectedGovernorate!.governorateNameAr ?? '',
+      city: state.selectedCity!.cityNameAr ?? '',
       address: addressController.text.trim(),
       countryCode: countryController.text.trim(),
       phone: phoneController.text.trim(),

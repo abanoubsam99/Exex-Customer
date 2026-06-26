@@ -66,7 +66,7 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
         selectedMerchantGov: gov,
         clearMerchantCity: true,
         merchantCities: const []));
-    if (gov != null) _loadMerchantCities(gov.id);
+    if (gov != null) _loadMerchantCities(gov.id!);
   }
 
   void selectMerchantCity(City? city) =>
@@ -83,7 +83,7 @@ class NewSuggestionCubit extends Cubit<NewSuggestionState> {
         selectedEventGov: gov,
         clearEventCity: true,
         eventCities: const []));
-    if (gov != null) _loadEventCities(gov.id);
+    if (gov != null) _loadEventCities(gov.id!);
   }
 
   void selectEventCity(City? city) =>

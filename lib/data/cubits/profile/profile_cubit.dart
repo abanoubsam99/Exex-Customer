@@ -86,7 +86,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> loadCities(String govName) async {
     final gov = state.governorates.where((g) => g.governorateNameAr == govName);
     if (gov.isEmpty) return;
-    final cities = await _locationRepo.getCities(gov.first.id);
+    final cities = await _locationRepo.getCities(gov.first.id!);
     if (cities != null) {
       emit(state.copyWith(cities: cities));
     }

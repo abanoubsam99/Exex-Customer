@@ -167,7 +167,7 @@ class SpecialOffersSection extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8.w, vertical: 3.h),
                                   child: Text(
-                                    offer.portName,
+                                    offer.portName??"",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.right,
@@ -195,7 +195,7 @@ class SpecialOffersSection extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        offer.name,
+                                        offer.name??"",
                                         textAlign: TextAlign.right,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -215,7 +215,7 @@ class SpecialOffersSection extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        offer.details,
+                                        offer.details??"",
                                         textAlign: TextAlign.right,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,

@@ -30,7 +30,7 @@ class OnboardingLocationCubit extends Cubit<OnboardingLocationState> {
       cities: const [],
       isLoadingCities: true,
     ));
-    final cities = await _repo.getCities(gov.id) ?? const [];
+    final cities = await _repo.getCities(gov.id!) ?? const [];
     emit(state.copyWith(isLoadingCities: false, cities: cities));
   }
 
@@ -42,10 +42,10 @@ class OnboardingLocationCubit extends Cubit<OnboardingLocationState> {
     final city = state.selectedCity;
     if (gov == null || city == null) return false;
     await _locationService.save(
-      govId: gov.id,
-      govName: gov.governorateNameAr,
-      cityId: city.id,
-      cityName: city.cityNameAr,
+      govId: gov.id!,
+      govName: gov.governorateNameAr ?? '',
+      cityId: city.id!,
+      cityName: city.cityNameAr ?? '',
     );
     return true;
   }

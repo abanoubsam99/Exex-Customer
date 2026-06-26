@@ -184,7 +184,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                             items: fState.governorates
                                 .map((g) => DropdownMenuItem(
                                       value: g,
-                                      child: Text(g.governorateNameAr),
+                                      child: Text(g.governorateNameAr ?? ''),
                                     ))
                                 .toList(),
                             onChanged: (value) {
@@ -204,7 +204,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                             items: fState.cities
                                 .map((c) => DropdownMenuItem(
                                       value: c,
-                                      child: Text(c.cityNameAr),
+                                      child: Text(c.cityNameAr ?? ''),
                                     ))
                                 .toList(),
                             onChanged: fState.selectedGovernorate == null

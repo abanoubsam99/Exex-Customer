@@ -100,7 +100,7 @@ class EditReservationScreen extends StatelessWidget {
                           items: state.governorates
                               .map((g) => DropdownMenuItem(
                                   value: g,
-                                  child: Text(g.governorateNameAr,
+                                  child: Text(g.governorateNameAr ?? '',
                                       style: _itemStyle)))
                               .toList(),
                           onChanged: cubit.selectGovernorate,
@@ -118,7 +118,7 @@ class EditReservationScreen extends StatelessWidget {
                               .map((c) => DropdownMenuItem(
                                   value: c,
                                   child:
-                                      Text(c.cityNameAr, style: _itemStyle)))
+                                      Text(c.cityNameAr ?? '', style: _itemStyle)))
                               .toList(),
                           onChanged: state.selectedGovernorate == null
                               ? null

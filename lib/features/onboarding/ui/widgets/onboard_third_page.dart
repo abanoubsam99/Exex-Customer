@@ -141,7 +141,7 @@ class _CityDropdown extends StatelessWidget {
           items: state.cities
               .map((c) => DropdownMenuItem(
                     value: c,
-                    child: Text(c.cityNameAr),
+                    child: Text(c.cityNameAr ?? ''),
                   ))
               .toList(),
           onChanged: state.selectedGovernorate == null

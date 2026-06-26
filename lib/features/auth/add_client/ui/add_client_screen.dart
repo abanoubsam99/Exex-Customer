@@ -232,7 +232,7 @@ class AddClientScreen extends StatelessWidget {
                                             (g) => DropdownMenuItem(
                                               value: g,
                                               child:
-                                                  Text(g.governorateNameAr),
+                                                  Text(g.governorateNameAr ?? ''),
                                             ),
                                           )
                                           .toList(),
@@ -277,7 +277,7 @@ class AddClientScreen extends StatelessWidget {
                                           .map(
                                             (c) => DropdownMenuItem(
                                               value: c,
-                                              child: Text(c.cityNameAr),
+                                              child: Text(c.cityNameAr ?? ''),
                                             ),
                                           )
                                           .toList(),
