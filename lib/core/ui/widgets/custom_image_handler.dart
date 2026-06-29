@@ -61,6 +61,9 @@ class CustomImageHandler extends StatelessWidget {
         color: color,
         height: height,
         width: width,
+        // medium (trilinear) keeps downscaled photos sharp instead of the
+        // soft/blurry look of the default low quality.
+        filterQuality: FilterQuality.medium,
       );
     }
 
@@ -72,6 +75,7 @@ class CustomImageHandler extends StatelessWidget {
         color: color,
         height: height,
         width: width,
+        filterQuality: FilterQuality.medium,
       );
     }
 
@@ -84,6 +88,9 @@ class CustomImageHandler extends StatelessWidget {
         alignment: alignment is Alignment ? alignment as Alignment : Alignment.center,
         width: width,
         height: height,
+        // medium (trilinear) keeps downscaled photos sharp instead of the
+        // soft/blurry look of the default low quality.
+        filterQuality: FilterQuality.medium,
         errorWidget: (BuildContext context, _, stackTrace) {
           return errorIcon != null
               ? Center(child: errorIcon)
@@ -124,6 +131,7 @@ class CustomImageHandler extends StatelessWidget {
       color: color,
       height: height,
       width: width,
+      filterQuality: FilterQuality.medium,
       // new_logo.png is a PNG, so it must be loaded with Image.asset, not
       // SvgPicture.asset (which only renders SVG and silently fails on a PNG).
       errorBuilder: (context, error, stackTrace) => _logoPlaceholder(),

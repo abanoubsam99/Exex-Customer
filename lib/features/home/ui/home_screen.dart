@@ -436,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               // Clear the floating nav bar at the end of the scroll.
-              SizedBox(height: kFloatingNavBarSpace.r),
+              SizedBox(height: navBarBottomReserve(context)),
             ],
           ),
         ),

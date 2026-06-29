@@ -92,8 +92,22 @@ class LoginCubit extends Cubit<LoginState> {
 
   /// Sign in with Google, then exchange the idToken via /ExternalLogin.
   Future<void> loginWithGoogle() async {
-    final google = await _googleAuthService.signIn();
-    if (google == null || (google.idToken ?? '').isEmpty) return; // cancelled
+    GoogleAuthResult? google;
+    try {
+      google = await _googleAuthService.signIn();
+    } catch (e) {
+      // signIn threw (e.g. ApiException 10 / DEVELOPER_ERROR) — don't die
+      // silently after the user picked an account.
+      ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+      return;
+    }
+    if (google == null) return; // user cancelled the picker
+    if ((google.idToken ?? '').isEmpty) {
+      // Account picked but no idToken came back → OAuth client misconfigured
+      // (SHA-1 / serverClientId). Surface it instead of staying silent.
+      ToastManager.showError('تعذّر إكمال تسجيل الدخول بجوجل، حاول مرة أخرى');
+      return;
+    }
     emit(LoginLoading());
     final user = await _loginRepo.externalLogin(
       provider: 'google',

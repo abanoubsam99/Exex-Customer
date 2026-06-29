@@ -52,8 +52,7 @@ class ServiceCategorySection extends StatelessWidget {
         final separator = 7.w;
         // Size each card so ~3.3 fit the available width → a partial card
         // always peeks, hinting the row is scrollable.
-        final itemWidth =
-            (constraints.maxWidth - 1 * separator) / _visibleCards;
+        final itemWidth = (constraints.maxWidth - 0.1 * separator) / _visibleCards;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -250,7 +249,7 @@ class _CategoryCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 11.r,
+                  fontSize: 12.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.24,

@@ -88,7 +88,7 @@ class _RequestsTab extends StatelessWidget {
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
               padding: EdgeInsets.fromLTRB(
-                  0, 20.h, 0, hasButton ? 12.h : kFloatingNavBarSpace.r),
+                  0, 20.h, 0, hasButton ? 12.h : navBarBottomReserve(context)),
               itemCount:
                   state.requests.length + (state.requestsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
@@ -211,7 +211,8 @@ class _ReservationsTab extends StatelessWidget {
             child: ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
+              padding:
+                  EdgeInsets.fromLTRB(0, 20.h, 0, navBarBottomReserve(context)),
               itemCount: state.reservations.length +
                   (state.reservationsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
@@ -271,7 +272,8 @@ class _CancelledTab extends StatelessWidget {
             child: ListView.separated(
               separatorBuilder: (_, __) => 24.verticalSpace,
               clipBehavior: Clip.none,
-              padding: EdgeInsets.fromLTRB(0, 20.h, 0, kFloatingNavBarSpace.r),
+              padding:
+                  EdgeInsets.fromLTRB(0, 20.h, 0, navBarBottomReserve(context)),
               itemCount:
                   state.cancelled.length + (state.reservationsLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {

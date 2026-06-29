@@ -121,7 +121,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: '${widget.service.price ?? 0}',
+                          text: '${widget.service.priceAfterDiscount ?? 0}',
                           style: TextStyle(
                             color: AppColors.primaryColor,
                             fontSize: 20.r,

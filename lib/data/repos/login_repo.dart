@@ -39,8 +39,9 @@ class LoginRepo {
       final response = await DioHelper.postData(
         url: AppEndpoints.externalLogin,
         data: {
+          // Backend expects `idToken` (see /ExternalLogin schema), not `token`.
+          'idToken': token,
           'provider': provider,
-          'token': token,
           'email': email,
           'name': name,
         },

@@ -279,21 +279,21 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                     ),
                   ),
                 ),
-                CustomImageHandler(
-                  AppImages.iconsStar,
-                  height: 26.r,
-                  width: 26.r,
-                ),
-                4.horizontalSpace,
-                Text(
-                  '${widget.port?.rate ?? 0}',
-                  style: TextStyle(
-                    color: AppColors.blacksoft,
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                // CustomImageHandler(
+                //   AppImages.iconsStar,
+                //   height: 26.r,
+                //   width: 26.r,
+                // ),
+                // 4.horizontalSpace,
+                // Text(
+                //   '${widget.port?.rate ?? 0}',
+                //   style: TextStyle(
+                //     color: AppColors.blacksoft,
+                //     fontSize: 14.r,
+                //     fontFamily: 'Almarai',
+                //     fontWeight: FontWeight.w400,
+                //   ),
+                // ),
               ],
             ),
           ),

@@ -113,6 +113,7 @@ class ChangeOccasion extends StatelessWidget {
           onOccasionSelected?.call(occasionId);
           final portId = port?.id;
           if (portId != null) {
+            homeCubit.setAvailabilityChecking();
             homeCubit.setAvailability(
               await repo.checkAvailability(
                 portId: portId,
@@ -127,15 +128,47 @@ class ChangeOccasion extends StatelessWidget {
     );
   }
 
+  /// Re-runs the availability check after a failed attempt, using the date +
+  /// place currently on [HomeCubit]. Mirrors the check done on screen open so
+  /// the badge can recover from a network/timeout error without leaving the
+  /// screen.
+  Future<void> _retryAvailability(BuildContext context) async {
+    final homeCubit = context.read<HomeCubit>();
+    final repo = context.read<ConfirmBookingRepo>();
+    final st = homeCubit.state;
+    final date = st.bookingDate ?? occasionDate;
+    final portId = port?.id;
+    if (date == null || portId == null) return;
+    homeCubit.setAvailabilityChecking();
+    homeCubit.setAvailability(
+      await repo.checkAvailability(
+        portId: portId,
+        date: date,
+        governorate: st.eventGovernorate,
+        city: st.eventCity,
+      ),
+    );
+  }
+
   /// Maps the availability response (+ whether a date was picked) to the exact
   /// status message/colour shown next to the glowing dot.
-  _AvailabilityView _statusFor(DateTime? date, CheckReservationResponse? av) {
+  _AvailabilityView _statusFor(
+      DateTime? date, CheckReservationResponse? av, AvailabilityStatus status) {
     // Can't know availability without a date — prompt the user to pick one.
     if (date == null) {
       return const _AvailabilityView(
         'حدد تاريخ المناسبة لمعرفة متاح أم لا !',
         AppColors.primaryColor,
         AppColors.primaryColor,
+      );
+    }
+    // The check failed (network/timeout) — offer a retry instead of spinning.
+    if (status == AvailabilityStatus.failed && av == null) {
+      return const _AvailabilityView(
+        'تعذّر التحقق من الإتاحة، اضغط لإعادة المحاولة',
+        AppColors.coral,
+        AppColors.coral,
+        isRetry: true,
       );
     }
     // Date picked, response not back yet.
@@ -202,6 +235,7 @@ class ChangeOccasion extends StatelessWidget {
         BlocBuilder<HomeCubit, HomeState>(
           buildWhen: (p, c) =>
               p.availability != c.availability ||
+              p.availabilityStatus != c.availabilityStatus ||
               p.bookingDate != c.bookingDate ||
               p.eventGovernorate != c.eventGovernorate ||
               p.eventCity != c.eventCity,
@@ -212,8 +246,8 @@ class ChangeOccasion extends StatelessWidget {
                     date, state.eventGovernorate, state.eventCity)
                 ? const _AvailabilityView('متاح للحجز الفوري',
                     AppColors.green2, AppColors.greenSoft)
-                : _statusFor(date, state.availability);
-            return Row(
+                : _statusFor(date, state.availability, state.availabilityStatus);
+            final row = Row(
               children: [
                 _GlowingDot(color: view.dotColor),
                 6.horizontalSpace,
@@ -231,7 +265,18 @@ class ChangeOccasion extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Refresh affordance so a failed check reads as retryable.
+                if (view.isRetry) ...[
+                  6.horizontalSpace,
+                  Icon(Icons.refresh, size: 18.r, color: view.textColor),
+                ],
               ],
+            );
+            if (!view.isRetry) return row;
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _retryAvailability(context),
+              child: row,
             );
           },
         ),
@@ -348,7 +393,15 @@ class _AvailabilityView {
   final String message;
   final Color textColor;
   final Color dotColor;
-  const _AvailabilityView(this.message, this.textColor, this.dotColor);
+
+  /// True when the line represents a failed check the user can tap to retry.
+  final bool isRetry;
+  const _AvailabilityView(
+    this.message,
+    this.textColor,
+    this.dotColor, {
+    this.isRetry = false,
+  });
 }
 
 /// A status dot with a soft halo that breathes in and out (glow), so the

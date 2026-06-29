@@ -250,7 +250,19 @@ class HomeCubit extends Cubit<HomeState> {
         clearAvailability: true,
       ));
 
-  /// Stores the availability result for the selected port + date.
+  /// Marks an availability check as in-flight so the badge shows "جاري التحقق"
+  /// (and not a stale result). Call right before awaiting checkAvailability.
+  void setAvailabilityChecking() =>
+      emit(state.copyWith(availabilityStatus: AvailabilityStatus.checking));
+
+  /// Stores the availability result for the selected port + date. A null result
+  /// means the check failed (network/timeout) — recorded as [AvailabilityStatus.failed]
+  /// so the badge can offer a retry instead of spinning forever.
   void setAvailability(CheckReservationResponse? availability) =>
-      emit(state.copyWith(availability: availability));
+      emit(state.copyWith(
+        availability: availability,
+        availabilityStatus: availability == null
+            ? AvailabilityStatus.failed
+            : AvailabilityStatus.done,
+      ));
 }

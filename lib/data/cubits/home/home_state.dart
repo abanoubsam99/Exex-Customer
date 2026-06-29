@@ -4,6 +4,12 @@ import 'package:evex_user/data/models/ports_respond_model.dart'
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/models/user_model.dart';
 
+/// Lifecycle of an instant-booking availability check, so the UI can tell
+/// "still checking" apart from "the check failed" (network/timeout). Without
+/// this a failed check leaves [HomeState.availability] null forever and the
+/// badge stays stuck on "جاري التحقق...".
+enum AvailabilityStatus { idle, checking, done, failed }
+
 class HomeState {
   final bool isLoadingPorts;
   final bool isLoadingOffers;
@@ -28,6 +34,10 @@ class HomeState {
   /// Instant-booking availability for the selected port + [bookingDate].
   final CheckReservationResponse? availability;
 
+  /// Where the availability check currently is in its lifecycle. Lets the badge
+  /// show a retry on failure instead of spinning forever (see [AvailabilityStatus]).
+  final AvailabilityStatus availabilityStatus;
+
   /// Unread notifications count, shown as a badge on the home bell icon.
   final int unreadNotifications;
 
@@ -50,6 +60,7 @@ class HomeState {
     this.eventGovernorate,
     this.eventCity,
     this.availability,
+    this.availabilityStatus = AvailabilityStatus.idle,
     this.unreadNotifications = 0,
     this.currentUser,
     this.errorMessage,
@@ -69,6 +80,7 @@ class HomeState {
     String? eventGovernorate,
     String? eventCity,
     CheckReservationResponse? availability,
+    AvailabilityStatus? availabilityStatus,
     bool clearAvailability = false,
     // Clear a whole section's selection (category + type). Used to keep the
     // instant-booking and direct-services sections mutually exclusive.
@@ -101,6 +113,9 @@ class HomeState {
       eventCity: eventCity ?? this.eventCity,
       availability:
           clearAvailability ? null : (availability ?? this.availability),
+      availabilityStatus: clearAvailability
+          ? AvailabilityStatus.idle
+          : (availabilityStatus ?? this.availabilityStatus),
       unreadNotifications: unreadNotifications ?? this.unreadNotifications,
       currentUser: currentUser ?? this.currentUser,
       errorMessage: errorMessage ?? this.errorMessage,

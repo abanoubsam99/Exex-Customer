@@ -12,6 +12,9 @@ class AddPhoneRepo {
     required String countryCode,
   }) async {
     try {
+      print("phoneNumberphoneNumber ${phoneNumber}");
+      print("countryCode ${countryCode}");
+
       final response = await DioHelper.postData(
         url: AppEndpoints.addPhone,
         data: FormData.fromMap({

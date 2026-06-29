@@ -1,3 +1,4 @@
+import 'package:evex_user/core/helpers/extensions.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_state.dart';
@@ -72,7 +73,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           Positioned(
-            bottom: 20.r,
+            // Add the bottom system inset (Android nav buttons / iOS home
+            // indicator) so the row clears it instead of hiding behind it.
+            bottom: 20.r + context.bottomSafeInset,
             left: 0.r,
             right: 0,
             child: Row(

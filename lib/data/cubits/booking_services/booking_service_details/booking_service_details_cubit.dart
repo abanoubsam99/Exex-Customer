@@ -50,6 +50,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
           isEditMode: editArgs != null,
         )) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _ensurePortLoaded();
       getPortImages();
       getOtherPorts();
       getOccasions();
@@ -294,6 +295,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     if (date == null || _homeCubit.state.availability != null) return;
     final portId = _portId;
     if (portId <= 0) return;
+    _homeCubit.setAvailabilityChecking();
     _homeCubit.setAvailability(
       await _confirmRepo.checkAvailability(
         portId: portId,
@@ -302,6 +304,21 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         city: _homeCubit.state.eventCity,
       ),
     );
+  }
+
+  /// When the screen is opened from a special offer or a shared deep link only
+  /// the portId is known (no full [Item]), so the header would have no name,
+  /// rating, description or images. Fetch the port via /api/Ports/Filter?Id=
+  /// and seed it onto the state so it renders like the normal list flow.
+  Future<void> _ensurePortLoaded() async {
+    if (state.port != null || editArgs != null) return;
+    final id = _offerPortId;
+    if (id == null || id <= 0) return;
+    final model = await _portsRepo.getAllPortServices(GetPortsRequest(id: id));
+    final items = model?.items;
+    if (items == null || items.isEmpty) return;
+    final match = items.firstWhere((p) => p.id == id, orElse: () => items.first);
+    emit(state.copyWith(port: match));
   }
 
   /// Loads other ports owned by the same vendor for the "خدمات أخرى" section
@@ -420,9 +437,13 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   }
 
   void _recalcTotal() {
-    // Prefer the detailed price; fall back to the selected service's own price
-    // so the total still reflects the base service if its details didn't load.
-    double cost = (state.serviceDetails?.price ?? state.selectedService?.price)
+    // Base cost = the selected service's price after discount — the same value
+    // the service card shows as its live price. The detailed model has no
+    // discount field, so prefer the service's discounted price; fall back to
+    // the detailed/full price only when there is no discounted value.
+    double cost = (state.selectedService?.priceAfterDiscount ??
+                state.serviceDetails?.price ??
+                state.selectedService?.price)
             ?.toDouble() ??
         0;
     final oldGiftIds =

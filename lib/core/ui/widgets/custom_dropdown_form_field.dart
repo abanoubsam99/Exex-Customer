@@ -49,15 +49,19 @@ class CustomDropDownFormField extends StatelessWidget {
               color: AppColors.blueGrey,
             ),
           ),
+          // Show the item's own label (its child, e.g. the occasion/gov/city
+          // name) when selected — not item.value, which can be a raw id.
           selectedItemBuilder:
               (context) =>
                   items!
                       .map(
-                        (item) => FittedBox(
-                          child: Text(
-                            item.value.toString(),
-                            overflow: TextOverflow.ellipsis,
+                        (item) => Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: DefaultTextStyle.merge(
                             style: AppTextStyles.font14BlacksoftRegular,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            child: item.child,
                           ),
                         ),
                       )

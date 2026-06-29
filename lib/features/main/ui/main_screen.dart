@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/constants/layout_constants.dart';
+import 'package:evex_user/core/helpers/extensions.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -53,6 +54,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<MainCubit>();
+    // The floating nav bar is pushed up by the bottom system inset (Android
+    // nav buttons / iOS home indicator) so it clears the system UI instead of
+    // hiding behind it.
+    final systemNavInset = context.bottomSafeInset;
     return Scaffold(
       body: Stack(
         children: [
@@ -103,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           Positioned(
-            bottom: 0,
+            bottom: systemNavInset,
             left: 0,
             right: 0,
             child: Container(

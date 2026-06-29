@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/extensions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:evex_user/core/localization/app_strings.dart';
 import 'package:evex_user/core/ui/widgets/country_picker.dart';
@@ -78,9 +79,13 @@ class AddClientScreen extends StatelessWidget {
                   ],
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 37.w,
-                    vertical: 32.h,
+                  // Extra bottom padding for the system inset (Android nav
+                  // buttons / iOS home indicator) so the submit button clears it.
+                  padding: EdgeInsets.fromLTRB(
+                    37.w,
+                    32.h,
+                    37.w,
+                    32.h + context.bottomSafeInset,
                   ),
                   child: BlocBuilder<AddClientCubit, AddClientState>(
                     builder: (context, state) {
