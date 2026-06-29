@@ -55,8 +55,7 @@ class DiscountProgress extends StatelessWidget {
               4.horizontalSpace,
               Expanded(
                 child: Text(
-                  // 'لفترة محدودة تقدر تستفيد بخصم إضافي ',
-                  'لفترة محدودة تقدر تستفيد بخصم إضافي ${_n(percentage)}%',
+                  'لفترة محدودة استفيد بخصم إضافي ${_n(percentage)}%',
                   textAlign: TextAlign.right,
                   style: _titleStyle,
                 ),
@@ -64,7 +63,7 @@ class DiscountProgress extends StatelessWidget {
             ],
           ),
           Text(
-            'على كل خدمة من خدمات الحجز الفوري لما تحجز $target خدمات أو اكتر!',
+            'على كل خدمة من خدمات الحجز الفوري\nلما تحجز $target خدمات أو اكتر!',
             textAlign: TextAlign.right,
             style: _subStyle,
           ),
@@ -96,6 +95,8 @@ class DiscountProgress extends StatelessWidget {
                 AppImages.iconsBadgePercent,
                 height: 28.r,
                 width: 28.r,
+                // Tint the badge green once the discount is achieved.
+                color: _green,
               ),
               4.horizontalSpace,
               Text('مبروك !', style: _titleStyle),

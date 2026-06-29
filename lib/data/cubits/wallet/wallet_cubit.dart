@@ -17,4 +17,14 @@ class WalletCubit extends Cubit<WalletState> {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
     }
   }
+
+  /// Sets/changes the wallet PIN, then refreshes the wallet data so
+  /// `passwordChanged` flips to true. Returns true on success.
+  Future<bool> changeWalletPassword(String password) async {
+    final success = await _repo.changeWalletPassword(password);
+    if (success) {
+      await getWalletData();
+    }
+    return success;
+  }
 }

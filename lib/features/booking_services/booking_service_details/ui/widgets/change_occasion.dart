@@ -237,17 +237,25 @@ class ChangeOccasion extends StatelessWidget {
         ),
         10.verticalSpace,
         // ── Date / location / occasion box (outlined, like the design) ──
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-          decoration: ShapeDecoration(
-            color: AppColors.bg,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: AppColors.boarderColor),
-              borderRadius: BorderRadius.circular(12.r),
+        // The whole box is tappable, not just the edit icon.
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            // Editing the occasion date/location is a logged-in-only action.
+            if (!AuthGuard.requireLogin(context)) return;
+            _openEditSheet(context);
+          },
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            decoration: ShapeDecoration(
+              color: AppColors.bg,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: AppColors.boarderColor),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
             ),
-          ),
-          child: Row(
+            child: Row(
             children: [
               Expanded(
                 child: Row(
@@ -321,19 +329,13 @@ class ChangeOccasion extends StatelessWidget {
                 ),
               ),
               8.horizontalSpace,
-              GestureDetector(
-                // Editing the occasion date/location is a logged-in-only action.
-                onTap: () {
-                  if (!AuthGuard.requireLogin(context)) return;
-                  _openEditSheet(context);
-                },
-                child: CustomImageHandler(
-                  AppImages.iconsEdit,
-                  width: 18.r,
-                  height: 18.r,
-                ),
+              CustomImageHandler(
+                AppImages.iconsEdit,
+                width: 18.r,
+                height: 18.r,
               ),
             ],
+          ),
           ),
         ),
       ],

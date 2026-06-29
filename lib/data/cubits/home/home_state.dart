@@ -2,6 +2,7 @@ import 'package:evex_user/data/models/port_category_with_port_types.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart'
     show CheckReservationResponse;
 import 'package:evex_user/data/models/special_offer.dart';
+import 'package:evex_user/data/models/user_model.dart';
 
 class HomeState {
   final bool isLoadingPorts;
@@ -29,6 +30,10 @@ class HomeState {
 
   /// Unread notifications count, shown as a badge on the home bell icon.
   final int unreadNotifications;
+
+  /// The signed-in user, refreshed from GetUserData so the greeting shows the
+  /// real name (the cached login user often only has the email in `userName`).
+  final UserViewModel? currentUser;
   final String? errorMessage;
 
   const HomeState({
@@ -46,6 +51,7 @@ class HomeState {
     this.eventCity,
     this.availability,
     this.unreadNotifications = 0,
+    this.currentUser,
     this.errorMessage,
   });
 
@@ -69,6 +75,7 @@ class HomeState {
     bool clearBookingSelection = false,
     bool clearPaymentSelection = false,
     int? unreadNotifications,
+    UserViewModel? currentUser,
     String? errorMessage,
   }) {
     return HomeState(
@@ -95,6 +102,7 @@ class HomeState {
       availability:
           clearAvailability ? null : (availability ?? this.availability),
       unreadNotifications: unreadNotifications ?? this.unreadNotifications,
+      currentUser: currentUser ?? this.currentUser,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

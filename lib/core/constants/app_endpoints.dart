@@ -38,6 +38,7 @@ class AppEndpoints {
   static const occasions = "/api/Occasions";
   static const favorites = "/api/Favorites";
   static const walletData = "/api/Clients/GetMyClientWalletData";
+  static const changeWalletPassword = "/api/Clients/ChangeClientWalletPassword";
 
   // Notifications
   static const myNotifications = "/api/Notifications/GetMyNotifications";

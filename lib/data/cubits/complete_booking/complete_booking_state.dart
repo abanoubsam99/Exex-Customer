@@ -1,9 +1,12 @@
+import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart'
+    show EditReservationArgs;
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/net_cost_model.dart';
 import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/port_policy.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:evex_user/data/models/reservation_update_model.dart';
 
 /// البيانات الجاية من شاشة تفاصيل الخدمة (اللي قبل استكمال الحجز) حسب اختيار
 /// المستخدم.
@@ -19,6 +22,25 @@ class CompleteBookingArgs {
   /// Occasion type (نوع المناسبة) chosen on the service-details screen.
   final int? occasionId;
 
+  /// Set when this screen is reached to confirm an *edit* of an existing
+  /// reservation (rather than create a new one). When non-null the bottom
+  /// button updates the reservation in place and reads "تعديل الحجز".
+  final EditReservationArgs? editArgs;
+
+  /// The echoed reservation bill (with the chosen service + additions already
+  /// applied) that we update in place on confirm. Only set in edit mode.
+  final ReservationUpdateModel? editBill;
+
+  /// Port id used for policy/net-cost lookups when no full [port] is available
+  /// (edit mode opens without an [Item]).
+  final int? portId;
+
+  /// The reservation's original date/place — lets the availability badge treat
+  /// the user's own unchanged slot as available in edit mode.
+  final DateTime? editOriginalDate;
+  final String? editOriginalGovernorate;
+  final String? editOriginalCity;
+
   const CompleteBookingArgs({
     this.port,
     this.service,
@@ -26,7 +48,16 @@ class CompleteBookingArgs {
     this.totalCost = 0,
     this.occasionDate,
     this.occasionId,
+    this.editArgs,
+    this.editBill,
+    this.portId,
+    this.editOriginalDate,
+    this.editOriginalGovernorate,
+    this.editOriginalCity,
   });
+
+  /// True when this screen confirms an edit instead of creating a booking.
+  bool get isEditMode => editArgs != null;
 }
 
 class CompleteBookingState {

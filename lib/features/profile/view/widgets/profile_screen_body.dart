@@ -115,7 +115,9 @@ class ProfileScreenBody extends StatelessWidget {
                                         profile?.imageName != null
                                             ? '${AppEndpoints.baseUrl}${profile!.imageName}'
                                             : AppImages.imagesNewLogo2,
-                                        smartFill: true,
+                                        // smartFill: true,
+                                        smartFill: false,
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
                                   ),

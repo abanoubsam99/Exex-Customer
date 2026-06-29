@@ -113,13 +113,9 @@ class ServiceCategorySection extends StatelessWidget {
                           onSelectType(type);
                           onOpenPorts();
                         },
-                        // Width + spacing mirror the category card above so the
-                        // two rows line up (and peek the same way).
                         child: Container(
-                          width: itemWidth,
-                          alignment: Alignment.center,
                           padding: EdgeInsets.symmetric(
-                              vertical: 6.h, horizontal: 1.w),
+                              vertical: 6.h, horizontal: 16.w),
                           decoration: ShapeDecoration(
                             color: isSelected
                                 ? AppColors.blacksoft

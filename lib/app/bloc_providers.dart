@@ -115,6 +115,7 @@ class BlocProviders {
             context.read<UserService>(),
             context.read<LocationService>(),
             context.read<CacheHelper>(),
+            context.read<ProfileRepo>(),
           ),
         ),
       ];

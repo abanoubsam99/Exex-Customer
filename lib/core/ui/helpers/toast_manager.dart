@@ -16,12 +16,43 @@ class ToastManager {
   /// The toast currently on screen (replaced when a new one is shown).
   static OverlayEntry? _current;
 
+  /// When the network layer last surfaced a message that came straight from the
+  /// backend. Used so a generic app-side toast fired right after (e.g. a cubit's
+  /// "تعذّر ..." fallback) doesn't replace the more specific server message.
+  static DateTime? _lastServerMessageAt;
+  static const _serverMessageWindow = Duration(milliseconds: 1500);
+
+  static bool get _serverMessageRecent {
+    final last = _lastServerMessageAt;
+    return last != null &&
+        DateTime.now().difference(last) < _serverMessageWindow;
+  }
+
   static void showSuccess(String message) {
+    // A backend message just shown for this request wins over a generic one.
+    if (_serverMessageRecent) return;
+    _showSuccess(message);
+  }
+
+  static void showError(String message) {
+    if (_serverMessageRecent) return;
+    _showError(message);
+  }
+
+  /// Shows a message that came directly from the backend (`message` field).
+  /// Always shown, and records the time so a generic toast fired right after
+  /// for the same request won't override it. Call this from the network layer.
+  static void showServerMessage(String message, {bool isError = true}) {
+    _lastServerMessageAt = DateTime.now();
+    isError ? _showError(message) : _showSuccess(message);
+  }
+
+  static void _showSuccess(String message) {
     _show(message, AppColors.greenColor.withValues(alpha: 0.95),
         Icons.check_circle_rounded);
   }
 
-  static void showError(String message) {
+  static void _showError(String message) {
     _show(message, Colors.red.withValues(alpha: 0.95), Icons.error_rounded);
   }
 

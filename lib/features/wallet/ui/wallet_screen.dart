@@ -2,9 +2,11 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
+import 'package:evex_user/data/cubits/main/main_state.dart';
 import 'package:evex_user/data/cubits/wallet/wallet_cubit.dart';
 import 'package:evex_user/data/cubits/wallet/wallet_state.dart';
 import 'package:evex_user/data/repos/wallet_repo.dart';
+import 'package:evex_user/features/wallet/ui/widgets/wallet_password_dialog.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +21,53 @@ class WalletScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           WalletCubit(context.read<WalletRepo>())..getWalletData(),
+      child: const _WalletView(),
+    );
+  }
+}
+
+class _WalletView extends StatefulWidget {
+  const _WalletView();
+
+  @override
+  State<_WalletView> createState() => _WalletViewState();
+}
+
+class _WalletViewState extends State<_WalletView> {
+  /// Guards against stacking the PIN dialog when one is already open.
+  bool _passwordDialogOpen = false;
+
+  /// Prompts the user to create a wallet PIN when the backend reports
+  /// `passwordChanged == false`. Only fires on an explicit false (not null/true)
+  /// and never while a dialog is already open.
+  void _maybePromptForPin(BuildContext context, WalletState state) {
+    if (_passwordDialogOpen) return;
+    final data = state.data;
+    if (data == null || data.passwordChanged != false) return;
+    _passwordDialogOpen = true;
+    final cubit = context.read<WalletCubit>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showWalletPasswordDialog(context, walletCubit: cubit);
+      _passwordDialogOpen = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocListener(
+      listeners: [
+        // Re-entering the wallet tab refreshes the data; the WalletCubit
+        // listener below then re-prompts for a PIN if one still isn't set.
+        BlocListener<MainCubit, MainState>(
+          listenWhen: (p, c) => p.currentPage != c.currentPage,
+          listener: (context, mainState) {
+            if (mainState.currentPage == 2) {
+              context.read<WalletCubit>().getWalletData();
+            }
+          },
+        ),
+        BlocListener<WalletCubit, WalletState>(listener: _maybePromptForPin),
+      ],
       child: Scaffold(
       body: SafeArea(
         child: Padding(
@@ -199,7 +248,7 @@ class WalletScreen extends StatelessWidget {
                           textAlign: TextAlign.right,
                         ),
                         Text(
-                          'عدد النقاط',
+                          'رصيد النقاط',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: AppColors.blacksoft,
@@ -328,7 +377,11 @@ class WalletScreen extends StatelessWidget {
                       recognizer:
                           TapGestureRecognizer()
                             ..onTap = () {
-                              print('Change password tapped');
+                              showWalletPasswordDialog(
+                                context,
+                                walletCubit: context.read<WalletCubit>(),
+                                isChange: true,
+                              );
                             },
                     ),
                     // WidgetSpan(

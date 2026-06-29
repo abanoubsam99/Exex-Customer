@@ -15,7 +15,16 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   final CompleteBookingArgs args;
 
   CompleteBookingCubit(this._repo, this._homeCubit, {required this.args})
-      : super(CompleteBookingState(selectedOccasionId: args.occasionId)) {
+      : super(CompleteBookingState(
+          selectedOccasionId: args.occasionId,
+          // Editing an existing reservation → the policy was already accepted
+          // when it was first booked, so the checkbox starts ticked.
+          termsAccepted: args.isEditMode,
+        )) {
+    // In edit mode, pre-fill the notes field with the reservation's own note.
+    if (args.editBill != null) {
+      notesController.text = args.editBill!.userNotes;
+    }
     getPortPolicy();
     getOccasions();
     getNetCost();
@@ -25,7 +34,7 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
 
   /// Vendor policy for the port chosen on the previous screen.
   Future<void> getPortPolicy() async {
-    final portId = args.port?.id;
+    final portId = args.port?.id ?? args.portId;
     if (portId == null) return;
     emit(state.copyWith(isLoadingPolicy: true));
     final policy = await _repo.getPortPolicy(portId);
@@ -59,7 +68,12 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
 
   /// "إضافة لحجوزاتي" → creates the reservation request (AddClientReservation),
   /// then navigates to the confirm screen with the request id + deposit.
+  /// In edit mode ("تعديل الحجز") it updates the existing reservation instead.
   Future<void> submit() async {
+    if (args.isEditMode) {
+      await _submitEdit();
+      return;
+    }
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
@@ -129,6 +143,55 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       );
     } else {
       emit(state.copyWith(errorMessage: 'تعذّر إضافة الحجز، حاول مرة أخرى'));
+    }
+  }
+
+  /// "تعديل الحجز" → applies the final occasion/date/notes onto the echoed bill
+  /// (service + additions were already applied on the previous screen) and
+  /// updates the reservation in place, then returns to "حجوزاتي".
+  Future<void> _submitEdit() async {
+    final bill = args.editBill;
+    final editArgs = args.editArgs;
+    if (bill == null || editArgs == null) {
+      ToastManager.showError('تعذّر تحميل بيانات الحجز، حاول مرة أخرى');
+      return;
+    }
+    if (!state.termsAccepted) {
+      ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
+      return;
+    }
+    if ((state.selectedOccasionId ?? 0) <= 0) {
+      ToastManager.showError('حدد نوع وتاريخ المناسبة لاستكمال الحجز');
+      return;
+    }
+
+    final date = _homeCubit.state.bookingDate ?? args.occasionDate;
+    if (date != null) {
+      // The bill keeps its M/d/yyyy format.
+      bill.occasionDate = '${date.month}/${date.day}/${date.year}';
+    }
+    // Carry through any event-location change made from the edit sheet.
+    final gov = _homeCubit.state.eventGovernorate;
+    final city = _homeCubit.state.eventCity;
+    if ((gov ?? '').isNotEmpty) bill.governorate = gov;
+    if ((city ?? '').isNotEmpty) bill.city = city;
+    bill.occasionId = state.selectedOccasionId!;
+    bill.userNotes = notesController.text.trim();
+
+    emit(state.copyWith(isSubmitting: true));
+    final ok = editArgs.isConfirmed
+        ? await _repo.updateReservationByClient(editArgs.reservationId, bill)
+        : await _repo.updateReservationRequest(editArgs.reservationId, bill);
+    emit(state.copyWith(isSubmitting: false));
+    if (ok) {
+      ToastManager.showSuccess('تم تعديل الحجز بنجاح');
+      // Back to "حجوزاتي" (tab 1) so the updated reservation is reloaded.
+      NavigationHelper.pushNamedAndRemoveUntil(
+        Routes.mainScreen,
+        arguments: 1,
+      );
+    } else {
+      ToastManager.showError('تعذّر تعديل الحجز، حاول مرة أخرى');
     }
   }
 

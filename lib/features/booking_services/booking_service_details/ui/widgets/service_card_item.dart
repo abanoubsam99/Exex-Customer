@@ -117,7 +117,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
                           decoration: BoxDecoration(
-                            color: AppColors.salmon,
+                            color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Text(

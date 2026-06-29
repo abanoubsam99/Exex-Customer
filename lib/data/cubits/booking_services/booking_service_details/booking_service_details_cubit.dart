@@ -1,4 +1,3 @@
-import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart'
     show EditReservationArgs;
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
@@ -238,28 +237,23 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     _recalcTotal();
   }
 
-  /// Confirms the edit: applies the current selections onto the echoed bill and
-  /// updates the reservation in place (no new booking / payment), then returns.
-  Future<void> submitEdit() async {
+  /// Edit mode: applies the chosen base service + additions onto the echoed
+  /// bill and returns it, so the complete-booking screen can finalize the
+  /// occasion/date/notes and update the reservation in place (same flow as a
+  /// new booking, with payment + policies + notes). Returns null when the bill
+  /// or a base service isn't ready yet.
+  ReservationUpdateModel? prepareEditBill() {
     final bill = _editBill;
-    final args = editArgs;
-    if (bill == null || args == null) {
+    if (bill == null) {
       ToastManager.showError('تعذّر تحميل بيانات الحجز، حاول مرة أخرى');
-      return;
+      return null;
     }
     if (state.selectedService == null) {
       ToastManager.showError('من فضلك اختر خدمة أولاً');
-      return;
+      return null;
     }
 
-    final date = _homeCubit.state.bookingDate;
-    if (date != null) {
-      bill.occasionDate = '${date.month}/${date.day}/${date.year}';
-    }
     bill.serviceId = state.selectedService!.id;
-    if ((state.selectedOccasionId ?? 0) > 0) {
-      bill.occasionId = state.selectedOccasionId!;
-    }
     bill.additions = [...state.selectedAdditions, ...state.selectedBuffets]
         .where((a) => a.id != null && (a.count ?? 0) > 0)
         .map((a) => {
@@ -268,18 +262,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
               'additionId': a.id,
             })
         .toList();
-
-    emit(state.copyWith(isSaving: true));
-    final ok = args.isConfirmed
-        ? await _confirmRepo.updateReservationByClient(args.reservationId, bill)
-        : await _confirmRepo.updateReservationRequest(args.reservationId, bill);
-    emit(state.copyWith(isSaving: false));
-    if (ok) {
-      ToastManager.showSuccess('تم تعديل الحجز بنجاح');
-      NavigationHelper.pop();
-    } else {
-      ToastManager.showError('تعذّر تعديل الحجز، حاول مرة أخرى');
-    }
+    return bill;
   }
 
   /// Parses the bill's M/d/yyyy occasion date (ignores any trailing time).

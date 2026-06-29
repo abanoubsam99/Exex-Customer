@@ -57,6 +57,12 @@ class CompleteBookingScreen extends StatelessWidget {
                             occasionDate: args.occasionDate,
                             occasions: state.occasions,
                             selectedOccasionId: state.selectedOccasionId,
+                            // Edit mode: the user's own unchanged slot is shown
+                            // as available (same as the service-details screen).
+                            isEditMode: args.isEditMode,
+                            editOriginalDate: args.editOriginalDate,
+                            editOriginalGovernorate: args.editOriginalGovernorate,
+                            editOriginalCity: args.editOriginalCity,
                             onOccasionSelected: (id) {
                               if (id != null) cubit.selectOccasion(id);
                             },
@@ -172,7 +178,7 @@ class CompleteBookingScreen extends StatelessWidget {
                         16.verticalSpace,
                         CustomButton(
                           height: 52.h,
-                          text: "إضافة لحجوزاتي",
+                          text: args.isEditMode ? "تعديل الحجز" : "إضافة لحجوزاتي",
                           isLoading: state.isSubmitting,
                           onTap: cubit.submit,
                         ),

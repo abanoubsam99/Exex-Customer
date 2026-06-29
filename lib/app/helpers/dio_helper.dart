@@ -59,10 +59,24 @@ class DioHelper {
           }
           handler.next(options);
         },
+        onResponse: (response, handler) {
+          // Business failures sometimes come back with a 2xx status but
+          // `isSuccess: false` + a message (so onError never fires). Surface
+          // that message just like a real error so it's never swallowed.
+          final data = response.data;
+          if (data is Map && (data['isSuccess'] == false ||
+              data['IsSuccess'] == false)) {
+            final message = data['message'] ?? data['Message'];
+            if (message is String && message.trim().isNotEmpty) {
+              ToastManager.showServerMessage(message.trim());
+            }
+          }
+          handler.next(response);
+        },
         onError: (error, handler) {
           final message = extractServerMessage(error);
           if (message != null && message.isNotEmpty) {
-            ToastManager.showError(message);
+            ToastManager.showServerMessage(message);
           }
           // Session expired / not authenticated → drop the stale token and send
           // the user to the login screen (also covers a guest hitting an

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_images.dart';
@@ -17,6 +18,17 @@ class EvexTextFormField extends StatefulWidget {
   final bool obscureText;
   final bool isPassword;
 
+  /// Optional override for the label text style (defaults to the shared header
+  /// style). Lets callers use a smaller label without changing it everywhere.
+  final TextStyle? labelStyle;
+
+  /// Optional spacing between the label and the input frame (defaults to 4.r).
+  /// Lets callers lift the label a bit higher above the field.
+  final double? labelGap;
+
+  /// Optional input formatters (e.g. digits-only restriction).
+  final List<TextInputFormatter>? inputFormatters;
+
   const EvexTextFormField({
     super.key,
     required this.label,
@@ -31,6 +43,9 @@ class EvexTextFormField extends StatefulWidget {
     this.suffix,
     this.obscureText = false,
     this.isPassword = false,
+    this.labelStyle,
+    this.labelGap,
+    this.inputFormatters,
   });
 
   @override
@@ -68,8 +83,11 @@ class _EvexTextFormFieldState extends State<EvexTextFormField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: AppTextStyles.font16BlackRegularHeader),
-        4.r.verticalSpace,
+        Text(
+          widget.label,
+          style: widget.labelStyle ?? AppTextStyles.font16BlackRegularHeader,
+        ),
+        (widget.labelGap ?? 4.r).verticalSpace,
         ValueListenableBuilder(
           valueListenable: _myFocusNotifier,
           builder: (_, isFocus, child) {
@@ -93,6 +111,7 @@ class _EvexTextFormFieldState extends State<EvexTextFormField> {
               textAlign: TextAlign.start,
               textDirection: TextDirection.rtl,
               keyboardType: widget.keyboardType ?? TextInputType.text,
+              inputFormatters: widget.inputFormatters,
               maxLines: widget.maxlines ?? 1,
               maxLength: widget.maxLength,
 

@@ -15,4 +15,22 @@ class WalletRepo {
       return null;
     }
   }
+
+  /// GET /api/Clients/ChangeClientWalletPassword
+  /// Sets or changes the wallet PIN. The backend expects the password in the
+  /// request body of a GET, so we hit dio directly (DioHelper.getData has no
+  /// body param). Returns true on success.
+  Future<bool> changeWalletPassword(String password) async {
+    try {
+      final response = await DioHelper.dio.get(
+        AppEndpoints.changeWalletPassword,
+        data: {'password': password},
+      );
+      return response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
 }

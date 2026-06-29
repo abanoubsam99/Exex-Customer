@@ -12,6 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Official website shown under "خدمة العملاء". Hardcoded for now — the API
+/// doesn't return it yet; swap to a [ContactInfo] field once the backend adds it.
+const String _officialWebsite = 'www.evexnow.com';
+
 /// "Contact us" screen — offices + contact channels + social media,
 /// fed from the contact-us APIs.
 class ContactUsScreen extends StatelessWidget {
@@ -52,8 +56,7 @@ class ContactUsScreen extends StatelessWidget {
                   else ...[
                     // ── مكاتبنا في مصر ──
                     if (state.branches.isNotEmpty) ...[
-                      Text('مكاتبنا في مصر',
-                          style: AppTextStyles.font16BlackBold),
+                      const _SectionHeader('متواجدون في'),
                       16.verticalSpace,
                       ...state.branches.map((b) => Padding(
                             padding: EdgeInsets.only(bottom: 12.h),
@@ -63,13 +66,13 @@ class ContactUsScreen extends StatelessWidget {
                     ],
 
                     // ── تواصل معنا على ──
-                    Text('تواصل معنا على', style: AppTextStyles.font16BlackBold),
+                    const _SectionHeader('تواصل معنا على'),
                     16.verticalSpace,
                     _ContactChannelsCard(info: state.contactInfo),
 
                     28.verticalSpace,
                     // ── تابعنا على ──
-                    Text('تابعنا على', style: AppTextStyles.font16BlackBold),
+                    const _SectionHeader('تابعنا على'),
                     16.verticalSpace,
                     _SocialRow(info: state.contactInfo),
                     24.verticalSpace,
@@ -80,6 +83,42 @@ class ContactUsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Small orange rounded bar shown before a header/title (matches Figma).
+class _OrangeBar extends StatelessWidget {
+  const _OrangeBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 4.r,
+      height: 18.r,
+      decoration: ShapeDecoration(
+        color: AppColors.primaryColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.r),
+        ),
+      ),
+    );
+  }
+}
+
+/// Section header: an orange bar followed by a bold title.
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const _OrangeBar(),
+        8.horizontalSpace,
+        Text(title, style: AppTextStyles.font16BlackBold),
+      ],
     );
   }
 }
@@ -128,57 +167,72 @@ class _OfficeCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              // عرض ↗ (يسار)
+              // علامة الموقع داخل دائرة + اسم المكتب (يمين)
+              Container(
+                width: 30.r,
+                height: 30.r,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryAlpha1A,
+                  shape: BoxShape.circle,
+                ),
+                child: CustomImageHandler(
+                  AppImages.iconsMarker,
+                  width: 15.r,
+                  height: 15.r,
+                  color: AppColors.orangeColor,
+                ),
+              ),
+              8.horizontalSpace,
               Expanded(
-                child: InkWell(
-                  onTap: () {
-                    openLocation();
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.open_in_new,
-                          size: 13.r, color: AppColors.orangeColor),
-                      4.horizontalSpace,
-                      Text(
-                        'عرض',
-                        style: TextStyle(
-                          color: AppColors.orangeColor,
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                child: Text(
+                  branch.name ?? '',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: AppColors.blacksoft,
+                    fontSize: 15.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
-              const Spacer(),
-              // اسم المكتب + علامة الموقع (يمين)
-              Text(
-                branch.name ?? '',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: AppColors.blacksoft,
-                  fontSize: 13.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w700,
+              8.horizontalSpace,
+              // عرض ↗ (يسار)
+              InkWell(
+                onTap: () {
+                  openLocation();
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.open_in_new,
+                        size: 14.r, color: AppColors.orangeColor),
+                    4.horizontalSpace,
+                    Text(
+                      'عرض',
+                      style: TextStyle(
+                        color: AppColors.orangeColor,
+                        fontSize: 13.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              6.horizontalSpace,
-              CustomImageHandler(
-                AppImages.iconsMarker,
-                width: 16.r,
-                height: 16.r,
-                color: AppColors.orangeColor,
               ),
             ],
           ),
           8.verticalSpace,
-          Text( 
+          Text(
             displayAddress,
             textAlign: TextAlign.right,
-            style: AppTextStyles.font12greyRegular,
+            style: TextStyle(
+              color: AppColors.grey,
+              fontSize: 13.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
           if (branch.phones.isNotEmpty) ...[
             8.verticalSpace,
@@ -186,9 +240,11 @@ class _OfficeCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 for (final p in branch.phones) ...[
-                  Text(p,
-                      textDirection: TextDirection.ltr,
-                      style: AppTextStyles.font12greyRegular),
+                  Text(
+                    p,
+                    textDirection: TextDirection.ltr,
+                    style: AppTextStyles.font12greyRegular,
+                  ),
                   16.horizontalSpace,
                 ],
               ],
@@ -226,12 +282,29 @@ class _ContactChannelsCard extends StatelessWidget {
       child: Column(
         children: [
           _ContactRow(
-            title: 'الهاتف',
+            title: 'خدمة العملاء',
             value: info?.phoneNumber ?? '-',
+            // Phone is the key number here — show it a touch bigger & darker.
+            valueStyle: TextStyle(
+              color: AppColors.blacksoft,
+              fontSize: 15.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w700,
+            ),
             iconBg: AppColors.blueBg1,
             icon: Icon(Icons.phone_outlined,
                 size: 18.r, color: AppColors.blue1),
             onTap: () => LauncherHelper.call(info?.phoneNumber),
+          ),
+          Divider(color: AppColors.fillGrey1, height: 1.h),
+          // الموقع الرسمي — ثابت مؤقتًا لحد ما الباك يرجّعه في الـ API.
+          // TODO(backend): replace the static URL with a ContactInfo field.
+          _ContactRow(
+            title: 'الموقع الرسمي',
+            value: _officialWebsite,
+            iconBg: AppColors.blueBg2,
+            icon: Icon(Icons.link_rounded, size: 20.r, color: AppColors.blue3),
+            onTap: () => LauncherHelper.openUrl('https://$_officialWebsite'),
           ),
           Divider(color: AppColors.fillGrey1, height: 1.h),
           _ContactRow(
@@ -270,12 +343,16 @@ class _ContactRow extends StatelessWidget {
   final Color iconBg;
   final Widget icon;
   final VoidCallback? onTap;
+
+  /// Optional override for the value's text style (e.g. a bigger phone number).
+  final TextStyle? valueStyle;
   const _ContactRow({
     required this.title,
     required this.value,
     required this.iconBg,
     required this.icon,
     this.onTap,
+    this.valueStyle,
   });
 
   @override
@@ -288,12 +365,12 @@ class _ContactRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 38.r,
-            height: 38.r,
+            width: 40.r,
+            height: 40.r,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(10.r),
+              shape: BoxShape.circle,
             ),
             child: icon,
           ),
@@ -306,9 +383,9 @@ class _ContactRow extends StatelessWidget {
                   title,
                   style: TextStyle(
                     color: AppColors.blacksoft,
-                    fontSize: 13.r,
+                    fontSize: 14.r,
                     fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 2.verticalSpace,
@@ -316,7 +393,7 @@ class _ContactRow extends StatelessWidget {
                   value,
                   textDirection: TextDirection.ltr,
                   textAlign: TextAlign.left,
-                  style: AppTextStyles.font12greyRegular,
+                  style: valueStyle ?? AppTextStyles.font13greyRegular,
                 ),
               ],
             ),

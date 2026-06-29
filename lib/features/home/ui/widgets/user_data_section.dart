@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
+import 'package:evex_user/data/models/user_model.dart';
 
 import '../../../../data/cubits/home/home_cubit.dart';
 
@@ -18,7 +19,19 @@ class UserDataSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<UserService>().currentUser?.userViewModel;
+    return BlocBuilder<HomeCubit, HomeState>(
+      buildWhen: (p, c) => p.currentUser != c.currentUser,
+      builder: (context, state) {
+        // Prefer the freshly-refreshed user from HomeState; fall back to the
+        // cached login user so the avatar still shows before the refresh lands.
+        final user = state.currentUser ??
+            context.read<UserService>().currentUser?.userViewModel;
+        return _buildContent(context, user);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, UserViewModel? user) {
     return Row(
       children: [
         InkWell(
@@ -31,7 +44,7 @@ class UserDataSection extends StatelessWidget {
             height: 46.r,
             clipBehavior: Clip.antiAlias,
             decoration: ShapeDecoration(
-              color: Colors.grey.shade200,
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 side: const BorderSide(width: 1, color: AppColors.grey9),
                 borderRadius: BorderRadius.circular(23.r),
@@ -41,7 +54,8 @@ class UserDataSection extends StatelessWidget {
               user?.imageName != null
                   ? '${AppEndpoints.baseUrl}${user!.imageName}'
                   : AppImages.imagesNewLogo2,
-              smartFill: true,
+              smartFill: false,
+              fit: BoxFit.fill,
               width: 46.r,
               height: 46.r,
             ),
@@ -65,7 +79,10 @@ class UserDataSection extends StatelessWidget {
                 ),
               ),
               Text(
-                user?.name ??  user?.userName ??'عميل',
+                // Never fall back to `userName` here — it's the email.
+                (user?.name?.trim().isNotEmpty ?? false)
+                    ? user!.name!.trim()
+                    : 'عميل',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: AppColors.blacksoft,

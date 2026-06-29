@@ -289,9 +289,31 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               'حدد نوع وتاريخ المناسبة لاستكمال الحجز');
                           return;
                         }
-                        // Edit → update the reservation in place (no new booking).
+                        // Edit → continue to the same استكمال الحجز screen
+                        // (payment + policies + notes); confirming there updates
+                        // the reservation in place instead of adding a new one.
                         if (st.isEditMode) {
-                          cubit.submitEdit();
+                          final bill = cubit.prepareEditBill();
+                          if (bill == null) return;
+                          NavigationHelper.pushNamed(
+                            Routes.completeBookingScreen,
+                            arguments: CompleteBookingArgs(
+                              port: st.port,
+                              service: st.selectedService,
+                              additions: cubit.prepareFinalAdditions(),
+                              totalCost: st.totalCost,
+                              occasionId: st.selectedOccasionId,
+                              occasionDate:
+                                  context.read<HomeCubit>().state.bookingDate,
+                              editArgs: cubit.editArgs,
+                              editBill: bill,
+                              portId: cubit.currentPortId,
+                              editOriginalDate: st.editOriginalDate,
+                              editOriginalGovernorate:
+                                  st.editOriginalGovernorate,
+                              editOriginalCity: st.editOriginalCity,
+                            ),
+                          );
                           return;
                         }
                         NavigationHelper.pushNamed(

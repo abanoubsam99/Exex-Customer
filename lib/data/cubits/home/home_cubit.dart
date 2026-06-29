@@ -10,6 +10,7 @@ import 'package:evex_user/data/models/ports_respond_model.dart'
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:evex_user/data/repos/home_repo.dart';
 import 'package:evex_user/data/repos/notifications_repo.dart';
+import 'package:evex_user/data/repos/profile_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_state.dart';
@@ -20,6 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
   final UserService _userService;
   final LocationService _locationService;
   final CacheHelper _cacheHelper;
+  final ProfileRepo _profileRepo;
 
   HomeCubit(
     this._homeRepo,
@@ -27,6 +29,7 @@ class HomeCubit extends Cubit<HomeState> {
     this._userService,
     this._locationService,
     this._cacheHelper,
+    this._profileRepo,
   ) : super(const HomeState());
 
   /// Clears all home state so the next signed-in account starts fresh.
@@ -37,7 +40,24 @@ class HomeCubit extends Cubit<HomeState> {
       getHomeUserAppInfo(),
       getSpecialOffers(),
       loadUnreadNotifications(),
+      refreshUser(),
     ]);
+  }
+
+  /// Refreshes the cached user from GetUserData so the home greeting shows the
+  /// real name. The login response often omits `name`, leaving only the email
+  /// in `userName` — without this the greeting would show the email. Seeds from
+  /// the cached user first (instant avatar), then updates with the fresh data.
+  /// Skipped for guests (the endpoint needs auth).
+  Future<void> refreshUser() async {
+    final cached = _userService.currentUser?.userViewModel;
+    if (cached != null) emit(state.copyWith(currentUser: cached));
+    if (_userService.currentUser == null) return;
+    final fresh = await _profileRepo.getProfile();
+    if (fresh != null) {
+      await _userService.updateUser(fresh);
+      emit(state.copyWith(currentUser: fresh));
+    }
   }
 
   /// Loads the unread-notifications count for the bell badge. Skipped for guests

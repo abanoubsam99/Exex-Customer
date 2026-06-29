@@ -121,7 +121,7 @@ class ServicesSection extends StatelessWidget {
                     images: service.serviceImages ?? [],
                     title: service.name ?? '',
                     subtitle: service.details ?? '',
-                    price: service.price ?? 0,
+                    price: service.priceAfterDiscount ?? 0,
                     priceBeforeDiscount: service.priceBeforDiscount,
                     isSelected: state.selectedService?.id == service.id,
                     onSelectionChanged: () {

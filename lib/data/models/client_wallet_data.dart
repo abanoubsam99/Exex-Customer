@@ -9,6 +9,10 @@ class ClientWalletData {
   final int? numberOfPoints;
   final num? pointsValue;
 
+  /// Whether the client has already set/changed their wallet PIN.
+  /// When false, the wallet screen prompts them to create one.
+  final bool? passwordChanged;
+
   ClientWalletData({
     this.clientId,
     this.clientName,
@@ -17,6 +21,7 @@ class ClientWalletData {
     this.clientKey,
     this.numberOfPoints,
     this.pointsValue,
+    this.passwordChanged,
   });
 
   ClientWalletData.fromJson(Map<String, dynamic> json)
@@ -26,5 +31,6 @@ class ClientWalletData {
         countryCode = json['countryCode'] as String?,
         clientKey = json['clientKey'] as String?,
         numberOfPoints = (json['numberOfPoints'] as num?)?.toInt(),
-        pointsValue = json['pointsValue'] as num?;
+        pointsValue = json['pointsValue'] as num?,
+        passwordChanged = json['passwordChanged'] as bool?;
 }
