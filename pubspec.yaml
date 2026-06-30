@@ -22,6 +22,7 @@ dependencies:
   alice_dio: ^1.0.7
   flutter_screenutil: ^5.9.3
   cached_network_image: ^3.4.1
+  flutter_cache_manager: ^3.4.1
   flutter_svg: ^2.2.4
   pattern_formatter: ^4.0.0
   animate_do: ^4.2.0

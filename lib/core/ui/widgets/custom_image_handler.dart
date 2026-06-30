@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_images.dart';
+import '../../helpers/image_cache_manager.dart';
 import '../../theme/app_colors.dart';
 
 class CustomImageHandler extends StatelessWidget {
@@ -84,6 +85,10 @@ class CustomImageHandler extends StatelessWidget {
         path.startsWith('www.')) {
       return CachedNetworkImage(
         imageUrl: path,
+        // Shared cache manager with a short stale period so backend image
+        // changes (same URL, overwritten file) are picked up instead of being
+        // served stale for the default 30 days.
+        cacheManager: ImageCacheManager.instance,
         fit: boxFit,
         alignment: alignment is Alignment ? alignment as Alignment : Alignment.center,
         width: width,
