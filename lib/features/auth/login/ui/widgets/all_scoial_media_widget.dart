@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -47,13 +49,14 @@ class AllSocalMediaWidget extends StatelessWidget {
         //   ),
         // ),
         // 14.horizontalSpace,
-        // ── Apple ──
-        _SocialButton(
-          onTap: () => cubit.loginWithApple(),
-          child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
-        ),
-
-
+        // ── Apple (iOS only) ──
+        // Apple sign-in only works natively on iOS; on Android the native
+        // sheet isn't available, so the button is hidden there.
+        if (Platform.isIOS)
+          _SocialButton(
+            onTap: () => cubit.loginWithApple(),
+            child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
+          ),
       ],
     );
   }
