@@ -50,10 +50,14 @@ class DirectServicesListCubit extends Cubit<DirectServicesListState> {
     }
   }
 
-  /// Featured offers filtered by the currently selected payment port type.
+  /// Featured offers filtered by the currently selected payment port type and
+  /// the user's location (profile when signed in, otherwise onboarding).
   Future<void> _fetchSpecialOffers() async {
-    final offers =
-        await _homeRepo.getSpecialOffers(portTypeId: _request.portType);
+    final offers = await _homeRepo.getSpecialOffers(
+      portTypeId: _request.portType,
+      gov: _request.gov,
+      city: _request.city,
+    );
     if (offers != null) emit(state.copyWith(specialOffers: offers));
   }
 }

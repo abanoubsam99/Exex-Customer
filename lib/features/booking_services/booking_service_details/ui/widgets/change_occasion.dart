@@ -105,6 +105,8 @@ class ChangeOccasion extends StatelessWidget {
         initialDate: st.bookingDate ?? occasionDate,
         initialGovernorate: st.eventGovernorate ?? user?.governorate,
         initialCity: st.eventCity ?? user?.city,
+        // Restrict the location picker to the port's working area.
+        portId: port?.id,
         occasions: occasions,
         initialOccasionId: selectedOccasionId,
         onConfirm: (date, gov, city, occasionId) async {

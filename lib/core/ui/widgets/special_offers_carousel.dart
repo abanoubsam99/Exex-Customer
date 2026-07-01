@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
@@ -135,6 +137,37 @@ class _OfferBanner extends StatelessWidget {
               width: 78.r,
             ),
           ),
+          // Port name — blur pill at top left (same style as the home banner).
+          if ((offer.portName ?? '').isNotEmpty)
+            Positioned(
+              top: 10.h,
+              left: 12.w,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6.r),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 160.w),
+                    color: Colors.white.withValues(alpha: 0.55),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                    child: Text(
+                      offer.portName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             right: 11.w,
             bottom: 24.h,

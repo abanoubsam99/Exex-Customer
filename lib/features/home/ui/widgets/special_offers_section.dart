@@ -5,6 +5,7 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
@@ -75,6 +76,15 @@ class SpecialOffersSection extends StatelessWidget {
                   ShimmerSkelton(height: 135.h),
                 ],
                 options: carouselOptions,
+              );
+            }
+
+            // No offers for the user's area → show a consistent empty state
+            // instead of a blank gap under the header.
+            if (state.specialOffers.isEmpty) {
+              return const EmptyListWidget(
+                message: 'لا توجد عروض مميزة متاحة حالياً',
+                icon: Icons.local_offer_outlined,
               );
             }
 

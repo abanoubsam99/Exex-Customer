@@ -40,7 +40,7 @@ void main() async {
   DioHelper.init(cacheHelper);
   final userService = UserService(cacheHelper);
   await userService.init();
-  final locationService = LocationService(cacheHelper);
+  final locationService = LocationService(cacheHelper, userService);
   final localAuthService = LocalAuthService();
   final deepLinkService = DeepLinkService(userService);
   // Start listening for the launch link + runtime links before the UI builds.

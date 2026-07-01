@@ -7,6 +7,7 @@ import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/reservation_update_model.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -25,6 +26,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final ConfirmBookingRepo _confirmRepo;
   final BookingServicesPortsRepo _portsRepo;
   final MyBookingsRepo _bookingsRepo;
+  final UserService _userService;
 
   /// When non-null the screen is in "edit" mode: it pre-fills an existing
   /// reservation's selections and the bottom button updates it in place.
@@ -40,7 +42,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     this._homeCubit,
     this._confirmRepo,
     this._portsRepo,
-    this._bookingsRepo, {
+    this._bookingsRepo,
+    this._userService, {
     Item? port,
     int? portId,
     this.editArgs,
@@ -290,20 +293,42 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
 
   /// Checks instant-booking availability when the screen opens with a date
   /// already picked (otherwise the status line would stay on "جاري التحقق").
+  ///
+  /// Defaults the event location to the signed-in user's profile area when the
+  /// user hasn't picked one yet, so the check (and the header) reflect the real
+  /// location — an out-of-area default then reads as "غير متاح في هذه المنطقة"
+  /// instead of a false "متاح", and can't be added to bookings.
   Future<void> _ensureAvailability() async {
     final date = _homeCubit.state.bookingDate;
-    if (date == null || _homeCubit.state.availability != null) return;
+    if (date == null) return;
     final portId = _portId;
     if (portId <= 0) return;
+
+    final user = _userService.currentUser?.userViewModel;
+    final gov =
+        _firstNonEmpty([_homeCubit.state.eventGovernorate, user?.governorate]);
+    final city = _firstNonEmpty([_homeCubit.state.eventCity, user?.city]);
+    if ((gov ?? '').isNotEmpty) {
+      _homeCubit.setEventLocation(gov!, city ?? '');
+    }
+
     _homeCubit.setAvailabilityChecking();
     _homeCubit.setAvailability(
       await _confirmRepo.checkAvailability(
         portId: portId,
         date: date,
-        governorate: _homeCubit.state.eventGovernorate,
-        city: _homeCubit.state.eventCity,
+        governorate: gov,
+        city: city,
       ),
     );
+  }
+
+  static String? _firstNonEmpty(List<String?> values) {
+    for (final v in values) {
+      final t = v?.trim();
+      if (t != null && t.isNotEmpty) return t;
+    }
+    return null;
   }
 
   /// When the screen is opened from a special offer or a shared deep link only

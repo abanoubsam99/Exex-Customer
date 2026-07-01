@@ -21,6 +21,11 @@ class EditOccasionSheet extends StatefulWidget {
   final String? initialGovernorate;
   final String? initialCity;
 
+  /// The port whose booking is being edited. When set, the governorate/city
+  /// dropdowns are restricted to the port's working area (the areas it serves),
+  /// so the user can only pick a location the vendor actually covers.
+  final int? portId;
+
   /// نوع المناسبة options + the currently chosen one. When empty the occasion
   /// type field is hidden (e.g. the complete-booking screen reuses this sheet
   /// only to edit the date/location).
@@ -38,6 +43,7 @@ class EditOccasionSheet extends StatefulWidget {
     this.initialDate,
     this.initialGovernorate,
     this.initialCity,
+    this.portId,
     this.occasions = const [],
     this.initialOccasionId,
     required this.onConfirm,
@@ -59,6 +65,12 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
   bool _loadingGovs = false;
   bool _loadingCities = false;
 
+  /// The port's working-area names (null when not restricted / fetch failed —
+  /// in which case the full lists are shown so a backend hiccup can't lock the
+  /// user out of booking entirely).
+  List<String>? _portGovNames;
+  List<String>? _portCityNames;
+
   @override
   void initState() {
     super.initState();
@@ -67,11 +79,34 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
     _loadGovernorates();
   }
 
+  /// True when [ar]/[en] appears in [allowed] (case-insensitive). Fails open
+  /// (allows everything) when [allowed] is null/empty.
+  bool _nameAllowed(List<String>? allowed, String? ar, String? en) {
+    if (allowed == null || allowed.isEmpty) return true;
+    final set = allowed.map((e) => e.trim().toLowerCase()).toSet();
+    return set.contains((ar ?? '').trim().toLowerCase()) ||
+        set.contains((en ?? '').trim().toLowerCase());
+  }
+
   Future<void> _loadGovernorates() async {
     setState(() => _loadingGovs = true);
-    final govs = await _repo.getGovernorates() ?? const [];
+    // Load the full list and the port's working-area governorates together, then
+    // keep only the governorates the port serves.
+    final results = await Future.wait([
+      _repo.getGovernorates(),
+      widget.portId != null
+          ? _repo.getPortGovernorates(widget.portId!)
+          : Future.value(null),
+    ]);
     if (!mounted) return;
-    // Pre-select the governorate that matches the passed-in name.
+    final allGovs = (results[0] as List<Governate>?) ?? const [];
+    _portGovNames = results[1] as List<String>?;
+    final govs = allGovs
+        .where((g) => _nameAllowed(
+            _portGovNames, g.governorateNameAr, g.governorateNameEn))
+        .toList();
+    // Pre-select the governorate that matches the passed-in name — only if it's
+    // still within the port's working area.
     Governate? selected;
     for (final g in govs) {
       if (g.governorateNameAr == widget.initialGovernorate ||
@@ -96,8 +131,16 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
       _cities = const [];
       _selectedCity = null;
     });
-    final cities = await _repo.getCities(govId) ?? const [];
+    // Fetch the port's served cities once and cache them for the session.
+    if (widget.portId != null && _portCityNames == null) {
+      _portCityNames = await _repo.getPortCities(widget.portId!);
+    }
+    final allCities = await _repo.getCities(govId) ?? const [];
     if (!mounted) return;
+    // Keep only the cities the port serves within the chosen governorate.
+    final cities = allCities
+        .where((c) => _nameAllowed(_portCityNames, c.cityNameAr, c.cityNameEn))
+        .toList();
     City? selected;
     if (prefillCityName != null) {
       for (final c in cities) {
@@ -372,6 +415,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
           child: DropdownButton<T>(
             isExpanded: true,
             value: value,
+            dropdownColor: Colors.white,
             borderRadius: BorderRadius.circular(14.r),
             hint: Text(
               hint,

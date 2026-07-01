@@ -289,6 +289,16 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               'حدد نوع وتاريخ المناسبة لاستكمال الحجز');
                           return;
                         }
+                        // Block booking when the chosen event area is outside
+                        // the vendor's working area.
+                        final availability =
+                            context.read<HomeCubit>().state.availability;
+                        if (!st.isEditMode &&
+                            availability?.reservationLocationAllowed == false) {
+                          ToastManager.showError(
+                              'هذه الخدمة غير متاحة في المنطقة المختارة');
+                          return;
+                        }
                         // Edit → continue to the same استكمال الحجز screen
                         // (payment + policies + notes); confirming there updates
                         // the reservation in place instead of adding a new one.

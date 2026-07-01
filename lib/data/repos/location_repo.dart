@@ -33,4 +33,43 @@ class LocationRepo {
       return null;
     }
   }
+
+  /// GET /api/Reservations/GetPortGovernorates/{portId} — the governorate names
+  /// the port serves. Returns null on failure so the caller can decide whether
+  /// to fall back to the full list.
+  Future<List<String>?> getPortGovernorates(int portId) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.getPortGovernorates}/$portId',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return (response.data as List)
+            .map((e) => e.toString())
+            .where((e) => e.trim().isNotEmpty)
+            .toList();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// GET /api/Reservations/GetPortCitiesByGov/{portId} — the city names the port
+  /// serves within its working area (across its governorates).
+  Future<List<String>?> getPortCities(int portId) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.getPortCitiesByGov}/$portId',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return (response.data as List)
+            .map((e) => e.toString())
+            .where((e) => e.trim().isNotEmpty)
+            .toList();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
 }

@@ -40,10 +40,14 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 
-  /// Featured offers filtered by the currently selected booking port type.
+  /// Featured offers filtered by the currently selected booking port type and
+  /// the user's location (profile when signed in, otherwise onboarding).
   Future<void> _fetchSpecialOffers() async {
-    final offers =
-        await _homeRepo.getSpecialOffers(portTypeId: _request.portType);
+    final offers = await _homeRepo.getSpecialOffers(
+      portTypeId: _request.portType,
+      gov: _request.gov,
+      city: _request.city,
+    );
     if (offers != null) emit(state.copyWith(specialOffers: offers));
   }
 
@@ -111,7 +115,8 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request.numberAllowed = numberAllowed;
     _request.minPrice = minPrice;
     _request.maxPrice = maxPrice;
-    await _fetchPorts();
+    // Re-filter the offers by the new location too, not just the ports list.
+    await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 
   /// Clears the filter-sheet values (keeping the port type + date) and
@@ -123,7 +128,7 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request.numberAllowed = null;
     _request.minPrice = null;
     _request.maxPrice = null;
-    await _fetchPorts();
+    await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 
   /// Sets the occasion date filter and re-fetches. The returned ports then

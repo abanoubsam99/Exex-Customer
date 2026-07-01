@@ -117,7 +117,7 @@ class _SectionHeader extends StatelessWidget {
       children: [
         const _OrangeBar(),
         8.horizontalSpace,
-        Text(title, style: AppTextStyles.font16BlackBold),
+        Text(title, style: AppTextStyles.font16BlackRegularHeader),
       ],
     );
   }

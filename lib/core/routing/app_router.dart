@@ -296,6 +296,7 @@ class AppRouter {
               context.read<ConfirmBookingRepo>(),
               context.read<BookingServicesPortsRepo>(),
               context.read<MyBookingsRepo>(),
+              context.read<UserService>(),
               port: bookingArg is Item ? bookingArg : null,
               // Opened from a special offer (SpecialOffer) or a shared deep
               // link (int) — only the portId is available in both cases.

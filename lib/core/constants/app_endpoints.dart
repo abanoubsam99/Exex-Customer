@@ -72,6 +72,10 @@ class AppEndpoints {
   static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
   static const cancelReservation = "/api/Reservations/CancelReservationByClient"; // + /{id}
   static const downloadInfo = "/api/Reservations/DownloadInfo"; // ?id=
+  // The port's working area — the governorate/city names it serves. Used to
+  // restrict the occasion-location picker to what the port actually covers.
+  static const getPortGovernorates = "/api/Reservations/GetPortGovernorates"; // + /{portId}
+  static const getPortCitiesByGov = "/api/Reservations/GetPortCitiesByGov"; // + /{portId}
 
   // Accounts
   static const myFinancialOperations = "/api/Accounts/GetMyFinancialOperations";
