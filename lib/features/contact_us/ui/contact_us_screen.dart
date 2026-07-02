@@ -39,7 +39,7 @@ class ContactUsScreen extends StatelessWidget {
                       const CustomBackButtonWidget(),
                       12.horizontalSpace,
                       Text('اتصل بنا',
-                          style: AppTextStyles.font18BlackExtraBoldHeader),
+                          style: AppTextStyles.font14BlacksoftRegular),
                     ],
                   ),
                   12.verticalSpace,
@@ -117,7 +117,7 @@ class _SectionHeader extends StatelessWidget {
       children: [
         const _OrangeBar(),
         8.horizontalSpace,
-        Text(title, style: AppTextStyles.font16BlackRegularHeader),
+        Text(title, style: AppTextStyles.font14BlacksoftRegular),
       ],
     );
   }
@@ -192,7 +192,7 @@ class _OfficeCard extends StatelessWidget {
                     color: AppColors.blacksoft,
                     fontSize: 15.r,
                     fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -285,12 +285,12 @@ class _ContactChannelsCard extends StatelessWidget {
             title: 'خدمة العملاء',
             value: info?.phoneNumber ?? '-',
             // Phone is the key number here — show it a touch bigger & darker.
-            valueStyle: TextStyle(
-              color: AppColors.blacksoft,
-              fontSize: 15.r,
-              fontFamily: 'Almarai',
-              fontWeight: FontWeight.w700,
-            ),
+            // valueStyle: TextStyle(
+            //   color: AppColors.blacksoft,
+            //   fontSize: 15.r,
+            //   fontFamily: 'Almarai',
+            //   fontWeight: FontWeight.w700,
+            // ),
             iconBg: AppColors.blueBg1,
             icon: Icon(Icons.phone_outlined,
                 size: 18.r, color: AppColors.blue1),
@@ -385,7 +385,7 @@ class _ContactRow extends StatelessWidget {
                     color: AppColors.blacksoft,
                     fontSize: 14.r,
                     fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 2.verticalSpace,
@@ -393,7 +393,7 @@ class _ContactRow extends StatelessWidget {
                   value,
                   textDirection: TextDirection.ltr,
                   textAlign: TextAlign.left,
-                  style: valueStyle ?? AppTextStyles.font13greyRegular,
+                  style: valueStyle ?? AppTextStyles.font12greyRegular,
                 ),
               ],
             ),

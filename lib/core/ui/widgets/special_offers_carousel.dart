@@ -13,9 +13,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 /// The "عروض مميزة" banner carousel used by the instant-booking and
-/// direct-services lists: shows ALL special offers coming from the backend
-/// (one elaborate banner per offer) with a dot indicator below that tracks the
-/// current page. Renders nothing when there are no offers.
+/// direct-services lists: shows the static promotional banner first, followed
+/// by ALL special offers coming from the backend (one elaborate banner per
+/// offer), with a dot indicator below that tracks the current page. The static
+/// banner is always present, so when there are no backend offers the carousel
+/// shows that banner on its own.
 class SpecialOffersCarousel extends StatefulWidget {
   final List<SpecialOffer> offers;
   const SpecialOffersCarousel({super.key, required this.offers});
@@ -29,30 +31,34 @@ class _SpecialOffersCarouselState extends State<SpecialOffersCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final offers = widget.offers;
-    if (offers.isEmpty) return const SizedBox.shrink();
+    // The static promotional banner always leads, followed by the backend
+    // offers. With no offers the carousel still shows the banner on its own.
+    final items = <Widget>[
+      const Center(child: _PromoBanner()),
+      ...widget.offers.map((o) => Center(child: _OfferBanner(offer: o))),
+    ];
     return Column(
       children: [
         CarouselSlider(
-          items: offers.map((o) => Center(child: _OfferBanner(offer: o))).toList(),
+          items: items,
           options: CarouselOptions(
             height: 160.h,
             viewportFraction: 0.92,
-            enableInfiniteScroll: offers.length > 1,
-            // Auto-rotate the offers one after another (only when there's more
+            enableInfiniteScroll: items.length > 1,
+            // Auto-rotate the slides one after another (only when there's more
             // than one), matching the home-screen offers banner.
-            autoPlay: offers.length > 1,
+            autoPlay: items.length > 1,
             autoPlayInterval: const Duration(seconds: 7),
             autoPlayAnimationDuration: const Duration(milliseconds: 800),
             autoPlayCurve: Curves.fastOutSlowIn,
             onPageChanged: (i, _) => setState(() => _index = i),
           ),
         ),
-        if (offers.length > 1) ...[
+        if (items.length > 1) ...[
           12.verticalSpace,
           AnimatedSmoothIndicator(
             activeIndex: _index,
-            count: offers.length,
+            count: items.length,
             textDirection: TextDirection.ltr,
             effect: ExpandingDotsEffect(
               dotHeight: 8.r,
@@ -225,6 +231,55 @@ class _OfferBanner extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The static promotional banner, drawn with the SAME decorative shape as
+/// [_OfferBanner] (orange base + curved clipped image) so it matches the offer
+/// cards in the carousel — but showing only the promo image, with no name,
+/// details, port pill, offers icon or tap target.
+class _PromoBanner extends StatelessWidget {
+  const _PromoBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topLeft,
+      children: [
+        Container(
+          width: 315.w,
+          height: 144.h,
+          decoration: ShapeDecoration(
+            color: AppColors.primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+          ),
+        ),
+        CustomPaint(
+          size: Size(305.w, 144.h),
+          painter: _RPSCustomPainter(),
+        ),
+        ClipPath(
+          clipper: _RPSClipper(),
+          child: CustomImageHandler(
+            AppImages.imagesSpecialBanner,
+            smartFill: true,
+            height: 159.h,
+            width: 292.w,
+          ),
+        ),
+        Positioned(
+          left: 4.w,
+          bottom: 10.h,
+          child: CustomImageHandler(
+            AppImages.iconsSpecialOffers,
+            fit: BoxFit.contain,
+            width: 78.r,
+          ),
+        ),
+      ],
     );
   }
 }

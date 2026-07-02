@@ -24,6 +24,11 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
+/// How far the frosted blur layer extends beyond the nav bar pill on each side
+/// so the blur is visible around the opaque white bar instead of being fully
+/// covered by it.
+const double _kNavBarBlurInflate = 8;
+
 class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _pages = [
     HomeScreen(),
@@ -80,29 +85,22 @@ class _MainScreenState extends State<MainScreen> {
               );
             },
           ),
-          // Frosted band behind the floating nav bar: blurs the page content
-          // sitting underneath it so the bottom of every tab feels less
-          // crowded. Faded from the top (transparent → opaque) so the blur
-          // eases in instead of cutting a hard edge across the content.
+          // Pill-shaped frosted layer sitting BEHIND the floating nav bar (a
+          // separate layer, not part of the bar). It mirrors the bar's rounded
+          // shape but is inflated a bit on every side so the blur peeks out
+          // around the opaque white pill as a soft frosted halo — matching the
+          // Figma "Background blur" on the nav bar rectangle.
           Positioned(
-            left: 0,
+            bottom: systemNavInset + kNavBarMargin.r - _kNavBarBlurInflate*5,
+            left:0,
             right: 0,
-            bottom: 0,
-            height: (kFloatingNavBarSpace + 80).r,
+            height: kNavBarHeight.r + _kNavBarBlurInflate * 4,
             child: IgnorePointer(
-              child: ShaderMask(
-                blendMode: BlendMode.dstIn,
-                shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black],
-                  stops: [0.0, 5],
-                ).createShader(rect),
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 45, sigmaY: 45),
-                    child: const SizedBox.expand(),
-                  ),
+              child: ClipRRect(
+                // borderRadius: BorderRadius.circular(45 + _kNavBarBlurInflate),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: const SizedBox.expand(),
                 ),
               ),
             ),

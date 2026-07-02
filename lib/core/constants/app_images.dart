@@ -156,6 +156,9 @@ class AppImages {
   /// assets/images/coin.png
   static const String imagesCoin = "assets/images/coin.png";
   static const String imagesBgCardDetails = "assets/images/bgcarddetails.png";
+  /// Assets for imagesSpecialBanner
+  /// assets/images/specialbannar.png
+  static const String imagesSpecialBanner = "assets/images/specialbannar.png";
   /// Assets for imagesDollars
   /// assets/images/dollars.png
   static const String imagesDollars = "assets/images/dollars.png";

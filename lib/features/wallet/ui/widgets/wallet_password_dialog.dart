@@ -63,6 +63,20 @@ class _WalletPasswordDialogState extends State<_WalletPasswordDialog> {
         fontWeight: FontWeight.w600,
       );
 
+  // Smaller typed-text font inside the fields.
+  TextStyle get _inputStyle => TextStyle(
+        color: AppColors.blacksoft,
+        fontSize: 13.r,
+        fontFamily: 'Almarai',
+      );
+
+  // Smaller hint font inside the fields.
+  TextStyle get _hintStyle => TextStyle(
+        color: AppColors.grey,
+        fontSize: 13.r,
+        fontFamily: 'Almarai',
+      );
+
   /// PIN must be exactly 6 digits (numbers only).
   String? _pinValidator(String? value) {
     final pin = value?.trim() ?? '';
@@ -144,7 +158,7 @@ class _WalletPasswordDialogState extends State<_WalletPasswordDialog> {
               ),
               8.verticalSpace,
               Text(
-                'برجاء إنشاء رقم سري للمحفظة لتأمين رصيدك ونقاطك',
+                'لإستخدامه في الخدمات المباشرة',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.grey,
@@ -159,6 +173,8 @@ class _WalletPasswordDialogState extends State<_WalletPasswordDialog> {
                 labelStyle: _labelStyle,
                 labelGap: 10.h,
                 hint: 'أدخل الرقم السري',
+                textStyle: _inputStyle,
+                hintStyle: _hintStyle,
                 textEditingController: _passwordController,
                 isPassword: true,
                 keyboardType: TextInputType.number,
@@ -174,6 +190,8 @@ class _WalletPasswordDialogState extends State<_WalletPasswordDialog> {
                 labelStyle: _labelStyle,
                 labelGap: 10.h,
                 hint: 'أعد إدخال الرقم السري',
+                textStyle: _inputStyle,
+                hintStyle: _hintStyle,
                 textEditingController: _confirmController,
                 isPassword: true,
                 keyboardType: TextInputType.number,

@@ -26,6 +26,14 @@ class EvexTextFormField extends StatefulWidget {
   /// Lets callers lift the label a bit higher above the field.
   final double? labelGap;
 
+  /// Optional override for the typed-text style (defaults to the shared header
+  /// style). Lets callers use a smaller input font without changing it everywhere.
+  final TextStyle? textStyle;
+
+  /// Optional override for the hint text style (defaults to the shared hint
+  /// style). Lets callers use a smaller hint font without changing it everywhere.
+  final TextStyle? hintStyle;
+
   /// Optional input formatters (e.g. digits-only restriction).
   final List<TextInputFormatter>? inputFormatters;
 
@@ -45,6 +53,8 @@ class EvexTextFormField extends StatefulWidget {
     this.isPassword = false,
     this.labelStyle,
     this.labelGap,
+    this.textStyle,
+    this.hintStyle,
     this.inputFormatters,
   });
 
@@ -115,7 +125,7 @@ class _EvexTextFormFieldState extends State<EvexTextFormField> {
               maxLines: widget.maxlines ?? 1,
               maxLength: widget.maxLength,
 
-              style: AppTextStyles.font16BlackRegularHeader,
+              style: widget.textStyle ?? AppTextStyles.font16BlackRegularHeader,
               validator:
                   widget.validator ??
                   (value) {
@@ -152,7 +162,8 @@ class _EvexTextFormFieldState extends State<EvexTextFormField> {
                         : null),
                 filled: true,
                 hintText: widget.hint,
-                hintStyle: AppTextStyles.font16GreyRegularHint,
+                hintStyle:
+                    widget.hintStyle ?? AppTextStyles.font16GreyRegularHint,
                 fillColor:
                     isError
                         ? AppColors.backgroundColor

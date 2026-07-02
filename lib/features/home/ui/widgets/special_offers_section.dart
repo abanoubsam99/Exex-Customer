@@ -5,8 +5,8 @@ import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
-import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/shimmer_skelton.dart';
+import 'package:evex_user/core/ui/widgets/special_banner_slide.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:flutter/material.dart';
@@ -79,18 +79,13 @@ class SpecialOffersSection extends StatelessWidget {
               );
             }
 
-            // No offers for the user's area → show a consistent empty state
-            // instead of a blank gap under the header.
-            if (state.specialOffers.isEmpty) {
-              return const EmptyListWidget(
-                message: 'لا توجد عروض مميزة متاحة حالياً',
-                icon: Icons.local_offer_outlined,
-              );
-            }
-
+            // The static promo banner always leads the carousel; the backend
+            // offers follow. So even with no offers for the user's area the
+            // section still shows the banner instead of an empty state.
             return CarouselSlider(
-              items: state.specialOffers
-                  .map(
+              items: <Widget>[
+                const SpecialBannerSlide(),
+                ...state.specialOffers.map(
                     (offer) => InkWell(
                       onTap: () => NavigationHelper.pushNamed(
                         Routes.bookingServiceDetailsScreen,
@@ -254,8 +249,8 @@ class SpecialOffersSection extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
-                  .toList(),
+                  ),
+              ],
               options: carouselOptions,
             );
           },
