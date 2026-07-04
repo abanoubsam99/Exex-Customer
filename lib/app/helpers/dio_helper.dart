@@ -74,8 +74,13 @@ class DioHelper {
           handler.next(response);
         },
         onError: (error, handler) {
+          // A request can opt out of the automatic error toast (e.g. a
+          // best-effort lookup where a 404 is expected and handled by the
+          // caller) via Options(extra: {'suppressErrorToast': true}).
+          final suppressToast =
+              error.requestOptions.extra['suppressErrorToast'] == true;
           final message = extractServerMessage(error);
-          if (message != null && message.isNotEmpty) {
+          if (!suppressToast && message != null && message.isNotEmpty) {
             ToastManager.showServerMessage(message);
           }
           // Session expired / not authenticated → drop the stale token and send

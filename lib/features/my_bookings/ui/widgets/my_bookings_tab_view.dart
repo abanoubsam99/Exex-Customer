@@ -107,6 +107,7 @@ class _RequestsTab extends StatelessWidget {
                         reservationId: r.id!,
                         isConfirmed: false,
                         portId: r.portId,
+                        portName: r.portName,
                         serviceId: r.serviceId,
                         occasionId: r.occasionId,
                         governorate: r.governorate,

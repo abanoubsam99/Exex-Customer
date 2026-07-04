@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["REPLACE_WITH_APPLE_TEAM_ID.com.example.evexUser"],
+        "appIDs": ["TYG6HR3KCM.com.example.evexUser"],
         "components": [
           {
             "/": "/port/*",

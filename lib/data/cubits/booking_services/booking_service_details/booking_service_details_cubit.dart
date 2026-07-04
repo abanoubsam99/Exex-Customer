@@ -51,6 +51,13 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         super(BookingServiceDetailsState(
           port: port,
           isEditMode: editArgs != null,
+          // Seed the header title/date/place from the list item right away, so
+          // the screen isn't blank while the port + bill load (and stays filled
+          // for a pending request whose bill 404s).
+          editPortName: editArgs?.portName,
+          editOriginalDate: editArgs?.occasionDate,
+          editOriginalGovernorate: editArgs?.governorate,
+          editOriginalCity: editArgs?.city,
         )) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _ensurePortLoaded();
@@ -331,12 +338,13 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     return null;
   }
 
-  /// When the screen is opened from a special offer or a shared deep link only
-  /// the portId is known (no full [Item]), so the header would have no name,
-  /// rating, description or images. Fetch the port via /api/Ports/Filter?Id=
-  /// and seed it onto the state so it renders like the normal list flow.
+  /// When the screen is opened from a special offer, a shared deep link, or the
+  /// edit flow (حجوزاتي) only the portId is known (no full [Item]), so the header
+  /// would have no name, rating, description or images. Fetch the port via
+  /// /api/Ports/Filter?Id= and seed it onto the state so it renders like the
+  /// normal list flow regardless of the entry point.
   Future<void> _ensurePortLoaded() async {
-    if (state.port != null || editArgs != null) return;
+    if (state.port != null) return;
     final id = _offerPortId;
     if (id == null || id <= 0) return;
     final model = await _portsRepo.getAllPortServices(GetPortsRequest(id: id));

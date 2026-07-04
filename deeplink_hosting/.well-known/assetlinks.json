@@ -5,7 +5,9 @@
       "namespace": "android_app",
       "package_name": "com.evex.evexuser",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_RELEASE_SHA256_FINGERPRINT"
+        "91:16:4E:E4:90:DE:73:25:08:D3:08:00:5D:90:B7:8F:69:2D:22:04:E7:9D:D7:DB:FD:A2:B7:7C:BA:6C:50:DF",
+        "0C:1B:80:09:B6:2F:C0:EC:5C:C4:7D:66:57:48:88:97:68:6E:18:C5:69:88:93:0D:E0:89:98:CD:A0:67:4C:F2",
+        "CA:AA:08:62:F7:94:FE:77:2C:96:C1:65:E7:FB:7C:6C:60:E4:8B:7F"
       ]
     }
   }

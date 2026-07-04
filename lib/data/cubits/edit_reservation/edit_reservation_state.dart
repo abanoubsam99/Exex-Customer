@@ -15,6 +15,10 @@ class EditReservationArgs {
   final bool isConfirmed;
 
   final int? portId;
+
+  /// The reservation's port name from the list item — seeds the header title
+  /// immediately, so it shows even for a pending request (whose bill 404s).
+  final String? portName;
   final int? serviceId;
   final int? occasionId;
   final String? governorate;
@@ -26,6 +30,7 @@ class EditReservationArgs {
     required this.reservationId,
     this.isConfirmed = false,
     this.portId,
+    this.portName,
     this.serviceId,
     this.occasionId,
     this.governorate,

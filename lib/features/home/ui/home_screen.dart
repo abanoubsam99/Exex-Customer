@@ -193,6 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Stack(
                                         children: [
                                           Container(
+                                            height: 200,
                                             width: 1.sw,
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -201,107 +202,100 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(16.r),
-                                              child: Transform.scale(
-                                                scale: 1.1,
-                                                child: const CustomImageHandler(
-                                                  null,
-                                                  fit: BoxFit.cover,
-                                                  alignment: Alignment(
-                                                    0,
-                                                    -0.58,
-                                                  ),
-                                                ),
+                                              child: const CustomImageHandler(
+                                                AppImages.imagesBanner1,
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                                stops: const [
-                                                  0.39,
-                                                  0.75,
-                                                  1.0,
-                                                ],
-                                                colors: [
-                                                  Colors.black.withValues(
-                                                    alpha: 0.65,
-                                                  ),
-                                                  Colors.black.withValues(
-                                                    alpha: 0.3705,
-                                                  ),
-                                                  Colors.black.withValues(
-                                                    alpha: 0,
-                                                  ),
-                                                ],
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(16.r),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 16.r,
-                                              vertical: 8.h,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'عايز تشكل فرحك على مزاجك ؟',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20.r,
-                                                    fontFamily: 'Almarai',
-                                                    fontWeight: FontWeight.w800,
-                                                    letterSpacing: -0.24,
-                                                  ),
-                                                ),
-                                                Flexible(
-                                                  child: Text(
-                                                    'اوعى تترد انك تدينا اقترحاتك وتحدد اللى انت عايزه وتختار براحتك وادينا كل اقترحاتك',
-                                                    textAlign: TextAlign.right,
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      color: const Color(
-                                                        0xFFD9D9D9,
-                                                      ),
-                                                      fontSize: 14.r,
-                                                      fontFamily: 'Almarai',
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      letterSpacing: -0.24,
-                                                    ),
-                                                  ),
-                                                ),
-                                                8.verticalSpace,
-                                                CustomButton(
-                                                  backgroundColor: const Color(
-                                                    0xFFF38B4A,
-                                                  ),
-                                                  fontSize: 14.r,
-                                                  borderRadius: 9.r,
-                                                  height: 30.h,
-                                                  width: 112.w,
-                                                  text: "اقتراح جديد",
-                                                  onTap: () {
-                                                    if (!AuthGuard.requireLogin(
-                                                        context)) {
-                                                      return;
-                                                    }
-                                                    NavigationHelper.pushNamed(
-                                                      Routes.newSuggestionScreen,
-                                                    );
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                          // Container(
+                                          //   decoration: BoxDecoration(
+                                          //     gradient: LinearGradient(
+                                          //       begin: Alignment.topCenter,
+                                          //       end: Alignment.bottomCenter,
+                                          //       stops: const [
+                                          //         0.39,
+                                          //         0.75,
+                                          //         1.0,
+                                          //       ],
+                                          //       colors: [
+                                          //         Colors.black.withValues(
+                                          //           alpha: 0.65,
+                                          //         ),
+                                          //         Colors.black.withValues(
+                                          //           alpha: 0.3705,
+                                          //         ),
+                                          //         Colors.black.withValues(
+                                          //           alpha: 0,
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //     borderRadius:
+                                          //         BorderRadius.circular(16.r),
+                                          //   ),
+                                          // ),
+                                          // Padding(
+                                          //   padding: EdgeInsets.symmetric(
+                                          //     horizontal: 16.r,
+                                          //     vertical: 8.h,
+                                          //   ),
+                                          //   child: Column(
+                                          //     crossAxisAlignment:
+                                          //         CrossAxisAlignment.start,
+                                          //     children: [
+                                          //       Text(
+                                          //         'عايز تشكل فرحك على مزاجك ؟',
+                                          //         textAlign: TextAlign.right,
+                                          //         style: TextStyle(
+                                          //           color: Colors.white,
+                                          //           fontSize: 20.r,
+                                          //           fontFamily: 'Almarai',
+                                          //           fontWeight: FontWeight.w800,
+                                          //           letterSpacing: -0.24,
+                                          //         ),
+                                          //       ),
+                                          //       Flexible(
+                                          //         child: Text(
+                                          //           'اوعى تترد انك تدينا اقترحاتك وتحدد اللى انت عايزه وتختار براحتك وادينا كل اقترحاتك',
+                                          //           textAlign: TextAlign.right,
+                                          //           maxLines: 2,
+                                          //           overflow:
+                                          //               TextOverflow.ellipsis,
+                                          //           style: TextStyle(
+                                          //             color: const Color(
+                                          //               0xFFD9D9D9,
+                                          //             ),
+                                          //             fontSize: 14.r,
+                                          //             fontFamily: 'Almarai',
+                                          //             fontWeight:
+                                          //                 FontWeight.w400,
+                                          //             letterSpacing: -0.24,
+                                          //           ),
+                                          //         ),
+                                          //       ),
+                                          //       8.verticalSpace,
+                                          //       CustomButton(
+                                          //         backgroundColor: const Color(
+                                          //           0xFFF38B4A,
+                                          //         ),
+                                          //         fontSize: 14.r,
+                                          //         borderRadius: 9.r,
+                                          //         height: 30.h,
+                                          //         width: 112.w,
+                                          //         text: "اقتراح جديد",
+                                          //         onTap: () {
+                                          //           if (!AuthGuard.requireLogin(
+                                          //               context)) {
+                                          //             return;
+                                          //           }
+                                          //           NavigationHelper.pushNamed(
+                                          //             Routes.newSuggestionScreen,
+                                          //           );
+                                          //         },
+                                          //       ),
+                                          //     ],
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                       Container(
@@ -317,8 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             16.r,
                                           ),
                                           child: const CustomImageHandler(
-                                            null,
-                                            fit: BoxFit.fill,
+                                            AppImages.imagesBanner2,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
@@ -335,8 +329,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             16.r,
                                           ),
                                           child: const CustomImageHandler(
-                                            null,
-                                            fit: BoxFit.fill,
+                                            AppImages.imagesBanner3,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
@@ -353,8 +347,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             16.r,
                                           ),
                                           child: const CustomImageHandler(
-                                            null,
-                                            fit: BoxFit.fill,
+                                            AppImages.imagesBanner4,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),

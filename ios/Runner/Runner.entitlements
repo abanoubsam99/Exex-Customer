@@ -6,7 +6,7 @@
 	     /.well-known/apple-app-site-association -->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:evex.runasp.net</string>
+		<string>applinks:backend.evexnow.com</string>
 	</array>
 	<!-- Sign in with Apple capability. -->
 	<key>com.apple.developer.applesignin</key>

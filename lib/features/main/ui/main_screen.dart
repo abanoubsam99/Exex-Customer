@@ -99,7 +99,9 @@ class _MainScreenState extends State<MainScreen> {
               child: ClipRRect(
                 // borderRadius: BorderRadius.circular(45 + _kNavBarBlurInflate),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  // Slightly lighter frost than before (was 8) — the blur is
+                  // still clearly there, just a touch softer.
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                   child: const SizedBox.expand(),
                 ),
               ),

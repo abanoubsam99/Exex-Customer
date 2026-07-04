@@ -14,7 +14,7 @@ class AppDeepLink {
   ///   `https://<host>/.well-known/apple-app-site-association` (iOS)
   /// Change this to the final production domain — it has to match the host
   /// declared in AndroidManifest.xml and the iOS Associated Domains.
-  static const String host = 'evex.runasp.net';
+  static const String host = 'backend.evexnow.com';
 
   /// Path prefix for a port: `https://<host>/port/<id>`.
   static const String portPath = 'port';

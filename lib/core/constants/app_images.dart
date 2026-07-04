@@ -159,6 +159,13 @@ class AppImages {
   /// Assets for imagesSpecialBanner
   /// assets/images/specialbannar.png
   static const String imagesSpecialBanner = "assets/images/specialbannar.png";
+
+  /// Home top promo banners (carousel slides).
+  /// assets/images/b1.jpg … b4.jpg
+  static const String imagesBanner1 = "assets/images/b1.jpg";
+  static const String imagesBanner2 = "assets/images/b2.jpg";
+  static const String imagesBanner3 = "assets/images/b3.jpg";
+  static const String imagesBanner4 = "assets/images/b4.jpg";
   /// Assets for imagesDollars
   /// assets/images/dollars.png
   static const String imagesDollars = "assets/images/dollars.png";

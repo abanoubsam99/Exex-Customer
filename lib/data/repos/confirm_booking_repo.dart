@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/general_response.dart';
@@ -168,6 +169,10 @@ class ConfirmBookingRepo {
     try {
       final response = await DioHelper.getData(
         url: '${AppEndpoints.billDetailsByClient}/$id',
+        // A pending request has no bill yet → the endpoint 404s. That's
+        // expected here (the caller falls back to the list item's data), so
+        // don't surface the framework's "Not Found" toast to the user.
+        options: Options(extra: {'suppressErrorToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return ReservationUpdateModel.fromBillJson(

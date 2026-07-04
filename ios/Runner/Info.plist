@@ -69,7 +69,7 @@
 	</array>
 	<!-- google_sign_in: iOS client id + reversed-client-id URL scheme. -->
 	<key>GIDClientID</key>
-	<string>461662438992-2j5be2jf3ad7jcr3s7uquvjspf3pet25.apps.googleusercontent.com</string>
+	<string>588244655147-2cl52q5u5q9u5f5d3tv4nt8spa2r9f5e.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -77,7 +77,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.461662438992-2j5be2jf3ad7jcr3s7uquvjspf3pet25</string>
+				<string>com.googleusercontent.apps.588244655147-2cl52q5u5q9u5f5d3tv4nt8spa2r9f5e</string>
 			</array>
 		</dict>
 	</array>

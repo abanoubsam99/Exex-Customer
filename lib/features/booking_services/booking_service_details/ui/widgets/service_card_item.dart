@@ -114,18 +114,18 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         top: 4.h,
                         left: 4.w,
                         child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 4.h),
                           decoration: BoxDecoration(
                             color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(10.r),
                           ),
                           child: Text(
                             '$_discountPercent%',
                             textDirection: TextDirection.ltr,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 11.r,
+                              fontSize: 15.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w700,
                               height: 1.3,

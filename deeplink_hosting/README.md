@@ -1,6 +1,6 @@
 # EVEX Deep Links — Hosting & Backend Checklist
 
-Shareable link shape: `https://evex.runasp.net/port/<portId>`
+Shareable link shape: `https://backend.evexnow.com/port/<portId>`
 
 - App installed → the OS opens the app on the port details screen.
 - App not installed → the browser opens `port.html`, which redirects to the
@@ -45,9 +45,9 @@ In `port.html`, set `IOS_APP_ID` to the App Store numeric id once published.
 - **Android** applicationId is `com.evex.evexuser` (already real).
 
 ## 4) iOS Xcode step (on a Mac)
-`Runner.entitlements` already declares `applinks:evex.runasp.net`. In Xcode:
+`Runner.entitlements` already declares `applinks:backend.evexnow.com`. In Xcode:
 *Runner target → Signing & Capabilities → + Capability → Associated Domains*,
-confirm `applinks:evex.runasp.net` is listed, and set the Team / signing.
+confirm `applinks:backend.evexnow.com` is listed, and set the Team / signing.
 
 ---
 
@@ -58,7 +58,7 @@ confirm `applinks:evex.runasp.net` is listed, and set the Team / signing.
 - Validators: Google `Statement List Generator and Tester`, Apple AASA validator.
 
 ## Changing the domain
-If the production domain differs from `evex.runasp.net`, update all of:
+If the production domain differs from `backend.evexnow.com`, update all of:
 `lib/core/constants/app_deep_link.dart` (`host`),
 `android/app/src/main/AndroidManifest.xml` (intent-filter `android:host`),
 `ios/Runner/Runner.entitlements` (`applinks:`).

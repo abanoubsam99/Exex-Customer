@@ -170,6 +170,7 @@ class OrderDetailsScreen extends StatelessWidget {
                                   ReservationStatusHelper.isConfirmed(
                                       order.status),
                                 portId: order.portId,
+                                portName: order.hallName,
                               ),
                             );
                           },
