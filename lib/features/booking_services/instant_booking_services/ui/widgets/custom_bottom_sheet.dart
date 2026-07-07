@@ -22,30 +22,24 @@ class CustomBottomSheet extends StatefulWidget {
 }
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
-  bool isAvilableOnly = true;
-  double myValue = 5;
-  // Starts at the max so an untouched slider means "no price cap".
-  double _currentValue = 500000;
+  // The draft filter values (location, occasion, price, count, availability)
+  // now live in the screen-scoped PortsFilterCubit so they persist across
+  // sheet re-opens. This widget only keeps the transient text-field plumbing.
   final double _min = 0;
   final double _max = 500000;
-  int count = 0;
-  TextEditingController countController = TextEditingController();
+  final TextEditingController countController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   void _validate() {
     final value = int.tryParse(countController.text);
     if (value == null || value < 1) {
-      countController.clear();
+      context.read<PortsFilterCubit>().setCount(0);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    // Guests can't restrict to "الخدمات المتاحه فقط" — default them to the
-    // unrestricted "جميع الخدمات" so they browse everything.
-    final isLoggedIn = context.read<UserService>().currentUser != null;
-    if (!isLoggedIn) isAvilableOnly = false;
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         _validate();
@@ -63,7 +57,17 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           opacity: isLoggedIn ? 1 : 0.5,
           child: AbsorbPointer(absorbing: !isLoggedIn, child: child),
         );
-    return Container(
+    return BlocBuilder<PortsFilterCubit, PortsFilterState>(
+      builder: (context, fState) {
+        final filterCubit = context.read<PortsFilterCubit>();
+        // Keep the count text field in sync with the persisted attendee count.
+        final countText = fState.count > 0 ? fState.count.toString() : '';
+        if (countController.text != countText) {
+          countController.text = countText;
+          countController.selection =
+              TextSelection.collapsed(offset: countText.length);
+        }
+        return Container(
       width: 1.sw,
       padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 21.w),
       decoration: BoxDecoration(
@@ -167,12 +171,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               onChanged: (value) {},
             ),
             16.verticalSpace,
-            BlocBuilder<PortsFilterCubit, PortsFilterState>(
-              builder: (context, fState) {
-                final filterCubit = context.read<PortsFilterCubit>();
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                     Row(
                       children: [
                         Expanded(
@@ -236,9 +237,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                         },
                       ),
                     ),
-                  ],
-                );
-              },
+              ],
             ),
             18.verticalSpace,
             guestLock(
@@ -259,7 +258,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
                 Spacer(),
                 Switch(
-                  value: isAvilableOnly,
+                  value: fState.availableOnly,
                   activeTrackColor: AppColors.primaryColor,
                   inactiveTrackColor: AppColors.dividerGrey,
                   inactiveThumbColor: Colors.white,
@@ -279,11 +278,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     return Colors.transparent;
                   }),
                   onChanged: isLoggedIn
-                      ? (value) {
-                          setState(() {
-                            isAvilableOnly = value;
-                          });
-                        }
+                      ? (value) => filterCubit.setAvailableOnly(value)
                       : null,
                 ),
               ],
@@ -303,7 +298,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 ),
                 Spacer(),
                 Switch(
-                  value: !isAvilableOnly,
+                  value: !fState.availableOnly,
                   activeTrackColor: AppColors.primaryColor,
                   inactiveTrackColor: AppColors.dividerGrey,
                   inactiveThumbColor: Colors.white,
@@ -323,11 +318,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     return Colors.transparent;
                   }),
                   onChanged: isLoggedIn
-                      ? (value) {
-                          setState(() {
-                            isAvilableOnly = !value;
-                          });
-                        }
+                      ? (value) => filterCubit.setAvailableOnly(!value)
                       : null,
                 ),
               ],
@@ -424,25 +415,20 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 trackHeight: 5.0.r,
                 thumbShape: CustomThumbShape(
                   thumbRadius: 12.0,
-                  label: '${(_currentValue / 1000).round()}k',
+                  label: '${(fState.price / 1000).round()}k',
                 ),
                 // overlayColor: AppColors.primaryColor.withOpacity(0.2),
                 // overlayShape: RoundSliderOverlayShape(overlayRadius: 20.0),
               ),
               child: Slider(
-                value: _currentValue,
+                value: fState.price,
                 min: _min,
                 max: _max,
                 padding: EdgeInsets.symmetric(horizontal: 0),
 
                 thumbColor: Colors.white,
-                onChanged: isLoggedIn
-                    ? (value) {
-                        setState(() {
-                          _currentValue = value;
-                        });
-                      }
-                    : null,
+                onChanged:
+                    isLoggedIn ? (value) => filterCubit.setPrice(value) : null,
               ),
             ),
                 ],
@@ -458,9 +444,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               controller: countController,
               focusNode: _focusNode,
               onChanged: (value) {
-                setState(() {
-                  count = int.parse(value == '' ? "0" : value);
-                });
+                filterCubit.setCount(int.tryParse(value == '' ? '0' : value) ?? 0);
                 countController.selection = TextSelection.fromPosition(
                   TextPosition(offset: countController.text.length),
                 );
@@ -496,18 +480,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: GestureDetector(
-                    onTap: () {
-                      count = count + 1;
-
-                      countController.text = count.toString();
-                      setState(() {});
-                    },
-                    onLongPress: () {
-                      count = count + 5;
-
-                      countController.text = count.toString();
-                      setState(() {});
-                    },
+                    onTap: () => filterCubit.setCount(fState.count + 1),
+                    onLongPress: () => filterCubit.setCount(fState.count + 5),
                     child: CircleAvatar(
                       radius: 16.r,
                       backgroundColor: AppColors.secondaryColor,
@@ -519,21 +493,15 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: GestureDetector(
                     onTap: () {
-                      if (count >= 1) {
-                        count = count - 1;
-                        countController.text = count.toString();
-                        setState(() {});
+                      if (fState.count >= 1) {
+                        filterCubit.setCount(fState.count - 1);
                       }
                     },
                     onLongPress: () {
-                      if (count >= 5) {
-                        count = count - 5;
-                        countController.text = count.toString();
-                        setState(() {});
-                      } else if (count >= 1) {
-                        count = count - 1;
-                        countController.text = count.toString();
-                        setState(() {});
+                      if (fState.count >= 5) {
+                        filterCubit.setCount(fState.count - 5);
+                      } else if (fState.count >= 1) {
+                        filterCubit.setCount(fState.count - 1);
                       }
                     },
                     child: CircleAvatar(
@@ -591,14 +559,14 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   child: CustomButton(
                     text: 'تأكيد',
                     onTap: () {
-                      final f = context.read<PortsFilterCubit>().state;
-                      final atMax = _currentValue.round() >= _max.round();
+                      final atMax = fState.price.round() >= _max.round();
                       context.read<InstantBookingCubit>().applyFilters(
-                            gov: f.selectedGovernorate?.governorateNameAr,
-                            city: f.selectedCity?.cityNameAr,
-                            occasionId: f.selectedOccasionId,
-                            numberAllowed: count > 0 ? count : null,
-                            maxPrice: atMax ? null : _currentValue.round(),
+                            gov: fState.selectedGovernorate?.governorateNameAr,
+                            city: fState.selectedCity?.cityNameAr,
+                            occasionId: fState.selectedOccasionId,
+                            numberAllowed:
+                                fState.count > 0 ? fState.count : null,
+                            maxPrice: atMax ? null : fState.price.round(),
                           );
                       Navigator.pop(context);
                     },
@@ -611,13 +579,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     // backgroundColor: Colors.transparent,
                     text: 'إعادة التعيين',
                     onTap: () {
-                      context.read<PortsFilterCubit>().clearSelections();
-                      setState(() {
-                        _currentValue = _max;
-                        count = 0;
-                        countController.clear();
-                        isAvilableOnly = true;
-                      });
+                      filterCubit.clearSelections();
+                      countController.clear();
                       context.read<InstantBookingCubit>().resetFilters();
                       Navigator.pop(context);
                     },
@@ -629,6 +592,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           ],
         ),
       ),
+        );
+      },
     );
   }
 }

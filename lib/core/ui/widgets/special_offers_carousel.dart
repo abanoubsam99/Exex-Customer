@@ -6,6 +6,7 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:flutter/material.dart';
@@ -244,42 +245,53 @@ class _PromoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      children: [
-        Container(
-          width: 315.w,
-          height: 144.h,
-          decoration: ShapeDecoration(
-            color: AppColors.primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.r),
+    // Tapping the pinned in-house ad opens the "انضم الينا" (join us) screen;
+    // guests are prompted to sign in first.
+    return GestureDetector(
+      onTap: () {
+        if (!AuthGuard.requireLogin(context)) return;
+        NavigationHelper.pushNamed(Routes.requestToJoinScreen);
+      },
+      child: Stack(
+        alignment: Alignment.topLeft,
+        children: [
+          Container(
+            width: 315.w,
+            height: 144.h,
+            decoration: ShapeDecoration(
+              color: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
             ),
           ),
-        ),
-        CustomPaint(
-          size: Size(305.w, 144.h),
-          painter: _RPSCustomPainter(),
-        ),
-        ClipPath(
-          clipper: _RPSClipper(),
-          child: CustomImageHandler(
-            AppImages.imagesSpecialBanner,
-            smartFill: true,
-            height: 159.h,
-            width: 292.w,
+          CustomPaint(
+            size: Size(305.w, 144.h),
+            painter: _RPSCustomPainter(),
           ),
-        ),
-        Positioned(
-          left: 4.w,
-          bottom: 10.h,
-          child: CustomImageHandler(
-            AppImages.iconsSpecialOffers,
-            fit: BoxFit.contain,
-            width: 78.r,
+          ClipPath(
+            clipper: _RPSClipper(),
+            child: CustomImageHandler(
+              AppImages.imagesSpecialBanner,
+              // Pinned in-house ad: stretch to fill the clipped area
+              // (BoxFit.fill) so the fixed banner covers it fully. API offers
+              // keep smartFill.
+              fit: BoxFit.fill,
+              height: 159.h,
+              width: 292.w,
+            ),
           ),
-        ),
-      ],
+          Positioned(
+            left: 4.w,
+            bottom: 10.h,
+            child: CustomImageHandler(
+              AppImages.iconsSpecialOffers,
+              fit: BoxFit.contain,
+              width: 78.r,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

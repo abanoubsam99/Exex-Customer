@@ -51,7 +51,7 @@ class VendorPoliciesSection extends StatelessWidget {
         ),
         8.verticalSpace,
         Text(
-          'جميعها مطروحه ومشروطه من قبل مقدم الخدمة أو التاجر نفسه',
+          'جميعها موضوعه من التاجر نفسه , وتخضع لها evex كما هي ..',
           textAlign: TextAlign.right,
           style: TextStyle(
             color: AppColors.grey,
@@ -79,64 +79,55 @@ class VendorPoliciesSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── التعديل في الخدمات ──
-              _row(
-                'فترة السماح بالتعديل في الخدمات',
-                _num(policy?.periodEditingServices),
-                'يوم قبل المناسبة',
-                boldTitle: true,
+              // ── تعديل الحجز في الخدمات والإضافات ──
+              _sectionTitle('تكلفة تعديل الحجز  (في الخدمات والإضافات)'),
+              8.verticalSpace,
+              _periodRow(
+                prefix: 'التعديل من الان حتى',
+                period: policy?.periodEditingServices,
+                suffix: 'ايام قبل تاريخ المناسبة',
+                value: _num(policy?.costOfModifyingServicesBeforePeriod),
+                unit: 'جنيه',
               ),
               4.verticalSpace,
               _row(
-                'تكلفة التعديل في فترة السماح / لكل مرة',
-                _num(policy?.costOfModifyingServicesBeforePeriod),
-                'جنيه',
-              ),
-              4.verticalSpace,
-              _row(
-                'تكلفة التعديل بعد فترة السماح / لكل مرة',
+                'التعديل بعد ذلك',
                 _num(policy?.costOfModifyingServicesAfterPeriod),
                 'جنيه',
               ),
               _divider(),
-              // ── التعديل في التاريخ والمكان ──
-              _row(
-                'فترة السماح بالتعديل في التاريخ والمكان',
-                _num(policy?.periodEditingDateAndLocaltion),
-                'يوم قبل المناسبة',
-                boldTitle: true,
+              // ── تعديل الحجز في تاريخ ومكان المناسبة ──
+              _sectionTitle('تكلفة تعديل الحجز  (في تاريخ ومكان المناسبة)'),
+              8.verticalSpace,
+              _periodRow(
+                prefix: 'التعديل من الان حتى',
+                period: policy?.periodEditingDateAndLocaltion,
+                suffix: 'ايام قبل تاريخ المناسبة',
+                value: _num(policy?.costOfModifyingDateAndLocationBeforePeriod),
+                unit: 'جنيه',
               ),
               4.verticalSpace,
               _row(
-                'تكلفة التعديل في فترة السماح / لكل مرة',
-                _num(policy?.costOfModifyingDateAndLocationBeforePeriod),
-                'جنيه',
-              ),
-              4.verticalSpace,
-              _row(
-                'تكلفة التعديل بعد فترة السماح / لكل مرة',
+                'التعديل بعد ذلك',
                 _num(policy?.costOfModifyingDateAndLocationAfterPeriod),
                 'جنيه',
               ),
               _divider(),
               // ── إلغاء الحجز ──
-              _row(
-                'فترة السماح بإلغاء الحجز',
-                _num(policy?.cancellationPeriod),
-                'يوم قبل المناسبة',
-                boldTitle: true,
+              _sectionTitle('تكلفة إلغاء الحجز'),
+              8.verticalSpace,
+              _periodRow(
+                prefix: 'الإلغاء من الان حتى',
+                period: policy?.cancellationPeriod,
+                suffix: 'ايام قبل المناسبة',
+                value: '${_num(policy?.costOfCancellationBeforePeriod)}%',
+                unit: 'من العربون',
               ),
               4.verticalSpace,
               _row(
-                'تكلفة الإلغاء في فترة السماح',
-                '${_num(policy?.costOfCancellationBeforePeriod)}%',
-                'من مقدم الحجز',
-              ),
-              4.verticalSpace,
-              _row(
-                'تكلفة الإلغاء بعد فترة السماح',
+                'الإلغاء بعد ذلك',
                 '${_num(policy?.costOfCancellationAfterPeriod)}%',
-                'من مقدم الحجز',
+                'من العربون',
               ),
               _divider(),
               // ── التأمين ──
@@ -147,7 +138,7 @@ class VendorPoliciesSection extends StatelessWidget {
                 boldTitle: true,
               ),
               Text(
-                'يلتزم التاجر برد مبلغ التأمين كاملاً للعميل\nبعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من قبل العميل',
+                'يلتزم التاجر برد مبلغ التأمين كاملاً للعميل من خلال evex\nبعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من العميل',
                 textAlign: TextAlign.right,
                 style: TextStyle(
                   color: AppColors.grey,
@@ -228,6 +219,21 @@ class VendorPoliciesSection extends StatelessWidget {
     );
   }
 
+  /// عنوان قسم عريض بدون قيمة (مثل "تكلفة تعديل الحجز (في الخدمات والإضافات)").
+  Widget _sectionTitle(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.right,
+      style: TextStyle(
+        color: AppColors.blacksoft,
+        fontSize: 12.r,
+        fontFamily: 'Almarai',
+        fontWeight: FontWeight.w700,
+        height: 1.50,
+      ),
+    );
+  }
+
   /// صف "عنوان ... قيمة + وحدة". في RTL العنوان على اليمين والقيمة على الشمال.
   Widget _row(String title, String value, String unit, {bool boldTitle = false}) {
     return Row(
@@ -247,37 +253,87 @@ class VendorPoliciesSection extends StatelessWidget {
           ),
         ),
         8.horizontalSpace,
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: value,
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 12.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w400,
-                  height: 1.50,
+        _valueUnit(value, unit),
+      ],
+    );
+  }
+
+  /// صف تعديل/إلغاء بعنوان فيه فترة السماح مضمّنة والرقم مميّز باللون البرتقالي
+  /// (مثل "التعديل من الان حتى 10 ايام قبل تاريخ المناسبة").
+  Widget _periodRow({
+    required String prefix,
+    required num? period,
+    required String suffix,
+    required String value,
+    required String unit,
+  }) {
+    final greyStyle = TextStyle(
+      color: AppColors.grey,
+      fontSize: 11.r,
+      fontFamily: 'Almarai',
+      fontWeight: FontWeight.w300,
+      height: 1.50,
+    );
+    return Row(
+      children: [
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: '$prefix ', style: greyStyle),
+                TextSpan(
+                  text: _num(period),
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 11.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    height: 1.50,
+                  ),
                 ),
-              ),
-              TextSpan(
-                text: ' ',
-                style: TextStyle(fontSize: 11.r, fontFamily: 'Almarai'),
-              ),
-              TextSpan(
-                text: unit,
-                style: TextStyle(
-                  color: AppColors.unitGrey,
-                  fontSize: 11.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w400,
-                  height: 1.50,
-                ),
-              ),
-            ],
+                TextSpan(text: ' $suffix', style: greyStyle),
+              ],
+            ),
+            textAlign: TextAlign.right,
           ),
         ),
+        8.horizontalSpace,
+        _valueUnit(value, unit),
       ],
+    );
+  }
+
+  /// القيمة على الشمال: الرقم برتقالي والوحدة رمادية.
+  Widget _valueUnit(String value, String unit) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: value,
+            style: TextStyle(
+              color: AppColors.primaryColor,
+              fontSize: 12.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+              height: 1.50,
+            ),
+          ),
+          TextSpan(
+            text: ' ',
+            style: TextStyle(fontSize: 11.r, fontFamily: 'Almarai'),
+          ),
+          TextSpan(
+            text: unit,
+            style: TextStyle(
+              color: AppColors.unitGrey,
+              fontSize: 11.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+              height: 1.50,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

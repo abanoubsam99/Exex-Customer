@@ -15,6 +15,15 @@ class PortsFilterState {
   final City? selectedCity;
   final int? selectedOccasionId;
 
+  /// Attendee count (حدد عدد الحضور); 0 means "not set".
+  final int count;
+
+  /// Price-slider position (حدد سعر معين); the max value means "no price cap".
+  final double price;
+
+  /// "الخدمات المتاحه فقط" toggle (vs. "جميع الخدمات").
+  final bool availableOnly;
+
   const PortsFilterState({
     this.isLoading = false,
     this.isLoadingCities = false,
@@ -24,6 +33,9 @@ class PortsFilterState {
     this.selectedGovernorate,
     this.selectedCity,
     this.selectedOccasionId,
+    this.count = 0,
+    this.price = 500000,
+    this.availableOnly = true,
   });
 
   PortsFilterState copyWith({
@@ -35,6 +47,9 @@ class PortsFilterState {
     Object? selectedGovernorate = _unset,
     Object? selectedCity = _unset,
     Object? selectedOccasionId = _unset,
+    int? count,
+    double? price,
+    bool? availableOnly,
   }) {
     return PortsFilterState(
       isLoading: isLoading ?? this.isLoading,
@@ -50,6 +65,9 @@ class PortsFilterState {
       selectedOccasionId: selectedOccasionId == _unset
           ? this.selectedOccasionId
           : selectedOccasionId as int?,
+      count: count ?? this.count,
+      price: price ?? this.price,
+      availableOnly: availableOnly ?? this.availableOnly,
     );
   }
 }

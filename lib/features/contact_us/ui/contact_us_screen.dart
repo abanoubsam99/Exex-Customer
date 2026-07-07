@@ -39,7 +39,11 @@ class ContactUsScreen extends StatelessWidget {
                       const CustomBackButtonWidget(),
                       12.horizontalSpace,
                       Text('اتصل بنا',
-                          style: AppTextStyles.font14BlacksoftRegular),
+                          style: AppTextStyles.font14BlacksoftRegular.copyWith(
+                            fontWeight: FontWeight.bold,
+                              fontSize: 16.r
+
+                          )),
                     ],
                   ),
                   12.verticalSpace,
@@ -117,7 +121,10 @@ class _SectionHeader extends StatelessWidget {
       children: [
         const _OrangeBar(),
         8.horizontalSpace,
-        Text(title, style: AppTextStyles.font14BlacksoftRegular),
+        Text(title, style: AppTextStyles.font14BlacksoftRegular.copyWith(
+            fontWeight: FontWeight.bold,
+          fontSize: 16.r
+        )),
       ],
     );
   }

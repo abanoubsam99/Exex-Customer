@@ -22,7 +22,7 @@ class WalletRepo {
   /// body param). Returns true on success.
   Future<bool> changeWalletPassword(String password) async {
     try {
-      final response = await DioHelper.dio.get(
+      final response = await DioHelper.dio.put(
         AppEndpoints.changeWalletPassword,
         data: {'password': password},
       );

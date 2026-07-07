@@ -1,7 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
@@ -15,8 +14,6 @@ import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_b
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
-import 'package:evex_user/data/repos/confirm_booking_repo.dart';
-import 'package:evex_user/data/repos/location_repo.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -110,13 +107,10 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                   BlocProvider.value(
                                     value: context.read<InstantBookingCubit>(),
                                   ),
-                                  BlocProvider(
-                                    create: (_) => PortsFilterCubit(
-                                      context.read<LocationRepo>(),
-                                      context.read<ConfirmBookingRepo>(),
-                                      context.read<LocationService>(),
-                                      context.read<UserService>(),
-                                    ),
+                                  // Reuse the screen-scoped cubit so the sheet
+                                  // reopens with the user's last filter draft.
+                                  BlocProvider.value(
+                                    value: context.read<PortsFilterCubit>(),
                                   ),
                                 ],
                                 child: const CustomBottomSheet(),

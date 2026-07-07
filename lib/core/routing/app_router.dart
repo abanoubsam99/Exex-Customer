@@ -5,6 +5,7 @@ import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
+import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/repos/add_client_repo.dart';
 import 'package:evex_user/data/repos/add_phone_repo.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -273,13 +274,27 @@ class AppRouter {
 
       case Routes.instantBookingServicesScreen:
         return _page(
-          BlocProvider(
-            create: (context) => InstantBookingCubit(
-              context.read<BookingServicesPortsRepo>(),
-              context.read<HomeRepo>(),
-              context.read<HomeCubit>(),
-              context.read<LocationService>(),
-            )..loadPorts(),
+          MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => InstantBookingCubit(
+                  context.read<BookingServicesPortsRepo>(),
+                  context.read<HomeRepo>(),
+                  context.read<HomeCubit>(),
+                  context.read<LocationService>(),
+                )..loadPorts(),
+              ),
+              // Screen-scoped so the "تصفيه" sheet keeps the user's draft filter
+              // selections across re-opens instead of resetting each time.
+              BlocProvider(
+                create: (context) => PortsFilterCubit(
+                  context.read<LocationRepo>(),
+                  context.read<ConfirmBookingRepo>(),
+                  context.read<LocationService>(),
+                  context.read<UserService>(),
+                ),
+              ),
+            ],
             child: const InstantBookingServicesScreen(),
           ),
           settings,
@@ -407,9 +422,10 @@ class AppRouter {
       case Routes.confirmBookingScreen:
         return _page(
           BlocProvider(
-            create: (context) =>
-                ConfirmBookingCubit(context.read<ConfirmBookingRepo>())
-                  ..init(
+            create: (context) => ConfirmBookingCubit(
+              context.read<ConfirmBookingRepo>(),
+              context.read<UserService>(),
+            )..init(
                     args: settings.arguments is ConfirmBookingArgs
                         ? settings.arguments as ConfirmBookingArgs
                         : null,

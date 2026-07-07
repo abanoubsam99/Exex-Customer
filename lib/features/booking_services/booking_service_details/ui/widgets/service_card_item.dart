@@ -115,7 +115,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         left: 4.w,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 4.h),
+                              horizontal: 5.w, vertical: 0.h),
                           decoration: BoxDecoration(
                             color: AppColors.primaryColor,
                             borderRadius: BorderRadius.circular(10.r),
@@ -125,7 +125,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                             textDirection: TextDirection.ltr,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 15.r,
+                              fontSize: 14.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w700,
                               height: 1.3,
@@ -183,7 +183,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppColors.blacksoft,
-                  fontSize: 14.r,
+                  fontSize: 13.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w700,
                   height: 1.50,

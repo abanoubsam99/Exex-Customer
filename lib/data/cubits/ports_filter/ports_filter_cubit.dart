@@ -27,7 +27,10 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
   }
 
   Future<void> load() async {
-    emit(state.copyWith(isLoading: true));
+    // Guests can't restrict to "الخدمات المتاحه فقط" — default them to the
+    // unrestricted "جميع الخدمات" so they browse everything.
+    final isLoggedIn = _userService.currentUser != null;
+    emit(state.copyWith(isLoading: true, availableOnly: isLoggedIn));
     final govsF = _locationRepo.getGovernorates();
     final occasionsF = _bookingRepo.getOccasions();
     final govs = await govsF ?? const [];
@@ -107,9 +110,18 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
 
   void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
 
+  void setCount(int value) => emit(state.copyWith(count: value));
+
+  void setPrice(double value) => emit(state.copyWith(price: value));
+
+  void setAvailableOnly(bool value) =>
+      emit(state.copyWith(availableOnly: value));
+
   /// Clears the draft selections (keeps the loaded lists so they don't reload).
+  /// Guests keep the unrestricted "جميع الخدمات" default.
   void clearSelections() => emit(PortsFilterState(
         governorates: state.governorates,
         occasions: state.occasions,
+        availableOnly: _userService.currentUser != null,
       ));
 }

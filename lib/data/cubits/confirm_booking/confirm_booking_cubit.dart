@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/payment_gateway_result.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -11,8 +12,10 @@ import 'confirm_booking_state.dart';
 
 class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
   final ConfirmBookingRepo _repo;
+  final UserService _userService;
 
-  ConfirmBookingCubit(this._repo) : super(const ConfirmBookingState());
+  ConfirmBookingCubit(this._repo, this._userService)
+      : super(const ConfirmBookingState());
 
   // Hidden per request — card payment fields (kept for when the gateway is wired).
   final cardNameController = TextEditingController();
@@ -75,6 +78,16 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
     });
   }
 
+  /// True when the current user has a full three-part name saved in their
+  /// profile. Payment can't proceed without it — the reservation is issued
+  /// under the account holder's legal (triple) name.
+  bool _hasFullName() {
+    final name = _userService.currentUser?.userViewModel?.name ?? '';
+    final parts =
+        name.split(' ').where((e) => e.trim().isNotEmpty).toList();
+    return parts.length >= 3;
+  }
+
   void selectMethod(BookingPaymentMethod method) =>
       emit(state.copyWith(selectedMethod: method));
 
@@ -90,6 +103,10 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
   /// payment-gateway URL for the caller to open in a WebView. Returns null when
   /// the terms aren't accepted, the ids are invalid, or the request fails.
   Future<PaymentGatewayResult?> confirmCardPayment() async {
+    if (!_hasFullName()) {
+      ToastManager.showError('برجاء كتابة الاسم ثلاثي في البروفايل');
+      return null;
+    }
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return null;
@@ -113,6 +130,10 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
   }
 
   Future<void> confirmPayment() async {
+    if (!_hasFullName()) {
+      ToastManager.showError('برجاء كتابة الاسم ثلاثي في البروفايل');
+      return;
+    }
     if (!state.termsAccepted) {
       ToastManager.showError('برجاء الموافقة على الشروط والسياسات أولاً');
       return;
