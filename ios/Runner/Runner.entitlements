@@ -6,9 +6,12 @@
 	<array>
 		<string>Default</string>
 	</array>
+<<<<<<< HEAD
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:backend.evexnow.com</string>
 	</array>
+=======
+>>>>>>> 6b40f4b (ios)
 </dict>
 </plist>
