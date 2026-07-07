@@ -1,3 +1,14 @@
+// ─────────────────────────────────────────────────────────────────────────
+// Google sign-in service — temporarily disabled for store review.
+// Kept fully implemented (commented out) to restore later. Re-enabling steps:
+//   1. Uncomment `google_sign_in` in pubspec.yaml + run `flutter pub get`.
+//   2. Uncomment this file.
+//   3. Re-wire GoogleAuthService in LoginCubit + app_router.dart.
+//   4. Restore the Google button in all_scoial_media_widget.dart.
+//   5. Restore the iOS Google keys (GIDClientID + URL scheme) in Info.plist.
+// ─────────────────────────────────────────────────────────────────────────
+
+/*
 import 'dart:io';
 
 import 'package:evex_user/core/constants/google_auth_constants.dart';
@@ -55,3 +66,4 @@ class GoogleAuthService {
     } catch (_) {}
   }
 }
+*/

@@ -1,3 +1,14 @@
+// ─────────────────────────────────────────────────────────────────────────
+// Apple sign-in service — temporarily disabled for store review.
+// Kept fully implemented (commented out) to restore later. Re-enabling steps:
+//   1. Uncomment `sign_in_with_apple` in pubspec.yaml + run `flutter pub get`.
+//   2. Uncomment this file.
+//   3. Re-wire AppleAuthService in LoginCubit + app_router.dart.
+//   4. Restore the Apple button in all_scoial_media_widget.dart.
+//   5. Restore `com.apple.developer.applesignin` in Runner.entitlements.
+// ─────────────────────────────────────────────────────────────────────────
+
+/*
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 /// Result of an Apple sign-in: the identityToken (verified by the backend)
@@ -33,3 +44,4 @@ class AppleAuthService {
     }
   }
 }
+*/
