@@ -1,5 +1,7 @@
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_card_item.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_details_bottom_sheet.dart';
@@ -95,7 +97,12 @@ class ServicesSection extends StatelessWidget {
           ],
         ),
         10.verticalSpace,
-        BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+        // Rebuild on a new availability response too: it decides which services
+        // are still bookable on the picked date (backend `unreservedServices`).
+        BlocBuilder<HomeCubit, HomeState>(
+          buildWhen: (p, c) => p.availability != c.availability,
+          builder: (context, _) =>
+              BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();
             if (state.services.isEmpty) {
@@ -117,24 +124,39 @@ class ServicesSection extends StatelessWidget {
                 separatorBuilder: (context, index) => 16.horizontalSpace,
                 itemBuilder: (context, index) {
                   final service = state.services[index];
+                  // Fall back to the port's gallery when the vendor didn't add
+                  // any image for the service; the card itself shows the EVEX
+                  // logo only when there's no port image either.
+                  final serviceImages = service.serviceImages ?? const [];
+                  final images = serviceImages.isNotEmpty
+                      ? serviceImages
+                      : state.portImages;
+                  final isSelected = state.selectedService?.id == service.id;
                   return ServiceCardItem(
-                    images: service.serviceImages ?? [],
+                    images: images,
                     title: service.name ?? '',
                     subtitle: service.details ?? '',
                     price: service.priceAfterDiscount ?? 0,
                     priceBeforeDiscount: service.priceBeforDiscount,
-                    isSelected: state.selectedService?.id == service.id,
+                    isSelected: isSelected,
+                    isAvailable: cubit.isServiceAvailable(service.id),
                     onSelectionChanged: () {
-                      // اختيار الخدمة (بيجيب بياناتها للحساب) + فتح bottom sheet
-                      // بتفاصيلها (صور/اسم/سعر/وصف).
+                      // الضغطة الأولى بتختار الخدمة بس (بتجيب بياناتها للحساب).
+                      // الضغطة التانية على نفس الخدمة المختارة هي اللي بتفتح
+                      // الـ bottom sheet بتفاصيلها (صور/اسم/سعر/وصف).
+                      // خدمة غير متاحة في التاريخ المختار بتتمنع هنا (بتوست).
+                      if (isSelected) {
+                        ServiceDetailsBottomSheet.show(context, service);
+                        return;
+                      }
                       cubit.selectService(service);
-                      ServiceDetailsBottomSheet.show(context, service);
                     },
                   );
                 },
               ),
             );
           },
+        ),
         ),
       ],
     );

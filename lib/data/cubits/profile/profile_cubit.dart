@@ -177,6 +177,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       await _refreshUserData();
       emit(state.copyWith(isLoading: false, updateSuccess: true));
       ToastManager.showSuccess('تم التعديل بنجاح');
+      // Go back to the previous screen after a successful save (the success
+      // toast lives in the navigator overlay, so it stays visible).
+      NavigationHelper.pop();
     } else {
       emit(state.copyWith(isLoading: false, errorMessage: 'حدث خطأ'));
     }

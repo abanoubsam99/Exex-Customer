@@ -59,6 +59,7 @@ class AppEndpoints {
   static const myReservations = "/api/Reservations/GetMyReservations";
   static const myRequestReservations = "/api/Reservations/GetMyRequestReservations";
   static const billDetailsByClient = "/api/Reservations/GetBillDetailsByClient"; // + /{id}
+  static const reservationsDetailsByClient = "/api/Reservations/GetReservationsDetailsByClient"; // + /{id}
   static const checkReservationAvailability = "/api/Reservations/CheckReservationAvailabilityByClient"; // + /{portId}?date=
   static const addClientReservation = "/api/Reservations/AddClientReservation";
   static const confirmClientReservation = "/api/Reservations/ConfirmClientReservation";
@@ -71,6 +72,7 @@ class AppEndpoints {
   static const updateReservationRequest = "/api/Reservations/UpdateReservationRequest"; // + /{id}
   static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
   static const cancelReservation = "/api/Reservations/CancelReservationByClient"; // + /{id}
+  static const deleteReservationRequest = "/api/Reservations/DeleteReservationRequest"; // + /{id}
   static const downloadInfo = "/api/Reservations/DownloadInfo"; // ?id=
   // The port's working area — the governorate/city names it serves. Used to
   // restrict the occasion-location picker to what the port actually covers.

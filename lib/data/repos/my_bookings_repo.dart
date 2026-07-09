@@ -25,12 +25,12 @@ class MyBookingsRepo {
     }
   }
 
-  /// PUT /api/Reservations/CancelReservationByClient/{id} — cancels (deletes)
-  /// a pending reservation request from the current-requests tab.
+  /// DELETE /api/Reservations/DeleteReservationRequest/{id} — deletes a pending
+  /// reservation request from the current-requests tab.
   Future<bool> cancelRequest(int id) async {
     try {
-      final response = await DioHelper.putData(
-        url: '${AppEndpoints.cancelReservation}/$id',
+      final response = await DioHelper.deleteData(
+        url: '${AppEndpoints.deleteReservationRequest}/$id',
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {

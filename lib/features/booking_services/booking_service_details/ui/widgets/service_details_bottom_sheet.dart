@@ -1,8 +1,11 @@
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
+import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
@@ -14,12 +17,18 @@ class ServiceDetailsBottomSheet extends StatefulWidget {
   const ServiceDetailsBottomSheet({super.key, required this.service});
 
   /// Helper لعرض الـ sheet بالشكل المتعارف عليه في المشروع.
+  /// The sheet reads the loaded [ServiceDetailsModel] (time + related occasions)
+  /// from the cubit, so its provider is forwarded via [BlocProvider.value].
   static Future<void> show(BuildContext context, PortService service) {
+    final cubit = context.read<BookingServiceDetailsCubit>();
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ServiceDetailsBottomSheet(service: service),
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: ServiceDetailsBottomSheet(service: service),
+      ),
     );
   }
 
@@ -147,18 +156,74 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
               16.verticalSpace,
               Flexible(
                 child: SingleChildScrollView(
-                  child: Text(
-                    (details != null && details.isNotEmpty)
-                        ? details
-                        : 'لا يوجد وصف متاح لهذه الخدمة',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 13.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w400,
-                      height: 1.7,
-                    ),
+                  child: BlocBuilder<BookingServiceDetailsCubit,
+                      BookingServiceDetailsState>(
+                    buildWhen: (p, c) => p.serviceDetails != c.serviceDetails,
+                    builder: (context, state) {
+                      // Only trust the loaded details when they belong to THIS
+                      // service (getServiceData is async, so a previous
+                      // service's details may linger for a frame).
+                      final sd = state.serviceDetails?.id == widget.service.id
+                          ? state.serviceDetails
+                          : null;
+                      final occasions = sd?.occasions
+                              ?.map((o) => o.name?.trim() ?? '')
+                              .where((e) => e.isNotEmpty)
+                              .toList() ??
+                          const [];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Booking time window (صباحي / مسائي / يوم كامل).
+                          if (sd != null) ...[
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: _timeChip(sd.time),
+                            ),
+                            12.verticalSpace,
+                          ],
+                          Text(
+                            (details != null && details.isNotEmpty)
+                                ? details
+                                : 'لا يوجد وصف متاح لهذه الخدمة',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 13.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w400,
+                              height: 1.7,
+                            ),
+                          ),
+                          if (occasions.isNotEmpty) ...[
+                            16.verticalSpace,
+                            Text(
+                              'المناسبات المتعلقة بالخدمة',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: AppColors.blacksoft,
+                                fontSize: 14.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w700,
+                                height: 1.5,
+                              ),
+                            ),
+                            6.verticalSpace,
+                            Text(
+                              occasions.join('، '),
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: AppColors.grey,
+                                fontSize: 13.r,
+                                fontFamily: 'Almarai',
+                                fontWeight: FontWeight.w400,
+                                height: 1.7,
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -172,6 +237,39 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
               8.verticalSpace,
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Maps the service's `time` flag (am / pm / null) to a display label.
+  String _timeLabel(String? time) {
+    switch (time?.trim().toLowerCase()) {
+      case 'am':
+        return 'صباحي';
+      case 'pm':
+        return 'مسائي';
+      default:
+        return 'يوم كامل';
+    }
+  }
+
+  /// Small pill showing the service's booking time window.
+  Widget _timeChip(String? time) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: AppColors.lightPeach,
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Text(
+        _timeLabel(time),
+        style: TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: 12.r,
+          fontFamily: 'Almarai',
+          fontWeight: FontWeight.w700,
+          height: 1.3,
         ),
       ),
     );

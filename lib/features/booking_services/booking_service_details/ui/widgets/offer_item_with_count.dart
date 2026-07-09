@@ -90,21 +90,25 @@ class _OfferItemWithCountState extends State<OfferItemWithCount> {
             Row(
               children: [
                 const SizedBox(width: 6),
-                SizedBox(
-                  width: 0.15.sw,
-                  // fit: BoxFit.scaleDown,
-                  child: Text(
-                    widget.title,
-                    softWrap: true,
-                    style: const TextStyle(
-                      color: AppColors.blacksoft,
-                      fontSize: 12,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.24,
+                // In the gift case the title already appears inside the gift
+                // chip below, so hide this plain black label to avoid showing
+                // the name twice.
+                if (widget.giftCount == null)
+                  SizedBox(
+                    width: 0.15.sw,
+                    // fit: BoxFit.scaleDown,
+                    child: Text(
+                      widget.title,
+                      softWrap: true,
+                      style: const TextStyle(
+                        color: AppColors.blacksoft,
+                        fontSize: 12,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.24,
+                      ),
                     ),
                   ),
-                ),
                 const Spacer(),
                 if (widget.giftCount != null)
                   SizedBox(

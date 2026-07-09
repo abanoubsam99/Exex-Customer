@@ -107,6 +107,9 @@ class BookingServiceDetailsState {
     bool? isSaving,
     String? errorMessage,
     bool? hasConfirmedBooking,
+    // Nullable fields can't be reset through `??`, so clearing them is explicit.
+    bool clearSelectedService = false,
+    bool clearServiceDetails = false,
   }) {
     return BookingServiceDetailsState(
       isLoading: isLoading ?? this.isLoading,
@@ -115,12 +118,15 @@ class BookingServiceDetailsState {
       hasConfirmedBooking: hasConfirmedBooking ?? this.hasConfirmedBooking,
       portImages: portImages ?? this.portImages,
       services: services ?? this.services,
-      selectedService: selectedService ?? this.selectedService,
+      selectedService: clearSelectedService
+          ? null
+          : (selectedService ?? this.selectedService),
       additions: additions ?? this.additions,
       selectedAdditions: selectedAdditions ?? this.selectedAdditions,
       buffets: buffets ?? this.buffets,
       selectedBuffets: selectedBuffets ?? this.selectedBuffets,
-      serviceDetails: serviceDetails ?? this.serviceDetails,
+      serviceDetails:
+          clearServiceDetails ? null : (serviceDetails ?? this.serviceDetails),
       reviews: reviews ?? this.reviews,
       otherPorts: otherPorts ?? this.otherPorts,
       occasions: occasions ?? this.occasions,

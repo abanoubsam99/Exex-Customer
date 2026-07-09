@@ -1,4 +1,5 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/helpers/occasion_validation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -55,14 +56,21 @@ class BookingServiceDetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ServiceTopPart(),
+            child: RefreshIndicator(
+              color: AppColors.primaryColor,
+              onRefresh: () =>
+                  context.read<BookingServiceDetailsCubit>().refresh(),
+              child: SingleChildScrollView(
+                // AlwaysScrollable so the pull gesture works even when the
+                // content already fits the screen.
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ServiceTopPart(),
                   16.verticalSpace,
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
                     child: Column(
                       children: [
                         BlocBuilder<BookingServiceDetailsCubit,
@@ -71,18 +79,23 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           builder: (context, state) {
                             final desc =
                                 state.port?.portDescription?.toString().trim();
-                            return Text(
-                              (desc != null && desc.isNotEmpty)
-                                  ? desc
-                                  : 'لا يوجد وصف متاح لهذه الخدمة',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: AppColors.grey2,
-                                fontSize: 13.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.54,
-                                letterSpacing: -0.24,
+                            // Full width so the text starts at the right edge,
+                            // in line with the port name above it.
+                            return SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                (desc != null && desc.isNotEmpty)
+                                    ? desc
+                                    : 'لا يوجد وصف متاح لهذه الخدمة',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: AppColors.grey2,
+                                  fontSize: 13.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.54,
+                                  letterSpacing: -0.24,
+                                ),
                               ),
                             );
                           },
@@ -187,6 +200,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
               ),
             ),
           ),
+          ),
 
           Container(
             width: 1.sw,
@@ -283,10 +297,15 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           ToastManager.showError('من فضلك اختر خدمة أولاً');
                           return;
                         }
-                        // نوع المناسبة مطلوب لاستكمال الحجز.
-                        if ((st.selectedOccasionId ?? 0) <= 0) {
-                          ToastManager.showError(
-                              'حدد نوع وتاريخ المناسبة لاستكمال الحجز');
+                        // نوع + تاريخ المناسبة مطلوبين لاستكمال الحجز — the toast
+                        // names only what's actually still missing.
+                        final missing =
+                            OccasionValidationHelper.missingOccasionMessage(
+                          date: context.read<HomeCubit>().state.bookingDate,
+                          occasionId: st.selectedOccasionId,
+                        );
+                        if (missing != null) {
+                          ToastManager.showError(missing);
                           return;
                         }
                         // Block booking when the chosen event area is outside
@@ -336,6 +355,10 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                             occasionId: st.selectedOccasionId,
                             occasionDate:
                                 context.read<HomeCubit>().state.bookingDate,
+                            // Opened from a special offer / deep link there is no
+                            // full [Item] port — only its id. Pass it through so
+                            // AddClientReservation still gets a portId.
+                            portId: cubit.currentPortId,
                           ),
                         );
                       },

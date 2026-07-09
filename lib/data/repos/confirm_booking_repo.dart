@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/general_response.dart';
 import 'package:evex_user/data/models/net_cost_model.dart';
 import 'package:evex_user/data/models/occasion.dart';
@@ -103,11 +104,30 @@ class ConfirmBookingRepo {
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return PaymentGatewayResult.fromJson(response.data);
+        final result = PaymentGatewayResult.fromJson(response.data);
+        if (result != null) return result;
+        // 2xx but no gateway URL → the backend couldn't start the payment and
+        // usually says why in `message`. Surface it (the onError/isSuccess==false
+        // interceptor paths don't fire for this success-shaped failure), so the
+        // caller's generic fallback toast can't mask the real reason.
+        _surfaceBackendMessage(response.data);
+        return null;
       }
       return null;
     } catch (_) {
       return null;
+    }
+  }
+
+  /// Shows the backend `message` from a business-failure body via the shared
+  /// server-message channel, so any generic app-side fallback toast fired right
+  /// after is suppressed. No-op when the body carries no message.
+  void _surfaceBackendMessage(dynamic data) {
+    if (data is Map) {
+      final msg = data['message'] ?? data['Message'];
+      if (msg is String && msg.trim().isNotEmpty) {
+        ToastManager.showServerMessage(msg.trim());
+      }
     }
   }
 
@@ -158,8 +178,11 @@ class ConfirmBookingRepo {
     }
   }
 
-  /// GET /api/Reservations/GetBillDetailsByClient/{id} — loads the current
-  /// reservation so the edit screen can echo the full body back on save.
+  /// GET /api/Reservations/GetReservationsDetailsByClient/{id} — loads the
+  /// current reservation so the edit screen can echo the full body back on save
+  /// and auto-select the reserved service/additions/occasion. This carries the
+  /// serviceId/occasionId/clientId directly (unlike the old bill endpoint), so
+  /// the auto-select no longer depends on ids passed from the list item.
   Future<ReservationUpdateModel?> getReservationBill(
     int id, {
     int? serviceId,
@@ -168,14 +191,14 @@ class ConfirmBookingRepo {
   }) async {
     try {
       final response = await DioHelper.getData(
-        url: '${AppEndpoints.billDetailsByClient}/$id',
-        // A pending request has no bill yet → the endpoint 404s. That's
+        url: '${AppEndpoints.reservationsDetailsByClient}/$id',
+        // A pending request may not resolve yet → the endpoint can 404. That's
         // expected here (the caller falls back to the list item's data), so
         // don't surface the framework's "Not Found" toast to the user.
         options: Options(extra: {'suppressErrorToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return ReservationUpdateModel.fromBillJson(
+        return ReservationUpdateModel.fromDetailsJson(
           response.data,
           serviceId: serviceId,
           occasionId: occasionId,
@@ -241,6 +264,9 @@ class ConfirmBookingRepo {
           if (additionalCost != null) 'additionalCost': additionalCost,
           if (buffetCost != null) 'buffetCost': buffetCost,
         },
+        // Best-effort cost breakdown — a failure (e.g. 404 "خطأ فى بيانات الحجز")
+        // is handled by the caller, so don't pop its message to the user.
+        options: Options(extra: {'suppressErrorToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return NetCostModel.fromJson(response.data);

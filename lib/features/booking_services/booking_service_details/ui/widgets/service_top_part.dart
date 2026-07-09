@@ -126,11 +126,16 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
                 initialPage: 0,
                 enableInfiniteScroll: images.length > 1,
                 reverse: false,
-                autoPlay: false,
+                // Auto-rotate the gallery like the home banner.
+                autoPlay: images.length > 1,
                 autoPlayInterval: const Duration(seconds: 7),
                 autoPlayAnimationDuration: const Duration(milliseconds: 800),
                 autoPlayCurve: Curves.fastOutSlowIn,
-                enlargeCenterPage: true,
+                // With a full-width viewport (fraction 1) there's no side page to
+                // enlarge; enabling it throws off the internal scroll math so the
+                // first swipe in one direction feels dead. Off = reliable swipe
+                // both ways from the first frame.
+                enlargeCenterPage: false,
                 scrollDirection: Axis.horizontal,
               ),
             );

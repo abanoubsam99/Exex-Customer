@@ -181,8 +181,30 @@ class ChangeOccasion extends StatelessWidget {
         AppColors.blueGrey,
       );
     }
+    // The backend ships the exact wording to show in `verificationResultMessage`
+    // (e.g. "متاح الحجز الفورى لخدمات معينة" — a case the flags alone can't
+    // express). Always surface it; the flags only decide the colour. The local
+    // strings stay as a fallback for when the backend sends no message.
+    final serverMsg = av.verificationResultMessage?.trim();
+    _AvailabilityView view(String fallback, Color textColor, Color dotColor) =>
+        _AvailabilityView(
+          (serverMsg != null && serverMsg.isNotEmpty) ? serverMsg : fallback,
+          textColor,
+          dotColor,
+        );
+
     if (av.allowedToReservation == true) {
-      return const _AvailabilityView(
+      // Vendor requires confirmation → bookable but pending the vendor's
+      // approval, so it reads as available-with-confirmation (blue) rather
+      // than instant (green).
+      if (av.confirmationIsRequiredFromVendor == true) {
+        return view(
+          'متاح للحجز ولكن يلزم التأكيد من التاجر',
+          AppColors.blue2,
+          AppColors.blue2,
+        );
+      }
+      return view(
         'متاح للحجز الفوري',
         AppColors.green2,
         AppColors.greenSoft,
@@ -190,22 +212,23 @@ class ChangeOccasion extends StatelessWidget {
     }
     // Event area is outside the vendor's working area.
     if (av.reservationLocationAllowed == false) {
-      return const _AvailabilityView(
+      return view(
         'غير متاح للحجز في هذه المنطقة',
         AppColors.coral,
         AppColors.coral,
       );
     }
-    // Backend says only the vendor's own work team can be booked.
+    // Backend says only the vendor's own work team can be booked (blue, per the
+    // design — distinct from the unavailable/red states).
     if (av.allowedToReserveWorkTeam == true) {
-      return const _AvailabilityView(
+      return view(
         'متاح لحجز فريق العمل الخاص به فقط',
-        AppColors.primaryColor,
-        AppColors.primaryColor,
+        AppColors.blue2,
+        AppColors.blue2,
       );
     }
     // Otherwise the date/time itself isn't available.
-    return const _AvailabilityView(
+    return view(
       'غير متاح للحجز في هذا الميعاد',
       AppColors.coral,
       AppColors.coral,
@@ -314,11 +337,11 @@ class ChangeOccasion extends StatelessWidget {
                         return Text(
                           d != null
                               ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
-                              : 'حدد تاريخ المناسبة',
+                              : 'حدد التاريخ',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: AppColors.blacksoft,
-                            fontSize: 14.r,
+                            fontSize: 13.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w700,
                           ),
@@ -343,35 +366,36 @@ class ChangeOccasion extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: AppColors.blueGrey,
-                            fontSize: 14.r,
+                            fontSize: 13.r,
                             fontFamily: 'Almarai',
                             fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),
                     ),
-                    // نوع المناسبة chip — only shown once a type is picked.
-                    if (occasionName != null) ...[
-                      6.horizontalSpace,
-                      Transform.translate(
-                        offset: Offset(0, 2.h),
-                        child: CustomCircle(
-                            radius: 5.r, color: AppColors.dividerGrey),
-                      ),
-                      6.horizontalSpace,
-                      Text(
-                        occasionName,
+                    // نوع المناسبة chip — falls back to a prompt so the user can
+                    // see the type is still unset (same as the date/location).
+                    6.horizontalSpace,
+                    Transform.translate(
+                      offset: Offset(0, 2.h),
+                      child: CustomCircle(
+                          radius: 5.r, color: AppColors.dividerGrey),
+                    ),
+                    6.horizontalSpace,
+                    Flexible(
+                      child: Text(
+                        occasionName ?? 'نوع المناسبة',
                         textAlign: TextAlign.right,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.blueGrey,
-                          fontSize: 14,
+                          fontSize: 13.r,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w400,
-                          height: 1.43,
-                          letterSpacing: -0.24,
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),

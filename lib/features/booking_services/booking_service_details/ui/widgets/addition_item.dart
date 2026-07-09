@@ -119,6 +119,7 @@ class _AdditionItemState extends State<AdditionItem> {
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
+              if (!hasGift)
               Text(
                 widget.title,
                 textAlign: TextAlign.right,

@@ -2,9 +2,8 @@
 /// (and UpdateReservationRequest/{id}).
 ///
 /// The endpoint expects the full reservation object, so we echo back the
-/// current reservation (loaded from GetBillDetailsByClient) and apply the
-/// client's edits (occasionDate + userNotes). serviceId/occasionId/clientId
-/// are NOT returned by the bill, so they're passed in from the list item.
+/// current reservation (loaded from GetReservationsDetailsByClient) and apply
+/// the client's edits (occasionDate + userNotes).
 class ReservationUpdateModel {
   final int id;
   final String? reservationKey;
@@ -88,9 +87,12 @@ class ReservationUpdateModel {
     this.oldAdditions = const [],
   });
 
-  /// Builds the update body from a GetBillDetailsByClient response. The bill
-  /// has no serviceId/occasionId/clientId, so they're supplied separately.
-  factory ReservationUpdateModel.fromBillJson(
+  /// Builds the update body from a GetReservationsDetailsByClient response.
+  /// Tolerates the older bill shape too (GetBillDetailsByClient), where the
+  /// reservation id comes as `reservationId` and `id` is the bill id, and
+  /// serviceId/occasionId/clientId are missing (the passed-in values fill any
+  /// id the response doesn't carry).
+  factory ReservationUpdateModel.fromDetailsJson(
     Map<String, dynamic> json, {
     int? serviceId,
     int? occasionId,
@@ -100,9 +102,15 @@ class ReservationUpdateModel {
     num nu(String k) => (json[k] as num?) ?? 0;
     String? s(String k) => json[k]?.toString();
 
-    final rawAdds = (json['additions'] as List?) ?? const [];
+    // Bill shape: reservationId + id(=billId). Details shape: id + billId.
+    final isBillShape = json['reservationId'] != null;
+
+    final rawAdds = (json['additions'] ??
+            json['reservation_Additions'] ??
+            json['reservationAdditions']) as List? ??
+        const [];
     return ReservationUpdateModel(
-      id: i('reservationId'),
+      id: isBillShape ? i('reservationId') : i('id'),
       reservationKey: s('reservationKey'),
       occasionDate: s('occasionDate') ?? '',
       reservationWay: s('reservationWay'),
@@ -113,13 +121,13 @@ class ReservationUpdateModel {
       startTime: s('startTime'),
       finishTime: s('finishTime'),
       reservationStatus: s('reservationStatus'),
-      portName: s('portName'),
+      portName: s('portName') ?? (json['port'] is Map ? json['port']['portName']?.toString() : null),
       reservationDate: s('reservationDate'),
       portId: i('portId'),
-      serviceId: serviceId ?? i('serviceId'),
-      serviceName: s('serviceName'),
-      clientId: clientId ?? i('clientId'),
-      occasionId: occasionId ?? i('occasionId'),
+      serviceId: i('serviceId') > 0 ? i('serviceId') : (serviceId ?? 0),
+      serviceName: s('serviceName') ?? (json['service'] is Map ? json['service']['name']?.toString() : null),
+      clientId: i('clientId') > 0 ? i('clientId') : (clientId ?? 0),
+      occasionId: i('occasionId') > 0 ? i('occasionId') : (occasionId ?? 0),
       totalCost: nu('totalCost'),
       additionalCost: nu('additionalCost'),
       additionalCostDetails: s('additionalCostDetails'),
@@ -127,9 +135,9 @@ class ReservationUpdateModel {
       vat: nu('vat'),
       netCost: nu('netCost'),
       deposit: nu('deposit'),
-      billId: i('id'),
+      billId: isBillShape ? i('id') : i('billId'),
       nationalId: i('nationalId'),
-      userNotes: s('userNotes') ?? '',
+      userNotes: s('userNotes') ?? s('clientNotes') ?? '',
       additions: rawAdds
           .map<Map<String, dynamic>>((a) => {
                 'id': (a['id'] as num?)?.toInt() ?? 0,

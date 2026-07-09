@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
+import 'package:evex_user/core/ui/widgets/looping_marquee_text.dart';
 
 import 'BlinkingDot.dart';
 
@@ -17,6 +18,11 @@ class ServiceCardItem extends StatefulWidget {
   final String subtitle;
   final List<String> images;
   final bool isSelected;
+
+  /// Whether the service can be booked on the picked date (the backend's
+  /// `unreservedServices`). An unavailable card dims, shows a red dot and can't
+  /// be selected.
+  final bool isAvailable;
   final VoidCallback onSelectionChanged;
 
   const ServiceCardItem({
@@ -27,6 +33,7 @@ class ServiceCardItem extends StatefulWidget {
     required this.subtitle,
     this.images = const [],
     this.isSelected = false,
+    this.isAvailable = true,
     required this.onSelectionChanged,
   });
 
@@ -72,8 +79,9 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
           shape: RoundedRectangleBorder(
             side: BorderSide(
               width: 2.r,
-              color:
-                  widget.isSelected ? AppColors.primaryColor : Colors.transparent,
+              color: widget.isSelected && widget.isAvailable
+                  ? AppColors.primaryColor
+                  : Colors.transparent,
             ),
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -89,9 +97,13 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.r),
-                        child: _buildImages(),
+                      // Dim the image of a service that can't be booked today.
+                      child: Opacity(
+                        opacity: widget.isAvailable ? 1 : 0.45,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.r),
+                          child: _buildImages(),
+                        ),
                       ),
                     ),
                     Positioned(
@@ -105,7 +117,12 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                           color: Colors.white,
                         ),
                         alignment: Alignment.center,
-                        child: const BlinkingDot(),
+                        child: BlinkingDot(
+                          color: widget.isAvailable
+                              ? AppColors.greenSoft
+                              : AppColors.coral,
+                          blink: widget.isAvailable,
+                        ),
                       ),
                     ),
                     // Discount badge (top-left) — only when there's a real discount.
@@ -176,18 +193,19 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 ),
               ),
               3.verticalSpace,
-              Text(
-                widget.title,
-                textAlign: TextAlign.right,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.blacksoft,
-                  fontSize: 13.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w700,
-                  height: 1.50,
-                  letterSpacing: -0.24,
+              SizedBox(
+                width: double.infinity,
+                child: LoopingMarqueeText(
+                  widget.title,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: AppColors.blacksoft,
+                    fontSize: 12.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    height: 1.50,
+                    letterSpacing: -0.24,
+                  ),
                 ),
               ),
               Text(

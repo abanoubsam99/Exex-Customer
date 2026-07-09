@@ -1,4 +1,5 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/helpers/occasion_validation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
@@ -82,18 +83,22 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
       ToastManager.showError('السعر يجب أن يكون أكبر من صفر');
       return;
     }
-    if ((state.selectedOccasionId ?? 0) <= 0) {
-      ToastManager.showError('حدد نوع وتاريخ المناسبة لاستكمال الحجز');
-      return;
-    }
     final port = args.port;
     // Prefer the date the user picked in the filter; fall back to the date the
     // port's availability was checked against.
-    final occasionDate = _formatDate(
-      _homeCubit.state.bookingDate ??
-          args.occasionDate ??
-          port?.checkReservationResponse?.date,
+    final pickedDate = _homeCubit.state.bookingDate ??
+        args.occasionDate ??
+        port?.checkReservationResponse?.date;
+    // The toast names only what's actually still missing (type, date, or both).
+    final missing = OccasionValidationHelper.missingOccasionMessage(
+      date: pickedDate,
+      occasionId: state.selectedOccasionId,
     );
+    if (missing != null) {
+      ToastManager.showError(missing);
+      return;
+    }
+    final occasionDate = _formatDate(pickedDate);
     // Prefer the event location the user picked (edit sheet); fall back to the
     // port's own location.
     final governorate = _homeCubit.state.eventGovernorate ?? port?.governorate;
@@ -121,7 +126,9 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
     final note = notesController.text.trim();
     final result = await _repo.addClientReservation(
       AddReservationRequest(
-        portId: port?.id,
+        // No full [Item] when opened from a special offer / deep link — fall
+        // back to the id carried in the args.
+        portId: port?.id ?? args.portId,
         serviceId: args.service?.id,
         occasionId: state.selectedOccasionId,
         governorate: governorate,

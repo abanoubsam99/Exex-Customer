@@ -8,13 +8,10 @@
 	<array>
 		<string>applinks:backend.evexnow.com</string>
 	</array>
-	<!-- Sign in with Apple capability.
-	     Temporarily disabled for store review (restore later). -->
-	<!--
+	<!-- Sign in with Apple capability. -->
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
 	</array>
-	-->
 </dict>
 </plist>

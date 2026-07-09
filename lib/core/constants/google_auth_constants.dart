@@ -3,9 +3,10 @@ class GoogleAuthConstants {
   GoogleAuthConstants._();
 
   /// Web client id — used as `serverClientId` so Android/iOS return an idToken
-  /// that the backend can verify.
+  /// that the backend can verify. Its matching client secret lives on the
+  /// backend only (never in the app).
   static const webClientId =
-      '461662438992-u7eofcnd4hpq7uqoda6173p97i7ja2jp.apps.googleusercontent.com';
+      '461662438992-laf4cf3cjci2pd02fa0bdf1o7rqdlem3.apps.googleusercontent.com';
 
   /// iOS client id — configured in Info.plist (GIDClientID + URL scheme).
   static const iosClientId =

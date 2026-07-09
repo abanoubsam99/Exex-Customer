@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart'
     show EditReservationArgs;
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:evex_user/data/models/addition.dart';
 import 'package:evex_user/data/models/addition_model.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
@@ -46,8 +49,10 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     this._userService, {
     Item? port,
     int? portId,
+    int? autoSelectServiceId,
     this.editArgs,
   })  : _offerPortId = portId ?? editArgs?.portId,
+        _autoSelectServiceId = autoSelectServiceId,
         super(BookingServiceDetailsState(
           port: port,
           isEditMode: editArgs != null,
@@ -59,25 +64,81 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
           editOriginalGovernorate: editArgs?.governorate,
           editOriginalCity: editArgs?.city,
         )) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _ensurePortLoaded();
-      getPortImages();
-      getOtherPorts();
-      getOccasions();
-      _checkConfirmedBooking();
-      await getAllPortServices();
-      await getAdditions();
-      await getReviews();
-      if (editArgs != null) {
-        await _applyEdit(editArgs!);
-      } else {
-        _ensureAvailability();
-      }
+    // Availability lives on HomeCubit (it's shared with the header badge), so
+    // watch it to drop a selected service the picked date no longer allows.
+    _lastAvailability = _homeCubit.state.availability;
+    _homeSub = _homeCubit.stream.listen((s) {
+      if (identical(s.availability, _lastAvailability)) return;
+      _lastAvailability = s.availability;
+      _dropUnavailableSelection();
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadAll());
+  }
+
+  /// Loads (or reloads) everything the screen shows: the port header, images,
+  /// other ports, occasions, services, additions and reviews — then restores
+  /// the right selection (edit-mode reservation, or the first service).
+  Future<void> _loadAll() async {
+    await _ensurePortLoaded();
+    getPortImages();
+    getOtherPorts();
+    getOccasions();
+    _checkConfirmedBooking();
+    await getAllPortServices();
+    await getAdditions();
+    await getReviews();
+    if (editArgs != null) {
+      await _applyEdit(editArgs!);
+    } else {
+      _autoSelectInitialService();
+      _ensureAvailability();
+    }
+  }
+
+  /// Pull-to-refresh entry point — re-fetches all of the screen's data.
+  Future<void> refresh() => _loadAll();
+
+  /// Watches [HomeCubit] for a new availability response.
+  late final StreamSubscription<HomeState> _homeSub;
+  CheckReservationResponse? _lastAvailability;
+
+  @override
+  Future<void> close() {
+    _homeSub.cancel();
+    return super.close();
+  }
+
+  /// Whether the service [serviceId] can be booked on the picked date.
+  /// The backend answers per-service through `unreservedServices`; while there's
+  /// no availability yet (no date picked, or the check is still running) every
+  /// service reads as available.
+  bool isServiceAvailable(int? serviceId) {
+    final av = _homeCubit.state.availability;
+    if (av == null) return true;
+    return av.allowsService(serviceId);
+  }
+
+  /// Clears the selected service (and its details/total) once a new availability
+  /// response says it's no longer bookable, so an unavailable service can never
+  /// be carried into the booking.
+  void _dropUnavailableSelection() {
+    final selected = state.selectedService;
+    if (selected == null || isServiceAvailable(selected.id)) return;
+    emit(state.copyWith(clearSelectedService: true, clearServiceDetails: true));
+    _recalcTotal();
+    // Never leave the screen with nothing selected — move to the first service
+    // the new date does allow. Edit mode keeps the reservation's own service,
+    // so it's left cleared for the user to re-pick.
+    if (!state.isEditMode) _autoSelectInitialService();
   }
 
   /// Port id passed directly (without a full [Item]) — e.g. from an offer.
   final int? _offerPortId;
+
+  /// Service id to auto-select when the screen opens from a special offer, so
+  /// the offered service (and its gift additions) is pre-selected without the
+  /// user tapping it.
+  final int? _autoSelectServiceId;
 
   /// The reservation bill echoed back on save (edit mode) + the existing
   /// addition row ids (additionId → row id) so the backend can diff on update.
@@ -338,20 +399,36 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     return null;
   }
 
-  /// When the screen is opened from a special offer, a shared deep link, or the
-  /// edit flow (حجوزاتي) only the portId is known (no full [Item]), so the header
-  /// would have no name, rating, description or images. Fetch the port via
-  /// /api/Ports/Filter?Id= and seed it onto the state so it renders like the
-  /// normal list flow regardless of the entry point.
+  /// Always loads the full, fresh port from /api/Ports/Filter?Id= and seeds it
+  /// (name, rating, description, working area, favorite flag, …) onto the state.
+  ///
+  /// The header data must come from the backend — not from whatever partial
+  /// [Item] the previous screen happened to pass — so it's correct and current
+  /// (e.g. the favorite state) regardless of the entry point (ports list,
+  /// special offer, shared deep link, or the edit flow from حجوزاتي).
   Future<void> _ensurePortLoaded() async {
-    if (state.port != null) return;
-    final id = _offerPortId;
-    if (id == null || id <= 0) return;
+    final id = state.port?.id ?? _offerPortId;
+    if (id == null || id <= 0) {
+      // No id at all — keep whatever the caller passed and read its fav flag.
+      _seedFavoriteFromPort();
+      return;
+    }
     final model = await _portsRepo.getAllPortServices(GetPortsRequest(id: id));
     final items = model?.items;
-    if (items == null || items.isEmpty) return;
+    if (items == null || items.isEmpty) {
+      // Fetch failed — fall back to the passed-in [Item] so the header isn't
+      // blank, and still surface its favorite flag if it has one.
+      _seedFavoriteFromPort();
+      return;
+    }
     final match = items.firstWhere((p) => p.id == id, orElse: () => items.first);
-    emit(state.copyWith(port: match));
+    emit(state.copyWith(port: match, isFavorite: match.isFavorite ?? false));
+  }
+
+  /// Seeds [BookingServiceDetailsState.isFavorite] from the current port.
+  void _seedFavoriteFromPort() {
+    final fav = state.port?.isFavorite;
+    if (fav != null) emit(state.copyWith(isFavorite: fav));
   }
 
   /// Loads other ports owned by the same vendor for the "خدمات أخرى" section
@@ -406,9 +483,52 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     }
   }
 
-  void selectService(PortService service) {
+  /// Selects a base service. Returns false (and toasts) when the picked date
+  /// doesn't allow it, so the caller doesn't open its details sheet.
+  bool selectService(PortService service) {
+    if (!isServiceAvailable(service.id)) {
+      ToastManager.showError('هذه الخدمة غير متاحة فى هذا اليوم');
+      return false;
+    }
     emit(state.copyWith(selectedService: service));
     getServiceData();
+    return true;
+  }
+
+  /// The screen never opens without a selected service:
+  ///   • from a special offer → the offered service ([_autoSelectServiceId]).
+  ///     Selecting it loads its details, which surfaces the free gift additions
+  ///     as already selected via [checkGift].
+  ///   • from the ports list  → the first service (the right-most card in RTL).
+  /// Skips services the picked date doesn't allow, and never toasts — this runs
+  /// without the user tapping anything.
+  void _autoSelectInitialService() {
+    if (state.selectedService != null || state.services.isEmpty) return;
+    final id = _autoSelectServiceId;
+    PortService? match;
+    if (id != null && id > 0) {
+      for (final s in state.services) {
+        if (s.id == id) {
+          match = s;
+          break;
+        }
+      }
+    }
+    // The offered service can be booked out on the picked date — fall back to
+    // the first one that isn't.
+    if (match != null && !isServiceAvailable(match.id)) match = null;
+    match ??= _firstAvailableService();
+    if (match == null) return;
+    emit(state.copyWith(selectedService: match));
+    getServiceData();
+  }
+
+  /// The first service bookable on the picked date, or null when none is.
+  PortService? _firstAvailableService() {
+    for (final s in state.services) {
+      if (isServiceAvailable(s.id)) return s;
+    }
+    return null;
   }
 
   Future<void> getServiceData() async {

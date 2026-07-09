@@ -59,6 +59,7 @@ class Item {
     required this.closingTime,
     required this.workDays,
     required this.checkReservationResponse,
+    required this.isFavorite,
     required this.id,
     required this.portName,
     required this.portTypeDto,
@@ -96,6 +97,9 @@ class Item {
   final String? closingTime;
   final String? workDays;
   final CheckReservationResponse? checkReservationResponse;
+
+  /// Whether the signed-in client favorited this port (false for guests).
+  final bool? isFavorite;
   final int? id;
   final String? portName;
   final PortTypeDto? portTypeDto;
@@ -149,6 +153,7 @@ class Item {
             ? CheckReservationResponse.fromJson(
                 json['checkReservationResponse'])
             : null,
+        isFavorite = json['isFavorite'] as bool?,
         id = (json['id'] as num?)?.toInt(),
         portName = json['portName'] as String?,
         portTypeDto = json['portTypeDTO'] != null
@@ -173,7 +178,7 @@ class CheckReservationResponse {
     required this.allowedToReservation,
     required this.confirmationIsRequiredFromVendor,
     required this.reservationTimeAllowed,
-    required this.reservationLocationAllowed,
+    required this.reservationLocationAllowed, 
     required this.unreservedServices,
     required this.date,
     required this.verificationResultMessage,
@@ -230,6 +235,23 @@ class CheckReservationResponse {
         errors = json['errors'],
         expireDate = json['expireDate'],
         modelId = (json['modelId'] as num?)?.toInt();
+
+  /// Ids of the port services that are still free (not reserved) on [date].
+  /// The backend sends them in `unreservedServices` whenever only *some* of the
+  /// services can be booked (e.g. `verificationResult == 6`).
+  List<int> get unreservedServiceIds => (unreservedServices ?? const [])
+      .map((e) => (e as num?)?.toInt())
+      .whereType<int>()
+      .toList();
+
+  /// Whether the service [serviceId] can be booked on [date].
+  /// When the backend sent no per-service list we fall back to the day-level
+  /// flag, so the whole day is either bookable or not.
+  bool allowsService(int? serviceId) {
+    final ids = unreservedServiceIds;
+    if (ids.isEmpty) return allowedToReservation == true;
+    return serviceId != null && ids.contains(serviceId);
+  }
 }
 
 class PortTypeDto {
