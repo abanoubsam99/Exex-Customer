@@ -60,6 +60,7 @@ class AppEndpoints {
   static const myRequestReservations = "/api/Reservations/GetMyRequestReservations";
   static const billDetailsByClient = "/api/Reservations/GetBillDetailsByClient"; // + /{id}
   static const reservationsDetailsByClient = "/api/Reservations/GetReservationsDetailsByClient"; // + /{id}
+  static const requestReservation = "/api/Reservations/GetRequestReservation"; // + /{id}
   static const checkReservationAvailability = "/api/Reservations/CheckReservationAvailabilityByClient"; // + /{portId}?date=
   static const addClientReservation = "/api/Reservations/AddClientReservation";
   static const confirmClientReservation = "/api/Reservations/ConfirmClientReservation";

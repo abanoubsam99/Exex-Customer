@@ -87,8 +87,13 @@ class SpecialOffersSection extends StatelessWidget {
                 const SpecialBannerSlide(),
                 ...state.specialOffers.map(
                     (offer) => InkWell(
+                      // Route to the right module by the offer's port type:
+                      // direct-payment vendors open the direct-service screen,
+                      // everything else opens the instant-booking screen.
                       onTap: () => NavigationHelper.pushNamed(
-                        Routes.bookingServiceDetailsScreen,
+                        offer.isDirectPayment
+                            ? Routes.directServiceDetailsScreen
+                            : Routes.bookingServiceDetailsScreen,
                         arguments: offer,
                       ),
                       child: Stack(

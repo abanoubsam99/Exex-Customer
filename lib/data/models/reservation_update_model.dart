@@ -91,7 +91,8 @@ class ReservationUpdateModel {
   /// Tolerates the older bill shape too (GetBillDetailsByClient), where the
   /// reservation id comes as `reservationId` and `id` is the bill id, and
   /// serviceId/occasionId/clientId are missing (the passed-in values fill any
-  /// id the response doesn't carry).
+  /// id the response doesn't carry). Also handles the GetRequestReservation
+  /// shape, where the request id is in `id` and `reservationId` is 0.
   factory ReservationUpdateModel.fromDetailsJson(
     Map<String, dynamic> json, {
     int? serviceId,
@@ -102,8 +103,9 @@ class ReservationUpdateModel {
     num nu(String k) => (json[k] as num?) ?? 0;
     String? s(String k) => json[k]?.toString();
 
-    // Bill shape: reservationId + id(=billId). Details shape: id + billId.
-    final isBillShape = json['reservationId'] != null;
+    // Bill shape: reservationId(>0) + id(=billId). Details/request shape: id.
+    // A request carries `reservationId: 0`, so only a positive value is a bill.
+    final isBillShape = ((json['reservationId'] as num?)?.toInt() ?? 0) > 0;
 
     final rawAdds = (json['additions'] ??
             json['reservation_Additions'] ??

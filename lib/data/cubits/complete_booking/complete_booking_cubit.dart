@@ -49,15 +49,20 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   }
 
   /// Cost breakdown for the "تفاصيل تكلفة الخدمة" section (عمولة evex، رسوم
-  /// إدارية، ضريبة، مقدم الحجز، الإجمالي) — computed from the chosen service +
-  /// total so nothing on that section is hardcoded.
+  /// إدارية، ضريبة، مقدم الحجز، الإجمالي) — computed by CalculateNetCost from the
+  /// port + the chosen service/additions/buffet prices, so nothing there is
+  /// hardcoded. The endpoint keys the fee/tax config off the *port* id.
   Future<void> getNetCost() async {
-    final serviceId = args.service?.id;
-    if (serviceId == null) return;
+    final portId = args.port?.id ?? args.portId;
+    if (portId == null) return;
+    // The service price used in the total (after discount when present).
+    final servicePrice = args.service?.priceAfterDiscount ?? args.service?.price;
     final netCost = await _repo.calculateNetCost(
-      id: serviceId,
-      servicePrice: args.service?.price,
+      id: portId,
+      servicePrice: servicePrice,
       totalCost: args.totalCost,
+      additionalCost: args.additionalCost,
+      buffetCost: args.buffetCost,
     );
     if (netCost != null) emit(state.copyWith(netCost: netCost));
   }

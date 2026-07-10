@@ -4,6 +4,7 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
 import 'package:evex_user/data/models/port_service.dart';
+import 'package:evex_user/data/models/service_details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,21 +15,44 @@ import 'package:evex_user/core/theme/app_colors.dart';
 /// بيتفتح لما المستخدم يضغط على كارت خدمة من قائمة "الخدمات الأساسية".
 class ServiceDetailsBottomSheet extends StatefulWidget {
   final PortService service;
-  const ServiceDetailsBottomSheet({super.key, required this.service});
+
+  /// Whether a [BookingServiceDetailsCubit] is available to read the loaded
+  /// [ServiceDetailsModel] (time chip + related occasions). The booking module
+  /// provides it; the direct-payment module doesn't — there the sheet just
+  /// shows name/price/description.
+  final bool hasDetailsCubit;
+
+  const ServiceDetailsBottomSheet({
+    super.key,
+    required this.service,
+    this.hasDetailsCubit = false,
+  });
 
   /// Helper لعرض الـ sheet بالشكل المتعارف عليه في المشروع.
   /// The sheet reads the loaded [ServiceDetailsModel] (time + related occasions)
-  /// from the cubit, so its provider is forwarded via [BlocProvider.value].
+  /// from the cubit when present, so its provider is forwarded via
+  /// [BlocProvider.value]. In modules without that cubit (direct payment) the
+  /// sheet still opens, just without the time chip / occasions.
   static Future<void> show(BuildContext context, PortService service) {
-    final cubit = context.read<BookingServiceDetailsCubit>();
+    BookingServiceDetailsCubit? cubit;
+    try {
+      cubit = context.read<BookingServiceDetailsCubit>();
+    } catch (_) {
+      cubit = null;
+    }
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => BlocProvider.value(
-        value: cubit,
-        child: ServiceDetailsBottomSheet(service: service),
-      ),
+      builder: (_) => cubit == null
+          ? ServiceDetailsBottomSheet(service: service)
+          : BlocProvider.value(
+              value: cubit,
+              child: ServiceDetailsBottomSheet(
+                service: service,
+                hasDetailsCubit: true,
+              ),
+            ),
     );
   }
 
@@ -125,106 +149,58 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                       ),
                     ),
                   ),
-                  12.horizontalSpace,
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '${widget.service.priceAfterDiscount ?? 0}',
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: 20.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w800,
+                  // Hide the price when the vendor keeps it private.
+                  if (!widget.service.displayPrice) ...[
+                    12.horizontalSpace,
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${widget.service.priceAfterDiscount ?? 0}',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 20.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
-                        ),
-                        TextSpan(
-                          text: ' جنيه',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 14.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.bold,
+                          TextSpan(
+                            text: ' جنيه',
+                            style: TextStyle(
+                              color: AppColors.black,
+                              fontSize: 14.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-
+                  ],
                 ],
               ),
               16.verticalSpace,
               Flexible(
                 child: SingleChildScrollView(
-                  child: BlocBuilder<BookingServiceDetailsCubit,
-                      BookingServiceDetailsState>(
-                    buildWhen: (p, c) => p.serviceDetails != c.serviceDetails,
-                    builder: (context, state) {
-                      // Only trust the loaded details when they belong to THIS
-                      // service (getServiceData is async, so a previous
-                      // service's details may linger for a frame).
-                      final sd = state.serviceDetails?.id == widget.service.id
-                          ? state.serviceDetails
-                          : null;
-                      final occasions = sd?.occasions
-                              ?.map((o) => o.name?.trim() ?? '')
-                              .where((e) => e.isNotEmpty)
-                              .toList() ??
-                          const [];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Booking time window (صباحي / مسائي / يوم كامل).
-                          if (sd != null) ...[
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: _timeChip(sd.time),
-                            ),
-                            12.verticalSpace,
-                          ],
-                          Text(
-                            (details != null && details.isNotEmpty)
-                                ? details
-                                : 'لا يوجد وصف متاح لهذه الخدمة',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: AppColors.grey,
-                              fontSize: 13.r,
-                              fontFamily: 'Almarai',
-                              fontWeight: FontWeight.w400,
-                              height: 1.7,
-                            ),
-                          ),
-                          if (occasions.isNotEmpty) ...[
-                            16.verticalSpace,
-                            Text(
-                              'المناسبات المتعلقة بالخدمة',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: AppColors.blacksoft,
-                                fontSize: 14.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w700,
-                                height: 1.5,
-                              ),
-                            ),
-                            6.verticalSpace,
-                            Text(
-                              occasions.join('، '),
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: AppColors.grey,
-                                fontSize: 13.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.7,
-                              ),
-                            ),
-                          ],
-                        ],
-                      );
-                    },
-                  ),
+                  // Only the booking module has the details cubit (time chip +
+                  // occasions). Elsewhere show the description on its own.
+                  child: widget.hasDetailsCubit
+                      ? BlocBuilder<BookingServiceDetailsCubit,
+                          BookingServiceDetailsState>(
+                          buildWhen: (p, c) =>
+                              p.serviceDetails != c.serviceDetails,
+                          builder: (context, state) {
+                            // Only trust the loaded details when they belong to
+                            // THIS service (getServiceData is async, so a
+                            // previous service's details may linger for a frame).
+                            final sd =
+                                state.serviceDetails?.id == widget.service.id
+                                    ? state.serviceDetails
+                                    : null;
+                            return _detailsBody(details, sd);
+                          },
+                        )
+                      : _detailsBody(details, null),
                 ),
               ),
               16.verticalSpace,
@@ -239,6 +215,68 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
           ),
         ),
       ),
+    );
+  }
+
+  /// The scrollable body: optional time chip + description + related occasions.
+  /// [sd] is null when there's no details cubit (direct-payment module).
+  Widget _detailsBody(String? details, ServiceDetailsModel? sd) {
+    final occasions = sd?.occasions
+            ?.map((o) => o.name?.trim() ?? '')
+            .where((e) => e.isNotEmpty)
+            .toList() ??
+        const [];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Booking time window (صباحي / مسائي / يوم كامل).
+        if (sd != null) ...[
+          Align(
+            alignment: Alignment.centerRight,
+            child: _timeChip(sd.time),
+          ),
+          12.verticalSpace,
+        ],
+        Text(
+          (details != null && details.isNotEmpty)
+              ? details
+              : 'لا يوجد وصف متاح لهذه الخدمة',
+          textAlign: TextAlign.right,
+          style: TextStyle(
+            color: AppColors.grey,
+            fontSize: 13.r,
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w400,
+            height: 1.7,
+          ),
+        ),
+        if (occasions.isNotEmpty) ...[
+          16.verticalSpace,
+          Text(
+            'المناسبات المتعلقة بالخدمة',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: AppColors.blacksoft,
+              fontSize: 14.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w700,
+              height: 1.5,
+            ),
+          ),
+          6.verticalSpace,
+          Text(
+            occasions.join('، '),
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: AppColors.grey,
+              fontSize: 13.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+              height: 1.7,
+            ),
+          ),
+        ],
+      ],
     );
   }
 

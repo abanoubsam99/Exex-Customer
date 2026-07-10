@@ -16,6 +16,11 @@ class CompleteBookingArgs {
   final List<Addition> additions;
   final double totalCost;
 
+  /// Price split sent to CalculateNetCost so it can compute the fee breakdown:
+  /// [additionalCost] = the selected additions, [buffetCost] = the buffet.
+  final double additionalCost;
+  final double buffetCost;
+
   /// Occasion date picked in the instant-booking filter (the reservation date).
   final DateTime? occasionDate;
 
@@ -46,6 +51,8 @@ class CompleteBookingArgs {
     this.service,
     this.additions = const [],
     this.totalCost = 0,
+    this.additionalCost = 0,
+    this.buffetCost = 0,
     this.occasionDate,
     this.occasionId,
     this.editArgs,

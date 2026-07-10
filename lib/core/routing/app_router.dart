@@ -499,8 +499,14 @@ class AppRouter {
               context.read<PortServicesRepo>(),
               context.read<WalletRepo>(),
               context.read<FavoritesRepo>(),
+              context.read<BookingServicesPortsRepo>(),
               port: settings.arguments is Item
                   ? settings.arguments as Item
+                  : null,
+              // Opened from a special offer (SpecialOffer) — only the portId is
+              // available, so the cubit loads the full port by id.
+              portId: settings.arguments is SpecialOffer
+                  ? (settings.arguments as SpecialOffer).portId
                   : null,
             ),
             child: const DirectServiceDetailsScreen(),

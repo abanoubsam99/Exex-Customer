@@ -197,11 +197,20 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   /// client made before (service + additions/buffet + occasion date), so the
   /// booking module opens autofilled. Runs after services/additions are loaded.
   Future<void> _applyEdit(EditReservationArgs args) async {
-    final bill = await _confirmRepo.getReservationBill(
-      args.reservationId,
-      serviceId: args.serviceId,
-      occasionId: args.occasionId,
-    );
+    // Auto-select data comes from a different endpoint depending on the source:
+    // a confirmed reservation → GetReservationsDetailsByClient; a pending
+    // request → GetRequestReservation (the details endpoint 404s for requests).
+    final bill = args.isConfirmed
+        ? await _confirmRepo.getReservationBill(
+            args.reservationId,
+            serviceId: args.serviceId,
+            occasionId: args.occasionId,
+          )
+        : await _confirmRepo.getRequestReservation(
+            args.reservationId,
+            serviceId: args.serviceId,
+            occasionId: args.occasionId,
+          );
     _editBill = bill;
 
     // Header title + original slot (no full [Item] is passed when editing, so
@@ -608,6 +617,28 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     }
     emit(state.copyWith(totalCost: cost));
   }
+
+  /// Sums the price of the given selections the same way [_recalcTotal] does
+  /// (count × price, skipping free gifts), so the split we send to
+  /// CalculateNetCost matches the total shown on screen.
+  double _sumSelections(List<AdditionModel> items) {
+    final giftIds =
+        state.serviceDetails?.oldGifts?.map((e) => e.id).toSet() ?? {};
+    double sum = 0;
+    for (final a in items) {
+      if (a.displayNumber == false && giftIds.contains(a.id)) continue;
+      sum += (a.count ?? 1) * (a.price?.toDouble() ?? 1);
+    }
+    return sum;
+  }
+
+  /// Total price of the selected non-buffet additions (excluding free gifts) —
+  /// sent to CalculateNetCost as `additionalCost`.
+  double get selectedAdditionsCost => _sumSelections(state.selectedAdditions);
+
+  /// Total price of the selected buffet items (excluding free gifts) — sent to
+  /// CalculateNetCost as `buffetCost`.
+  double get selectedBuffetsCost => _sumSelections(state.selectedBuffets);
 
   List<Addition> prepareFinalAdditions() {
     final giftIds =

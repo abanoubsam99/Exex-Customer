@@ -1,6 +1,7 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
+import 'package:evex_user/core/ui/widgets/looping_marquee_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -119,53 +120,61 @@ class _AdditionItemState extends State<AdditionItem> {
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
+              // Takes the free width; a long addition name (e.g.
+              // "لوحه خشب ٥٠ × ٧٠ سم") scrolls in a loop so all of it is
+              // readable instead of being cut off — static when it fits.
               if (!hasGift)
-              Text(
-                widget.title,
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: AppColors.blacksoft,
-                  fontSize: 13.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.24,
+                Expanded(
+                  child: LoopingMarqueeText(
+                    widget.title,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: AppColors.blacksoft,
+                      fontSize: 13.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.24,
+                    ),
+                  ),
                 ),
-              ),
               if (hasGift) ...[
                 12.horizontalSpace,
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 4.h,
-                    horizontal: 10.w,
-                  ),
-                  decoration: ShapeDecoration(
-                    color: AppColors.lightPeach,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 4.h,
+                      horizontal: 10.w,
                     ),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomImageHandler(AppImages.imagesGift),
-                        4.horizontalSpace,
-                        Text(
-                          widget.hasCount
-                              ? "${widget.giftCount} ${widget.title}"
-                              : widget.title,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: AppColors.secondaryColor,
+                    decoration: ShapeDecoration(
+                      color: AppColors.lightPeach,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomImageHandler(AppImages.imagesGift),
+                          4.horizontalSpace,
+                          Text(
+                            widget.hasCount
+                                ? "${widget.giftCount} ${widget.title}"
+                                : widget.title,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: AppColors.secondaryColor,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
+                const Spacer(),
               ],
-              const Spacer(),
+              8.horizontalSpace,
               Row(
                 children: [
                   Text(

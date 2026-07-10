@@ -211,6 +211,35 @@ class ConfirmBookingRepo {
     }
   }
 
+  /// GET /api/Reservations/GetRequestReservation/{id} — loads a **pending
+  /// request** (not yet a confirmed reservation) so the edit screen can
+  /// auto-select the requested service/additions/occasion and echo the full
+  /// body back on save. Confirmed reservations use [getReservationBill] instead.
+  Future<ReservationUpdateModel?> getRequestReservation(
+    int id, {
+    int? serviceId,
+    int? occasionId,
+    int? clientId,
+  }) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.requestReservation}/$id',
+        options: Options(extra: {'suppressErrorToast': true}),
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return ReservationUpdateModel.fromDetailsJson(
+          response.data,
+          serviceId: serviceId,
+          occasionId: occasionId,
+          clientId: clientId,
+        );
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// PUT /api/Reservations/UpdateReservationRequest/{id} — edit a pending request.
   Future<bool> updateReservationRequest(
     int id,

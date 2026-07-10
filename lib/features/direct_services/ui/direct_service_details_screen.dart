@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/constants/app_images.dart';
@@ -12,7 +13,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/direct_services/direct_service_details_state.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
+import 'package:flutter/gestures.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/other_service_card_item.dart';
+import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/reviews_section.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_details_bottom_sheet.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/service_top_part.dart'
     show SocialNavButton;
@@ -31,7 +34,10 @@ class DirectServiceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final port = context.read<DirectServiceDetailsCubit>().port;
+    // Watch the port: when opened from an offer it loads async (by portId), so
+    // the header/description must rebuild once it arrives.
+    final port =
+        context.select((DirectServiceDetailsCubit c) => c.state.port);
     final desc = port?.portDescription?.toString().trim();
     return Scaffold(
       backgroundColor: Colors.white,
@@ -85,6 +91,15 @@ class DirectServiceDetailsScreen extends StatelessWidget {
             22.verticalSpace,
             const SectionSeperator(),
             22.verticalSpace,
+            // Customer reviews — same section as the instant-booking module,
+            // shown before "خدمات أخرى".
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: const _DirectReviewsSection(),
+            ),
+            22.verticalSpace,
+            const SectionSeperator(),
+            22.verticalSpace,
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: const _OtherServicesSection(),
@@ -108,7 +123,6 @@ class _DirectDetailsHeader extends StatefulWidget {
 }
 
 class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
-  final PageController _controller = PageController();
   int _active = 0;
 
   /// Prefers the dedicated /api/Ports/GetPortImages gallery (from the cubit),
@@ -120,17 +134,16 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
     return const [];
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   void _openContact() {
     NavigationHelper.pushNamed(
       Routes.contactInfoScreen,
       arguments: widget.port,
     );
+  }
+
+  /// Opens the vendor's portfolio (Google Drive) link in an external browser.
+  void _openPortfolio() {
+    LauncherHelper.openPortfolio(widget.port?.goolgeDriveLink);
   }
 
   /// Opens the port's location on the maps app (GPS, else the address text).
@@ -171,13 +184,31 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
           width: 1.sw,
           child: images.isEmpty
               ? const CustomImageHandler(null, fit: BoxFit.cover)
-              : PageView.builder(
-                  controller: _controller,
-                  itemCount: images.length,
-                  onPageChanged: (i) => setState(() => _active = i),
-                  itemBuilder: (_, i) => CustomImageHandler(
-                    ImageUrlHelper.full(images[i]),
-                    smartFill: true,
+              // Auto-rotating gallery of all the port's images — same as the
+              // instant-booking header (swipe + auto-play).
+              : CarouselSlider(
+                  items: images
+                      .map((url) => SizedBox(
+                            width: 1.sw,
+                            child: CustomImageHandler(
+                              ImageUrlHelper.full(url),
+                              smartFill: true,
+                            ),
+                          ))
+                      .toList(),
+                  options: CarouselOptions(
+                    onPageChanged: (i, _) => setState(() => _active = i),
+                    height: 283.h,
+                    viewportFraction: 1,
+                    initialPage: 0,
+                    enableInfiniteScroll: images.length > 1,
+                    autoPlay: images.length > 1,
+                    autoPlayInterval: const Duration(seconds: 7),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: false,
+                    scrollDirection: Axis.horizontal,
                   ),
                 ),
         ),
@@ -231,7 +262,7 @@ class _DirectDetailsHeaderState extends State<_DirectDetailsHeader> {
                   6.horizontalSpace,
                   SocialNavButton(
                     icon: AppImages.iconsFolder,
-                    onTap: _openContact,
+                    onTap: _openPortfolio,
                   ),
                   6.horizontalSpace,
                   SocialNavButton(icon: AppImages.iconsShare, onTap: _share),
@@ -518,19 +549,56 @@ class _PointsSection extends StatelessWidget {
 }
 
 // ─────────────────────────── How to use ───────────────────────────
-class _HowToUseSection extends StatelessWidget {
+class _HowToUseSection extends StatefulWidget {
   const _HowToUseSection();
 
-  static const _steps = [
-    'ادخل على محفظة evex لتعيين كلمة المرور الخاصة بك اضغط هنا',
+  @override
+  State<_HowToUseSection> createState() => _HowToUseSectionState();
+}
+
+class _HowToUseSectionState extends State<_HowToUseSection> {
+  /// Wallet tab index inside [MainScreen].
+  static const _walletTabIndex = 2;
+
+  /// The first step ends with a "اضغط هنا" link that opens the EVEX wallet
+  /// (where the client sets their wallet password).
+  static const _firstStepText =
+      'ادخل على محفظة evex لتعيين كلمة المرور الخاصة بك ';
+  static const _firstStepLink = 'اضغط هنا';
+
+  static const _restSteps = [
     'اذهب للتاجر وقم باختيار مشترياتك او الخدمات المراد الحصول عليها',
     'يعطيك التاجر هاتفه لتكتب كلمة السر الخاصة بك بسرية تامة (حافظ على خصوصية تلك الخطوة)',
     'تخصم قيمة نقاطك الحالية من اصل المبلغ المطلوب دفعه نقداً للتاجر',
     'يصلك فوراً نقاط جديدة (كاش باك) في محفظتك على المبلغ المدفوع نقداً للتاجر',
   ];
 
+  late final TapGestureRecognizer _openWalletRecognizer =
+      TapGestureRecognizer()..onTap = _openWallet;
+
+  /// Opens the wallet tab so the client can set their wallet password.
+  void _openWallet() {
+    NavigationHelper.pushNamedAndRemoveUntil(
+      Routes.mainScreen,
+      arguments: _walletTabIndex,
+    );
+  }
+
+  @override
+  void dispose() {
+    _openWalletRecognizer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final baseStyle = TextStyle(
+      color: AppColors.grey,
+      fontSize: 12.r,
+      fontFamily: 'Almarai',
+      fontWeight: FontWeight.w400,
+      height: 1.7,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -552,18 +620,32 @@ class _HowToUseSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (var i = 0; i < _steps.length; i++) ...[
-                if (i > 0) 12.verticalSpace,
+              // Step 1 with the tappable "اضغط هنا" link.
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: '1- $_firstStepText'),
+                    TextSpan(
+                      text: _firstStepLink,
+                      recognizer: _openWalletRecognizer,
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.right,
+                style: baseStyle,
+              ),
+              for (var i = 0; i < _restSteps.length; i++) ...[
+                12.verticalSpace,
                 Text(
-                  '${i + 1}- ${_steps[i]}',
+                  '${i + 2}- ${_restSteps[i]}',
                   textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 12.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w400,
-                    height: 1.7,
-                  ),
+                  style: baseStyle,
                 ),
               ],
             ],
@@ -594,6 +676,7 @@ class _HelpRow extends StatelessWidget {
         ),
         6.horizontalSpace,
         GestureDetector(
+          // Opens the vendor's contact info (معلومات التواصل للتاجر).
           onTap: () => NavigationHelper.pushNamed(
             Routes.contactInfoScreen,
             arguments: port,
@@ -613,6 +696,19 @@ class _HelpRow extends StatelessWidget {
   }
 }
 
+// ─────────────────────────── Reviews ───────────────────────────
+class _DirectReviewsSection extends StatelessWidget {
+  const _DirectReviewsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<DirectServiceDetailsCubit, DirectServiceDetailsState>(
+      buildWhen: (p, c) => p.reviews != c.reviews,
+      builder: (context, state) => ReviewsSection(reviews: state.reviews),
+    );
+  }
+}
+
 // ─────────────────────────── Other services ───────────────────────────
 class _OtherServicesSection extends StatelessWidget {
   const _OtherServicesSection();
@@ -628,21 +724,37 @@ class _OtherServicesSection extends StatelessWidget {
         ),
         12.verticalSpace,
         BlocBuilder<DirectServiceDetailsCubit, DirectServiceDetailsState>(
-          buildWhen: (p, c) => p.services != c.services,
+          buildWhen: (p, c) => p.otherPorts != c.otherPorts,
           builder: (context, state) {
-            if (state.services.isEmpty) return const SizedBox.shrink();
+            final ports = state.otherPorts;
+            if (ports.isEmpty) {
+              return EmptyListWidget(
+                message: 'لا يوجد خدمات أخرى لهذا التاجر حالياً',
+                icon: Icons.widgets_outlined,
+                iconSize: 44.r,
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+              );
+            }
             return SizedBox(
               height: 150.h,
               child: ListView.separated(
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
-                itemCount: state.services.length,
+                itemCount: ports.length,
                 separatorBuilder: (_, __) => 16.horizontalSpace,
                 itemBuilder: (context, index) {
-                  final service = state.services[index];
-                  return OtherServiceCardItem(
-                    images: service.serviceImages ?? const [],
-                    title: service.name ?? '',
+                  final port = ports[index];
+                  return GestureDetector(
+                    // Same vendor's other port → open it in its own direct
+                    // (payment) details screen.
+                    onTap: () => NavigationHelper.pushNamed(
+                      Routes.directServiceDetailsScreen,
+                      arguments: port,
+                    ),
+                    child: OtherServiceCardItem(
+                      images: _portImages(port),
+                      title: port.portName ?? '',
+                    ),
                   );
                 },
               ),
@@ -651,5 +763,11 @@ class _OtherServicesSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  /// The port's image paths — uses the main image from the Filter response.
+  List<String> _portImages(Item port) {
+    final main = port.theMainImageFileName?.trim();
+    return (main != null && main.isNotEmpty) ? [main] : const [];
   }
 }

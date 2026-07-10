@@ -97,7 +97,7 @@ class _RequestsTab extends StatelessWidget {
                 }
                 final r = state.requests[index];
                 final available =
-                    (r.reservationStatus ?? '').contains('متاح');
+                    ReservationStatusHelper.isAvailable(r.reservationStatus);
                 // A pending request opens the edit-reservation screen (both on
                 // card tap and via the edit icon). The order-details/invoice
                 // screen is reserved for confirmed/cancelled reservations only.
@@ -158,10 +158,16 @@ class _ConfirmRequestsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final availableIds = _confirmableIds(state);
 
-    final depositTotal = state.pendingDeposit?.totalDeposit ??
-        state.requests
-            .where((r) => (r.reservationStatus ?? '').contains('متاح'))
-            .fold<num>(0, (sum, r) => sum + (r.deposit ?? 0));
+    // Sum of the deposits the user can actually see for available requests.
+    final requestsDepositTotal = state.requests
+        .where((r) => ReservationStatusHelper.isAvailable(r.reservationStatus))
+        .fold<num>(0, (sum, r) => sum + (r.deposit ?? 0));
+    // Prefer the backend summary only when it carries a real value — it often
+    // comes back as 0, which must NOT be sent to the payment gateway. Fall back
+    // to the visible requests' deposits so the confirm amount is never wrongly 0.
+    final summaryDeposit = state.pendingDeposit?.totalDeposit ?? 0;
+    final depositTotal =
+        summaryDeposit > 0 ? summaryDeposit : requestsDepositTotal;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(24.w, 4.h, 24.w, 85.r),
@@ -462,15 +468,25 @@ class _PendingDepositFooter extends StatelessWidget {
 /// Empty → the "تأكيد الحجز" button is hidden.
 List<int> _confirmableIds(MyBookingsState state) {
   final pd = state.pendingDeposit;
-  if (pd != null) {
-    return pd.items
-        .where((e) => e.isAvailable && e.id != null)
+  if (pd != null && pd.items.isNotEmpty) {
+    // The summary's boolean `isAvailable` isn't always populated; also accept
+    // an Arabic `statusMessage` that reads "متاح ..." (excluding "غير متاح").
+    final ids = pd.items
+        .where((e) =>
+            e.id != null &&
+            (e.isAvailable ||
+                ReservationStatusHelper.isAvailable(e.statusMessage)))
         .map((e) => e.id!)
         .toList();
+    // Only trust the summary when it actually flagged something; otherwise fall
+    // back to the visible requests' own status (so we never wrongly block the
+    // confirm button when the user can clearly see an available request).
+    if (ids.isNotEmpty) return ids;
   }
   return state.requests
       .where((r) =>
-          (r.reservationStatus ?? '').contains('متاح') && r.id != null)
+          ReservationStatusHelper.isAvailable(r.reservationStatus) &&
+          r.id != null)
       .map((r) => r.id!)
       .toList();
 }

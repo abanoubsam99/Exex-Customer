@@ -115,16 +115,15 @@ class HomeCubit extends Cubit<HomeState> {
     // selected yet) default to the first booking category so its types open
     // below it; the direct-services section starts with no selection. We never
     // auto-select a payment category, and a background refresh keeps whatever
-    // the user currently has selected.
+    // the user currently has selected. The type chip is deliberately left
+    // unselected — a highlighted chip only appears when the user taps one.
     final hasSelection =
         state.selectedBookingPort != null || state.selectedPaymentPort != null;
     var selBooking = state.selectedBookingPort;
     var selBookingType = state.selectedBookingPortType;
     if (!hasSelection && booking.isNotEmpty) {
       selBooking = booking.first;
-      selBookingType = booking.first.portTypeDtos.isNotEmpty
-          ? booking.first.portTypeDtos.first
-          : null;
+      selBookingType = null;
     }
 
     emit(state.copyWith(
@@ -201,11 +200,10 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void selectBookingPort(PortCategoryWithPortTypes port) {
-    final firstType =
-        port.portTypeDtos.isNotEmpty ? port.portTypeDtos.first : null;
     emit(state.copyWith(
       selectedBookingPort: port,
-      selectedBookingPortType: firstType,
+      // No default type highlight — the chip lights up only when tapped.
+      clearBookingType: true,
       // Unchecks the direct-services section and hides its chips.
       clearPaymentSelection: true,
     ));
@@ -219,11 +217,10 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void selectPaymentPort(PortCategoryWithPortTypes port) {
-    final firstType =
-        port.portTypeDtos.isNotEmpty ? port.portTypeDtos.first : null;
     emit(state.copyWith(
       selectedPaymentPort: port,
-      selectedPaymentPortType: firstType,
+      // No default type highlight — the chip lights up only when tapped.
+      clearPaymentType: true,
       // Unchecks the instant-booking section and hides its chips.
       clearBookingSelection: true,
     ));

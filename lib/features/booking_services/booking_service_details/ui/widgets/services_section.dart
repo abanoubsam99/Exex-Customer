@@ -138,6 +138,7 @@ class ServicesSection extends StatelessWidget {
                     subtitle: service.details ?? '',
                     price: service.priceAfterDiscount ?? 0,
                     priceBeforeDiscount: service.priceBeforDiscount,
+                    displayPrice: service.displayPrice,
                     isSelected: isSelected,
                     isAvailable: cubit.isServiceAvailable(service.id),
                     onSelectionChanged: () {

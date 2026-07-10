@@ -1,4 +1,5 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
+import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
@@ -253,24 +254,47 @@ class _PortListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  item.portName ?? '',
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: AppColors.blacksoft,
-                    fontSize: 15.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.24,
-                  ),
+                // Name + rating (stars shown even when the backend rate is 0).
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.portName ?? '',
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: AppColors.blacksoft,
+                          fontSize: 15.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.24,
+                        ),
+                      ),
+                    ),
+                    CustomImageHandler(
+                      AppImages.iconsStar,
+                      height: 20.r,
+                      width: 20.r,
+                    ),
+                    2.horizontalSpace,
+                    Text(
+                      '${item.rate ?? 0}',
+                      style: TextStyle(
+                        color: AppColors.blacksoft,
+                        fontSize: 12.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -0.24,
+                      ),
+                    ),
+                  ],
                 ),
-                8.verticalSpace,
+                6.verticalSpace,
                 Text(
                   _subtitle(item),
                   textAlign: TextAlign.right,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: AppColors.grey2,
@@ -278,6 +302,43 @@ class _PortListItem extends StatelessWidget {
                     fontFamily: 'Almarai',
                     fontWeight: FontWeight.w400,
                     height: 1.5,
+                  ),
+                ),
+                8.verticalSpace,
+                // Starting price (cheapest service) — shown like the instant cards.
+                Text.rich(
+                  textAlign: TextAlign.right,
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'يبدأ بـ ',
+                        style: TextStyle(
+                          color: const Color(0xFF2C262C),
+                          fontSize: 12.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: -0.24,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '${item.cheapestServicePrice ?? '—'}',
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontSize: 16.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' جنيه',
+                        style: TextStyle(
+                          color: AppColors.blueGrey,
+                          fontSize: 11.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

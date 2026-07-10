@@ -15,6 +15,15 @@ class ReservationStatusHelper {
     return raw.toLowerCase().tr();
   }
 
+  /// Whether a request's availability status means it can be booked now.
+  /// The backend sends Arabic messages like "متاح للحجز ..." / "غير متاح ...".
+  /// Note "غير متاح" also *contains* "متاح", so a plain `contains('متاح')`
+  /// wrongly reads unavailable requests as available — we exclude "غير" here.
+  static bool isAvailable(String? status) {
+    final s = status?.trim() ?? '';
+    return s.contains('متاح') && !s.contains('غير');
+  }
+
   static bool isConfirmed(String? status) =>
       (status?.trim().toLowerCase() ?? '') == 'confirmed';
 

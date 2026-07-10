@@ -331,6 +331,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               service: st.selectedService,
                               additions: cubit.prepareFinalAdditions(),
                               totalCost: st.totalCost,
+                              additionalCost: cubit.selectedAdditionsCost,
+                              buffetCost: cubit.selectedBuffetsCost,
                               occasionId: st.selectedOccasionId,
                               occasionDate:
                                   context.read<HomeCubit>().state.bookingDate,
@@ -352,6 +354,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                             service: st.selectedService,
                             additions: cubit.prepareFinalAdditions(),
                             totalCost: st.totalCost,
+                            additionalCost: cubit.selectedAdditionsCost,
+                            buffetCost: cubit.selectedBuffetsCost,
                             occasionId: st.selectedOccasionId,
                             occasionDate:
                                 context.read<HomeCubit>().state.bookingDate,

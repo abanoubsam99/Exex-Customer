@@ -71,7 +71,10 @@ class ServiceCostDetailsSection extends StatelessWidget {
                   6.verticalSpace,
                   _costRow('ضريبة', _fmt(netCost?.tax)),
                   6.verticalSpace,
-                  _costRow('مبلغ التأمين', _fmt(policy?.insuranceAmount)),
+                  // مبلغ التأمين يأتي من CalculateNetCost زي باقي الصفوف؛
+                  // سياسة التاجر تُستخدم كقيمة احتياطية لحين رجوع [netCost].
+                  _costRow('مبلغ التأمين',
+                      _fmt(netCost?.insuranceAmount ?? policy?.insuranceAmount)),
                   const Spacer(),
                   _costRow('مقدم الحجز', _fmt(netCost?.deposit)),
                   _costRow(

@@ -19,6 +19,10 @@ class ServiceCardItem extends StatefulWidget {
   final List<String> images;
   final bool isSelected;
 
+  /// When true the price (and discount badge) is hidden — the vendor didn't
+  /// publish a fixed price for this service.
+  final bool displayPrice;
+
   /// Whether the service can be booked on the picked date (the backend's
   /// `unreservedServices`). An unavailable card dims, shows a red dot and can't
   /// be selected.
@@ -34,6 +38,7 @@ class ServiceCardItem extends StatefulWidget {
     this.images = const [],
     this.isSelected = false,
     this.isAvailable = true,
+    this.displayPrice = false,
     required this.onSelectionChanged,
   });
 
@@ -125,8 +130,9 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                         ),
                       ),
                     ),
-                    // Discount badge (top-left) — only when there's a real discount.
-                    if (_discountPercent > 0)
+                    // Discount badge (top-left) — only when there's a real
+                    // discount and the price isn't hidden.
+                    if (!widget.displayPrice && _discountPercent > 0)
                       Positioned(
                         top: 4.h,
                         left: 4.w,
@@ -223,6 +229,8 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                 ),
               ),
               const Spacer(),
+              // Hide the whole price row when the vendor keeps the price private.
+              if (!widget.displayPrice)
               Row(
                 children: [
                   // السعر الحالي (بعد الخصم)

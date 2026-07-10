@@ -3,10 +3,11 @@ import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
 /// كارت منتج/خدمة في شاشة الدفع المباشر (عرض فقط — بيفتح bottom sheet التفاصيل).
-class DirectProductCard extends StatelessWidget {
+class DirectProductCard extends StatefulWidget {
   final PortService service;
   final VoidCallback onTap;
 
@@ -17,16 +18,36 @@ class DirectProductCard extends StatelessWidget {
   });
 
   @override
+  State<DirectProductCard> createState() => _DirectProductCardState();
+}
+
+class _DirectProductCardState extends State<DirectProductCard> {
+  final PageController _pageController = PageController();
+  int _activeImage = 0;
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final service = widget.service;
+    // When the vendor keeps the price private, hide the price + discount badge.
+    final showPrice = !service.displayPrice;
+    // Show the price the customer actually pays (after discount), with the
+    // original price struck through — same as the instant-booking cards.
     final before = service.priceBeforDiscount;
-    final price = service.price ?? 0;
-    final hasDiscount = before != null && before > price;
-    final discountPercent =
-        hasDiscount ? (((before - price) / before) * 100).round() : 0;
+    final price = service.priceAfterDiscount ?? service.price ?? 0;
+    // Discount percentage comes straight from the API (not recomputed).
+    final discountPercent = service.discountPercentage ?? 0;
+    final hasDiscount =
+        showPrice && discountPercent > 0 && before != null && before > price;
     final images = service.serviceImages ?? const <String>[];
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         width: 141.w,
         clipBehavior: Clip.antiAlias,
@@ -57,12 +78,7 @@ class DirectProductCard extends StatelessWidget {
                     Positioned.fill(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.r),
-                        child: CustomImageHandler(
-                          images.isEmpty
-                              ? null
-                              : ImageUrlHelper.full(images.first),
-                          smartFill: true,
-                        ),
+                        child: _buildImages(images),
                       ),
                     ),
                     if (hasDiscount)
@@ -85,6 +101,25 @@ class DirectProductCard extends StatelessWidget {
                               fontSize: 11.r,
                               fontFamily: 'Almarai',
                               fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Dots indicator when the service has more than one image.
+                    if (images.length > 1)
+                      Positioned(
+                        bottom: 4.h,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: AnimatedSmoothIndicator(
+                            activeIndex: _activeImage,
+                            count: images.length,
+                            effect: JumpingDotEffect(
+                              dotHeight: 5.r,
+                              dotWidth: 5.r,
+                              activeDotColor: AppColors.primaryColor,
+                              dotColor: Colors.white.withValues(alpha: 0.7),
                             ),
                           ),
                         ),
@@ -122,53 +157,77 @@ class DirectProductCard extends StatelessWidget {
                 ),
               ),
               8.verticalSpace,
-              Row(
-                textDirection: TextDirection.ltr,
-                children: [
-                  if (hasDiscount) ...[
-                    Text(
-                      '$before LE',
-                      style: TextStyle(
-                        color: AppColors.unitGrey,
-                        fontSize: 11.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        decoration: TextDecoration.lineThrough,
-                        decorationColor: AppColors.salmon,
+              if (showPrice)
+                Row(
+                  textDirection: TextDirection.ltr,
+                  children: [
+                    if (hasDiscount) ...[
+                      Text(
+                        '$before LE',
+                        style: TextStyle(
+                          color: AppColors.unitGrey,
+                          fontSize: 11.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: AppColors.salmon,
+                        ),
+                      ),
+                      6.horizontalSpace,
+                    ],
+                    Text.rich(
+                      textDirection: TextDirection.ltr,
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '$price',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 16.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' LE',
+                            style: TextStyle(
+                              color: AppColors.blueGrey,
+                              fontSize: 12.r,
+                              fontFamily: 'Almarai',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    6.horizontalSpace,
                   ],
-                  Text.rich(
-                    textDirection: TextDirection.ltr,
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '$price',
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: 16.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' LE',
-                          style: TextStyle(
-                            color: AppColors.blueGrey,
-                            fontSize: 12.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Swipeable gallery of all the service images (falls back to the placeholder
+  /// when there are none) — same behaviour as the instant-booking service card.
+  Widget _buildImages(List<String> images) {
+    if (images.isEmpty) {
+      return const CustomImageHandler(null);
+    }
+    if (images.length == 1) {
+      return CustomImageHandler(
+        ImageUrlHelper.full(images.first),
+        smartFill: true,
+      );
+    }
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: images.length,
+      onPageChanged: (i) => setState(() => _activeImage = i),
+      itemBuilder: (context, i) => CustomImageHandler(
+        ImageUrlHelper.full(images[i]),
+        smartFill: true,
       ),
     );
   }

@@ -13,6 +13,8 @@ class SpecialOffer {
     this.picturesAlbumName,
     this.serviceImages = const [],
     this.portId,
+    this.displayPrice = false,
+    this.subscriptionType,
   });
 
   final int? priceAfterDiscount;
@@ -29,6 +31,17 @@ class SpecialOffer {
   final List<String> serviceImages;
   final int? portId;
 
+  /// When true the price is hidden across the UI (the vendor doesn't want to
+  /// publish a fixed price for this service).
+  final bool displayPrice;
+
+  /// Port payment type — `1` = direct payment (خدمات مباشرة), anything else =
+  /// instant booking. Decides which module a tapped offer opens.
+  final int? subscriptionType;
+
+  /// Whether this offer's port is a direct-payment vendor.
+  bool get isDirectPayment => subscriptionType == 1;
+
   SpecialOffer.fromJson(Map<String, dynamic> json)
       : priceAfterDiscount = (json['priceAfterDiscount'] as num?)?.toInt(),
         priceBeforDiscount = (json['priceBeforDiscount'] as num?)?.toInt(),
@@ -44,7 +57,9 @@ class SpecialOffer {
         serviceImages =
             (json['serviceImages'] as List?)?.map((e) => e as String).toList() ??
                 const [],
-        portId = (json['portId'] as num?)?.toInt();
+        portId = (json['portId'] as num?)?.toInt(),
+        displayPrice = json['displayPrice'] as bool? ?? false,
+        subscriptionType = (json['subscriptionType'] as num?)?.toInt();
 
   Map<String, dynamic> toJson() {
     return {
@@ -61,6 +76,8 @@ class SpecialOffer {
       'picturesAlbumName': picturesAlbumName,
       'serviceImages': serviceImages,
       'portId': portId,
+      'displayPrice': displayPrice,
+      'subscriptionType': subscriptionType,
     };
   }
 }

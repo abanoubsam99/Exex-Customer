@@ -86,6 +86,10 @@ class HomeState {
     // instant-booking and direct-services sections mutually exclusive.
     bool clearBookingSelection = false,
     bool clearPaymentSelection = false,
+    // Clear only the selected port type (keep the category). Used so picking a
+    // category shows its type chips with none highlighted by default.
+    bool clearBookingType = false,
+    bool clearPaymentType = false,
     int? unreadNotifications,
     UserViewModel? currentUser,
     String? errorMessage,
@@ -99,13 +103,13 @@ class HomeState {
       selectedBookingPort: clearBookingSelection
           ? null
           : (selectedBookingPort ?? this.selectedBookingPort),
-      selectedBookingPortType: clearBookingSelection
+      selectedBookingPortType: (clearBookingSelection || clearBookingType)
           ? null
           : (selectedBookingPortType ?? this.selectedBookingPortType),
       selectedPaymentPort: clearPaymentSelection
           ? null
           : (selectedPaymentPort ?? this.selectedPaymentPort),
-      selectedPaymentPortType: clearPaymentSelection
+      selectedPaymentPortType: (clearPaymentSelection || clearPaymentType)
           ? null
           : (selectedPaymentPortType ?? this.selectedPaymentPortType),
       bookingDate: bookingDate ?? this.bookingDate,

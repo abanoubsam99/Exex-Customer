@@ -33,6 +33,16 @@ class LauncherHelper {
     await _launch(uri);
   }
 
+  /// Opens the vendor's portfolio (Google Drive) link in an external browser.
+  /// Tells the user when the vendor hasn't provided one.
+  static Future<void> openPortfolio(String? url) async {
+    if (url == null || url.trim().isEmpty) {
+      ToastManager.showError('معرض الأعمال غير متاح');
+      return;
+    }
+    await openUrl(url);
+  }
+
   /// Opens the dialer with [phone] pre-filled.
   static Future<void> call(String? phone) async {
     if (phone == null || phone.trim().isEmpty) return;

@@ -31,15 +31,14 @@ class ServiceTopPart extends StatefulWidget {
 class _ServiceTopPartState extends State<ServiceTopPart> {
   int activeIndex = 0;
 
-  /// Opens the "معلومات التواصل" screen with the port's contact details
-  /// (phone numbers, address, work days) where the user can call or open maps.
+  /// Opens the vendor's portfolio (Google Drive) link in an external browser.
   Future<void> _openDriveLink() async {
     final link = context
         .read<BookingServiceDetailsCubit>()
         .state
         .port
         ?.goolgeDriveLink;
-    await LauncherHelper.openUrl(link);
+    await LauncherHelper.openPortfolio(link);
   }
 
   void _openContact() {

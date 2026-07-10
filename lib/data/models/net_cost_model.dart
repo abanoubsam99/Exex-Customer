@@ -14,6 +14,9 @@ class NetCostModel {
   /// رسوم إدارية.
   final num adminFees;
 
+  /// مبلغ التأمين.
+  final num insuranceAmount;
+
   const NetCostModel({
     this.totalCost = 0,
     this.additionalCost = 0,
@@ -24,6 +27,7 @@ class NetCostModel {
     this.tax = 0,
     this.commission = 0,
     this.adminFees = 0,
+    this.insuranceAmount = 0,
   });
 
   NetCostModel.fromJson(Map<String, dynamic> json)
@@ -45,6 +49,10 @@ class NetCostModel {
           'administrativeFees',
           'administrationFees',
           'managementFees',
+        ]),
+        insuranceAmount = _num(json, const [
+          'insuranceAmount',
+          'insuranceAmountFromVendor',
         ]);
 
   /// Reads the first key that holds a numeric value (tolerant to the exact
