@@ -1,6 +1,7 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/core/ui/widgets/text_field_builder_widget.dart';
@@ -59,6 +60,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                                 Text(
                                   '${state.depositAmount} جنيه',
                                   textDirection: TextDirection.ltr,
+                                  // maxLines: 1,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 26.r,
@@ -607,11 +609,65 @@ class _PoliciesSection extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   const _PoliciesSection({required this.accepted, required this.onChanged});
 
-  static const _terms =
-      'نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص '
-      'الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط '
-      'والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات '
-      'والملحوظات نص الشروط والسياسات والملحوظات نص';
+  static const _terms = '''
+أولاً : تأكيد الحجز و سياسة الدفع
+1- يتم تأكيد الحجز فقط بعد دفعي لمقدم الحجز من خلال  تطبيق evex , ولايحق لي إلغاء الحجز أو استرداد المقدم إلا وفقاً لسياسات وشروط التاجر التي وافقت عليها مسبقاً .
+ 2- تلتزم شركة evex بتطبيق سياسات التاجر في الحجز , التي قرأتها ووافقت عليها مسبقاً , ولا دخل لها في وضع تلك السياسات ,  بل فقط تُعلِن حقي كعميل وحق التاجر وفقاً لتلك السياسات . 
+3- ألتزم بسداد باقي مبلغ الحجز المتبقي إلى شركة evex وليس إلى التاجر مباشرة , وذلك قبل ميعاد المناسبة بمدة لاتقل عن 20 يوم وفي حالة التأخير , يحق ل evex إلغاء الخصومات التي حصلت عليها أو إلغاء الحجز بالكامل إن زاد التأخير , ولايحق لي المطالبه بأي مستحقات نهائياً.  4- ألتزم بدفع جميع المبالغ المالية للحجز من خلال evex فقط , ولايعتد بأي مبالغ يتم دفعها مباشرة لأي تاجر .. بإستثناء قسم الخدمات المباشرة فقط .  ثانياً : إلغاء الحجز ورد المقدّم 5- في حالة الإلغاء من قِبل التاجر و عدم إمكانية التاجر تنفيذ الخدمة المحجوزه لأي سبب , يلتزم التاجر برد مقدم الحجز بالكامل لي , ورد أي مبالغ أو دفعات أخرى مدفوعه من قيمة الحجز من خلال evex , وأيضاً تعمل evex على مساعدة العميل في إيجاد حل بديل وفقاً للمتاح ,   6-في حالة حدوث إلغاء من قِبل التاجر في يوم المناسبة ذاته , ووجود ضرر لي ناتج عن عدم تنفيذ الخدمة , يتم اتخاذ الإجراءات اللازمة ضد التاجر بعد مراجعة الحالة  وثبوت التقصير (مثل إيقاف حسابه وخصم مستحقاته وإلزامه بدفع غرامات وجزاءات محدده ) وذلك طبقاً لإتفاقية وسياسة evex مع التجار.  7- يتم رد المبالغ المستحقه لي في حالة إلغائي للحجز (إن وجدت) وفقاً لسياسات التاجر , من خلال evex , وذلك في خلال  من 15 الي 30 يوم عمل من تاريخ الإلغاء . 
+8- يتم رد مبلغ التأمين لي ( إن وجد) طبقاً لسياسات التاجر , من خلال evex , في مدة من 15 الى 30 يوم عمل من تاريخ المناسبة المحجوزه , وذلك بالقيمة المحدده من التاجر بحسب سياساته وبحسب نسبة الأضرار أو المخالفات الناتجه .  9- يحق لـ evex تعليق أو إلغاء أي حجز في حالة وجود استخدام مخالف أو احتيالي أو أي انتهاك لشروط الاستخدام , ولا يحق لي المطالبه بأي مستحقات . 
+ثالثاً : الإلتزام بمواعيد الحجز
+10- ألتزم بمواعيد الحجز التي تم تأكيدها وأتحمل مسئولية غير ذلك , وفي حالة تغيبي عن حضور المناسبة , لايحق لي المطالبه بأي مستحقات قمت بدفعها من قبل .  11- تضمن evex تاريخ المناسبة لي كعميل وللتاجر , ولكن في حالة حجزي لخدمة على تطبيق evex لا تتوافر بها معلومات كافية عن توقيت الخدمة المقدمه من التاجر “بساعات محدده” , يتم الإتفاق على ذلك خارج التطبيق بعد إتمام تأكيد حجز اليوم ودفع المقدم , ولا مسئولية ل evex عن تأخيري أو تأخير التاجر عن الحضور  في هذا التوقيت .  رابعاً : مشاركة البيانات 12- جميع البيانات التي أدخلتها صحيحة وتشمل بياناتي الشخصية وبيانات وتفاصيل المناسبة المطلوبة , وأتحمل مسئولية غير ذلك.  13- أوافق على مشاركة بياناتي وبيانات الحجز اللازمه مع التاجر  ومع شركة evex , وذلك لإتمام الخدمة والتواصل بشأنها .  خامساً : دور evex 14- تعمل evex كمنصة لحجز المناسبات وربط العملاء بالتجار ومقدمي الخدمات , وإدارة عمليات الدفع والتحصيل وفقاً للنظام المتبع دخل التطبيق ووفقاً لسياسات وشروط التاجر في الحجز .  15- تضمن evex ثبات أسعار الخدمات التي قمت بحجزها بعد دفعي لمقدم الحجز لحين إتمام المناسبة , فيما عدا قيامي بتعديل الحجز  قبل ميعاد المناسبة لأي سبب , حينها يتم تغيير أسعار خدماتي المحجوزه بالأسعار الجديدة الموضوعه من قِبل التاجر .  16- لا تتحمل evex مسئولية جودة أو تفاصيل الخدمات التي قمت بإختيارها , وأنا كعميل مسئول مسئولية كاملة عن اختياري للتاجر . وأيضاً لا علاقة ل evex بتسليم أعمال المناسبة لي , من فيديوهات وصور وغيرها أو مواعيد تسليمها , وهذه كلها مسئولية التاجر .  17- evex غير مسئولة تماماً عن أي إتفاقات خارجية بيني وبين التاجر تحت أي مسمى ولأي سبب , ولايعتد إلا بتفاصيل الحجز المحدده والمتفق عليها في تطبيق evex فقط.  18- بإستخدامي لتطبيق evex  وإتمام الحجز , فأنني أقر بأنني قرأت هذه الشروط والأحكام وأوافق عليها بالكامل .
+  
+  ''';
+      // 'نص الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص '
+      // 'الشروط والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط '
+      // 'والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات '
+      // 'والسياسات والملحوظات نص الشروط والسياسات والملحوظات نص الشروط والسياسات '
+      // 'والملحوظات نص الشروط والسياسات والملحوظات نص';
+
+  /// Acknowledgment line above the policies, naming the signed-in client's
+  /// phone (dynamic from the profile) so the terms are tied to their account.
+  Widget _acknowledgment(BuildContext context) {
+    final user = context.read<UserService>().currentUser?.userViewModel;
+    final phone = user?.phoneNumber?.trim() ?? '';
+    // Stored country code may or may not carry a leading '+'; normalize so it
+    // always shows as "(+20)".
+    final code = user?.countryCode?.replaceAll('+', '').trim() ?? '';
+    if (phone.isEmpty) return const SizedBox.shrink();
+    // The phone + country code is wrapped in an LTR isolate (U+2066 .. U+2069)
+    // so it reads "01284623066 (+20)" inside the surrounding RTL sentence.
+    final lri = String.fromCharCode(0x2066);
+    final pdi = String.fromCharCode(0x2069);
+    final phonePart =
+        '$lri$phone${code.isNotEmpty ? ' ' : ''}$pdi';
+        // '$lri$phone${code.isNotEmpty ? ' (+$code)' : ''}$pdi';
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14.h),
+      child: Text.rich(
+        TextSpan(
+          style: TextStyle(
+            color: AppColors.blacksoft,
+            fontSize: 13.r, 
+            fontFamily: 'Almarai',
+            fontWeight: FontWeight.w600,
+            height: 1.6,
+          ),
+          children: [
+            const TextSpan(text: 'أقر أنا العميل المُسَجَّل برقم هاتف '),
+            TextSpan(
+              text: phonePart,
+              style: const TextStyle(
+                color: _orange,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.rtl,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -649,28 +705,58 @@ class _PoliciesSection extends StatelessWidget {
             fontFamily: 'Almarai',
           ),
         ),
-        12.verticalSpace,
+        // 6.verticalSpace,
+        6.verticalSpace,
         Container(
           width: double.infinity,
-          height: 190.h,
-          padding: EdgeInsets.all(14.r),
+          height: 330.h,
+          padding: EdgeInsets.all(8.r),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14.r),
             border: Border.all(color: AppColors.lineGrey),
           ),
-          child: SingleChildScrollView(
-            child: Text(
-              _terms,
-              style: TextStyle(
-                color: AppColors.grey5,
-                fontSize: 12.r,
-                fontFamily: 'Almarai',
-                height: 1.8,
+          child: Column(
+            children: [
+              _acknowledgment(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(
+                    _terms,
+                    style: TextStyle(
+                        color: AppColors.descriptionText,
+                        fontSize: 12.r,
+                        fontFamily: 'Almarai',
+                        height: 1.8,
+                        fontWeight: FontWeight.w400
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
+        // Container(
+        //   // No fixed height / inner scroll — the box grows to fit the full
+        //   // terms text so the whole page scrolls as one instead.
+        //   width: double.infinity,
+        //   padding: EdgeInsets.all(14.r),
+        //   decoration: BoxDecoration(
+        //     color: Colors.white,
+        //     borderRadius: BorderRadius.circular(14.r),
+        //     border: Border.all(color: AppColors.lineGrey),
+        //   ),
+        //   child: Text(
+        //     _terms,
+        //     style: TextStyle(
+        //       color: AppColors.descriptionText,
+        //       fontSize: 12.r,
+        //       fontFamily: 'Almarai',
+        //       height: 1.8,
+        //       fontWeight: FontWeight.w400,
+        //     ),
+        //   ),
+        // ),
         12.verticalSpace,
         InkWell(
           onTap: () => onChanged(!accepted),

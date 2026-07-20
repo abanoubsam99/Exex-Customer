@@ -32,6 +32,16 @@ class MyBookingItem extends StatelessWidget {
   /// the edit + trash actions. Used by the confirmed / cancelled tabs.
   final VoidCallback? onDownload;
 
+  /// When true (requests tab), an envelope icon with a badge is shown in the
+  /// content row. The badge reads 1 when [hasMessage] is true, 0 otherwise.
+  final bool showMessageIcon;
+
+  /// Whether the vendor sent a pending message (drives the badge count).
+  final bool hasMessage;
+
+  /// Tapping the envelope icon (opens the pending-message dialog).
+  final VoidCallback? onMessageTap;
+
   const MyBookingItem({
     super.key,
     required this.portName,
@@ -48,6 +58,9 @@ class MyBookingItem extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.onDownload,
+    this.showMessageIcon = false,
+    this.hasMessage = false,
+    this.onMessageTap,
   });
 
   static String _money(num v) => v.round().toString();
@@ -322,16 +335,13 @@ class MyBookingItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // 13.horizontalSpace,
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(16.r),
-                    //   child: Image.asset(
-                    //     AppImages.imagesLuxuriousDinnerHall,
-                    //     fit: BoxFit.fill,
-                    //     height: 63.r,
-                    //     width: 63.r,
-                    //   ),
-                    // ),
+                    if (showMessageIcon) ...[
+                      10.horizontalSpace,
+                      _MessageBadge(
+                        count: hasMessage ? 1 : 0,
+                        onTap: onMessageTap,
+                      ),
+                    ],
                   ],
                 ),
                 const Spacer(),
@@ -459,6 +469,61 @@ class MyBookingItem extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Envelope icon with a small red badge showing the pending-message count
+/// (1 when the vendor sent a message, 0 otherwise). Tapping opens the dialog.
+class _MessageBadge extends StatelessWidget {
+  final int count;
+  final VoidCallback? onTap;
+
+  const _MessageBadge({required this.count, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(50),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            SvgPicture.asset(
+              AppImages.iconsMessage,
+              width: 40.r,
+              height: 40.r,
+            ),
+            Positioned(
+              top: -6.r,
+              right: -6.r,
+              child: Container(
+                width: 18.r,
+                height: 18.r,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  // Grey (matching the envelope) when there's no message,
+                  // red only when a pending message exists.
+                  color: count > 0 ? AppColors.coral : AppColors.grey,
+                  shape: BoxShape.circle,
+                ),
+                child: Text(
+                  '$count',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -107,6 +107,8 @@ class ChangeOccasion extends StatelessWidget {
         initialCity: st.eventCity ?? user?.city,
         // Restrict the location picker to the port's working area.
         portId: port?.id,
+        // Disable dates before today + minimumDays (vendor's required lead time).
+        minimumDays: port?.minimumDays ?? 0,
         occasions: occasions,
         initialOccasionId: selectedOccasionId,
         onConfirm: (date, gov, city, occasionId) async {
@@ -186,12 +188,20 @@ class ChangeOccasion extends StatelessWidget {
     // express). Always surface it; the flags only decide the colour. The local
     // strings stay as a fallback for when the backend sends no message.
     final serverMsg = av.verificationResultMessage?.trim();
-    _AvailabilityView view(String fallback, Color textColor, Color dotColor) =>
-        _AvailabilityView(
-          (serverMsg != null && serverMsg.isNotEmpty) ? serverMsg : fallback,
-          textColor,
-          dotColor,
-        );
+    _AvailabilityView view(String fallback, Color textColor, Color dotColor) {
+      final msg =
+          (serverMsg != null && serverMsg.isNotEmpty) ? serverMsg : fallback;
+      // Colour follows the wording: anything starting with "متاح" reads as
+      // available → green; "غير متاح ..." stays red. Checked in this order
+      // because "غير متاح" also contains the word "متاح".
+      if (msg.startsWith('غير متاح')) {
+        return _AvailabilityView(msg, AppColors.coral, AppColors.coral);
+      }
+      if (msg.startsWith('متاح')) {
+        return _AvailabilityView(msg, AppColors.green2, AppColors.greenSoft);
+      }
+      return _AvailabilityView(msg, textColor, dotColor);
+    }
 
     if (av.allowedToReservation == true) {
       // Vendor requires confirmation → bookable but pending the vendor's

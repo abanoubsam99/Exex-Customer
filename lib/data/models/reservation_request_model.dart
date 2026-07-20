@@ -26,6 +26,14 @@ class ReservationRequestModel {
   final bool? paid;
   final String? userNotes;
 
+  /// Pending message text from the vendor awaiting the client's accept/refuse.
+  final String? reservationPendingMessage;
+
+  /// Whether a pending message exists (the envelope badge shows 1 when true,
+  /// 0 otherwise). Source of truth for the badge — [reservationPendingMessage]
+  /// carries the text to display.
+  final bool? messageStatus;
+
   ReservationRequestModel({
     this.id,
     this.portId,
@@ -45,6 +53,8 @@ class ReservationRequestModel {
     this.acceptedByVendor,
     this.paid,
     this.userNotes,
+    this.reservationPendingMessage,
+    this.messageStatus,
   });
 
   ReservationRequestModel.fromJson(Map<String, dynamic> json)
@@ -65,5 +75,8 @@ class ReservationRequestModel {
         deposit = json['deposit'] as num?,
         acceptedByVendor = json['acceptedByVendor'] as bool?,
         paid = json['paid'] as bool?,
-        userNotes = json['userNotes'] as String?;
+        userNotes = json['userNotes'] as String?,
+        reservationPendingMessage =
+            json['reservationPendingMessage'] as String?,
+        messageStatus = json['messageStatus'] as bool?;
 }

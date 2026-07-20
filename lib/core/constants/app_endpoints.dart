@@ -74,6 +74,7 @@ class AppEndpoints {
   static const updateReservationByClient = "/api/Reservations/UpdateReservationByClient"; // + /{id}
   static const cancelReservation = "/api/Reservations/CancelReservationByClient"; // + /{id}
   static const deleteReservationRequest = "/api/Reservations/DeleteReservationRequest"; // + /{id}
+  static const markMessageStatusAsRead = "/api/Reservations/MarkMessageStatusAsRead"; // + /{id}
   static const downloadInfo = "/api/Reservations/DownloadInfo"; // ?id=
   // The port's working area — the governorate/city names it serves. Used to
   // restrict the occasion-location picker to what the port actually covers.

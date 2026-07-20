@@ -7,6 +7,8 @@ import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/empty_list_widget.dart';
 import 'package:evex_user/core/ui/widgets/load_more_listener.dart';
+import 'package:evex_user/core/ui/widgets/pending_message_dialog.dart';
+import 'package:evex_user/data/models/reservation_request_model.dart';
 import 'package:evex_user/data/cubits/confirm_booking/confirm_booking_state.dart';
 import 'package:evex_user/data/cubits/edit_reservation/edit_reservation_state.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
@@ -134,6 +136,12 @@ class _RequestsTab extends StatelessWidget {
                       ? null
                       : () => _confirmDeleteRequest(context, r.id!),
                   onEdit: editArgs == null ? null : () => _openEdit(editArgs),
+                  // Envelope + badge: the vendor's pending message (accept/refuse).
+                  showMessageIcon: true,
+                  hasMessage: r.messageStatus == true,
+                  onMessageTap: r.id == null
+                      ? null
+                      : () => _openPendingMessage(context, r),
                 );
               },
             ),
@@ -324,6 +332,26 @@ void _openEdit(EditReservationArgs args) {
   NavigationHelper.pushNamed(
     Routes.bookingServiceDetailsScreen,
     arguments: args,
+  );
+}
+
+/// Opens the vendor's pending-message dialog and marks it as read (the client
+/// saw it) via MarkMessageStatusAsRead. When there's no message the envelope
+/// badge reads 0 — tapping is a no-op.
+Future<void> _openPendingMessage(
+  BuildContext context,
+  ReservationRequestModel r,
+) async {
+  // Badge reads 0 (no pending message) → tapping is a no-op.
+  if (r.messageStatus != true || r.id == null) return;
+  final message = r.reservationPendingMessage?.trim();
+  // Opening the message marks it as read (clears the badge on refresh).
+  context.read<MyBookingsCubit>().markMessageAsRead(r.id!);
+  await PendingMessageDialog.show(
+    context,
+    message: (message == null || message.isEmpty)
+        ? 'لديك رسالة من مقدم الخدمة'
+        : message,
   );
 }
 

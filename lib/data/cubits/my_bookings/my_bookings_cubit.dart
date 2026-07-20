@@ -148,6 +148,13 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     }
   }
 
+  /// Marks the vendor's pending message for [id] as read (the client opened it),
+  /// then refreshes the requests list so the envelope badge clears.
+  Future<void> markMessageAsRead(int id) async {
+    final ok = await _repo.markMessageStatusAsRead(id);
+    if (ok) await loadRequests();
+  }
+
   /// Loads the deposit summary for all pending requests (footer in the
   /// requests tab).
   Future<void> loadPendingDeposit() async {

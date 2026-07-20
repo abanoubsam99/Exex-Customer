@@ -75,6 +75,15 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
   Widget build(BuildContext context) {
     final images = widget.service.serviceImages ?? const <String>[];
     final details = widget.service.details?.trim();
+    // Hide the price when the service is private OR the whole port keeps its
+    // prices private (port-level displayPrice, read from the booking cubit).
+    final port = widget.hasDetailsCubit
+        ? context.read<BookingServiceDetailsCubit>().state.port
+        : null;
+    final hidePrice =
+        widget.service.displayPrice || port?.displayPrice == true;
+    // Max attendees the port can host (الحد الأقصى لعدد الحضور).
+    final numberAllowed = port?.numberAllowed;
     return Container(
       width: 1.sw,
       constraints: BoxConstraints(maxHeight: 0.85.sh),
@@ -150,7 +159,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                     ),
                   ),
                   // Hide the price when the vendor keeps it private.
-                  if (!widget.service.displayPrice) ...[
+                  if (!hidePrice) ...[
                     12.horizontalSpace,
                     Text.rich(
                       TextSpan(
@@ -197,10 +206,10 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                                 state.serviceDetails?.id == widget.service.id
                                     ? state.serviceDetails
                                     : null;
-                            return _detailsBody(details, sd);
+                            return _detailsBody(details, sd, numberAllowed);
                           },
                         )
-                      : _detailsBody(details, null),
+                      : _detailsBody(details, null, numberAllowed),
                 ),
               ),
               16.verticalSpace,
@@ -220,7 +229,9 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
 
   /// The scrollable body: optional time chip + description + related occasions.
   /// [sd] is null when there's no details cubit (direct-payment module).
-  Widget _detailsBody(String? details, ServiceDetailsModel? sd) {
+  /// [numberAllowed] is the port's max attendee capacity (الحد الأقصى لعدد الحضور).
+  Widget _detailsBody(String? details, ServiceDetailsModel? sd,
+      int? numberAllowed) {
     final occasions = sd?.occasions
             ?.map((o) => o.name?.trim() ?? '')
             .where((e) => e.isNotEmpty)
@@ -231,11 +242,8 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
       children: [
         // Booking time window (صباحي / مسائي / يوم كامل).
         if (sd != null) ...[
-          Align(
-            alignment: Alignment.centerRight,
-            child: _timeChip(sd.time),
-          ),
-          12.verticalSpace,
+          _timeChip(sd.time),
+          16.verticalSpace,
         ],
         Text(
           (details != null && details.isNotEmpty)
@@ -243,7 +251,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
               : 'لا يوجد وصف متاح لهذه الخدمة',
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: AppColors.grey,
+            color: AppColors.descriptionText,
             fontSize: 13.r,
             fontFamily: 'Almarai',
             fontWeight: FontWeight.w400,
@@ -256,7 +264,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
             'المناسبات المتعلقة بالخدمة',
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: AppColors.blacksoft,
+              color: AppColors.primaryColor,
               fontSize: 14.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w700,
@@ -268,7 +276,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
             occasions.join('، '),
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: AppColors.grey,
+              color: AppColors.descriptionText,
               fontSize: 13.r,
               fontFamily: 'Almarai',
               fontWeight: FontWeight.w400,
@@ -276,39 +284,96 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
             ),
           ),
         ],
+        if (numberAllowed != null && numberAllowed > 0) ...[
+          16.verticalSpace,
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'الحد الأقصى لعدد الحضور : ',
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 14.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    height: 1.5,
+                  ),
+                ),
+                TextSpan(
+                  text: '$numberAllowed',
+                  style: TextStyle(
+                    color: AppColors.descriptionText,
+                    fontSize: 14.r,
+                    fontFamily: 'Almarai',
+                    fontWeight: FontWeight.w700,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ],
       ],
     );
   }
 
-  /// Maps the service's `time` flag (am / pm / null) to a display label.
+  /// Maps the service's `time` flag to its full booking-window description.
+  /// am  → morning-only, pm → evening-only, anything else → full day.
   String _timeLabel(String? time) {
     switch (time?.trim().toLowerCase()) {
       case 'am':
-        return 'صباحي';
+        return 'صباحي ( حجز خلال الفترة الصباحية فقط )';
       case 'pm':
-        return 'مسائي';
+        return 'مسائي ( حجز خلال الفترة المسائية فقط )';
       default:
-        return 'يوم كامل';
+        return 'حجز اليوم بالكامل (غير مرتبط بتوقيت معين)';
     }
   }
 
-  /// Small pill showing the service's booking time window.
+  /// Bordered pill-box showing the service's booking time window:
+  /// an orange "توقيت الخدمة" label followed by the window description.
   Widget _timeChip(String? time) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+      // padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
-        color: AppColors.lightPeach,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(30.r),
+        border: Border.all(color: AppColors.peachOrange),
       ),
-      child: Text(
-        _timeLabel(time),
-        style: TextStyle(
-          color: AppColors.primaryColor,
-          fontSize: 12.r,
-          fontFamily: 'Almarai',
-          fontWeight: FontWeight.w700,
-          height: 1.3,
-        ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(24.r),
+            ),
+            child: Text(
+              'توقيت الخدمة',
+              style: TextStyle(
+                color: AppColors.whiteColor,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+                height: 1.3,
+              ),
+            ),
+          ),
+          3.horizontalSpace,
+          Expanded(
+            child: Text(
+              _timeLabel(time),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.descriptionText,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w700,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

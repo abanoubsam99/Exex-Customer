@@ -26,6 +26,11 @@ class EditOccasionSheet extends StatefulWidget {
   /// so the user can only pick a location the vendor actually covers.
   final int? portId;
 
+  /// Minimum lead time (in days) the vendor requires before an event. The date
+  /// picker disables every day before today + [minimumDays], so the earliest
+  /// selectable date is that many days ahead.
+  final int minimumDays;
+
   /// نوع المناسبة options + the currently chosen one. When empty the occasion
   /// type field is hidden (e.g. the complete-booking screen reuses this sheet
   /// only to edit the date/location).
@@ -44,6 +49,7 @@ class EditOccasionSheet extends StatefulWidget {
     this.initialGovernorate,
     this.initialCity,
     this.portId,
+    this.minimumDays = 0,
     this.occasions = const [],
     this.initialOccasionId,
     required this.onConfirm,
@@ -160,12 +166,18 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
+    // The vendor requires bookings at least `minimumDays` ahead, so the earliest
+    // selectable day is today + minimumDays (every earlier day is disabled).
+    final earliest = DateTime(now.year, now.month, now.day)
+        .add(Duration(days: widget.minimumDays));
+    final initial =
+        (_date != null && !_date!.isBefore(earliest)) ? _date! : earliest;
     final picked = await showDatePicker(
       context: context,
       locale: const Locale('ar'),
-      initialDate: (_date != null && _date!.isAfter(now)) ? _date! : now,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 365)),
+      initialDate: initial,
+      firstDate: earliest,
+      lastDate: earliest.add(const Duration(days: 365)),
     );
     if (picked != null) setState(() => _date = picked);
   }

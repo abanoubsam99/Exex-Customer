@@ -59,7 +59,9 @@ class Item {
     required this.closingTime,
     required this.workDays,
     required this.checkReservationResponse,
+    required this.minimumDays,
     required this.isFavorite,
+    required this.numberAllowed,
     required this.id,
     required this.portName,
     required this.portTypeDto,
@@ -70,6 +72,7 @@ class Item {
     required this.portImages,
     required this.theMainImageFileName,
     required this.goolgeDriveLink,
+    this.displayPrice = false,
   });
 
   final int? cheapestServicePrice;
@@ -98,8 +101,15 @@ class Item {
   final String? workDays;
   final CheckReservationResponse? checkReservationResponse;
 
+  /// Minimum lead time (in days) the vendor requires before an event can be
+  /// booked. The earliest selectable booking date is today + [minimumDays].
+  final int? minimumDays;
+
   /// Whether the signed-in client favorited this port (false for guests).
   final bool? isFavorite;
+
+  /// Maximum number of attendees the port can host (الحد الأقصى لعدد الحضور).
+  final int? numberAllowed;
   final int? id;
   final String? portName;
   final PortTypeDto? portTypeDto;
@@ -110,6 +120,11 @@ class Item {
   final dynamic portImages;
   final String? theMainImageFileName;
   final String? goolgeDriveLink;
+
+  /// When true the vendor keeps all prices private for this port: every price on
+  /// the details screen (services, additions, buffets, total) is hidden and the
+  /// "إضافة لحجوزاتي" button is not shown.
+  final bool displayPrice;
 
   Item.fromJson(Map<String, dynamic> json)
       : cheapestServicePrice =
@@ -153,7 +168,9 @@ class Item {
             ? CheckReservationResponse.fromJson(
                 json['checkReservationResponse'])
             : null,
+        minimumDays = (json['minimumDays'] as num?)?.toInt(),
         isFavorite = json['isFavorite'] as bool?,
+        numberAllowed = (json['numberAllowed'] as num?)?.toInt(),
         id = (json['id'] as num?)?.toInt(),
         portName = json['portName'] as String?,
         portTypeDto = json['portTypeDTO'] != null
@@ -165,7 +182,8 @@ class Item {
         picturesAlbumName = json['picturesAlbumName'] as String?,
         portImages = json['portImages'],
         theMainImageFileName = json['theMainImageFileName'] as String?,
-        goolgeDriveLink = json['goolgeDriveLink'] as String?;
+        goolgeDriveLink = json['goolgeDriveLink'] as String?,
+        displayPrice = json['displayPrice'] as bool? ?? false;
 }
 
 class CheckReservationResponse {

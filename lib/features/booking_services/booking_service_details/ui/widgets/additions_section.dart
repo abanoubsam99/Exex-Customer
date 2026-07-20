@@ -73,6 +73,8 @@ class AdditionsSection extends StatelessWidget {
                 return AdditionItem(
                   title: additionModel.name ?? '',
                   price: (additionModel.price ?? 0).toString(),
+                  // Port keeps its prices private → hide the addition price too.
+                  showPrice: state.port?.displayPrice != true,
                   hasCount: additionModel.displayNumber ?? false,
                   initialCount: state.selectedAdditions
                           .firstWhere(

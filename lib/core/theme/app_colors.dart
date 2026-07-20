@@ -21,6 +21,7 @@ class AppColors {
 
   static const Color black = Color(0xFF121212);
   static const Color blacksoft = Color(0xff2C262C);
+  static const Color descriptionText = Color.fromRGBO(111, 118, 126, 1);
   static const Color blacksoftHint = Color(0xFFC4C4C4);
   static const Color bg = Color.fromRGBO(247, 247, 247, 1);
   static const Color offBlackColor = Color(0xff433D42);

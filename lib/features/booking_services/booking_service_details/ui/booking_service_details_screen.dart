@@ -202,7 +202,15 @@ class BookingServiceDetailsScreen extends StatelessWidget {
           ),
           ),
 
-          Container(
+          // The whole cost bar (إجمالي التكلفة + إضافة لحجوزاتي) is hidden when
+          // the port keeps its prices private (port-level displayPrice).
+          BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
+            buildWhen: (p, c) => p.port != c.port,
+            builder: (context, portState) {
+              if (portState.port?.displayPrice == true) {
+                return const SizedBox.shrink();
+              }
+              return Container(
             width: 1.sw,
             height: 130.h,
             decoration: BoxDecoration(
@@ -371,6 +379,8 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
+          );
+            },
           ),
         ],
       ),

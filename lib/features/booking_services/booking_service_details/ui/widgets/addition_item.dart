@@ -11,6 +11,10 @@ class AdditionItem extends StatefulWidget {
   final bool isSelected;
   final VoidCallback onChanged;
 
+  /// When false the price ("... LE") is hidden — the port keeps its prices
+  /// private (port-level displayPrice).
+  final bool showPrice;
+
   // Count-related properties (optional)
   final bool hasCount;
   final int? initialCount;
@@ -23,6 +27,7 @@ class AdditionItem extends StatefulWidget {
     required this.price,
     required this.isSelected,
     required this.onChanged,
+    this.showPrice = true,
     this.hasCount = false,
     this.initialCount,
     this.giftCount,
@@ -140,10 +145,11 @@ class _AdditionItemState extends State<AdditionItem> {
               if (hasGift) ...[
                 12.horizontalSpace,
                 Flexible(
+                  flex: 3,
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      vertical: 4.h,
-                      horizontal: 10.w,
+                      vertical: 6.h,
+                      horizontal: 12.w,
                     ),
                     decoration: ShapeDecoration(
                       color: AppColors.lightPeach,
@@ -163,7 +169,8 @@ class _AdditionItemState extends State<AdditionItem> {
                                 ? "${widget.giftCount} ${widget.title}"
                                 : widget.title,
                             style: TextStyle(
-                              fontSize: 13.sp,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.secondaryColor,
                             ),
                           ),
@@ -175,31 +182,33 @@ class _AdditionItemState extends State<AdditionItem> {
                 const Spacer(),
               ],
               8.horizontalSpace,
-              Row(
-                children: [
-                  Text(
-                    'LE',
-                    style: TextStyle(
-                      color: AppColors.unitGrey,
-                      fontSize: 12.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -0.24,
+              // Hidden when the port keeps its prices private.
+              if (widget.showPrice)
+                Row(
+                  children: [
+                    Text(
+                      'LE',
+                      style: TextStyle(
+                        color: AppColors.unitGrey,
+                        fontSize: 12.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -0.24,
+                      ),
                     ),
-                  ),
-                  3.horizontalSpace,
-                  Text(
-                    widget.price,
-                    style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: 16.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.24,
+                    3.horizontalSpace,
+                    Text(
+                      widget.price,
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontSize: 16.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.24,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               if (widget.hasCount) ...[
                 8.horizontalSpace,
                 _buildCountControls(),

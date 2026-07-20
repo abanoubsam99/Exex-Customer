@@ -80,6 +80,9 @@ class AppImages {
   /// Assets for iconsMenu
   /// assets/icons/menu.svg
   static const String iconsMenu = "assets/icons/menu.svg";
+  /// Assets for iconsMessage
+  /// assets/icons/message.svg
+  static const String iconsMessage = "assets/icons/message.svg";
   /// Assets for iconsMinus
   /// assets/icons/minus.svg
   static const String iconsMinus = "assets/icons/minus.svg";

@@ -38,6 +38,19 @@ class MyBookingsRepo {
     }
   }
 
+  /// PUT /api/Reservations/MarkMessageStatusAsRead/{id} — marks the vendor's
+  /// pending message for the given reservation request as read by the client.
+  Future<bool> markMessageStatusAsRead(int id) async {
+    try {
+      final response = await DioHelper.putData(
+        url: '${AppEndpoints.markMessageStatusAsRead}/$id',
+      );
+      return response.statusCode! >= 200 && response.statusCode! < 300;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// GET /api/Reservations/GetMyRequestReservations — الطلبات الحالية.
   Future<List<ReservationRequestModel>?> getMyRequestReservations({
     int index = 0,

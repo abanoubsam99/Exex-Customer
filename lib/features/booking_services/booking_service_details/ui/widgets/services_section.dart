@@ -138,7 +138,10 @@ class ServicesSection extends StatelessWidget {
                     subtitle: service.details ?? '',
                     price: service.priceAfterDiscount ?? 0,
                     priceBeforeDiscount: service.priceBeforDiscount,
-                    displayPrice: service.displayPrice,
+                    // Hide the price when the service is private OR the whole
+                    // port keeps its prices private (port-level displayPrice).
+                    displayPrice:
+                        service.displayPrice || state.port?.displayPrice == true,
                     isSelected: isSelected,
                     isAvailable: cubit.isServiceAvailable(service.id),
                     onSelectionChanged: () {

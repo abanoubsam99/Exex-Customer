@@ -30,7 +30,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- App Links: https://backend.evexnow.com/port/<id> opens the app.
+            <!-- App Links: https://evexnow.com/port/<id> opens the app.
                  autoVerify needs /.well-known/assetlinks.json on that host. -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -38,7 +38,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="backend.evexnow.com"
+                    android:host="evexnow.com"
                     android:pathPrefix="/port" />
             </intent-filter>
         </activity>
