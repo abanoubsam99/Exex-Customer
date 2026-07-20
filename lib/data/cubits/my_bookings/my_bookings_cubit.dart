@@ -1,7 +1,6 @@
 import 'package:evex_user/core/helpers/file_download_helper.dart';
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
-import 'package:evex_user/data/models/reservation_model.dart';
 import 'package:evex_user/data/models/reservation_request_model.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/data/repos/my_bookings_repo.dart';
@@ -20,43 +19,37 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
 
   static const int _pageSize = 20;
 
-  /// Accumulated raw pages (re-split into active/cancelled on every emit).
-  final List<ReservationModel> _rawReservations = [];
+  /// Backend reservation-status filters (sent as the `status` query param).
+  static const String _confirmedStatus = 'Confirmed';
+  static const String _cancelledStatus = 'Cancelled';
+
+  /// Accumulated raw request pages (re-filtered to active on every emit).
   final List<ReservationRequestModel> _rawRequests = [];
   int _reservationsNextIndex = 0;
+  int _cancelledNextIndex = 0;
   int _requestsNextIndex = 0;
 
-  /// بيحمّل التابين مع بعض (الطلبات الحالية + الحجوزات المؤكدة).
+  /// بيحمّل التابات مع بعض (الطلبات الحالية + المؤكدة + الملغية).
   Future<void> load() async {
-    await Future.wait([loadRequests(), loadReservations()]);
+    await Future.wait([loadRequests(), loadReservations(), loadCancelled()]);
   }
 
-  /// Splits the accumulated reservations into active/cancelled and emits them.
-  void _emitReservations({required bool hasMore, bool loadingMore = false}) {
-    final cancelled = _rawReservations
-        .where((r) => ReservationStatusHelper.isCancelled(r.reservationStatus))
-        .toList();
-    final active = _rawReservations
-        .where((r) => !ReservationStatusHelper.isCancelled(r.reservationStatus))
-        .toList();
-    emit(state.copyWith(
-      isLoadingReservations: false,
-      reservationsLoadingMore: loadingMore,
-      reservations: active,
-      cancelled: cancelled,
-      reservationsHasMore: hasMore,
-    ));
-  }
+  // ── Confirmed reservations (status=Confirmed) ──
 
   Future<void> loadReservations() async {
     emit(state.copyWith(isLoadingReservations: true));
-    final list = await _repo.getMyReservations(index: 0, size: _pageSize);
+    final list = await _repo.getMyReservations(
+      index: 0,
+      size: _pageSize,
+      status: _confirmedStatus,
+    );
     if (list != null) {
-      _rawReservations
-        ..clear()
-        ..addAll(list);
       _reservationsNextIndex = 1;
-      _emitReservations(hasMore: list.length >= _pageSize);
+      emit(state.copyWith(
+        isLoadingReservations: false,
+        reservations: list,
+        reservationsHasMore: list.length >= _pageSize,
+      ));
     } else {
       emit(state.copyWith(
         isLoadingReservations: false,
@@ -65,7 +58,7 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     }
   }
 
-  /// Appends the next page of reservations (drives both confirmed + cancelled).
+  /// Appends the next page of confirmed reservations (infinite scroll).
   Future<void> loadMoreReservations() async {
     if (state.isLoadingReservations ||
         state.reservationsLoadingMore ||
@@ -76,13 +69,66 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
     final list = await _repo.getMyReservations(
       index: _reservationsNextIndex,
       size: _pageSize,
+      status: _confirmedStatus,
     );
     if (list != null) {
-      _rawReservations.addAll(list);
       _reservationsNextIndex += 1;
-      _emitReservations(hasMore: list.length >= _pageSize, loadingMore: false);
+      emit(state.copyWith(
+        reservationsLoadingMore: false,
+        reservations: [...state.reservations, ...list],
+        reservationsHasMore: list.length >= _pageSize,
+      ));
     } else {
       emit(state.copyWith(reservationsLoadingMore: false));
+    }
+  }
+
+  // ── Cancelled reservations (status=Cancelled) ──
+
+  Future<void> loadCancelled() async {
+    emit(state.copyWith(isLoadingCancelled: true));
+    final list = await _repo.getMyReservations(
+      index: 0,
+      size: _pageSize,
+      status: _cancelledStatus,
+    );
+    if (list != null) {
+      _cancelledNextIndex = 1;
+      emit(state.copyWith(
+        isLoadingCancelled: false,
+        cancelled: list,
+        cancelledHasMore: list.length >= _pageSize,
+      ));
+    } else {
+      emit(state.copyWith(
+        isLoadingCancelled: false,
+        cancelledError: 'حدث خطأ',
+      ));
+    }
+  }
+
+  /// Appends the next page of cancelled reservations (infinite scroll).
+  Future<void> loadMoreCancelled() async {
+    if (state.isLoadingCancelled ||
+        state.cancelledLoadingMore ||
+        !state.cancelledHasMore) {
+      return;
+    }
+    emit(state.copyWith(cancelledLoadingMore: true));
+    final list = await _repo.getMyReservations(
+      index: _cancelledNextIndex,
+      size: _pageSize,
+      status: _cancelledStatus,
+    );
+    if (list != null) {
+      _cancelledNextIndex += 1;
+      emit(state.copyWith(
+        cancelledLoadingMore: false,
+        cancelled: [...state.cancelled, ...list],
+        cancelledHasMore: list.length >= _pageSize,
+      ));
+    } else {
+      emit(state.copyWith(cancelledLoadingMore: false));
     }
   }
 

@@ -45,11 +45,11 @@ class MyBookingsTabView extends StatelessWidget {
               onRefresh: cubit.loadReservations,
               onLoadMore: cubit.loadMoreReservations,
             ),
-            // Cancelled reservations — filtered from GetMyReservations by status.
+            // Cancelled reservations — GetMyReservations with status=Cancelled.
             _CancelledTab(
               state: state,
-              onRefresh: cubit.loadReservations,
-              onLoadMore: cubit.loadMoreReservations,
+              onRefresh: cubit.loadCancelled,
+              onLoadMore: cubit.loadMoreCancelled,
             ),
           ],
         );
@@ -275,7 +275,7 @@ class _CancelledTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.isLoadingReservations && state.cancelled.isEmpty) {
+    if (state.isLoadingCancelled && state.cancelled.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
     return RefreshIndicator(
@@ -290,7 +290,7 @@ class _CancelledTab extends StatelessWidget {
               padding:
                   EdgeInsets.fromLTRB(0, 20.h, 0, navBarBottomReserve(context)),
               itemCount:
-                  state.cancelled.length + (state.reservationsLoadingMore ? 1 : 0),
+                  state.cancelled.length + (state.cancelledLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index >= state.cancelled.length) {
                   return const PaginationLoader();

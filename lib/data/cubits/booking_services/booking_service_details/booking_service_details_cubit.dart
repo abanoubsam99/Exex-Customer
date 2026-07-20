@@ -178,7 +178,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   /// updates [BookingServiceDetailsState.hasConfirmedBooking] accordingly.
   Future<void> _checkConfirmedBooking() async {
     final portId = _portId;
-    final reservations = await _bookingsRepo.getMyReservations(size: 100);
+    final reservations =
+        await _bookingsRepo.getMyReservations(size: 100, status: 'Confirmed');
     if (reservations == null) return;
     final has = reservations.any((r) => r.portId == portId);
     emit(state.copyWith(hasConfirmedBooking: has));
