@@ -35,12 +35,14 @@ class SpecialOffer {
   /// publish a fixed price for this service).
   final bool displayPrice;
 
-  /// Port payment type — `1` = direct payment (خدمات مباشرة), anything else =
-  /// instant booking. Decides which module a tapped offer opens.
-  final int? subscriptionType;
+  /// Service subscription type as sent by the API — `"payment"` = direct
+  /// service (مباشر), `"reservation"` = instant booking (فوري). Decides which
+  /// module a tapped offer opens.
+  final String? subscriptionType;
 
-  /// Whether this offer's port is a direct-payment vendor.
-  bool get isDirectPayment => subscriptionType == 1;
+  /// Whether this offer is a direct-payment service.
+  bool get isDirectPayment =>
+      subscriptionType?.trim().toLowerCase() == 'payment';
 
   SpecialOffer.fromJson(Map<String, dynamic> json)
       : priceAfterDiscount = (json['priceAfterDiscount'] as num?)?.toInt(),
@@ -59,7 +61,13 @@ class SpecialOffer {
                 const [],
         portId = (json['portId'] as num?)?.toInt(),
         displayPrice = json['displayPrice'] as bool? ?? false,
-        subscriptionType = (json['subscriptionType'] as num?)?.toInt();
+        // Older payloads sent this as an int (1 = direct payment); the services
+        // endpoint sends "payment" / "reservation".
+        subscriptionType = json['subscriptionType'] is num
+            ? ((json['subscriptionType'] as num).toInt() == 1
+                ? 'payment'
+                : 'reservation')
+            : json['subscriptionType'] as String?;
 
   Map<String, dynamic> toJson() {
     return {

@@ -67,7 +67,8 @@
 		<string>http</string>
 		<string>whatsapp</string>
 	</array>
-	<!-- google_sign_in: iOS client id + reversed-client-id URL scheme. -->
+	<!-- google_sign_in: iOS client id + reversed-client-id URL scheme.
+	     DISABLED for the store build (google_sign_in commented out of pubspec).
 	<key>GIDClientID</key>
 	<string>588244655147-2cl52q5u5q9u5f5d3tv4nt8spa2r9f5e.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
@@ -81,5 +82,6 @@
 			</array>
 		</dict>
 	</array>
+	-->
 </dict>
 </plist>

@@ -8,10 +8,12 @@
 	<array>
 		<string>applinks:evexnow.com</string>
 	</array>
-	<!-- Sign in with Apple capability. -->
+	<!-- Sign in with Apple capability.
+	     DISABLED for the store build (sign_in_with_apple commented out).
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
 	</array>
+	-->
 </dict>
 </plist>

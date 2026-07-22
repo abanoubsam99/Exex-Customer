@@ -21,7 +21,7 @@ class ProfileRepo {
   }
 
   /// تعديل بيانات العميل. كل الحقول بتتبعت كـ multipart/form-data (زي الـ API
-  /// المعتمد)، والصورة بتتبعت في نفس الـ body على الحقل `ImagePath`.
+  /// المعتمد)، والصورة بتتبعت في نفس الـ body على الحقل `Image`.
   /// PUT /api/Clients/UpdateClient
   Future<UserViewModel?> updateClient({
     int? id,
@@ -44,8 +44,8 @@ class ProfileRepo {
         if (gender != null && gender.isNotEmpty) 'Gender': gender,
         if (dateOfBirth != null && dateOfBirth.isNotEmpty)
           'DateOfBirth': dateOfBirth,
-        // The backend expects the uploaded file on the `ImagePath` field.
-        if (image != null) 'ImagePath': image,
+        // The backend expects the uploaded file on the `Image` field.
+        if (image != null) 'Image': image,
       });
       final response = await DioHelper.putData(
         url: AppEndpoints.updateClient,
