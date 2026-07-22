@@ -1,9 +1,9 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
-// Social sign-in services — all disabled for the store build.
-// import 'package:evex_user/core/services/google_auth_service.dart';
+// Social sign-in services. Google + Apple enabled; Facebook stays disabled.
+import 'package:evex_user/core/services/google_auth_service.dart';
 // import 'package:evex_user/core/services/facebook_auth_service.dart';
-// import 'package:evex_user/core/services/apple_auth_service.dart';
+import 'package:evex_user/core/services/apple_auth_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -19,18 +19,18 @@ class LoginCubit extends Cubit<LoginState> {
   final LoginRepo _loginRepo;
   final UserService _userService;
   final LocalAuthService _localAuthService;
-  // Social services — all disabled for the store build.
-  // final GoogleAuthService _googleAuthService;
+  // Social services. Facebook stays disabled.
+  final GoogleAuthService _googleAuthService;
   // final FacebookAuthService _facebookAuthService;
-  // final AppleAuthService _appleAuthService;
+  final AppleAuthService _appleAuthService;
 
   LoginCubit(
     this._loginRepo,
     this._userService,
     this._localAuthService,
-    // this._googleAuthService,
+    this._googleAuthService,
     // this._facebookAuthService,
-    // this._appleAuthService,
+    this._appleAuthService,
   ) : super(LoginInitial());
 
   final formKey = GlobalKey<FormState>();
@@ -88,41 +88,40 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   // ─────────────────────────── Social sign-in ───────────────────────────
-  // Google, Apple and Facebook are all kept commented (disabled) — the
-  // packages are commented out of pubspec.yaml for the store build.
+  // Google + Apple are enabled. Facebook is kept commented (disabled).
 
-  // /// Sign in with Google, then exchange the idToken via /ExternalLogin.
-  // Future<void> loginWithGoogle() async {
-  //   GoogleAuthResult? google;
-  //   try {
-  //     google = await _googleAuthService.signIn();
-  //   } catch (e) {
-  //     // signIn threw (e.g. ApiException 10 / DEVELOPER_ERROR) — don't die
-  //     // silently after the user picked an account.
-  //     ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
-  //     return;
-  //   }
-  //   if (google == null) return; // user cancelled the picker
-  //   if ((google.idToken ?? '').isEmpty) {
-  //     // Account picked but no idToken came back → OAuth client misconfigured
-  //     // (SHA-1 / serverClientId). Surface it instead of staying silent.
-  //     ToastManager.showError('تعذّر إكمال تسجيل الدخول بجوجل، حاول مرة أخرى');
-  //     return;
-  //   }
-  //   emit(LoginLoading());
-  //   final user = await _loginRepo.externalLogin(
-  //     provider: 'google',
-  //     token: google.idToken!,
-  //     email: google.email,
-  //     name: google.name,
-  //   );
-  //   if (user != null) {
-  //     await _onLoggedIn(user);
-  //   } else {
-  //     emit(LoginError('فشل تسجيل الدخول بجوجل'));
-  //     ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
-  //   }
-  // }
+  /// Sign in with Google, then exchange the idToken via /ExternalLogin.
+  Future<void> loginWithGoogle() async {
+    GoogleAuthResult? google;
+    try {
+      google = await _googleAuthService.signIn();
+    } catch (e) {
+      // signIn threw (e.g. ApiException 10 / DEVELOPER_ERROR) — don't die
+      // silently after the user picked an account.
+      ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+      return;
+    }
+    if (google == null) return; // user cancelled the picker
+    if ((google.idToken ?? '').isEmpty) {
+      // Account picked but no idToken came back → OAuth client misconfigured
+      // (SHA-1 / serverClientId). Surface it instead of staying silent.
+      ToastManager.showError('تعذّر إكمال تسجيل الدخول بجوجل، حاول مرة أخرى');
+      return;
+    }
+    emit(LoginLoading());
+    final user = await _loginRepo.externalLogin(
+      provider: 'google',
+      token: google.idToken!,
+      email: google.email,
+      name: google.name,
+    );
+    if (user != null) {
+      await _onLoggedIn(user);
+    } else {
+      emit(LoginError('فشل تسجيل الدخول بجوجل'));
+      ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+    }
+  }
 
   // /// Sign in with Facebook, then exchange the accessToken via /ExternalLogin.
   // Future<void> loginWithFacebook() async {
@@ -143,24 +142,24 @@ class LoginCubit extends Cubit<LoginState> {
   //   }
   // }
 
-  // /// Sign in with Apple, then exchange the identityToken via /ExternalLogin.
-  // Future<void> loginWithApple() async {
-  //   final apple = await _appleAuthService.signIn();
-  //   if (apple == null || (apple.identityToken ?? '').isEmpty) return; // cancelled
-  //   emit(LoginLoading());
-  //   final user = await _loginRepo.externalLogin(
-  //     provider: 'apple',
-  //     token: apple.identityToken!,
-  //     email: apple.email,
-  //     name: apple.name,
-  //   );
-  //   if (user != null) {
-  //     await _onLoggedIn(user);
-  //   } else {
-  //     emit(LoginError('فشل تسجيل الدخول بأبل'));
-  //     ToastManager.showError('تعذّر تسجيل الدخول بأبل، حاول مرة أخرى');
-  //   }
-  // }
+  /// Sign in with Apple, then exchange the identityToken via /ExternalLogin.
+  Future<void> loginWithApple() async {
+    final apple = await _appleAuthService.signIn();
+    if (apple == null || (apple.identityToken ?? '').isEmpty) return; // cancelled
+    emit(LoginLoading());
+    final user = await _loginRepo.externalLogin(
+      provider: 'apple',
+      token: apple.identityToken!,
+      email: apple.email,
+      name: apple.name,
+    );
+    if (user != null) {
+      await _onLoggedIn(user);
+    } else {
+      emit(LoginError('فشل تسجيل الدخول بأبل'));
+      ToastManager.showError('تعذّر تسجيل الدخول بأبل، حاول مرة أخرى');
+    }
+  }
 
   /// Shared post-login handling: persist the user and route to the right
   /// screen depending on the account completion state.
