@@ -79,12 +79,12 @@ class SpecialOffersSection extends StatelessWidget {
               );
             }
 
-            // The static promo banner always leads the carousel; the backend
-            // offers follow. So even with no offers for the user's area the
-            // section still shows the banner instead of an empty state.
+            // The backend offers come first; the static "إعلانك هنا" promo
+            // banner always trails at the very end after every real offer. With
+            // no offers for the user's area the section still shows the banner
+            // instead of an empty state.
             return CarouselSlider(
               items: <Widget>[
-                const SpecialBannerSlide(),
                 ...state.specialOffers.map(
                     (offer) => InkWell(
                       // Route to the right module by the offer's port type:
@@ -255,6 +255,7 @@ class SpecialOffersSection extends StatelessWidget {
                       ),
                     ),
                   ),
+                const SpecialBannerSlide(),
               ],
               options: carouselOptions,
             );

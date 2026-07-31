@@ -24,6 +24,16 @@ class ReservationStatusHelper {
     return s.contains('متاح') && !s.contains('غير');
   }
 
+  /// Localized-independent label for a request that is still waiting on the
+  /// vendor's confirmation.
+  static const String awaitingVendorLabel = 'بأنتظار التأكيد من ناحية التاجر';
+
+  /// True when the request is still waiting on the vendor's confirmation
+  /// (waiting == true and not yet accepted). Such a request isn't bookable or
+  /// payable yet and shows the [awaitingVendorLabel] status.
+  static bool isAwaitingVendor({bool? waiting, bool? acceptedByVendor}) =>
+      waiting == true && acceptedByVendor != true;
+
   static bool isConfirmed(String? status) =>
       (status?.trim().toLowerCase() ?? '') == 'confirmed';
 

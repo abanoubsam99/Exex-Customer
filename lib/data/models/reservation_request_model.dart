@@ -23,6 +23,11 @@ class ReservationRequestModel {
   final num? deposit;
 
   final bool? acceptedByVendor;
+
+  /// True while the request is still awaiting the vendor's confirmation. Paired
+  /// with [acceptedByVendor] == false it means "بأنتظار التأكيد من ناحية التاجر"
+  /// — the request isn't bookable/payable yet.
+  final bool? waiting;
   final bool? paid;
   final String? userNotes;
 
@@ -51,6 +56,7 @@ class ReservationRequestModel {
     this.finalCost,
     this.deposit,
     this.acceptedByVendor,
+    this.waiting,
     this.paid,
     this.userNotes,
     this.reservationPendingMessage,
@@ -74,6 +80,7 @@ class ReservationRequestModel {
         finalCost = json['theFinalCostBasedOnNumberOfReservations'] as num?,
         deposit = json['deposit'] as num?,
         acceptedByVendor = json['acceptedByVendor'] as bool?,
+        waiting = json['waiting'] as bool?,
         paid = json['paid'] as bool?,
         userNotes = json['userNotes'] as String?,
         reservationPendingMessage =

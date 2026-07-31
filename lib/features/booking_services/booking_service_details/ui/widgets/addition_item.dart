@@ -125,66 +125,75 @@ class _AdditionItemState extends State<AdditionItem> {
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: Row(
             children: [
-              // Takes the free width; a long addition name (e.g.
-              // "لوحه خشب ٥٠ × ٧٠ سم") scrolls in a loop so all of it is
-              // readable instead of being cut off — static when it fits.
-              if (!hasGift)
-                Expanded(
-                  child: LoopingMarqueeText(
-                    widget.title,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: AppColors.blacksoft,
-                      fontSize: 13.r,
-                      fontFamily: 'Almarai',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.24,
-                    ),
-                  ),
-                ),
-              if (hasGift) ...[
-                12.horizontalSpace,
-                Flexible(
-                  flex: 3,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 6.h,
-                      horizontal: 12.w,
-                    ),
-                    decoration: ShapeDecoration(
-                      color: AppColors.lightPeach,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomImageHandler(AppImages.imagesGift),
-                          4.horizontalSpace,
-                          Text(
-                            widget.hasCount
-                                ? "${widget.giftCount} ${widget.title}"
-                                : widget.title,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.secondaryColor,
-                            ),
+              // ── Name (right side) ──
+              // Fixed font size (no FittedBox scale-down) so every row reads at
+              // the same size instead of short names looking huge and long names
+              // shrinking to nothing. Long names scroll in a loop so they stay
+              // readable — static when they fit.
+              Flexible(
+                flex: 5,
+                child: hasGift
+                    ? Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 6.h,
+                          horizontal: 12.w,
+                        ),
+                        decoration: ShapeDecoration(
+                          color: AppColors.lightPeach,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          children: [
+                            CustomImageHandler(AppImages.imagesGift),
+                            4.horizontalSpace,
+                            Expanded(
+                              child: LoopingMarqueeText(
+                                widget.hasCount
+                                    ? "${widget.giftCount} ${widget.title}"
+                                    : widget.title,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: AppColors.secondaryColor,
+                                  fontSize: 15.sp,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : LoopingMarqueeText(
+                        widget.title,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: AppColors.blacksoft,
+                          fontSize: 15.sp,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.24,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-              ],
-              8.horizontalSpace,
-              // Hidden when the port keeps its prices private.
-              if (widget.showPrice)
+              ),
+              // ── Count stepper (middle) ──
+              // Always sits between the name (right) and the price (left),
+              // centered in the free space so it reads as the middle control.
+              if (widget.hasCount)
+                Flexible(
+                  flex: 4,
+                  child: Center(child: _buildCountControls()),
+                )
+              else
+                const Spacer(flex: 4),
+              // ── Price (far left) ──
+              // Pinned to the far left on every row, even when a count stepper
+              // is present. Hidden when the port keeps its prices private.
+              if (widget.showPrice) ...[
+                6.horizontalSpace,
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'LE',
@@ -209,9 +218,6 @@ class _AdditionItemState extends State<AdditionItem> {
                     ),
                   ],
                 ),
-              if (widget.hasCount) ...[
-                8.horizontalSpace,
-                _buildCountControls(),
               ],
             ],
           ),

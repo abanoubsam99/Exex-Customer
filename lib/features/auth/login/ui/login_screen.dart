@@ -13,10 +13,12 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 899),
-      child: UpgradeAlert(
-        child: Scaffold(
+    // No nested ScreenUtilInit here: the root one in main.dart (Size(375, 812))
+    // governs the whole app. A second ScreenUtilInit with a different design
+    // size re-initialised the global singleton, leaving every screen opened
+    // afterwards scaled with the wrong design height (squished UI until restart).
+    return UpgradeAlert(
+      child: Scaffold(
         body: SafeArea(
           top: false,
           child: Stack(
@@ -145,7 +147,6 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         ),
-      ),
     );
   }
 }

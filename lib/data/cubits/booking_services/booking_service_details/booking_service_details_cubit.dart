@@ -10,6 +10,7 @@ import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/models/reservation_update_model.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -30,6 +31,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   final BookingServicesPortsRepo _portsRepo;
   final MyBookingsRepo _bookingsRepo;
   final UserService _userService;
+  final LocationService _locationService;
 
   /// When non-null the screen is in "edit" mode: it pre-fills an existing
   /// reservation's selections and the bottom button updates it in place.
@@ -46,7 +48,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     this._confirmRepo,
     this._portsRepo,
     this._bookingsRepo,
-    this._userService, {
+    this._userService,
+    this._locationService, {
     Item? port,
     int? portId,
     int? autoSelectServiceId,
@@ -447,8 +450,15 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   Future<void> getOtherPorts() async {
     final companyId = state.port?.companyId;
     if (companyId == null) return;
-    final model =
-        await _portsRepo.getAllPortServices(GetPortsRequest(companyId: companyId));
+    // Filter by the client's selected location so vendor ports whose working
+    // area doesn't cover it are hidden — the client can't open an out-of-area
+    // service they'd never be able to book. Same gov/city filter the home and
+    // instant-booking lists use.
+    final model = await _portsRepo.getAllPortServices(GetPortsRequest(
+      companyId: companyId,
+      gov: _locationService.govName,
+      city: _locationService.cityName,
+    ));
     final items = model?.items;
     if (items == null) return;
     // Drop the port currently being viewed from the list.

@@ -312,6 +312,7 @@ class AppRouter {
               context.read<BookingServicesPortsRepo>(),
               context.read<MyBookingsRepo>(),
               context.read<UserService>(),
+              context.read<LocationService>(),
               port: bookingArg is Item ? bookingArg : null,
               // Opened from a special offer (SpecialOffer) or a shared deep
               // link (int) — only the portId is available in both cases.
@@ -500,6 +501,7 @@ class AppRouter {
               context.read<WalletRepo>(),
               context.read<FavoritesRepo>(),
               context.read<BookingServicesPortsRepo>(),
+              context.read<LocationService>(),
               port: settings.arguments is Item
                   ? settings.arguments as Item
                   : null,

@@ -98,7 +98,14 @@ class _RequestsTab extends StatelessWidget {
                   return const PaginationLoader();
                 }
                 final r = state.requests[index];
-                final available =
+                // A request still waiting on the vendor's confirmation
+                // (waiting == true && acceptedByVendor == false) is neither
+                // available nor payable — it shows its own amber status.
+                final awaitingVendor = ReservationStatusHelper.isAwaitingVendor(
+                  waiting: r.waiting,
+                  acceptedByVendor: r.acceptedByVendor,
+                );
+                final available = !awaitingVendor &&
                     ReservationStatusHelper.isAvailable(r.reservationStatus);
                 // A pending request opens the edit-reservation screen (both on
                 // card tap and via the edit icon). The order-details/invoice
@@ -119,9 +126,12 @@ class _RequestsTab extends StatelessWidget {
                       );
                 return MyBookingItem(
                   portName: r.portName ?? '',
-                  statusText:
-                      ReservationStatusHelper.label(r.reservationStatus),
-                  statusColor: available ? _green : _red,
+                  statusText: awaitingVendor
+                      ? ReservationStatusHelper.awaitingVendorLabel
+                      : ReservationStatusHelper.label(r.reservationStatus),
+                  statusColor: awaitingVendor
+                      ? AppColors.amber
+                      : (available ? _green : _red),
                   serviceName: r.serviceName ?? '',
                   serviceDetails: r.serviceDetails ?? '',
                   location: _location(r.governorate, r.city),
@@ -165,6 +175,11 @@ class _ConfirmRequestsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final availableIds = _confirmableIds(state);
+
+    // Nothing available to confirm (e.g. CalculatePendingDeposit.availableCount
+    // == 0, or every request is still awaiting the vendor) → hide the button so
+    // the user can't reach the deposit-payment screen at all.
+    if (availableIds.isEmpty) return const SizedBox.shrink();
 
     // Sum of the deposits the user can actually see for available requests.
     final requestsDepositTotal = state.requests
@@ -496,21 +511,29 @@ class _PendingDepositFooter extends StatelessWidget {
 /// Empty → the "تأكيد الحجز" button is hidden.
 List<int> _confirmableIds(MyBookingsState state) {
   final pd = state.pendingDeposit;
-  if (pd != null && pd.items.isNotEmpty) {
-    // The summary's boolean `isAvailable` isn't always populated; also accept
-    // an Arabic `statusMessage` that reads "متاح ..." (excluding "غير متاح").
-    final ids = pd.items
-        .where((e) =>
-            e.id != null &&
-            (e.isAvailable ||
-                ReservationStatusHelper.isAvailable(e.statusMessage)))
-        .map((e) => e.id!)
-        .toList();
-    // Only trust the summary when it actually flagged something; otherwise fall
-    // back to the visible requests' own status (so we never wrongly block the
-    // confirm button when the user can clearly see an available request).
-    if (ids.isNotEmpty) return ids;
+  if (pd != null) {
+    // CalculatePendingDeposit is authoritative. When it reports nothing
+    // available (availableCount == 0) the confirm flow is blocked outright — the
+    // user must not reach the deposit-payment screen (e.g. the only request left
+    // is still waiting on the vendor's confirmation).
+    if (pd.availableCount <= 0) return const [];
+    if (pd.items.isNotEmpty) {
+      // The summary's boolean `isAvailable` isn't always populated; also accept
+      // an Arabic `statusMessage` that reads "متاح ..." (excluding "غير متاح").
+      final ids = pd.items
+          .where((e) =>
+              e.id != null &&
+              (e.isAvailable ||
+                  ReservationStatusHelper.isAvailable(e.statusMessage)))
+          .map((e) => e.id!)
+          .toList();
+      // Only trust the item ids when the summary actually flagged something;
+      // otherwise fall back to the visible requests' own status below.
+      if (ids.isNotEmpty) return ids;
+    }
   }
+  // No summary loaded yet → fall back to the visible requests' own status so we
+  // never wrongly block the confirm button before the summary arrives.
   return state.requests
       .where((r) =>
           ReservationStatusHelper.isAvailable(r.reservationStatus) &&

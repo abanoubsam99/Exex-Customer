@@ -10,10 +10,12 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 899),
-      child: Scaffold(
-        body: SafeArea(
+    // No nested ScreenUtilInit here: the root one in main.dart (Size(375, 812))
+    // governs the whole app. A second ScreenUtilInit with a different design
+    // size re-initialised the global singleton, leaving every screen opened
+    // afterwards scaled with the wrong design height (squished UI until restart).
+    return Scaffold(
+      body: SafeArea(
           top: false,
           child: Stack(
             children: [
@@ -58,7 +60,6 @@ class RegisterScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

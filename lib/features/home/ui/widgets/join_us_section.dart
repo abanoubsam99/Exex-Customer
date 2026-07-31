@@ -1,6 +1,5 @@
 import 'dart:math' as Math;
 
-import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -100,11 +99,11 @@ class JoinUsSection extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: (){
-                        // Account action — a guest is prompted to sign in first.
-                        if (!AuthGuard.requireLogin(context)) return;
-                        NavigationHelper.pushNamed(Routes.requestToJoinScreen);
-                      },
+                      // Open to guests (same as the "المزيد" menu entry) — no
+                      // sign-in gate here: joining as a vendor is a public CTA.
+                      onTap: () => NavigationHelper.pushNamed(
+                        Routes.requestToJoinScreen,
+                      ),
                       child: Row(
                         children: [
                           Spacer(),

@@ -1,3 +1,4 @@
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
@@ -16,6 +17,7 @@ class DirectServiceDetailsCubit extends Cubit<DirectServiceDetailsState> {
   final WalletRepo _walletRepo;
   final FavoritesRepo _favoritesRepo;
   final BookingServicesPortsRepo _portsRepo;
+  final LocationService _locationService;
 
   /// The port id when opened from a special offer (no full [Item] available).
   final int? _offerPortId;
@@ -24,7 +26,8 @@ class DirectServiceDetailsCubit extends Cubit<DirectServiceDetailsState> {
     this._servicesRepo,
     this._walletRepo,
     this._favoritesRepo,
-    this._portsRepo, {
+    this._portsRepo,
+    this._locationService, {
     Item? port,
     int? portId,
   })  : _offerPortId = portId,
@@ -95,8 +98,15 @@ class DirectServiceDetailsCubit extends Cubit<DirectServiceDetailsState> {
   Future<void> getOtherPorts() async {
     final companyId = state.port?.companyId;
     if (companyId == null) return;
-    final model = await _portsRepo
-        .getAllPortServices(GetPortsRequest(companyId: companyId));
+    // Filter by the client's selected location so vendor ports whose working
+    // area doesn't cover it are hidden — the client can't open an out-of-area
+    // service they'd never be able to book. Same gov/city filter the main lists
+    // use.
+    final model = await _portsRepo.getAllPortServices(GetPortsRequest(
+      companyId: companyId,
+      gov: _locationService.govName,
+      city: _locationService.cityName,
+    ));
     final items = model?.items;
     if (items == null) return;
     // Drop the port currently being viewed from the list.

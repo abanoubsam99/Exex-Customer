@@ -6,7 +6,6 @@ import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
-import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/models/special_offer.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +31,12 @@ class _SpecialOffersCarouselState extends State<SpecialOffersCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    // The static promotional banner always leads, followed by the backend
-    // offers. With no offers the carousel still shows the banner on its own.
+    // The backend offers come first; the static "إعلانك هنا" promo banner always
+    // trails at the very end after every real offer. With no offers the carousel
+    // still shows the banner on its own.
     final items = <Widget>[
-      const Center(child: _PromoBanner()),
       ...widget.offers.map((o) => Center(child: _OfferBanner(offer: o))),
+      const Center(child: _PromoBanner()),
     ];
     return Column(
       children: [
@@ -245,13 +245,11 @@ class _PromoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tapping the pinned in-house ad opens the "انضم الينا" (join us) screen;
-    // guests are prompted to sign in first.
+    // Tapping the pinned in-house ad opens the "انضم الينا" (join us) screen —
+    // open to guests too, matching the home "انضم الينا" section.
     return GestureDetector(
-      onTap: () {
-        if (!AuthGuard.requireLogin(context)) return;
-        NavigationHelper.pushNamed(Routes.requestToJoinScreen);
-      },
+      onTap: () =>
+          NavigationHelper.pushNamed(Routes.requestToJoinScreen),
       child: Stack(
         alignment: Alignment.topLeft,
         children: [
