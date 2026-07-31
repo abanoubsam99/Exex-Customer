@@ -122,7 +122,7 @@ class _AdditionItemState extends State<AdditionItem> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Row(
             children: [
               // ── Name (right side) ──
@@ -140,9 +140,7 @@ class _AdditionItemState extends State<AdditionItem> {
                         ),
                         decoration: ShapeDecoration(
                           color: AppColors.lightPeach,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),),
                         ),
                         child: Row(
                           children: [
@@ -156,7 +154,7 @@ class _AdditionItemState extends State<AdditionItem> {
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                   color: AppColors.secondaryColor,
-                                  fontSize: 15.sp,
+                                  fontSize: 10.sp,
                                   fontFamily: 'Almarai',
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -170,7 +168,7 @@ class _AdditionItemState extends State<AdditionItem> {
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           color: AppColors.blacksoft,
-                          fontSize: 15.sp,
+                          fontSize: 10.sp,
                           fontFamily: 'Almarai',
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.24,

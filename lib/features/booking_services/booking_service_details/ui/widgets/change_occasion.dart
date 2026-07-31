@@ -356,8 +356,17 @@ class ChangeOccasion extends StatelessWidget {
                       selector: (s) => s.bookingDate,
                       builder: (context, date) {
                         final d = date ?? occasionDate;
+                        // A carried-over date earlier than this port's earliest
+                        // bookable day (today + minimumDays) isn't valid here, so
+                        // show "حدد التاريخ" — consistent with the availability
+                        // status line above — instead of a date they can't book.
+                        final now = DateTime.now();
+                        final earliest = DateTime(now.year, now.month, now.day)
+                            .add(Duration(days: port?.minimumDays ?? 0));
+                        final valid =
+                            d != null && (isEditMode || !d.isBefore(earliest));
                         return Text(
-                          d != null
+                          valid
                               ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
                               : 'حدد التاريخ',
                           textAlign: TextAlign.right,

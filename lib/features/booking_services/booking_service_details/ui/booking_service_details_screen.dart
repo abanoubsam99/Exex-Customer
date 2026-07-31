@@ -172,7 +172,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               22.verticalSpace,
                               Padding(
                                 padding:
-                                    EdgeInsets.symmetric(horizontal: 24.w),
+                                    EdgeInsets.symmetric(horizontal: 12.w),
                                 child: child,
                               ),
                             ],
