@@ -274,27 +274,17 @@ class AppRouter {
 
       case Routes.instantBookingServicesScreen:
         return _page(
-          MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => InstantBookingCubit(
-                  context.read<BookingServicesPortsRepo>(),
-                  context.read<HomeRepo>(),
-                  context.read<HomeCubit>(),
-                  context.read<LocationService>(),
-                )..loadPorts(),
-              ),
-              // Screen-scoped so the "تصفيه" sheet keeps the user's draft filter
-              // selections across re-opens instead of resetting each time.
-              BlocProvider(
-                create: (context) => PortsFilterCubit(
-                  context.read<LocationRepo>(),
-                  context.read<ConfirmBookingRepo>(),
-                  context.read<LocationService>(),
-                  context.read<UserService>(),
-                ),
-              ),
-            ],
+          BlocProvider(
+            // PortsFilterCubit is now app-wide (see BlocProviders.providers) so
+            // the "تصفيه" draft + date survive leaving and re-entering this
+            // screen; the cubit below reads it to re-apply the filter on entry.
+            create: (context) => InstantBookingCubit(
+              context.read<BookingServicesPortsRepo>(),
+              context.read<HomeRepo>(),
+              context.read<HomeCubit>(),
+              context.read<LocationService>(),
+              context.read<PortsFilterCubit>(),
+            )..loadPorts(),
             child: const InstantBookingServicesScreen(),
           ),
           settings,

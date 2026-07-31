@@ -316,15 +316,37 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                           ToastManager.showError(missing);
                           return;
                         }
-                        // Block booking when the chosen event area is outside
-                        // the vendor's working area.
+                        // The date/place must actually be bookable before adding
+                        // to حجوزاتي. The outer filter lets any date through, so a
+                        // carried-over date earlier than the vendor's earliest
+                        // bookable day (today + minimumDays, blocked in their
+                        // agenda) — or any slot the availability check rejects —
+                        // must be changed first via "تعديل تاريخ ومكان المناسبة".
                         final availability =
                             context.read<HomeCubit>().state.availability;
-                        if (!st.isEditMode &&
-                            availability?.reservationLocationAllowed == false) {
-                          ToastManager.showError(
-                              'هذه الخدمة غير متاحة في المنطقة المختارة');
-                          return;
+                        if (!st.isEditMode) {
+                          final bookingDate =
+                              context.read<HomeCubit>().state.bookingDate;
+                          final now = DateTime.now();
+                          final earliest = DateTime(now.year, now.month, now.day)
+                              .add(Duration(days: st.port?.minimumDays ?? 0));
+                          if (bookingDate == null ||
+                              bookingDate.isBefore(earliest)) {
+                            ToastManager.showError(
+                                'التاريخ المحدد غير متاح، برجاء تعديل تاريخ المناسبة');
+                            return;
+                          }
+                          if (availability?.reservationLocationAllowed ==
+                              false) {
+                            ToastManager.showError(
+                                'هذه الخدمة غير متاحة في المنطقة المختارة');
+                            return;
+                          }
+                          if (availability?.allowedToReservation != true) {
+                            ToastManager.showError(
+                                'هذا الميعاد غير متاح للحجز، برجاء اختيار ميعاد آخر');
+                            return;
+                          }
                         }
                         // Edit → continue to the same استكمال الحجز screen
                         // (payment + policies + notes); confirming there updates

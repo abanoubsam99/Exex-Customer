@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/city.dart';
 import 'package:evex_user/data/models/governate.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
@@ -16,14 +19,32 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
   final ConfirmBookingRepo _bookingRepo;
   final LocationService _locationService;
   final UserService _userService;
+  final HomeCubit _homeCubit;
+
+  /// Keeps نوع المناسبة in sync with the inner service edit sheet: when the
+  /// occasion is changed there (via HomeCubit) the filter draft updates too.
+  StreamSubscription? _homeSub;
 
   PortsFilterCubit(
     this._locationRepo,
     this._bookingRepo,
     this._locationService,
     this._userService,
+    this._homeCubit,
   ) : super(const PortsFilterState()) {
     load();
+    _homeSub = _homeCubit.stream.listen((s) {
+      // Guarded so our own writes (selectOccasion → HomeCubit) don't loop.
+      if (s.occasionId != state.selectedOccasionId) {
+        emit(state.copyWith(selectedOccasionId: s.occasionId));
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _homeSub?.cancel();
+    return super.close();
   }
 
   Future<void> load() async {
@@ -39,6 +60,9 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
       isLoading: false,
       governorates: govs,
       occasions: occasions,
+      // Seed نوع المناسبة from the shared session value so the outer filter opens
+      // already matching whatever was picked inside a service (and vice versa).
+      selectedOccasionId: _homeCubit.state.occasionId,
     ));
     await _autofillUserLocation(govs);
   }
@@ -108,7 +132,11 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
 
   void selectCity(City city) => emit(state.copyWith(selectedCity: city));
 
-  void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
+  void selectOccasion(int id) {
+    emit(state.copyWith(selectedOccasionId: id));
+    // Mirror into the shared session store so the inner service filter matches.
+    _homeCubit.setOccasion(id);
+  }
 
   void setCount(int value) => emit(state.copyWith(count: value));
 
@@ -119,9 +147,13 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
 
   /// Clears the draft selections (keeps the loaded lists so they don't reload).
   /// Guests keep the unrestricted "جميع الخدمات" default.
-  void clearSelections() => emit(PortsFilterState(
-        governorates: state.governorates,
-        occasions: state.occasions,
-        availableOnly: _userService.currentUser != null,
-      ));
+  void clearSelections() {
+    emit(PortsFilterState(
+      governorates: state.governorates,
+      occasions: state.occasions,
+      availableOnly: _userService.currentUser != null,
+    ));
+    // Keep the shared نوع المناسبة in sync with the cleared filter.
+    _homeCubit.setOccasion(null);
+  }
 }

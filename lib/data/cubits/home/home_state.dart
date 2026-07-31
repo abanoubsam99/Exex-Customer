@@ -10,6 +10,9 @@ import 'package:evex_user/data/models/user_model.dart';
 /// badge stays stuck on "جاري التحقق...".
 enum AvailabilityStatus { idle, checking, done, failed }
 
+/// Sentinel so copyWith can set [HomeState.occasionId] back to null explicitly.
+const Object _unsetOccasion = Object();
+
 class HomeState {
   final bool isLoadingPorts;
   final bool isLoadingOffers;
@@ -30,6 +33,11 @@ class HomeState {
   /// reservation. Null until the user edits it (UI falls back to the profile).
   final String? eventGovernorate;
   final String? eventCity;
+
+  /// نوع المناسبة chosen in either the outer instant-booking filter or the inner
+  /// service edit sheet — kept here (app-wide) so both stay in sync for the whole
+  /// session. Null until the user picks one.
+  final int? occasionId;
 
   /// Instant-booking availability for the selected port + [bookingDate].
   final CheckReservationResponse? availability;
@@ -59,6 +67,7 @@ class HomeState {
     this.bookingDate,
     this.eventGovernorate,
     this.eventCity,
+    this.occasionId,
     this.availability,
     this.availabilityStatus = AvailabilityStatus.idle,
     this.unreadNotifications = 0,
@@ -79,6 +88,7 @@ class HomeState {
     DateTime? bookingDate,
     String? eventGovernorate,
     String? eventCity,
+    Object? occasionId = _unsetOccasion,
     CheckReservationResponse? availability,
     AvailabilityStatus? availabilityStatus,
     bool clearAvailability = false,
@@ -115,6 +125,9 @@ class HomeState {
       bookingDate: bookingDate ?? this.bookingDate,
       eventGovernorate: eventGovernorate ?? this.eventGovernorate,
       eventCity: eventCity ?? this.eventCity,
+      occasionId: occasionId == _unsetOccasion
+          ? this.occasionId
+          : occasionId as int?,
       availability:
           clearAvailability ? null : (availability ?? this.availability),
       availabilityStatus: clearAvailability

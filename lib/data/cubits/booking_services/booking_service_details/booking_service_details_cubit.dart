@@ -366,11 +366,26 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   /// Loads occasion types (نوع المناسبة) for the picker on this screen.
   Future<void> getOccasions() async {
     final occasions = await _confirmRepo.getOccasions();
-    if (occasions != null) emit(state.copyWith(occasions: occasions));
+    if (occasions == null) return;
+    // Seed نوع المناسبة from the shared session value (picked in the outer filter
+    // or a previous service) so it stays in sync — but never override an
+    // edit-mode selection or one the user already made here.
+    final homeOcc = _homeCubit.state.occasionId;
+    if (!state.isEditMode &&
+        state.selectedOccasionId == null &&
+        homeOcc != null) {
+      emit(state.copyWith(occasions: occasions, selectedOccasionId: homeOcc));
+    } else {
+      emit(state.copyWith(occasions: occasions));
+    }
   }
 
   /// Sets the chosen occasion type (mandatory before adding to bookings).
-  void selectOccasion(int id) => emit(state.copyWith(selectedOccasionId: id));
+  void selectOccasion(int id) {
+    emit(state.copyWith(selectedOccasionId: id));
+    // Mirror into the shared session store so the outer filter stays in sync.
+    _homeCubit.setOccasion(id);
+  }
 
   /// Checks instant-booking availability when the screen opens with a date
   /// already picked (otherwise the status line would stay on "جاري التحقق").

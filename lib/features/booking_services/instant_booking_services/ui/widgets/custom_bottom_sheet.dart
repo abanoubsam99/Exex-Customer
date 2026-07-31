@@ -6,6 +6,7 @@ import 'package:evex_user/core/ui/widgets/country_picker.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_dropdown_form_field.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/cubits/ports_filter/ports_filter_state.dart';
 import 'package:evex_user/data/models/city.dart';
@@ -560,9 +561,17 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                     text: 'تأكيد',
                     onTap: () {
                       final atMax = fState.price.round() >= _max.round();
+                      final gov = fState.selectedGovernorate?.governorateNameAr;
+                      final city = fState.selectedCity?.cityNameAr;
+                      // Mirror the chosen place into the shared session store so
+                      // the inner service filter reflects it too (نوع المناسبة is
+                      // already synced live via the filter cubit).
+                      if ((gov ?? '').isNotEmpty && (city ?? '').isNotEmpty) {
+                        context.read<HomeCubit>().setEventLocation(gov!, city!);
+                      }
                       context.read<InstantBookingCubit>().applyFilters(
-                            gov: fState.selectedGovernorate?.governorateNameAr,
-                            city: fState.selectedCity?.cityNameAr,
+                            gov: gov,
+                            city: city,
                             occasionId: fState.selectedOccasionId,
                             numberAllowed:
                                 fState.count > 0 ? fState.count : null,

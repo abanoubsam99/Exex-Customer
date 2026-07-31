@@ -28,6 +28,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../data/cubits/home/home_cubit.dart';
 import '../data/cubits/main/main_cubit.dart';
+import '../data/cubits/ports_filter/ports_filter_cubit.dart';
 
 /// Central place for all app-wide providers.
 ///
@@ -116,6 +117,20 @@ class BlocProviders {
             context.read<LocationService>(),
             context.read<CacheHelper>(),
             context.read<ProfileRepo>(),
+          ),
+        ),
+        // App-wide (session-scoped) so the "تصفيه" draft — location, نوع
+        // المناسبة, price, attendee count, availability toggle — survives leaving
+        // and re-entering the instant-booking screen. It resets only on a cold
+        // app restart (in-memory, never persisted). Kept after HomeCubit so it
+        // can read it for two-way نوع المناسبة sync.
+        BlocProvider<PortsFilterCubit>(
+          create: (context) => PortsFilterCubit(
+            context.read<LocationRepo>(),
+            context.read<ConfirmBookingRepo>(),
+            context.read<LocationService>(),
+            context.read<UserService>(),
+            context.read<HomeCubit>(),
           ),
         ),
       ];

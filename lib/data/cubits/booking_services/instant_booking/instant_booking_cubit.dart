@@ -1,5 +1,6 @@
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/models/get_ports_request.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/repos/booking_services_ports_repo.dart';
@@ -13,21 +14,32 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
   final HomeRepo _homeRepo;
   final HomeCubit _homeCubit;
   final LocationService _locationService;
+  final PortsFilterCubit _filterCubit;
 
   InstantBookingCubit(
     this._repo,
     this._homeRepo,
     this._homeCubit,
     this._locationService,
+    this._filterCubit,
   ) : super(const InstantBookingState());
 
   GetPortsRequest _request = GetPortsRequest();
 
   Future<void> loadPorts() async {
+    // Seed the request from the session-scoped filter draft + the shared event
+    // date, so leaving and re-entering the screen (e.g. switching sections)
+    // re-applies whatever the user last picked instead of resetting.
+    final f = _filterCubit.state;
     _request.portType = _homeCubit.state.selectedBookingPortType?.id;
-    // Filter by the user's saved (onboarding) location by default.
-    _request.gov = _locationService.govName;
-    _request.city = _locationService.cityName;
+    _request.date = _homeCubit.state.bookingDate;
+    _request.gov =
+        f.selectedGovernorate?.governorateNameAr ?? _locationService.govName;
+    _request.city = f.selectedCity?.cityNameAr ?? _locationService.cityName;
+    _request.occasionId = f.selectedOccasionId;
+    _request.numberAllowed = f.count > 0 ? f.count : null;
+    final atMax = f.price.round() >= 500000;
+    _request.maxPrice = atMax ? null : f.price.round();
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 

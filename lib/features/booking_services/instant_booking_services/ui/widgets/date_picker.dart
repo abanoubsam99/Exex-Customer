@@ -9,11 +9,17 @@ class DatePicker extends StatefulWidget {
   const DatePicker({
     super.key,
     required this.title,
+    this.initialDate,
     this.onChanged,
     this.onBeforePick,
   });
 
   final String title;
+
+  /// The date to show when the user hasn't picked one this build (comes from the
+  /// session store, so the chosen date survives leaving and re-entering the
+  /// screen). A locally picked date takes precedence over it.
+  final DateTime? initialDate;
 
   /// Called when the user picks a date.
   final ValueChanged<DateTime>? onChanged;
@@ -30,15 +36,18 @@ class _DatePickerState extends State<DatePicker> {
   DateTime? selectedDate;
   @override
   Widget build(BuildContext context) {
+    // Local pick wins; otherwise fall back to the session date passed in.
+    final shown = selectedDate ?? widget.initialDate;
+    final now = DateTime.now();
     return GestureDetector(
       onTap: () async {
         if (widget.onBeforePick != null && !widget.onBeforePick!()) return;
         final DateTime? picked = await showDatePicker(
           context: context,
           locale: const Locale('ar'),
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
+          initialDate: (shown != null && !shown.isBefore(now)) ? shown : now,
+          firstDate: now,
+          lastDate: now.add(const Duration(days: 365)),
         );
         if (picked == null) return;
         setState(() {
@@ -65,8 +74,8 @@ class _DatePickerState extends State<DatePicker> {
               ),
               8.horizontalSpace,
               Text(
-                selectedDate != null
-                    ? DateFormat('dd/MM/yyyy').format(selectedDate!)
+                shown != null
+                    ? DateFormat('dd/MM/yyyy').format(shown)
                     : widget.title,
                 style: TextStyle(
                   color: AppColors.blueGrey,

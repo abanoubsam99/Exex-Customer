@@ -247,6 +247,11 @@ class HomeCubit extends Cubit<HomeState> {
         clearAvailability: true,
       ));
 
+  /// Stores نوع المناسبة chosen in either the outer instant-booking filter or the
+  /// inner service edit sheet, so both stay in sync for the whole session.
+  void setOccasion(int? occasionId) =>
+      emit(state.copyWith(occasionId: occasionId));
+
   /// Marks an availability check as in-flight so the badge shows "جاري التحقق"
   /// (and not a stale result). Call right before awaiting checkAvailability.
   void setAvailabilityChecking() =>

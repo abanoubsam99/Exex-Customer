@@ -12,6 +12,7 @@ import 'package:evex_user/core/helpers/image_url_helper.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/instant_booking/instant_booking_state.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
+import 'package:evex_user/data/cubits/home/home_state.dart';
 import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/features/booking_services/instant_booking_services/ui/widgets/date_picker.dart';
@@ -81,18 +82,24 @@ class InstantBookingServicesScreen extends StatelessWidget {
                                 context.watch<UserService>().currentUser != null
                                     ? 1
                                     : 0.5,
-                            child: DatePicker(
-                              title: 'تاريخ المناسبة',
-                              onBeforePick: () =>
-                                  AuthGuard.requireLogin(context),
-                              onChanged: (date) {
-                                context
-                                    .read<InstantBookingCubit>()
-                                    .setDate(date);
-                                context
-                                    .read<HomeCubit>()
-                                    .setBookingDate(date);
-                              },
+                            // Show the session date so it survives leaving and
+                            // re-entering the screen.
+                            child: BlocSelector<HomeCubit, HomeState, DateTime?>(
+                              selector: (s) => s.bookingDate,
+                              builder: (context, sessionDate) => DatePicker(
+                                title: 'تاريخ المناسبة',
+                                initialDate: sessionDate,
+                                onBeforePick: () =>
+                                    AuthGuard.requireLogin(context),
+                                onChanged: (date) {
+                                  context
+                                      .read<InstantBookingCubit>()
+                                      .setDate(date);
+                                  context
+                                      .read<HomeCubit>()
+                                      .setBookingDate(date);
+                                },
+                              ),
                             ),
                           ),
                         ),

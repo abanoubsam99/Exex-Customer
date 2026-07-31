@@ -275,7 +275,19 @@ class ChangeOccasion extends StatelessWidget {
               p.eventGovernorate != c.eventGovernorate ||
               p.eventCity != c.eventCity,
           builder: (context, state) {
-            final date = state.bookingDate ?? occasionDate;
+            final rawDate = state.bookingDate ?? occasionDate;
+            // A carried-over date earlier than the vendor's earliest bookable day
+            // (today + minimumDays, blocked in their agenda) isn't a valid pick
+            // for THIS port. Treat it as "no date" so the status prompts the user
+            // to pick a valid one instead of misleadingly reading "متاح".
+            final now = DateTime.now();
+            final earliest = DateTime(now.year, now.month, now.day)
+                .add(Duration(days: port?.minimumDays ?? 0));
+            final date = (!isEditMode &&
+                    rawDate != null &&
+                    rawDate.isBefore(earliest))
+                ? null
+                : rawDate;
             // Editing one's own reservation at the same slot → always available.
             final view = _isOwnOriginalSlot(
                     date, state.eventGovernorate, state.eventCity)
