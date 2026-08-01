@@ -378,7 +378,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
             28.verticalSpace,
             Row(
               children: [
-                Expanded(child: CustomButton(text: 'تعديل', onTap: _confirm)),
+                Expanded(child: CustomButton(text: 'تأكيد', onTap: _confirm)),
                 14.horizontalSpace,
                 Expanded(
                   child: CustomButton(

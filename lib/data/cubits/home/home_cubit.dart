@@ -111,28 +111,15 @@ class HomeCubit extends Cubit<HomeState> {
     final booking = ports.where((p) => p.subscriptionType == 0).toList();
     final payment = ports.where((p) => p.subscriptionType == 1).toList();
 
-    // The two sections are mutually exclusive. On a fresh launch (nothing
-    // selected yet) default to the first booking category so its types open
-    // below it; the direct-services section starts with no selection. We never
-    // auto-select a payment category, and a background refresh keeps whatever
-    // the user currently has selected. The type chip is deliberately left
-    // unselected — a highlighted chip only appears when the user taps one.
-    final hasSelection =
-        state.selectedBookingPort != null || state.selectedPaymentPort != null;
-    var selBooking = state.selectedBookingPort;
-    var selBookingType = state.selectedBookingPortType;
-    if (!hasSelection && booking.isNotEmpty) {
-      selBooking = booking.first;
-      selBookingType = null;
-    }
-
+    // Nothing is auto-selected: on a fresh launch no category is highlighted and
+    // no port-type chips (the subgroup) show until the user taps a category. The
+    // two sections stay mutually exclusive, and a background refresh keeps
+    // whatever the user currently has selected (selection is left untouched
+    // here — null on first launch, or the user's own pick afterwards).
     emit(state.copyWith(
       isLoadingPorts: isLoading,
       bookingPorts: booking,
       paymentPorts: payment,
-      selectedBookingPort: selBooking,
-      selectedBookingPortType: selBookingType,
-      // Payment selection is left exactly as-is (null on first launch).
     ));
   }
 

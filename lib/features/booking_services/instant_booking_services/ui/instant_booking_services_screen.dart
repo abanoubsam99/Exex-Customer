@@ -1,7 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_back_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -20,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../home/ui/widgets/booking_services_type.dart';
 import 'widgets/custom_bottom_sheet.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
@@ -60,46 +58,76 @@ class InstantBookingServicesScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Text(
-                      'دلوقتي ولأول مرة في مصر, عرفنا تاريخ مناسبتك وهنعرفك فوراً الخدمات المتاحة للحجز',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: AppColors.grey,
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.69,
-                      ),
+                    // Text(
+                    //   'دلوقتي ولأول مرة في مصر, عرفنا تاريخ مناسبتك وهنعرفك فوراً الخدمات المتاحة للحجز',
+                    //   textAlign: TextAlign.right,
+                    //   style: TextStyle(
+                    //     color: AppColors.grey,
+                    //     fontSize: 13.r,
+                    //     fontFamily: 'Almarai',
+                    //     fontWeight: FontWeight.w400,
+                    //     height: 1.69,
+                    //   ),
+                    // ),
+                    // Selected category / port-type name (e.g. "قاعة اون اير")
+                    // picked on home — shown above the filter, like the design.
+                    BlocSelector<HomeCubit, HomeState, String>(
+                      selector: _selectedBookingTypeName,
+                      builder: (context, name) => name.isEmpty
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: EdgeInsets.only(top: 8.h),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  name,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: AppColors.black,
+                                    fontSize: 16.r,
+                                    fontFamily: 'Almarai',
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "اكتب تاريخ مناسبتك واعرف الخدمات المتاحه حالاً ..",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: AppColors.descriptionText,
+                            fontSize: 12.r,
+                            fontFamily: 'Almarai',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                     16.verticalSpace,
                     Row(
                       children: [
                         Expanded(
-                          // Picking the occasion date is a logged-in-only action;
-                          // guests see it dimmed and get a login prompt on tap.
-                          child: Opacity(
-                            opacity:
-                                context.watch<UserService>().currentUser != null
-                                    ? 1
-                                    : 0.5,
-                            // Show the session date so it survives leaving and
-                            // re-entering the screen.
-                            child: BlocSelector<HomeCubit, HomeState, DateTime?>(
-                              selector: (s) => s.bookingDate,
-                              builder: (context, sessionDate) => DatePicker(
-                                title: 'تاريخ المناسبة',
-                                initialDate: sessionDate,
-                                onBeforePick: () =>
-                                    AuthGuard.requireLogin(context),
-                                onChanged: (date) {
-                                  context
-                                      .read<InstantBookingCubit>()
-                                      .setDate(date);
-                                  context
-                                      .read<HomeCubit>()
-                                      .setBookingDate(date);
-                                },
-                              ),
+                          // Picking the occasion date is a logged-in-only action,
+                          // but guests see it at full opacity (no dimming/blur) —
+                          // they just get a login prompt on tap via onBeforePick.
+                          // Show the session date so it survives leaving and
+                          // re-entering the screen.
+                          child: BlocSelector<HomeCubit, HomeState, DateTime?>(
+                            selector: (s) => s.bookingDate,
+                            builder: (context, sessionDate) => DatePicker(
+                              title: 'تاريخ المناسبة',
+                              initialDate: sessionDate,
+                              onBeforePick: () =>
+                                  AuthGuard.requireLogin(context),
+                              onChanged: (date) {
+                                context
+                                    .read<InstantBookingCubit>()
+                                    .setDate(date);
+                                context.read<HomeCubit>().setBookingDate(date);
+                              },
                             ),
                           ),
                         ),
@@ -143,8 +171,6 @@ class InstantBookingServicesScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    20.verticalSpace,
-                    BookingServicesType(),
                     26.verticalSpace,
                   ],
                 ),
@@ -426,6 +452,14 @@ Widget _imagesBadge(Item item) {
       ],
     ),
   );
+}
+
+/// The selected instant-booking category / port-type name shown under the
+/// header (the port type takes precedence over the category), or '' when none.
+String _selectedBookingTypeName(HomeState s) {
+  final t = s.selectedBookingPortType;
+  final c = s.selectedBookingPort;
+  return (t?.nameAr ?? t?.nameEn ?? c?.nameAr ?? c?.nameEn ?? '').trim();
 }
 
 /// Subtitle line for a port card: its description, or its location as a fallback.

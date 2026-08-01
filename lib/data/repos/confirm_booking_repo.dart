@@ -102,6 +102,9 @@ class ConfirmBookingRepo {
           'depositAmount': depositAmount,
           'reservationRequestIds': reservationRequestIds,
         },
+        // Mid-flow payment start (navigates straight to the gateway WebView on
+        // success) — don't pop a success toast; a business failure still shows.
+        options: Options(extra: {'suppressSuccessToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final result = PaymentGatewayResult.fromJson(response.data);

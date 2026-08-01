@@ -312,6 +312,16 @@ class ChangeOccasion extends StatelessWidget {
                     ),
                   ),
                 ),
+                8.horizontalSpace,
+                GestureDetector(
+                  onTap: () => _openEditSheet(context),
+                  child: CustomImageHandler(
+                    AppImages.iconsEdit,
+                    width: 18.r,
+                    height: 18.r,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
                 // Refresh affordance so a failed check reads as retryable.
                 if (view.isRetry) ...[
                   6.horizontalSpace,
@@ -339,105 +349,93 @@ class ChangeOccasion extends StatelessWidget {
           },
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
             decoration: ShapeDecoration(
-              color: AppColors.bg,
+              // color: AppColors.bg,
               shape: RoundedRectangleBorder(
-                side: const BorderSide(color: AppColors.boarderColor),
-                borderRadius: BorderRadius.circular(12.r),
+                side: const BorderSide(color: AppColors.primaryColor),
+                borderRadius: BorderRadius.circular(14.r),
               ),
             ),
             child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    BlocSelector<HomeCubit, HomeState, DateTime?>(
-                      selector: (s) => s.bookingDate,
-                      builder: (context, date) {
-                        final d = date ?? occasionDate;
-                        // A carried-over date earlier than this port's earliest
-                        // bookable day (today + minimumDays) isn't valid here, so
-                        // show "حدد التاريخ" — consistent with the availability
-                        // status line above — instead of a date they can't book.
-                        final now = DateTime.now();
-                        final earliest = DateTime(now.year, now.month, now.day)
-                            .add(Duration(days: port?.minimumDays ?? 0));
-                        final valid =
-                            d != null && (isEditMode || !d.isBefore(earliest));
-                        return Text(
-                          valid
-                              ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
-                              : 'حدد التاريخ',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: AppColors.blacksoft,
-                            fontSize: 13.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        );
-                      },
-                    ),
-                    6.horizontalSpace,
-                    Transform.translate(
-                      offset: Offset(0, 2.h),
-                      child:
-                          CustomCircle(radius: 5.r, color: AppColors.dividerGrey),
-                    ),
-                    6.horizontalSpace,
-                    Flexible(
-                      child: BlocSelector<HomeCubit, HomeState, String>(
-                        selector: (s) => _eventLocationText(
-                            context, s.eventGovernorate, s.eventCity),
-                        builder: (context, loc) => Text(
-                          loc,
-                          textAlign: TextAlign.right,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: AppColors.blueGrey,
-                            fontSize: 13.r,
-                            fontFamily: 'Almarai',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+              children: [
+                BlocSelector<HomeCubit, HomeState, DateTime?>(
+                  selector: (s) => s.bookingDate,
+                  builder: (context, date) {
+                    final d = date ?? occasionDate;
+                    // A carried-over date earlier than this port's earliest
+                    // bookable day (today + minimumDays) isn't valid here, so
+                    // show "حدد التاريخ" — consistent with the availability
+                    // status line above — instead of a date they can't book.
+                    final now = DateTime.now();
+                    final earliest = DateTime(now.year, now.month, now.day)
+                        .add(Duration(days: port?.minimumDays ?? 0));
+                    final valid =
+                        d != null && (isEditMode || !d.isBefore(earliest));
+                    return Text(
+                      valid
+                          ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
+                          : 'حدد التاريخ',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: AppColors.descriptionText,
+                        fontSize: 13.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
                       ),
-                    ),
-                    // نوع المناسبة chip — falls back to a prompt so the user can
-                    // see the type is still unset (same as the date/location).
-                    6.horizontalSpace,
-                    Transform.translate(
-                      offset: Offset(0, 2.h),
-                      child: CustomCircle(
-                          radius: 5.r, color: AppColors.dividerGrey),
-                    ),
-                    6.horizontalSpace,
-                    Flexible(
-                      child: Text(
-                        occasionName ?? 'نوع المناسبة',
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppColors.blueGrey,
-                          fontSize: 13.r,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-              8.horizontalSpace,
-              CustomImageHandler(
-                AppImages.iconsEdit,
-                width: 18.r,
-                height: 18.r,
-              ),
-            ],
-          ),
+                6.horizontalSpace,
+                Transform.translate(
+                  offset: Offset(0, 2.h),
+                  child:
+                      CustomCircle(radius: 5.r, color: AppColors.dividerGrey),
+                ),
+                6.horizontalSpace,
+                Flexible(
+                  child: BlocSelector<HomeCubit, HomeState, String>(
+                    selector: (s) => _eventLocationText(
+                        context, s.eventGovernorate, s.eventCity),
+                    builder: (context, loc) => Text(
+                      loc,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.descriptionText,
+                        fontSize: 13.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+                // نوع المناسبة chip — falls back to a prompt so the user can
+                // see the type is still unset (same as the date/location).
+                6.horizontalSpace,
+                Transform.translate(
+                  offset: Offset(0, 2.h),
+                  child: CustomCircle(
+                      radius: 5.r, color: AppColors.dividerGrey),
+                ),
+                6.horizontalSpace,
+                Flexible(
+                  child: Text(
+                    occasionName ?? 'نوع المناسبة',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppColors.descriptionText,
+                      fontSize: 13.r,
+                      fontFamily: 'Almarai',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

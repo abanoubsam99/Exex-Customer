@@ -58,9 +58,11 @@ class _DatePickerState extends State<DatePicker> {
       child: Container(
         height: 46.h,
         decoration: ShapeDecoration(
-          color: AppColors.boarderFillColor,
+          // color: AppColors.bg,
+          // Orange outlined box, matching the design.
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+            borderRadius: BorderRadius.circular(14.r),
           ),
         ),
         child: Padding(
@@ -69,8 +71,8 @@ class _DatePickerState extends State<DatePicker> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomImageHandler(
-                AppImages.iconsCalendar,
-                color: AppColors.lightOrange2,
+                AppImages.iconsCalendar2,
+                color: AppColors.primaryColor,
               ),
               8.horizontalSpace,
               Text(
@@ -78,7 +80,7 @@ class _DatePickerState extends State<DatePicker> {
                     ? DateFormat('dd/MM/yyyy').format(shown)
                     : widget.title,
                 style: TextStyle(
-                  color: AppColors.blueGrey,
+                  color: AppColors.descriptionText,
                   fontSize: 14.r,
                   fontFamily: 'Almarai',
                   fontWeight: FontWeight.w400,

@@ -60,15 +60,26 @@ class DioHelper {
           handler.next(options);
         },
         onResponse: (response, handler) {
-          // Business failures sometimes come back with a 2xx status but
-          // `isSuccess: false` + a message (so onError never fires). Surface
-          // that message just like a real error so it's never swallowed.
+          // Rule: the backend `message` is the source of truth for what the user
+          // sees. On any 2xx response that carries a message:
+          //   • business failure (isSuccess:false) → show it as an error
+          //   • successful mutation (POST/PUT/PATCH/DELETE) → show it as success
+          // Both go through showServerMessage, which records the time so a
+          // generic app-side toast fired right after (a cubit's hardcoded
+          // "تم ..." / "تعذّر ...") is suppressed and can't mask the real one.
+          // A request can opt out of the success toast (silent background writes)
+          // via Options(extra: {'suppressSuccessToast': true}).
           final data = response.data;
-          if (data is Map && (data['isSuccess'] == false ||
-              data['IsSuccess'] == false)) {
-            final message = data['message'] ?? data['Message'];
-            if (message is String && message.trim().isNotEmpty) {
-              ToastManager.showServerMessage(message.trim());
+          if (data is Map) {
+            final rawSuccess = data['isSuccess'] ?? data['IsSuccess'];
+            final rawMessage = data['message'] ?? data['Message'];
+            final message = rawMessage is String ? rawMessage.trim() : '';
+            if (rawSuccess == false) {
+              if (message.isNotEmpty) ToastManager.showServerMessage(message);
+            } else if (message.isNotEmpty &&
+                _isMutation(response.requestOptions.method) &&
+                response.requestOptions.extra['suppressSuccessToast'] != true) {
+              ToastManager.showServerMessage(message, isError: false);
             }
           }
           handler.next(response);
@@ -241,6 +252,21 @@ class DioHelper {
     if (errors is String && errors.isNotEmpty) return errors;
 
     return null;
+  }
+
+  /// POST/PUT/PATCH/DELETE — the request methods whose successful backend
+  /// `message` is surfaced to the user. GETs stay silent (they return data, not
+  /// a user-facing outcome) to avoid toast noise on every list/detail load.
+  static bool _isMutation(String method) {
+    switch (method.toUpperCase()) {
+      case 'POST':
+      case 'PUT':
+      case 'PATCH':
+      case 'DELETE':
+        return true;
+      default:
+        return false;
+    }
   }
 
   // ── Static network helpers used directly by repositories ──

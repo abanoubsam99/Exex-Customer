@@ -5,6 +5,7 @@ import 'package:evex_user/core/constants/layout_constants.dart';
 import 'package:evex_user/core/helpers/extensions.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
+import 'package:evex_user/core/ui/widgets/confirm_dialog.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/main/main_cubit.dart';
 import 'package:evex_user/data/cubits/main/main_state.dart';
@@ -13,6 +14,7 @@ import 'package:evex_user/features/more/ui/more_screen.dart';
 import 'package:evex_user/features/my_bookings/ui/my_bookings_screen.dart';
 import 'package:evex_user/features/wallet/ui/wallet_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -63,7 +65,30 @@ class _MainScreenState extends State<MainScreen> {
     // nav buttons / iOS home indicator) so it clears the system UI instead of
     // hiding behind it.
     final systemNavInset = context.bottomSafeInset;
-    return Scaffold(
+    // System back handling for the tab shell:
+    //   • On any tab other than الرئيسيه → go back to the home tab first.
+    //   • Already on الرئيسيه → ask "هل تريد الخروج من التطبيق؟" and only leave
+    //     the app on "نعم".
+    // canPop is always false so every back press runs through this handler
+    // instead of popping the route (which would exit the app outright).
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (cubit.state.currentPage != 0) {
+          cubit.goToTab(0);
+          return;
+        }
+        final shouldExit = await ConfirmDialog.show(
+          context,
+          title: 'الخروج من التطبيق',
+          message: 'هل تريد الخروج من التطبيق؟',
+          confirmText: 'نعم',
+          cancelText: 'لا',
+        );
+        if (shouldExit) SystemNavigator.pop();
+      },
+      child: Scaffold(
       body: Stack(
         children: [
           // Pages fill the full height; each scrollable page reserves
@@ -168,6 +193,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

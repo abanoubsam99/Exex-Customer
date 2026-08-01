@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/reservation_model.dart';
@@ -44,6 +45,9 @@ class MyBookingsRepo {
     try {
       final response = await DioHelper.putData(
         url: '${AppEndpoints.markMessageStatusAsRead}/$id',
+        // Silent background write (client just opened the message) — don't pop
+        // the backend success message as a toast.
+        options: Options(extra: {'suppressSuccessToast': true}),
       );
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (_) {

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/app_notification.dart';
@@ -60,6 +61,8 @@ class NotificationsRepo {
     try {
       final response = await DioHelper.putData(
         url: AppEndpoints.markAllNotificationsRead,
+        // Silent background write (opening the notifications screen) — no toast.
+        options: Options(extra: {'suppressSuccessToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return GeneralResponse.fromJson(response.data);

@@ -145,15 +145,19 @@ class ServicesSection extends StatelessWidget {
                     isSelected: isSelected,
                     isAvailable: cubit.isServiceAvailable(service.id),
                     onSelectionChanged: () {
-                      // الضغطة الأولى بتختار الخدمة بس (بتجيب بياناتها للحساب).
-                      // الضغطة التانية على نفس الخدمة المختارة هي اللي بتفتح
-                      // الـ bottom sheet بتفاصيلها (صور/اسم/سعر/وصف).
-                      // خدمة غير متاحة في التاريخ المختار بتتمنع هنا (بتوست).
+                      // One tap = select the service AND open its details bottom
+                      // sheet (images/name/price/description) together, so users
+                      // don't have to tap twice. An already-selected service
+                      // just re-opens the sheet. A service the picked date
+                      // doesn't allow is blocked by selectService (toast, returns
+                      // false) so its sheet never opens.
                       if (isSelected) {
                         ServiceDetailsBottomSheet.show(context, service);
                         return;
                       }
-                      cubit.selectService(service);
+                      if (cubit.selectService(service)) {
+                        ServiceDetailsBottomSheet.show(context, service);
+                      }
                     },
                   );
                 },

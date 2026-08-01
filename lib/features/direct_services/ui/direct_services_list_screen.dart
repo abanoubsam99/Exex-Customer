@@ -55,25 +55,37 @@ class DirectServicesListScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    8.verticalSpace,
-                    Text(
-                      'دلوقتي تقدر تستخدم نقاطك وتستفيد بكاش باك على كل '
-                      'مشترياتك من تجار evex',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: AppColors.grey,
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        height: 1.6,
-                      ),
+                    // Selected category / port-type name (e.g. "اتيليه فساتين")
+                    // — mirrors the Figma subtitle. Hidden when nothing was
+                    // selected (e.g. opened from a deep link).
+                    BlocSelector<HomeCubit, HomeState, String>(
+                      selector: _selectedTypeName,
+                      builder: (context, name) => name.isEmpty
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: EdgeInsets.only(top: 8.h),
+                              child: Text(
+                                name,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: 16.r,
+                                  fontFamily: 'Almarai',
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ),
               ),
               16.verticalSpace,
-              const _TypeTabs(),
-              18.verticalSpace,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: const _CashbackBanner(),
+              ),
+              20.verticalSpace,
               BlocBuilder<DirectServicesListCubit, DirectServicesListState>(
                 buildWhen: (p, c) => p.specialOffers != c.specialOffers,
                 builder: (context, state) =>
@@ -115,69 +127,6 @@ class DirectServicesListScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Tabs بأنواع الخدمة (القاعات/فوتوغرافر/...). الضغط بيعيد فلترة القائمة.
-class _TypeTabs extends StatelessWidget {
-  const _TypeTabs();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        final types = state.selectedPaymentPort?.portTypeDtos ?? const [];
-        if (types.isEmpty) return const SizedBox.shrink();
-        return SizedBox(
-          height: 34.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            itemCount: types.length,
-            separatorBuilder: (_, __) => 10.horizontalSpace,
-            itemBuilder: (context, index) {
-              final type = types[index];
-              final isSelected = state.selectedPaymentPortType?.id == type.id;
-              return Center(
-                child: GestureDetector(
-                  onTap: () {
-                    context.read<HomeCubit>().selectPaymentPortType(type);
-                    context
-                        .read<DirectServicesListCubit>()
-                        .changeType(type.id);
-                  },
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 4.h, horizontal: 18.w),
-                    decoration: ShapeDecoration(
-                      color: isSelected ? AppColors.blacksoft : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          width: 1.5,
-                          color: AppColors.blacksoft,
-                        ),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                    ),
-                    child: Text(
-                      type.nameAr ?? type.nameEn ?? '',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : AppColors.blacksoft,
-                        fontSize: 13.r,
-                        fontFamily: 'Almarai',
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.24,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }
@@ -399,6 +348,71 @@ class _PortListItem extends StatelessWidget {
       ),
     );
   }
+}
+
+/// بانر الكاش باك أعلى شاشة الخدمات المباشرة: دايرة برتقالية فيها علامة "$"
+/// على الشمال + سطرين "اللي هتدفعه كاش / هيرجعلك عليه كاش باك" على اليمين.
+class _CashbackBanner extends StatelessWidget {
+  const _CashbackBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.whiteColor,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: AppColors.primaryColor),
+      ),
+      // RTL: text first (right side), coin badge last (far left) — matching the
+      // design where the "$" circle sits on the left of the banner.
+      child: Row(
+        children: [
+          // Orange coin badge with a cash "$" glyph.
+          Container(
+            width: 40.r,
+            height: 40.r,
+            decoration:  BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.only(topRight:Radius.circular(13.r),bottomRight: Radius.circular(13.r))
+            ),
+            alignment: Alignment.center,
+            child: Text("\$",
+              style: TextStyle(
+              color: AppColors.whiteColor,
+              fontSize: 26.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w400,
+              // letterSpacing: -0.24,
+            ), )
+          ),
+          12.horizontalSpace,
+          Expanded(
+            child: Text(
+              'اللي هتدفعه كاش , هيرجعلك عليه كاش باك',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: AppColors.descriptionText,
+                fontSize: 12.r,
+                fontFamily: 'Almarai',
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.24,
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+
+/// The selected direct-service category / port-type name shown under the title
+/// (the port type takes precedence over the category), or '' when none.
+String _selectedTypeName(HomeState s) {
+  final t = s.selectedPaymentPortType;
+  final c = s.selectedPaymentPort;
+  return (t?.nameAr ?? t?.nameEn ?? c?.nameAr ?? c?.nameEn ?? '').trim();
 }
 
 List<String> _portImages(Item item) {

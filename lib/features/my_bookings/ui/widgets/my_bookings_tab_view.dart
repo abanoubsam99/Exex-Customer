@@ -165,8 +165,9 @@ class _RequestsTab extends StatelessWidget {
 }
 
 /// Bottom "تأكيد الحجز" button for the current-requests tab: confirms all the
-/// available requests at once via the confirm-booking screen. Hidden when there
-/// are no available requests.
+/// available requests at once via the confirm-booking screen. Always visible
+/// while there are requests; when none can be confirmed yet (e.g. still awaiting
+/// the vendor) tapping shows a message instead of opening the deposit screen.
 class _ConfirmRequestsButton extends StatelessWidget {
   final MyBookingsState state;
 
@@ -176,10 +177,10 @@ class _ConfirmRequestsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final availableIds = _confirmableIds(state);
 
-    // Nothing available to confirm (e.g. CalculatePendingDeposit.availableCount
-    // == 0, or every request is still awaiting the vendor) → hide the button so
-    // the user can't reach the deposit-payment screen at all.
-    if (availableIds.isEmpty) return const SizedBox.shrink();
+    // Keep the button visible as long as there are current requests — even when
+    // none are confirmable yet — so the user always sees it; the tap handler
+    // below explains why it can't proceed. Only a truly empty list hides it.
+    if (state.requests.isEmpty) return const SizedBox.shrink();
 
     // Sum of the deposits the user can actually see for available requests.
     final requestsDepositTotal = state.requests
@@ -199,7 +200,8 @@ class _ConfirmRequestsButton extends StatelessWidget {
         height: 54.h,
         onTap: () {
           if (availableIds.isEmpty) {
-            ToastManager.showError(' يلزم وجود خدمة واحدة على الأقل متاحة للحجز');
+            ToastManager.showError(
+                'لا توجد حجوزات متاحة للتأكيد حالياً — بعض الطلبات بأنتظار تأكيد التاجر');
             return;
           }
 
