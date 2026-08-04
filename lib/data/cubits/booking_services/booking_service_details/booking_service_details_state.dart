@@ -51,15 +51,11 @@ class BookingServiceDetailsState {
   final bool isSaving;
   final String? errorMessage;
 
-  /// True when the current user has at least one confirmed reservation for this port.
-  /// Used to gate phone-number visibility on the contact info screen.
-  final bool hasConfirmedBooking;
 
   const BookingServiceDetailsState({
     this.isLoading = false,
     this.port,
     this.isFavorite = false,
-    this.hasConfirmedBooking = false,
     this.portImages = const [],
     this.services = const [],
     this.isEditMode = false,
@@ -106,7 +102,6 @@ class BookingServiceDetailsState {
     String? editOriginalCity,
     bool? isSaving,
     String? errorMessage,
-    bool? hasConfirmedBooking,
     // Nullable fields can't be reset through `??`, so clearing them is explicit.
     bool clearSelectedService = false,
     bool clearServiceDetails = false,
@@ -115,7 +110,6 @@ class BookingServiceDetailsState {
       isLoading: isLoading ?? this.isLoading,
       port: port ?? this.port,
       isFavorite: isFavorite ?? this.isFavorite,
-      hasConfirmedBooking: hasConfirmedBooking ?? this.hasConfirmedBooking,
       portImages: portImages ?? this.portImages,
       services: services ?? this.services,
       selectedService: clearSelectedService

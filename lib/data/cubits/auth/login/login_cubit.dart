@@ -95,10 +95,13 @@ class LoginCubit extends Cubit<LoginState> {
     GoogleAuthResult? google;
     try {
       google = await _googleAuthService.signIn();
-    } catch (e) {
+    } catch (e, s)  {
       // signIn threw (e.g. ApiException 10 / DEVELOPER_ERROR) — don't die
       // silently after the user picked an account.
-      ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+      // ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+      debugPrint('Google Sign In Error: $e');
+      debugPrintStack(stackTrace: s);
+      ToastManager.showError(e.toString());
       return;
     }
     if (google == null) return; // user cancelled the picker

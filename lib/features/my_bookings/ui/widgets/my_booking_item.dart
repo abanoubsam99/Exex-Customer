@@ -335,10 +335,10 @@ class MyBookingItem extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (showMessageIcon) ...[
+                    if (showMessageIcon && hasMessage) ...[
                       10.horizontalSpace,
                       _MessageBadge(
-                        count: hasMessage ? 1 : 0,
+                        count: 1,
                         onTap: onMessageTap,
                       ),
                     ],
@@ -495,24 +495,23 @@ class _MessageBadge extends StatelessWidget {
           children: [
             SvgPicture.asset(
               AppImages.iconsMessage,
-              width: 40.r,
-              height: 40.r,
+              width: 28.r,
+              height: 28.r,
             ),
             Positioned(
-              top: -6.r,
-              right: -6.r,
+              top: -4.r,
+              right: -4.r,
               child: Container(
-                width: 18.r,
-                height: 18.r,
+                width: 16.r,
+                height: 16.r,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  // Grey (matching the envelope) when there's no message,
-                  // red only when a pending message exists.
-                  color: count > 0 ? AppColors.coral : AppColors.grey,
+                  color: AppColors.coral,
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.r),
                 ),
                 child: Text(
-                  '$count',
+                  '1',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10.r,

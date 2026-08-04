@@ -14,15 +14,20 @@ class PortServicesRepo {
     int portId, {
     bool specialOffer = false,
     int portTypeId = 0,
+    int? occasionId,
   }) async {
     try {
+      final query = <String, dynamic>{
+        'portId': portId,
+        'specialOffer': specialOffer,
+        'portTypeId': portTypeId,
+      };
+      if (occasionId != null && occasionId > 0) {
+        query['occasionId'] = occasionId;
+      }
       final response = await DioHelper.getData(
         url: AppEndpoints.getAllServicesByClient,
-        query: {
-          'portId': portId,
-          'specialOffer': specialOffer,
-          'portTypeId': portTypeId,
-        },
+        query: query,
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return (response.data as List)
@@ -96,6 +101,24 @@ class PortServicesRepo {
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return ServiceDetailsModel.fromJson(response.data);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<List<String>?> getPortContactInfo(int portId) async {
+    try {
+      final response = await DioHelper.getData(
+        url: '${AppEndpoints.getPortContactInfo}/$portId',
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final d = response.data;
+        return [
+          if (d['phoneNumber1'] != null) d['phoneNumber1'].toString(),
+          if (d['phoneNumber2'] != null) d['phoneNumber2'].toString(),
+        ].where((e) => e.trim().isNotEmpty).toList();
       }
       return null;
     } catch (_) {

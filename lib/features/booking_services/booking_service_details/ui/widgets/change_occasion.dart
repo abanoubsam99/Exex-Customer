@@ -1,6 +1,6 @@
 import 'package:evex_user/core/constants/app_images.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
-import 'package:evex_user/core/services/user_service.dart';
+import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/ui/helpers/auth_guard.dart';
 import 'package:evex_user/core/ui/widgets/custom_circle.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
@@ -70,17 +70,22 @@ class ChangeOccasion extends StatelessWidget {
   }
 
   /// The event location shown in the header: the value picked in the edit sheet
-  /// ([eventGov]/[eventCity]) if any, otherwise the signed-in user's own
-  /// governorate/city from their profile. Falls back to a prompt when neither
-  /// is available.
+  /// ([eventGov]/[eventCity]) if any, otherwise the default location from
+  /// [LocationService] — the signed-in user's profile governorate/city, or the
+  /// onboarding pick for a guest. Falls back to a prompt only when even that is
+  /// unset.
+  ///
+  /// Using [LocationService] (not the profile alone) keeps gov/city populated
+  /// after a cold restart, when the shared event location on [HomeCubit] is back
+  /// to null: a guest still sees the area they entered on install instead of a
+  /// blank prompt.
   String _eventLocationText(
       BuildContext context, String? eventGov, String? eventCity) {
-    final user = context.read<UserService>().currentUser?.userViewModel;
-    final gov = (eventGov?.trim().isNotEmpty ?? false)
-        ? eventGov
-        : user?.governorate;
+    final location = context.read<LocationService>();
+    final gov =
+        (eventGov?.trim().isNotEmpty ?? false) ? eventGov : location.govName;
     final city =
-        (eventCity?.trim().isNotEmpty ?? false) ? eventCity : user?.city;
+        (eventCity?.trim().isNotEmpty ?? false) ? eventCity : location.cityName;
     final parts = [gov, city]
         .where((e) => e != null && e.trim().isNotEmpty)
         .cast<String>()
@@ -95,7 +100,10 @@ class ChangeOccasion extends StatelessWidget {
   void _openEditSheet(BuildContext context) {
     final homeCubit = context.read<HomeCubit>();
     final repo = context.read<ConfirmBookingRepo>();
-    final user = context.read<UserService>().currentUser?.userViewModel;
+    // Default the location to the user's own area (profile for a signed-in user,
+    // onboarding pick for a guest) via LocationService, so the sheet opens
+    // pre-filled even after a cold restart when the shared event location is null.
+    final location = context.read<LocationService>();
     final st = homeCubit.state;
     showModalBottomSheet(
       context: context,
@@ -103,8 +111,8 @@ class ChangeOccasion extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => EditOccasionSheet(
         initialDate: st.bookingDate ?? occasionDate,
-        initialGovernorate: st.eventGovernorate ?? user?.governorate,
-        initialCity: st.eventCity ?? user?.city,
+        initialGovernorate: st.eventGovernorate ?? location.govName,
+        initialCity: st.eventCity ?? location.cityName,
         // Restrict the location picker to the port's working area.
         portId: port?.id,
         // Disable dates before today + minimumDays (vendor's required lead time).

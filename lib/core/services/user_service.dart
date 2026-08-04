@@ -63,6 +63,12 @@ class UserService {
       if (!user.isAccountComplete) {
         currentUser = null;
         _browseOnly = true;
+        // Drop the stale login token too. Left in cache it would be attached to
+        // the home GETs (DioHelper request interceptor), so this browse-only
+        // session would hit the backend half-authenticated and get "Not Found"
+        // instead of the anonymous guest response. Clearing it makes browse-only
+        // behave exactly like a real guest; a fresh token is issued on re-login.
+        await _cacheHelper.removeData(key: CacheKeys.token);
       } else {
         currentUser = user;
       }

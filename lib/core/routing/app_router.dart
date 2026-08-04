@@ -81,6 +81,7 @@ import '../../data/cubits/confirm_booking/confirm_booking_state.dart';
 // import '../../data/cubits/edit_reservation/edit_reservation_cubit.dart';
 // edit_reservation_state.dart لسه مطلوب لأنه بيعرّف EditReservationArgs المستخدم
 // في bookingServiceDetailsScreen.
+import '../../data/cubits/contact_info/contact_info_cubit.dart';
 import '../../data/cubits/edit_reservation/edit_reservation_state.dart';
 import '../../data/cubits/favorites/favorites_cubit.dart';
 import '../../data/cubits/direct_services/direct_service_details_cubit.dart';
@@ -508,19 +509,24 @@ class AppRouter {
 
       case Routes.contactInfoScreen:
         final contactArgs = settings.arguments;
+        final port = contactArgs is ContactInfoArgs
+            ? contactArgs.port
+            : contactArgs is Item
+                ? contactArgs
+                : null;
+        final isBookingService = contactArgs is ContactInfoArgs
+            ? contactArgs.isBookingService
+            : false;
         return _page(
-          ContactInfoScreen(
-            port: contactArgs is ContactInfoArgs
-                ? contactArgs.port
-                : contactArgs is Item
-                    ? contactArgs
-                    : null,
-            isBookingService: contactArgs is ContactInfoArgs
-                ? contactArgs.isBookingService
-                : false,
-            hasConfirmedBooking: contactArgs is ContactInfoArgs
-                ? contactArgs.hasConfirmedBooking
-                : false,
+          BlocProvider(
+            create: (context) => ContactInfoCubit(
+              context.read<PortServicesRepo>(),
+              portId: port?.id ?? 0,
+            ),
+            child: ContactInfoScreen(
+              port: port,
+              isBookingService: isBookingService,
+            ),
           ),
           settings,
         );

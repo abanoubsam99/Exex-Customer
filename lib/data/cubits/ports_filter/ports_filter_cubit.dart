@@ -146,7 +146,10 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
       emit(state.copyWith(availableOnly: value));
 
   /// Clears the draft selections (keeps the loaded lists so they don't reload).
-  /// Guests keep the unrestricted "جميع الخدمات" default.
+  /// Guests keep the unrestricted "جميع الخدمات" default. The governorate/city
+  /// are the exception: they're restored to the user's default area rather than
+  /// blanked, so gov/city is never left empty (per requirement — a guest keeps
+  /// the onboarding pick, a signed-in user keeps their profile location).
   void clearSelections() {
     emit(PortsFilterState(
       governorates: state.governorates,
@@ -155,5 +158,8 @@ class PortsFilterCubit extends Cubit<PortsFilterState> {
     ));
     // Keep the shared نوع المناسبة in sync with the cleared filter.
     _homeCubit.setOccasion(null);
+    // Re-fill gov/city with the default location (selectedGovernorate is null
+    // after the reset above, so the autofill won't short-circuit).
+    _autofillUserLocation(state.governorates);
   }
 }

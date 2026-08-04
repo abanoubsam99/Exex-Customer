@@ -69,11 +69,20 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         )) {
     // Availability lives on HomeCubit (it's shared with the header badge), so
     // watch it to drop a selected service the picked date no longer allows.
+    // We also watch event location changes to refresh "Other services".
     _lastAvailability = _homeCubit.state.availability;
+    _lastGov = _homeCubit.state.eventGovernorate;
+    _lastCity = _homeCubit.state.eventCity;
     _homeSub = _homeCubit.stream.listen((s) {
-      if (identical(s.availability, _lastAvailability)) return;
-      _lastAvailability = s.availability;
-      _dropUnavailableSelection();
+      if (s.eventGovernorate != _lastGov || s.eventCity != _lastCity) {
+        _lastGov = s.eventGovernorate;
+        _lastCity = s.eventCity;
+        getOtherPorts();
+      }
+      if (!identical(s.availability, _lastAvailability)) {
+        _lastAvailability = s.availability;
+        _dropUnavailableSelection();
+      }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAll());
   }
@@ -86,7 +95,6 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     getPortImages();
     getOtherPorts();
     getOccasions();
-    _checkConfirmedBooking();
     await getAllPortServices();
     await getAdditions();
     await getReviews();
@@ -104,6 +112,8 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   /// Watches [HomeCubit] for a new availability response.
   late final StreamSubscription<HomeState> _homeSub;
   CheckReservationResponse? _lastAvailability;
+  String? _lastGov;
+  String? _lastCity;
 
   @override
   Future<void> close() {
@@ -177,16 +187,6 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     }
   }
 
-  /// Checks whether the user has a confirmed reservation for this port and
-  /// updates [BookingServiceDetailsState.hasConfirmedBooking] accordingly.
-  Future<void> _checkConfirmedBooking() async {
-    final portId = _portId;
-    final reservations =
-        await _bookingsRepo.getMyReservations(size: 100, status: 'Confirmed');
-    if (reservations == null) return;
-    final has = reservations.any((r) => r.portId == portId);
-    emit(state.copyWith(hasConfirmedBooking: has));
-  }
 
   /// Loads the port's gallery from /api/Ports/GetPortImages and stores it on the
   /// state (the carousel prefers it over the port's inline images).
@@ -381,10 +381,22 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   }
 
   /// Sets the chosen occasion type (mandatory before adding to bookings).
-  void selectOccasion(int id) {
+  Future<void> selectOccasion(int id) async {
     emit(state.copyWith(selectedOccasionId: id));
     // Mirror into the shared session store so the outer filter stays in sync.
     _homeCubit.setOccasion(id);
+    
+    // Changing the occasion type requires re-fetching the base services so we
+    // only show services related to this new occasion.
+    await getAllPortServices();
+    
+    // If the currently selected service isn't valid for the new occasion, clear it.
+    if (state.selectedService != null &&
+        !state.services.any((s) => s.id == state.selectedService!.id)) {
+      emit(state.copyWith(clearSelectedService: true, clearServiceDetails: true));
+      _recalcTotal();
+    }
+    _autoSelectInitialService();
   }
 
   /// Checks instant-booking availability when the screen opens with a date
@@ -400,10 +412,9 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     final portId = _portId;
     if (portId <= 0) return;
 
-    final user = _userService.currentUser?.userViewModel;
     final gov =
-        _firstNonEmpty([_homeCubit.state.eventGovernorate, user?.governorate]);
-    final city = _firstNonEmpty([_homeCubit.state.eventCity, user?.city]);
+        _firstNonEmpty([_homeCubit.state.eventGovernorate, _locationService.govName]);
+    final city = _firstNonEmpty([_homeCubit.state.eventCity, _locationService.cityName]);
     if ((gov ?? '').isNotEmpty) {
       _homeCubit.setEventLocation(gov!, city ?? '');
     }
@@ -465,14 +476,15 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   Future<void> getOtherPorts() async {
     final companyId = state.port?.companyId;
     if (companyId == null) return;
-    // Filter by the client's selected location so vendor ports whose working
-    // area doesn't cover it are hidden — the client can't open an out-of-area
-    // service they'd never be able to book. Same gov/city filter the home and
-    // instant-booking lists use.
+    // Filter by the occasion location if picked, falling back to the profile/cached
+    // location. So vendor ports whose working area doesn't cover it are hidden.
+    final gov = _firstNonEmpty([_homeCubit.state.eventGovernorate, _locationService.govName]);
+    final city = _firstNonEmpty([_homeCubit.state.eventCity, _locationService.cityName]);
+
     final model = await _portsRepo.getAllPortServices(GetPortsRequest(
       companyId: companyId,
-      gov: _locationService.govName,
-      city: _locationService.cityName,
+      gov: gov,
+      city: city,
     ));
     final items = model?.items;
     if (items == null) return;
@@ -485,7 +497,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
 
   Future<void> getAllPortServices() async {
     emit(state.copyWith(isLoading: true, services: []));
-    final services = await _repo.getAllPortServices(_portId);
+    
+    int? occasionId = state.selectedOccasionId;
+    if (occasionId == null && !state.isEditMode) {
+      occasionId = _homeCubit.state.occasionId;
+    }
+    
+    final services = await _repo.getAllPortServices(
+      _portId,
+      occasionId: occasionId,
+    );
     if (services != null) {
       emit(state.copyWith(isLoading: false, services: services));
     } else {

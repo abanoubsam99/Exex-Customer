@@ -48,7 +48,6 @@ class _ServiceTopPartState extends State<ServiceTopPart> {
       arguments: ContactInfoArgs(
         port: cubit.state.port,
         isBookingService: true,
-        hasConfirmedBooking: cubit.state.hasConfirmedBooking,
       ),
     );
   }
