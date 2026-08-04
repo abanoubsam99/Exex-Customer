@@ -76,6 +76,23 @@ class DateFormatHelper {
     if (d == null) return fallback;
     return '${d.day} , ${_months[d.month - 1]} , ${d.year}';
   }
+  /// "20/6/2026" (d/M/yyyy, no leading zeros) — or [fallback] when invalid
+  /// (covers the .NET default 0001-01-01, empty and null).
+  static String numericDate(String? value, {String fallback = ''}) {
+    final d = parse(value);
+    if (d == null) return fallback;
+    return '${d.day}/${d.month}/${d.year}';
+  }
+
+  /// "20/6/2026 - 20/7/2026" — a start→end range in d/M/yyyy. Returns an empty
+  /// string when either end is invalid (so the caller can hide the whole row).
+  static String numericRange(String? start, String? end) {
+    final from = numericDate(start);
+    final to = numericDate(end);
+    if (from.isEmpty || to.isEmpty) return '';
+    return '$from - $to';
+  }
+
   /// "الأحد" — or an empty string when the date is invalid.
   static String arabicWeekday(String? value) {
     final d = parse(value);

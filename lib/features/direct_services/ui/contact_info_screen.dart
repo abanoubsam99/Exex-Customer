@@ -90,7 +90,7 @@ class ContactInfoScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         _circleIconButton(
-                          icon: AppImages.iconsPhone,
+                          icon: AppImages.iconsPhone2,
                           iconColor: AppColors.callIconColor,
                           bg: AppColors.callbg,
                           onTap: (state.phones.isNotEmpty)
@@ -193,7 +193,7 @@ class ContactInfoScreen extends StatelessWidget {
     // and this is a booking service, show the restriction message.
     if (state.hasError || state.phones.isEmpty) {
       if (isBookingService) {
-        return _value('نأسف ، لا يمكن التواصل المباشر مع التاجر إلا بعد إتمام الحجز');
+        return _value('نأسف ، لا يمكن التواصل المباشر مع التاجر إلا بعد إتمام الحجز',textColor:AppColors.descriptionText);
       }
       return _value('غير متوفر');
     }
@@ -315,12 +315,12 @@ class ContactInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _value(String text) => Text(
+  Widget _value(String text,{Color? textColor}) => Text(
         text,
         textAlign: TextAlign.right,
         textDirection: TextDirection.rtl,
         style: TextStyle(
-          color: AppColors.blacksoft,
+          color: textColor??AppColors.blacksoft,
           fontSize: 12.r,
           fontFamily: 'Almarai',
           fontWeight: FontWeight.w700,

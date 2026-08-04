@@ -92,6 +92,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                               ),
                             ),
                     ),
+                    8.verticalSpace,
                     Row(
                       children: [
                         Text(
@@ -106,7 +107,7 @@ class InstantBookingServicesScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    16.verticalSpace,
+                    8.verticalSpace,
                     Row(
                       children: [
                         Expanded(

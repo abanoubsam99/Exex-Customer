@@ -73,11 +73,18 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     _lastAvailability = _homeCubit.state.availability;
     _lastGov = _homeCubit.state.eventGovernorate;
     _lastCity = _homeCubit.state.eventCity;
+    _lastBookingDate = _homeCubit.state.bookingDate;
     _homeSub = _homeCubit.stream.listen((s) {
       if (s.eventGovernorate != _lastGov || s.eventCity != _lastCity) {
         _lastGov = s.eventGovernorate;
         _lastCity = s.eventCity;
         getOtherPorts();
+      }
+      // A new picked date can move the selected service into (or out of) a
+      // special-price period, so recompute the total against the new date.
+      if (s.bookingDate != _lastBookingDate) {
+        _lastBookingDate = s.bookingDate;
+        _recalcTotal();
       }
       if (!identical(s.availability, _lastAvailability)) {
         _lastAvailability = s.availability;
@@ -114,6 +121,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   CheckReservationResponse? _lastAvailability;
   String? _lastGov;
   String? _lastCity;
+  DateTime? _lastBookingDate;
 
   @override
   Future<void> close() {
@@ -646,15 +654,16 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
   }
 
   void _recalcTotal() {
-    // Base cost = the selected service's price after discount — the same value
-    // the service card shows as its live price. The detailed model has no
-    // discount field, so prefer the service's discounted price; fall back to
-    // the detailed/full price only when there is no discounted value.
-    double cost = (state.selectedService?.priceAfterDiscount ??
-                state.serviceDetails?.price ??
-                state.selectedService?.price)
-            ?.toDouble() ??
-        0;
+    // Base cost = the selected service's price for the picked date — the same
+    // value the service card shows as its live price. When the service has
+    // time-boxed special prices and the picked date falls in a period, that
+    // period's price applies; otherwise it's the normal discounted price. Fall
+    // back to the detailed/full price only when there's no service price at all.
+    final service = state.selectedService;
+    double cost =
+        (service?.effectivePrice(_homeCubit.state.bookingDate) ?? 0).toDouble();
+    // No usable service price (rare) → fall back to the detailed model's price.
+    if (cost == 0) cost = (state.serviceDetails?.price ?? 0).toDouble();
     final oldGiftIds =
         state.serviceDetails?.oldGifts?.map((e) => e.id).toSet() ?? {};
 

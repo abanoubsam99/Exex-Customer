@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
 import 'package:evex_user/data/models/addition_model.dart';
@@ -112,6 +113,9 @@ class PortServicesRepo {
     try {
       final response = await DioHelper.getData(
         url: '${AppEndpoints.getPortContactInfo}/$portId',
+        // A 404 here is expected (merchant has no contact info yet) and the
+        // screen handles it, so don't fire the global error toast.
+        options: Options(extra: {'suppressErrorToast': true}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final d = response.data;

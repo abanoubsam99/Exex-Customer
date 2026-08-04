@@ -359,11 +359,21 @@ class ChangeOccasion extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
             decoration: ShapeDecoration(
-              // color: AppColors.bg,
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 side: const BorderSide(color: AppColors.primaryColor),
                 borderRadius: BorderRadius.circular(14.r),
               ),
+              // Soft drop shadow so the box lifts off the page (the "shadow
+              // frame" in the Figma) — matches the app's standard card shadow.
+              shadows: [
+                BoxShadow(
+                  color: AppColors.shadow,
+                  blurRadius: 16.r,
+                  offset: Offset(0, 4.r),
+                  spreadRadius: 0,
+                ),
+              ],
             ),
             child: Row(
               children: [

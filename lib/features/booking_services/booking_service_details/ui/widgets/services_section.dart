@@ -100,11 +100,15 @@ class ServicesSection extends StatelessWidget {
         // Rebuild on a new availability response too: it decides which services
         // are still bookable on the picked date (backend `unreservedServices`).
         BlocBuilder<HomeCubit, HomeState>(
-          buildWhen: (p, c) => p.availability != c.availability,
-          builder: (context, _) =>
+          // Rebuild on a new picked date too: it decides which special-price
+          // period (and price/date range) each service card shows.
+          buildWhen: (p, c) =>
+              p.availability != c.availability || p.bookingDate != c.bookingDate,
+          builder: (context, homeState) =>
               BlocBuilder<BookingServiceDetailsCubit, BookingServiceDetailsState>(
           builder: (context, state) {
             final cubit = context.read<BookingServiceDetailsCubit>();
+            final pickedDate = homeState.bookingDate;
             if (state.services.isEmpty) {
               return EmptyListWidget(
                 message: 'لا توجد خدمات متاحة',
@@ -116,7 +120,7 @@ class ServicesSection extends StatelessWidget {
             return SizedBox(
               // Headroom for the global 1.1 text scaling so the card content
               // (image + title + price row) never overflows.
-              height: 192.h,
+              height: 200.h,
               child: ListView.separated(
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
@@ -136,8 +140,13 @@ class ServicesSection extends StatelessWidget {
                     images: images,
                     title: service.name ?? '',
                     subtitle: service.details ?? '',
-                    price: service.priceAfterDiscount ?? 0,
+                    // Price for the picked date: the special-price period's
+                    // price when it falls in one, otherwise the normal price.
+                    price: service.effectivePrice(pickedDate),
                     priceBeforeDiscount: service.priceBeforDiscount,
+                    // "20/6/2026 - 20/7/2026" for the matching period (empty
+                    // otherwise, which hides the row).
+                    dateRange: service.effectiveRangeLabel(pickedDate),
                     // Hide the price when the service is private OR the whole
                     // port keeps its prices private (port-level displayPrice).
                     displayPrice:

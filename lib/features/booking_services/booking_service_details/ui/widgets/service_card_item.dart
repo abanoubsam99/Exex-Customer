@@ -16,6 +16,10 @@ class ServiceCardItem extends StatefulWidget {
   /// shows a discount badge and a struck-through old price.
   final int? priceBeforeDiscount;
   final String subtitle;
+
+  /// "20/6/2026 - 20/7/2026" — the special-price period the picked date falls
+  /// in. Empty when the normal price applies (the row is then hidden).
+  final String dateRange;
   final List<String> images;
   final bool isSelected;
 
@@ -35,6 +39,7 @@ class ServiceCardItem extends StatefulWidget {
     required this.price,
     this.priceBeforeDiscount,
     required this.subtitle,
+    this.dateRange = '',
     this.images = const [],
     this.isSelected = false,
     this.isAvailable = true,
@@ -228,6 +233,37 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                   letterSpacing: -0.24,
                 ),
               ),
+              // Special-price window (e.g. "20/6/2026 - 20/7/2026") — shown only
+              // when the picked date falls inside one of the service's periods.
+              if (widget.dateRange.isNotEmpty) ...[
+                2.verticalSpace,
+                Row(mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Icon(
+                    //   Icons.calendar_today_rounded,
+                    //   size: 11.r,
+                    //   color: AppColors.cyan,
+                    // ),
+                    // 4.horizontalSpace,
+                    Text(
+                      widget.dateRange,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.ltr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.descriptionText,
+                        fontSize: 12.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                        height: 1.40,
+                        letterSpacing: -0.24,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               const Spacer(),
               // Hide the whole price row when the vendor keeps the price private.
               if (!widget.displayPrice)

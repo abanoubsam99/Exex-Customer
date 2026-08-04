@@ -3,6 +3,7 @@ import 'package:evex_user/core/ui/widgets/custom_button.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_cubit.dart';
 import 'package:evex_user/data/cubits/booking_services/booking_service_details/booking_service_details_state.dart';
+import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/models/port_service.dart';
 import 'package:evex_user/data/models/service_details_model.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,16 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
         : null;
     final hidePrice =
         widget.service.displayPrice || port?.displayPrice == true;
+    // The date the user picked (from the shared HomeCubit) decides which
+    // special-price period — and therefore which price + date range — applies.
+    DateTime? pickedDate;
+    try {
+      pickedDate = context.read<HomeCubit>().state.bookingDate;
+    } catch (_) {
+      pickedDate = null;
+    }
+    final servicePrice = widget.service.effectivePrice(pickedDate);
+    final periodRange = widget.service.effectiveRangeLabel(pickedDate);
     // Max attendees the port can host (الحد الأقصى لعدد الحضور).
     final numberAllowed = port?.numberAllowed;
     return Container(
@@ -165,7 +176,7 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '${widget.service.priceAfterDiscount ?? 0}',
+                            text: '$servicePrice',
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontSize: 20.r,
@@ -188,6 +199,29 @@ class _ServiceDetailsBottomSheetState extends State<ServiceDetailsBottomSheet> {
                   ],
                 ],
               ),
+              // Special-price window for the picked date (e.g.
+              // "20/6/2026 - 20/7/2026"); hidden when the normal price applies.
+              if (!hidePrice && periodRange.isNotEmpty) ...[
+                8.verticalSpace,
+                Row(
+                  children: [
+                    // Icon(Icons.calendar_today_rounded,
+                    //     size: 14.r, color: AppColors.cyan),
+                    // 6.horizontalSpace,
+                    Text(
+                      periodRange,
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: AppColors.descriptionText,
+                        fontSize: 13.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w700,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               16.verticalSpace,
               Flexible(
                 child: SingleChildScrollView(
