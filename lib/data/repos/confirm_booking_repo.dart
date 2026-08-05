@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:evex_user/app/helpers/dio_helper.dart';
 import 'package:evex_user/core/constants/app_endpoints.dart';
+import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
 import 'package:evex_user/data/models/general_response.dart';
 import 'package:evex_user/data/models/net_cost_model.dart';
@@ -145,7 +146,7 @@ class ConfirmBookingRepo {
     String? city,
   }) async {
     try {
-      final d = '${date.year}/${date.month}/${date.day}';
+      final d = DateFormatHelper.apiDate(date, separator: '/');
       final response = await DioHelper.getData(
         url: '${AppEndpoints.checkReservationAvailability}/$portId',
         query: {

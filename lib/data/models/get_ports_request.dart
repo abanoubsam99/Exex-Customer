@@ -1,3 +1,5 @@
+import 'package:evex_user/core/helpers/date_format_helper.dart';
+
 class GetPortsRequest {
   /// Generic filter id sent as `Id` to /api/Ports/Filter.
   int? id;
@@ -62,7 +64,7 @@ class GetPortsRequest {
     if (maxPrice != null) data['maxPrice'] = maxPrice;
     if (index != null) data['index'] = index;
     if (size != null) data['size'] = size;
-    if (date != null) data['date'] = date!.toIso8601String();
+    if (date != null) data['date'] = DateFormatHelper.apiDate(date!);
     if ((gov ?? '').isNotEmpty) data['gov'] = gov;
     if ((city ?? '').isNotEmpty) data['city'] = city;
     if (companyId != null) data['companyId'] = companyId;

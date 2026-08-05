@@ -26,13 +26,9 @@ class ConfirmBookingScreen extends StatelessWidget {
         builder: (context, state) {
           return Column(
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+              // Keep the screen fixed; policies have their own scroll area.
                       // ── Warm gradient top area ──
-                      Container(
+              Container(
                         width: double.infinity,
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
@@ -97,7 +93,8 @@ class ConfirmBookingScreen extends StatelessWidget {
                         ),
                       ),
                       // ── Policies (white) ──
-                      Padding(
+              Expanded(
+                child: Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 24.w,
                           vertical: 20.h,
@@ -106,9 +103,6 @@ class ConfirmBookingScreen extends StatelessWidget {
                           accepted: state.termsAccepted,
                           onChanged: cubit.toggleTerms,
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
               // ── Bottom confirm button ──
@@ -134,6 +128,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                         text: 'تأكيد الدفع',
                         height: 54.h,
                         isLoading: state.isLoading,
+                        isDisabled: !state.termsAccepted,
                         onTap: () async {
                           final result = await cubit.confirmCardPayment();
                           if (result != null) {
@@ -669,6 +664,37 @@ class _PoliciesSection extends StatelessWidget {
     );
   }
 
+  Widget _termsAgreement(bool accepted, ValueChanged<bool> onChanged) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 22.r,
+          height: 22.r,
+          child: Checkbox(
+            value: accepted,
+            onChanged: (value) => onChanged(value ?? false),
+            activeColor: _orange,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+          ),
+        ),
+        8.horizontalSpace,
+        Expanded(
+          child: Text(
+            'قرأت جميع الشروط والسياسات وأوافق عليها',
+            style: TextStyle(
+              color: AppColors.blacksoft,
+              fontSize: 13.r,
+              fontFamily: 'Almarai',
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -707,9 +733,9 @@ class _PoliciesSection extends StatelessWidget {
         ),
         // 6.verticalSpace,
         6.verticalSpace,
-        Container(
+        Expanded(
+          child: Container(
           width: double.infinity,
-          height: 330.h,
           padding: EdgeInsets.all(8.r),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -721,19 +747,31 @@ class _PoliciesSection extends StatelessWidget {
               _acknowledgment(context),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Text(
-                    _terms,
-                    style: TextStyle(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _terms,
+                        style: TextStyle(
                         color: AppColors.descriptionText,
                         fontSize: 12.r,
                         fontFamily: 'Almarai',
                         height: 1.8,
                         fontWeight: FontWeight.w400
-                    ),
+                        ),
+                      ),
+                      16.verticalSpace,
+                      InkWell(
+                        onTap: () => onChanged(!accepted),
+                        child: _termsAgreement(accepted, onChanged),
+                      ),
+                      8.verticalSpace,
+                    ],
                   ),
                 ),
               ),
             ],
+          ),
           ),
         ),
         // Container(
@@ -757,36 +795,6 @@ class _PoliciesSection extends StatelessWidget {
         //     ),
         //   ),
         // ),
-        12.verticalSpace,
-        InkWell(
-          onTap: () => onChanged(!accepted),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 22.r,
-                height: 22.r,
-                child: Checkbox(
-                  value: accepted,
-                  onChanged: (v) => onChanged(v ?? false),
-                  activeColor: _orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                ),
-              ),
-              8.horizontalSpace,
-              Text(
-                'قرأت جميع الشروط والسياسات وأوافق عليها',
-                style: TextStyle(
-                  color: AppColors.blacksoft,
-                  fontSize: 13.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

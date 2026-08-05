@@ -132,48 +132,47 @@ class _AdditionItemState extends State<AdditionItem> {
               // readable — static when they fit.
               Flexible(
                 flex: 5,
-                child: hasGift
-                    ? Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 6.h,
-                          horizontal: 12.w,
-                        ),
-                        decoration: ShapeDecoration(
-                          color: AppColors.lightPeach,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),),
-                        ),
-                        child: Row(
-                          children: [
-                            CustomImageHandler(AppImages.imagesGift),
-                            4.horizontalSpace,
-                            Expanded(
-                              child: LoopingMarqueeText(
-                                widget.hasCount
-                                    ? "${widget.giftCount} ${widget.title}"
-                                    : widget.title,
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: AppColors.secondaryColor,
-                                  fontSize: 10.sp,
-                                  fontFamily: 'Almarai',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : LoopingMarqueeText(
-                        widget.title,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: AppColors.blacksoft,
-                          fontSize: 10.sp,
-                          fontFamily: 'Almarai',
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.24,
+                // Every row wraps its name in the same pill so gift and
+                // non-gift rows share one layout. Gift rows use the peach fill
+                // + gift icon; plain rows use a neutral grey fill and no icon.
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 6.h,
+                    horizontal: 12.w,
+                  ),
+                  decoration: ShapeDecoration(
+                    color: hasGift ? AppColors.lightPeach : AppColors.fillGrey3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      if (hasGift) ...[
+                        CustomImageHandler(AppImages.imagesGift),
+                        4.horizontalSpace,
+                      ],
+                      Expanded(
+                        child: LoopingMarqueeText(
+                          hasGift && widget.hasCount
+                              ? "${widget.giftCount} ${widget.title}"
+                              : widget.title,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: hasGift
+                                ? AppColors.secondaryColor
+                                : AppColors.blacksoft,
+                            fontSize: 10.sp,
+                            fontFamily: 'Almarai',
+                            fontWeight:
+                                hasGift ? FontWeight.w600 : FontWeight.w700,
+                            letterSpacing: hasGift ? null : -0.24,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
               ),
               // ── Count stepper (middle) ──
               // Always sits between the name (right) and the price (left),

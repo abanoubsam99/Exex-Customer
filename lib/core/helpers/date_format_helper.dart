@@ -76,6 +76,15 @@ class DateFormatHelper {
     if (d == null) return fallback;
     return '${d.day} , ${_months[d.month - 1]} , ${d.year}';
   }
+  /// Canonical date the backend expects in requests: zero-padded `yyyy{sep}MM{sep}dd`
+  /// with no time part. Use `separator: '-'` for ISO (`2026-08-31`) or `'/'` for
+  /// the slash form (`2026/08/31`). Keep every outgoing API date going through
+  /// this so the format stays consistent everywhere.
+  static String apiDate(DateTime date, {String separator = '-'}) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${date.year}$separator${two(date.month)}$separator${two(date.day)}';
+  }
+
   /// "20/6/2026" (d/M/yyyy, no leading zeros) — or [fallback] when invalid
   /// (covers the .NET default 0001-01-01, empty and null).
   static String numericDate(String? value, {String fallback = ''}) {
