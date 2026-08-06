@@ -52,6 +52,18 @@ class UserModel {
   /// هل أكمل بيانات العميل (عنده clientId فعلي)؟
   bool get isAccountComplete =>
       (userViewModel?.clientId ?? 0) > 0;
+
+  /// Whether every registration step is finished, so the account can be
+  /// restored as a real signed-in session on the next launch.
+  ///
+  /// The backend hands out a `clientId` early (right after register, before the
+  /// phone step), so [isAccountComplete] alone is NOT enough — a user who
+  /// abandoned registration at the phone screen still has a clientId and would
+  /// be wrongly treated as a full account. A usable account must also have a
+  /// phone entered AND verified. This mirrors the step sequence enforced by
+  /// LoginCubit._onLoggedIn.
+  bool get isFullyRegistered =>
+      hasPhone && isPhoneVerified && isAccountComplete;
 }
 
 class UserViewModel {

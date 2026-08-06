@@ -270,7 +270,25 @@ class ChangeOccasion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final occasionName = _selectedOccasionName;
-    return Column(
+    // White "shadow frame" that wraps BOTH the availability line and the
+    // date/location/occasion pill (per the Figma). The soft drop shadow lifts
+    // the whole block off the page; the inner pill keeps only its outlined
+    // border so there's no double shadow.
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 16.r,
+            offset: Offset(0, 4.r),
+          ),
+        ],
+      ),
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -364,16 +382,8 @@ class ChangeOccasion extends StatelessWidget {
                 side: const BorderSide(color: AppColors.primaryColor),
                 borderRadius: BorderRadius.circular(14.r),
               ),
-              // Soft drop shadow so the box lifts off the page (the "shadow
-              // frame" in the Figma) — matches the app's standard card shadow.
-              shadows: [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 16.r,
-                  offset: Offset(0, 4.r),
-                  spreadRadius: 0,
-                ),
-              ],
+              // No shadow here — the surrounding white card already carries the
+              // "shadow frame"; the pill keeps only its outlined border.
             ),
             child: Row(
               children: [
@@ -457,6 +467,7 @@ class ChangeOccasion extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
   }
 }

@@ -60,7 +60,12 @@ class UserService {
       // and show a broken "عميل" profile. Instead browse home like a guest; the
       // remaining steps are resumed only if the user logs in again explicitly
       // (LoginCubit routes an incomplete account to add-phone / add-client).
-      if (!user.isAccountComplete) {
+      //
+      // Completeness is measured by isFullyRegistered (phone entered + verified
+      // + clientId), NOT isAccountComplete alone: the backend assigns a clientId
+      // right after register, so an account abandoned at the phone screen still
+      // has a clientId and would otherwise be mistaken for a finished account.
+      if (!user.isFullyRegistered) {
         currentUser = null;
         _browseOnly = true;
         // Drop the stale login token too. Left in cache it would be attached to
@@ -78,6 +83,16 @@ class UserService {
   }
 
   Future<void> updateUser(UserViewModel user) async {
+    // GetUserData is authoritative for display fields (name, image, address…),
+    // but it may omit the auth-critical flags. Preserve those from the existing
+    // session when the fresh copy leaves them null, so refreshing the profile
+    // can never make a fully-registered account look half-finished on the next
+    // launch (see [_loadUser] / UserModel.isFullyRegistered).
+    final existing = currentUser!.userViewModel;
+    user.phoneNumber ??= existing?.phoneNumber;
+    user.phoneVerified ??= existing?.phoneVerified;
+    user.clientId ??= existing?.clientId;
+    user.userId ??= existing?.userId;
     currentUser!.userViewModel = user;
     await saveUser(currentUser!);
   }

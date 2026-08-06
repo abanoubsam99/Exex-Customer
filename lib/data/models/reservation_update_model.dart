@@ -24,6 +24,7 @@ class ReservationUpdateModel {
   final String? reservationStatus;
   final String? portName;
   final String? reservationDate;
+  final String? reservationRequestDto;
   final int portId;
 
   /// Editable — the chosen base service (can change when editing a reservation).
@@ -61,6 +62,7 @@ class ReservationUpdateModel {
     this.reservationWay,
     this.employeName,
     this.governorate,
+    this.reservationRequestDto,
     this.city,
     this.clientName,
     this.startTime,
@@ -117,6 +119,7 @@ class ReservationUpdateModel {
       occasionDate: s('occasionDate') ?? '',
       reservationWay: s('reservationWay'),
       employeName: s('employeName'),
+      reservationRequestDto: s('reservationRequestDto'),
       governorate: s('governorate'),
       city: s('city'),
       clientName: s('clientName'),
@@ -194,6 +197,7 @@ class ReservationUpdateModel {
         'governorate': governorate,
         'city': city,
         'clientName': clientName,
+        'reservationRequestDto': reservationRequestDto,
         'startTime': startTime,
         'finishTime': finishTime,
         'reservationStatus': reservationStatus,

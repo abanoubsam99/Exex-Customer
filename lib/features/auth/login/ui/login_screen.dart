@@ -2,6 +2,9 @@ import 'package:evex_user/core/ui/widgets/top_backround.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_body_widget.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_top_part.dart';
+import 'dart:io';
+
+import 'package:evex_user/core/helpers/app_upgrader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +21,13 @@ class LoginScreen extends StatelessWidget {
     // size re-initialised the global singleton, leaving every screen opened
     // afterwards scaled with the wrong design height (squished UI until restart).
     return UpgradeAlert(
+      upgrader: appUpgrader,
+      dialogStyle: Platform.isIOS
+          ? UpgradeDialogStyle.cupertino
+          : UpgradeDialogStyle.material,
+      showIgnore: false,
+      showLater: false,
+      barrierDismissible: false,
       child: Scaffold(
         body: SafeArea(
           top: false,
