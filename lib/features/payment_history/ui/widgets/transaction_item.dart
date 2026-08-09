@@ -93,7 +93,9 @@ class TransactionItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '${transaction.paymentType == 0 ? '-' : '+'}${transaction.paymentAmount}',
+              // Payments (paymentType == 0) show no minus sign — the red colour
+              // and the outgoing arrow already mark them; income keeps its '+'.
+              '${transaction.paymentType == 0 ? '' : '+'}${transaction.paymentAmount}',
               textAlign: TextAlign.right,
               textDirection: TextDirection.ltr,
               style: TextStyle(

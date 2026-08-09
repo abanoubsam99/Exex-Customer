@@ -18,6 +18,13 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules">
+        <!-- Deep links are handled by the app_links package (see
+             DeepLinkService), so disable Flutter's built-in deep linking.
+             Otherwise Flutter treats the incoming URL path (e.g. /port/26) as a
+             route name, which the router doesn't know → "Route not found". -->
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -48,7 +55,7 @@
                 <data
                     android:scheme="https"
                     android:host="backend.evexnow.com"
-                    android:pathPrefix="/port" />
+                    android:pathPattern="/port/.*" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -25,8 +25,9 @@ final Upgrader appUpgrader = Upgrader(
   // Prompt again on the next launch instead of waiting the default 3 days.
   durationUntilAlertAgain: const Duration(days: 1),
 
-  // App Store lookups default to the US listing; keep it explicit.
-  countryCode: 'us',
+  // The app is published on the Egyptian store (apps.apple.com/eg/...), so
+  // look up the EG listing — a US lookup can miss the app / its version.
+  countryCode: 'eg',
 
   // TESTING ONLY: force the dialog on every launch, ignoring the store version
   // check and the cadence above. Uncomment to confirm the UI wiring works, then

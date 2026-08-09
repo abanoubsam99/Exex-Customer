@@ -141,7 +141,13 @@ class CompleteBookingScreen extends StatelessWidget {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: args.totalCost.toStringAsFixed(2),
+                                    // Same source as the top "إجمالى التكلفة"
+                                    // (ServiceCostDetailsSection): the net cost
+                                    // from CalculateNetCost, falling back to the
+                                    // passed total until it arrives.
+                                    text: (state.netCost?.netCost ??
+                                            args.totalCost)
+                                        .toStringAsFixed(2),
                                     style: TextStyle(
                                       color: AppColors.primaryColor,
                                       fontSize: 20.r,

@@ -11,6 +11,7 @@ class ReservationModel {
   final String? occasionDate;
   final String? reservationStatus;
   final String? serviceName;
+  final String? serviceDetails;
 
   /// السعر الظاهر (قبل خصم عدد الحجوزات).
   final num? apparentPrice;
@@ -20,6 +21,15 @@ class ReservationModel {
 
   /// مقدم الحجز.
   final num? deposit;
+
+  /// إجمالي المبلغ المدفوع من العميل (تاب المؤكدة/الملغاه).
+  final num? paid;
+
+  /// المبلغ المتبقي على العميل (تاب المؤكدة).
+  final num? remaining;
+
+  /// المبلغ المسترد للعميل (تاب الملغاه).
+  final num? refunded;
 
   ReservationModel({
     this.id,
@@ -33,9 +43,13 @@ class ReservationModel {
     this.occasionDate,
     this.reservationStatus,
     this.serviceName,
+    this.serviceDetails,
     this.apparentPrice,
     this.finalCost,
     this.deposit,
+    this.paid,
+    this.remaining,
+    this.refunded,
   });
 
   ReservationModel.fromJson(Map<String, dynamic> json)
@@ -50,7 +64,12 @@ class ReservationModel {
         occasionDate = json['occasionDate'] as String?,
         reservationStatus = json['reservationStatus'] as String?,
         serviceName = json['serviceName'] as String?,
+        serviceDetails = json['serviceDetails'] as String?,
         apparentPrice = json['apparentPrice'] as num?,
         finalCost = json['theFinalCostBasedOnNumberOfReservations'] as num?,
-        deposit = json['deposit'] as num?;
+        deposit = json['deposit'] as num?,
+        paid = (json['totalAmountPaid'] ??
+            json['totalAmountReceivedFromCustomer']) as num?,
+        remaining = json['remainingAmount'] as num?,
+        refunded = json['totalAmountRefundedToCustomer'] as num?;
 }

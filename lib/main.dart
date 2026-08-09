@@ -32,6 +32,9 @@ menaatefdesigner2@gmail.com
 menaatefdesigner5@gmail.com
 1234
 
+// test issues with
+beshoybassem@gmail.com
+123456
 */
 
 
@@ -48,7 +51,7 @@ void main() async {
   await userService.init();
   final locationService = LocationService(cacheHelper, userService);
   final localAuthService = LocalAuthService();
-  final deepLinkService = DeepLinkService(userService);
+  final deepLinkService = DeepLinkService();
   // Start listening for the launch link + runtime links before the UI builds.
   await deepLinkService.init();
 
@@ -120,6 +123,16 @@ class MyApp extends StatelessWidget {
               theme: theme,
               initialRoute: Routes.splashScreen,
               onGenerateRoute: AppRouter.onGenerateRoute,
+              // Deep links are handled by app_links (DeepLinkService), never by
+              // Flutter's built-in navigation. Always start at splash so an
+              // incoming link URL (e.g. /port/26) is never mistaken for an
+              // in-app route name — which would land on "Route not found".
+              onGenerateInitialRoutes: (_) {
+                final route = AppRouter.onGenerateRoute(
+                  const RouteSettings(name: Routes.splashScreen),
+                );
+                return route == null ? const [] : [route];
+              },
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(context).copyWith(
                   // Global text scale — bumped up so everything reads bigger

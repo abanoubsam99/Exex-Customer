@@ -118,10 +118,19 @@ class OrderDetailsScreen extends StatelessWidget {
                           ),
                         ),
 
+                        // Notes always show; a cancelled reservation displays
+                        // them read-only so the user can see but not edit them.
                         20.verticalSpace,
-                        _SectionHeader('إضافة ملاحظات'),
+                        _SectionHeader(
+                          ReservationStatusHelper.isCancelled(order.status)
+                              ? 'ملاحظات'
+                              : 'إضافة ملاحظات',
+                        ),
                         10.verticalSpace,
-                        const _NotesField(),
+                        _NotesField(
+                          readOnly: ReservationStatusHelper.isCancelled(
+                              order.status),
+                        ),
                         20.verticalSpace,
                       ],
                     ),
@@ -768,7 +777,7 @@ class _CostAndTotalCard extends StatelessWidget {
                       child: Text('إجمالي التكلفة',
                           style: AppTextStyles.font16BlackBold),
                     ),
-                    _priceText(order.totalCost, numberSize: 22, unitSize: 14),
+                    _priceText(order.netCost, numberSize: 22, unitSize: 14),
                   ],
                 ),
                 12.verticalSpace,
@@ -891,18 +900,20 @@ class _TicketDividerPainter extends CustomPainter {
 //  Notes field
 // ─────────────────────────────────────────────────────────────────────────
 class _NotesField extends StatelessWidget {
-  const _NotesField();
+  final bool readOnly;
+  const _NotesField({this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OrderDetailsCubit>();
     return Focus(
-      // Save the note when the field loses focus.
+      // Save the note when the field loses focus (never in read-only mode).
       onFocusChange: (hasFocus) {
-        if (!hasFocus) cubit.saveUserNote();
+        if (!readOnly && !hasFocus) cubit.saveUserNote();
       },
       child: TextFormField(
         controller: cubit.notesController,
+        readOnly: readOnly,
         maxLines: 3,
       textAlign: TextAlign.start,
       textDirection: TextDirection.rtl,

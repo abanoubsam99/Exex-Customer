@@ -133,12 +133,16 @@ class _RequestsTab extends StatelessWidget {
                       ? AppColors.amber
                       : (available ? _green : _red),
                   serviceName: r.serviceName ?? '',
-                  serviceDetails: r.serviceDetails ?? '',
                   location: _location(r.governorate, r.city),
                   dateText: DateFormatHelper.arabicDate(r.occasionDate),
-                  deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
+                  // Requests: مقدم الحجز + الإجمالي (with the struck price).
+                  primaryAmountLabel: 'مقدم الحجز',
+                  primaryAmountValue: r.deposit ?? 0,
+                  secondaryAmountLabel: 'الإجمالي',
+                  secondaryAmountValue: r.finalCost ?? r.apparentPrice ?? 0,
+                  secondaryShowStrikethrough: true,
                   // Tapping a request → edit it (not the invoice screen).
                   onTap: editArgs == null ? null : () => _openEdit(editArgs),
                   // Trash icon → confirm, then delete the request.
@@ -258,12 +262,15 @@ class _ReservationsTab extends StatelessWidget {
                       ReservationStatusHelper.label(r.reservationStatus),
                   statusColor: _green,
                   serviceName: r.serviceName ?? '',
-                  serviceDetails: '',
                   location: _location(r.governorate, r.city),
                   dateText: DateFormatHelper.arabicDate(r.occasionDate),
-                  deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
+                  // Confirmed: المبلغ المدفوع + المتبقي.
+                  primaryAmountLabel: 'المبلغ المدفوع',
+                  primaryAmountValue: r.paid ?? 0,
+                  secondaryAmountLabel: 'المتبقي',
+                  secondaryAmountValue: r.remaining ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
                   // Confirmed cards: no edit/trash — just download (DownloadInfo).
                   onDownload: r.id == null
@@ -318,12 +325,15 @@ class _CancelledTab extends StatelessWidget {
                   statusText: ReservationStatusHelper.label('cancelled'),
                   statusColor: _red,
                   serviceName: r.serviceName ?? '',
-                  serviceDetails: '',
                   location: _location(r.governorate, r.city),
                   dateText: DateFormatHelper.arabicDate(r.occasionDate),
-                  deposit: r.deposit ?? 0,
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
+                  // Cancelled: المبلغ المسترد + المدفوع.
+                  primaryAmountLabel: 'المبلغ المسترد',
+                  primaryAmountValue: r.refunded ?? 0,
+                  secondaryAmountLabel: 'المدفوع',
+                  secondaryAmountValue: r.paid ?? 0,
                   onTap: r.id == null ? null : () => _openDetails(r.id!),
                   // Cancelled cards: no edit/trash — just download (DownloadInfo).
                   onDownload: r.id == null

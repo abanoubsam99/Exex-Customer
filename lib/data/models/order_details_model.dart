@@ -18,6 +18,7 @@ class OrderDetailsModel {
   final List<OrderLineItem> buffet;
   final List<CostRow> costBreakdown;
   final num totalCost;
+  final num netCost;
   final num paid;
   final num remaining;
   final num refunded;
@@ -40,6 +41,7 @@ class OrderDetailsModel {
     required this.buffet,
     required this.costBreakdown,
     required this.totalCost,
+    required this.netCost,
     required this.paid,
     required this.remaining,
     required this.refunded,
@@ -70,6 +72,7 @@ class OrderDetailsModel {
           .map((e) => CostRow.fromJson(e))
           .toList(),
       totalCost: json['totalCost'] ?? 0,
+      netCost: json['netCost'] ?? 0,
       paid: json['paid'] ?? 0,
       remaining: json['remaining'] ?? 0,
       refunded: json['refunded'] ?? 0,
@@ -115,6 +118,7 @@ class OrderDetailsModel {
     // Totals come from the API; remaining is derived (total − paid) only when
     // the backend doesn't send it explicitly.
     final totalValue = n('totalCost');
+    final netCost = n('netCost');
     final paidValue = n('totalAmountReceivedFromCustomer');
     final remainingValue =
         (json['remainingAmount'] as num?) ?? (totalValue - paidValue);
@@ -187,6 +191,7 @@ class OrderDetailsModel {
             ),
           ].where((row) => row.value != 0).toList(),
       totalCost: totalValue.round(),
+      netCost: netCost.round(),
       paid: paidValue.round(),
       remaining: remainingValue.round(),
       refunded: n('totalAmountRefundedToCustomer').round(),

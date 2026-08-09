@@ -187,10 +187,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
       ToastManager.showError('برجاء تحديد تاريخ المناسبة');
       return;
     }
-    if (widget.occasions.isNotEmpty && (_selectedOccasionId ?? 0) <= 0) {
-      ToastManager.showError('برجاء اختيار نوع المناسبة');
-      return;
-    }
+    // Event type (نوع المناسبة) is optional — the user can confirm without it.
     if (_selectedGov == null) {
       ToastManager.showError('برجاء اختيار المحافظة');
       return;

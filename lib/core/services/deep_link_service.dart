@@ -4,7 +4,6 @@ import 'package:app_links/app_links.dart';
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_deep_link.dart';
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/services/user_service.dart';
 
 /// Listens for incoming App Links (Android) / Universal Links (iOS) and opens
 /// the matching screen inside the app.
@@ -18,14 +17,20 @@ import 'package:evex_user/core/services/user_service.dart';
 /// held in [_pendingPortId] and replayed by [flushPending] — called by the
 /// splash screen once the initial route is in place.
 class DeepLinkService {
-  DeepLinkService(this._userService);
+  DeepLinkService();
 
-  final UserService _userService;
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _sub;
 
   /// A link captured before we could route it (no navigator / not signed in).
   int? _pendingPortId;
+
+  /// The last port actually opened, with its timestamp. app_links can deliver
+  /// the launch link twice on cold start (getInitialLink + the stream), which
+  /// would open the same port twice; a repeat within this window is ignored.
+  int? _lastOpenedPortId;
+  DateTime? _lastOpenedAt;
+  static const _dedupeWindow = Duration(seconds: 3);
 
   /// Starts listening for cold-start and runtime links. Safe to call once.
   Future<void> init() async {
@@ -51,10 +56,18 @@ class DeepLinkService {
     final portId = _pendingPortId;
     if (portId == null) return;
     if (NavigationHelper.navigatorKey.currentState == null) return;
-    // Per requirements, deep links resolve only for a signed-in user.
-    // (Deferred sign-in-then-open is a later phase.)
-    if (_userService.currentUser == null) return;
+    // The port details screen is open to guests, so deep links resolve without
+    // requiring sign-in — we only need the navigator to be mounted.
     _pendingPortId = null;
+    // Ignore a duplicate delivery of the same launch link (see [_lastOpenedAt]).
+    final now = DateTime.now();
+    if (_lastOpenedPortId == portId &&
+        _lastOpenedAt != null &&
+        now.difference(_lastOpenedAt!) < _dedupeWindow) {
+      return;
+    }
+    _lastOpenedPortId = portId;
+    _lastOpenedAt = now;
     NavigationHelper.pushNamed(
       Routes.bookingServiceDetailsScreen,
       arguments: portId,

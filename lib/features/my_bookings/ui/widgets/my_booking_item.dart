@@ -11,18 +11,28 @@ class MyBookingItem extends StatelessWidget {
   final String statusText;
   final Color statusColor;
   final String serviceName;
-  final String serviceDetails;
   final String location;
   final String dateText;
-
-  /// مقدم الحجز.
-  final num deposit;
 
   /// الإجمالي بعد الخصم (الرقم البرتقالي).
   final num finalCost;
 
   /// السعر الظاهر قبل الخصم (المشطوب). بيتعرض بس لو مختلف عن [finalCost].
   final num apparentPrice;
+
+  /// The highlighted (green) amount row — label + value. Varies per tab:
+  /// مقدم الحجز (requests) / المبلغ المدفوع (confirmed) / المبلغ المسترد (cancelled).
+  final String primaryAmountLabel;
+  final num primaryAmountValue;
+
+  /// The second (coral) amount row — label + value. Varies per tab:
+  /// الإجمالي (requests) / المتبقي (confirmed) / المدفوع (cancelled).
+  final String secondaryAmountLabel;
+  final num secondaryAmountValue;
+
+  /// When true, the secondary row shows the pre-discount price ([apparentPrice])
+  /// struck through next to its value. Only the الإجمالي row (requests) uses it.
+  final bool secondaryShowStrikethrough;
 
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
@@ -48,12 +58,15 @@ class MyBookingItem extends StatelessWidget {
     required this.statusText,
     required this.statusColor,
     required this.serviceName,
-    required this.serviceDetails,
     required this.location,
     required this.dateText,
-    required this.deposit,
     required this.finalCost,
     required this.apparentPrice,
+    required this.primaryAmountLabel,
+    required this.primaryAmountValue,
+    required this.secondaryAmountLabel,
+    required this.secondaryAmountValue,
+    this.secondaryShowStrikethrough = false,
     this.onTap,
     this.onEdit,
     this.onDelete,
@@ -247,38 +260,19 @@ class MyBookingItem extends StatelessWidget {
                               ),
                               6.horizontalSpace,
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      serviceName,
-                                      textAlign: TextAlign.right,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: AppColors.grey,
-                                        fontSize: 12.r,
-                                        fontFamily: 'Almarai',
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.50,
-                                        letterSpacing: -0.24,
-                                      ),
-                                    ),
-                                    Text(
-                                      serviceDetails,
-                                      textAlign: TextAlign.right,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: AppColors.blueGrey,
-                                        fontSize: 11.r,
-                                        fontFamily: 'Almarai',
-                                        fontWeight: FontWeight.w300,
-                                        height: 1.36,
-                                        letterSpacing: -0.24,
-                                      ),
-                                    ),
-                                  ],
+                                child: Text(
+                                  serviceName,
+                                  textAlign: TextAlign.right,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: AppColors.grey,
+                                    fontSize: 12.r,
+                                    fontFamily: 'Almarai',
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.50,
+                                    letterSpacing: -0.24,
+                                  ),
                                 ),
                               ),
                             ],
@@ -345,10 +339,12 @@ class MyBookingItem extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
+                // Highlighted (green) amount row — مقدم الحجز / المبلغ المدفوع /
+                // المبلغ المسترد depending on the tab.
                 Row(
                   children: [
                     Text(
-                      'مقدم الحجز',
+                      primaryAmountLabel,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: AppColors.blueGrey,
@@ -365,7 +361,7 @@ class MyBookingItem extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '${_money(deposit)} ',
+                            text: '${_money(primaryAmountValue)} ',
                             style: TextStyle(
                               color: AppColors.greenSoft,
                               fontSize: 16.r,
@@ -391,10 +387,12 @@ class MyBookingItem extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Second (coral) amount row — الإجمالي / المتبقي / المدفوع
+                // depending on the tab. Only الإجمالي shows the struck price.
                 Row(
                   children: [
                     Text(
-                      'الإجمالي',
+                      secondaryAmountLabel,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         color: AppColors.blueGrey,
@@ -406,7 +404,7 @@ class MyBookingItem extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    if (hasDiscount) ...[
+                    if (secondaryShowStrikethrough && hasDiscount) ...[
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -440,7 +438,7 @@ class MyBookingItem extends StatelessWidget {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: '${_money(finalCost)} ',
+                            text: '${_money(secondaryAmountValue)} ',
                             style: TextStyle(
                               color: AppColors.coral,
                               fontSize: 14.r,

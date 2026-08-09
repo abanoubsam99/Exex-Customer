@@ -11,13 +11,20 @@ class MyBookingTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabBar(
       // Re-fetch the tapped tab's data so it auto-refreshes on every tap.
+      // Each tab has its own status filter — the cancelled tab must NOT reuse
+      // the confirmed loader (that would send status=Confirmed for cancelled).
       onTap: (index) {
         final cubit = context.read<MyBookingsCubit>();
-        if (index == 0) {
-          cubit.loadRequests();
-        } else {
-          // Confirmed + cancelled tabs are both filled from GetMyReservations.
-          cubit.loadReservations();
+        switch (index) {
+          case 0:
+            cubit.loadRequests();
+            break;
+          case 1:
+            cubit.loadReservations();
+            break;
+          case 2:
+            cubit.loadCancelled();
+            break;
         }
       },
       dividerColor: AppColors.grey6,

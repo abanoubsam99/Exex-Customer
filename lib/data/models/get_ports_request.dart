@@ -18,6 +18,7 @@ class GetPortsRequest {
   String? city;
   int? companyId;
   bool? fav;
+  bool? onlyAllowedToReservation;
 
   GetPortsRequest({
     this.id,
@@ -33,6 +34,7 @@ class GetPortsRequest {
     this.city,
     this.companyId,
     this.fav,
+    this.onlyAllowedToReservation,
   });
 
   GetPortsRequest.fromJson(Map<String, dynamic> json) {
@@ -51,6 +53,8 @@ class GetPortsRequest {
     city = json['city'] as String?;
     companyId = (json['companyId'] as num?)?.toInt();
     fav = json['fav'] as bool?;
+    onlyAllowedToReservation =
+        json['onlyAllowedToReservation'] as bool?;
   }
 
   // Mirrors json_serializable(includeIfNull: false): null fields are omitted.
@@ -69,6 +73,9 @@ class GetPortsRequest {
     if ((city ?? '').isNotEmpty) data['city'] = city;
     if (companyId != null) data['companyId'] = companyId;
     if (fav != null) data['fav'] = fav;
+    if (onlyAllowedToReservation != null) {
+      data['onlyAllowedToReservation'] = onlyAllowedToReservation;
+    }
     return data;
   }
 }

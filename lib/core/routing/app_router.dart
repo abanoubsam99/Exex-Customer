@@ -531,6 +531,9 @@ class AppRouter {
           settings,
         );
 
+      // Deep-link paths like `/port/<id>` are handled solely by app_links
+      // (DeepLinkService) — the router must NOT also open them, otherwise the
+      // screen opens twice. Anything unknown here is a genuine bad route.
       default:
         return _page(
           const Scaffold(body: Center(child: Text('Route not found'))),

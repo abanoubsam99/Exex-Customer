@@ -38,6 +38,7 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request.city = f.selectedCity?.cityNameAr ?? _locationService.cityName;
     _request.occasionId = f.selectedOccasionId;
     _request.numberAllowed = f.count > 0 ? f.count : null;
+    _request.onlyAllowedToReservation = f.availableOnly;
     final atMax = f.price.round() >= 500000;
     _request.maxPrice = atMax ? null : f.price.round();
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
@@ -127,6 +128,7 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request.numberAllowed = numberAllowed;
     _request.minPrice = minPrice;
     _request.maxPrice = maxPrice;
+    _request.onlyAllowedToReservation = _filterCubit.state.availableOnly;
     // Re-filter the offers by the new location too, not just the ports list.
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
@@ -140,6 +142,7 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
     _request.numberAllowed = null;
     _request.minPrice = null;
     _request.maxPrice = null;
+    _request.onlyAllowedToReservation = _filterCubit.state.availableOnly;
     await Future.wait([_fetchPorts(), _fetchSpecialOffers()]);
   }
 
