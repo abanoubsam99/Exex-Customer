@@ -314,12 +314,16 @@ class ChangeOccasion extends StatelessWidget {
                     rawDate.isBefore(earliest))
                 ? null
                 : rawDate;
-            // Editing one's own reservation at the same slot → always available.
-            final view = _isOwnOriginalSlot(
-                    date, state.eventGovernorate, state.eventCity)
-                ? const _AvailabilityView('متاح للحجز الفوري',
-                    AppColors.green2, AppColors.greenSoft)
-                : _statusFor(date, state.availability, state.availabilityStatus);
+            // Editing one's own reservation with the date/place untouched: the
+            // only booking occupying that slot is the user's own, so there's no
+            // availability verdict worth showing — hide the line entirely
+            // instead of inventing a status the API didn't send.
+            if (_isOwnOriginalSlot(
+                date, state.eventGovernorate, state.eventCity)) {
+              return const SizedBox.shrink();
+            }
+            final view =
+                _statusFor(date, state.availability, state.availabilityStatus);
             final row = Row(
               children: [
                 _GlowingDot(color: view.dotColor),
@@ -328,7 +332,9 @@ class ChangeOccasion extends StatelessWidget {
                   child: Text(
                     view.message,
                     textAlign: TextAlign.right,
-                    maxLines: 1,
+                    // Backend messages can be a full sentence — two lines so the
+                    // condition stays readable instead of being cut off.
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: view.textColor,
@@ -355,15 +361,20 @@ class ChangeOccasion extends StatelessWidget {
                 ],
               ],
             );
-            if (!view.isRetry) return row;
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => _retryAvailability(context),
-              child: row,
+            // The gap below the line lives here too, so hiding the line leaves
+            // no empty space above the date/location box.
+            return Padding(
+              padding: EdgeInsets.only(bottom: 10.h),
+              child: view.isRetry
+                  ? GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => _retryAvailability(context),
+                      child: row,
+                    )
+                  : row,
             );
           },
         ),
-        10.verticalSpace,
         // ── Date / location / occasion box (outlined, like the design) ──
         // The whole box is tappable, not just the edit icon.
         GestureDetector(

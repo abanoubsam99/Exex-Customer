@@ -152,7 +152,7 @@ class _RequestsTab extends StatelessWidget {
                   onEdit: editArgs == null ? null : () => _openEdit(editArgs),
                   // Envelope + badge: the vendor's pending message (accept/refuse).
                   showMessageIcon: true,
-                  hasMessage: r.messageStatus == true,
+                  hasMessage: r.hasPendingMessage,
                   onMessageTap: r.id == null
                       ? null
                       : () => _openPendingMessage(context, r),
@@ -370,7 +370,7 @@ Future<void> _openPendingMessage(
   ReservationRequestModel r,
 ) async {
   // Badge reads 0 (no pending message) → tapping is a no-op.
-  if (r.messageStatus != true || r.id == null) return;
+  if (!r.hasPendingMessage || r.id == null) return;
   final message = r.reservationPendingMessage?.trim();
   // Opening the message marks it as read (clears the badge on refresh).
   context.read<MyBookingsCubit>().markMessageAsRead(r.id!);

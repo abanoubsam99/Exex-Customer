@@ -261,6 +261,8 @@ class _CustomerCard extends StatelessWidget {
                   ),
                 ),
                 10.horizontalSpace,
+                // Booking code badge — hidden when the backend sent no key.
+                if (order.bookingNumber.isNotEmpty)
                 Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
@@ -288,9 +290,11 @@ class _CustomerCard extends StatelessWidget {
                 ),
               ],
             ),
-            5.verticalSpace,
+            // Phone/address sit lower in the card — the free space below the
+            // name is wide enough to breathe.
+            18.verticalSpace,
             _infoRow(AppImages.iconsPhone, 'رقم الهاتف', c.phone),
-            5.verticalSpace,
+            10.verticalSpace,
             _infoRow(AppImages.iconsLocation2, 'العنوان', c.address),
           ],
         ),
@@ -384,39 +388,37 @@ class _BookingSummaryCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     )),
               ),
-              8.horizontalSpace,
-              // Icon(Icons.access_time,color: AppColors.grey),
-              CustomImageHandler(AppImages.iconsAccessTime,
-                  width: 16.r, height: 16.r, color: AppColors.grey),
-              6.horizontalSpace,
-              Text('${order.createdDate}  ${order.createdTime}',
-                  style: AppTextStyles.font12greyRegular),
-              // const Spacer(),
             ],
           ),
           14.verticalSpace,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // venue (right)
+              // Booking details (right): port name + the reservation date.
+              // Wider flex so the port name isn't clipped.
               Expanded(
+                flex: 6,
                 child: _miniBlock(
                   icon: AppImages.iconsBuildings,
                   line1: order.hallName,
-                  tag: order.eventType,
-                  line2: order.venueLocation,
+                  line1MaxLines: 2,
+                  line2: '${order.createdDate}  ${order.createdTime}',
                 ),
               ),
-              Container(width: 1, height: 36.h, color: AppColors.lineGrey),
-              12.horizontalSpace,
-              // date (left)
+              10.horizontalSpace,
+              Container(width: 1, height: 46.h, color: AppColors.lineGrey),
+              10.horizontalSpace,
+              // Occasion details (left): weekday + type tag, date, then venue.
               Expanded(
+                flex: 5,
                 child: _miniBlock(
                   line1: order.eventDay,
                   line1Color: AppColors.orangeColor,
+                  tag: order.eventType,
                   line2: order.eventDate,
                   line2Color: AppColors.black,
-                  line2Style:FontWeight.bold,
+                  line2Style: FontWeight.bold,
+                  line3: order.venueLocation,
                 ),
               ),
             ],
@@ -430,10 +432,12 @@ class _BookingSummaryCard extends StatelessWidget {
     String? icon,
     required String line1,
     required String line2,
+    String? line3,
     String? tag,
     Color? line1Color,
     Color? line2Color,
     FontWeight? line2Style,
+    int line1MaxLines = 1,
   }) {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,7 +446,7 @@ class _BookingSummaryCard extends StatelessWidget {
           children: [
             Flexible(
               child: Text(line1,
-                  maxLines: 1,
+                  maxLines: line1MaxLines,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: line1Color ?? AppColors.blacksoft,
@@ -479,6 +483,13 @@ class _BookingSummaryCard extends StatelessWidget {
               fontWeight: line2Style?? FontWeight.w400
 
             )),
+        if (line3 != null && line3.isNotEmpty) ...[
+          2.verticalSpace,
+          Text(line3,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.font13greyRegular),
+        ],
       ],
     );
     if (icon == null) return content;

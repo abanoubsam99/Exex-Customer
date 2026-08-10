@@ -143,7 +143,12 @@ class ServicesSection extends StatelessWidget {
                     // Price for the picked date: the special-price period's
                     // price when it falls in one, otherwise the normal price.
                     price: service.effectivePrice(pickedDate),
-                    priceBeforeDiscount: service.priceBeforDiscount,
+                    // Struck price + badge follow the same period as the shown
+                    // price.
+                    priceBeforeDiscount:
+                        service.effectivePriceBeforeDiscount(pickedDate),
+                    discountPercentage:
+                        service.effectiveDiscountPercentage(pickedDate),
                     // "20/6/2026 - 20/7/2026" for the matching period (empty
                     // otherwise, which hides the row).
                     dateRange: service.effectiveRangeLabel(pickedDate),

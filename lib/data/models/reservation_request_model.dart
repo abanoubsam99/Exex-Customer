@@ -34,9 +34,8 @@ class ReservationRequestModel {
   /// Pending message text from the vendor awaiting the client's accept/refuse.
   final String? reservationPendingMessage;
 
-  /// Whether a pending message exists (the envelope badge shows 1 when true,
-  /// 0 otherwise). Source of truth for the badge — [reservationPendingMessage]
-  /// carries the text to display.
+  /// The backend's read/unread flag. Kept for reference only — the badge is
+  /// driven by [reservationPendingMessage], not by this.
   final bool? messageStatus;
 
   ReservationRequestModel({
@@ -83,7 +82,35 @@ class ReservationRequestModel {
         waiting = json['waiting'] as bool?,
         paid = json['paid'] as bool?,
         userNotes = json['userNotes'] as String?,
-        reservationPendingMessage =
-            json['reservationPendingMessage'] as String?,
-        messageStatus = json['messageStatus'] as bool?;
+        reservationPendingMessage = (json['reservationPendingMessage'] ??
+            json['pendingMessage'] ??
+            json['vendorPendingMessage']) as String?,
+        messageStatus = _bool(json, const [
+          'messageStatus',
+          'reservationMessageStatus',
+          'hasPendingMessage',
+          'pendingMessageStatus',
+        ]);
+
+  /// Whether the envelope badge should show. Driven by the message text alone —
+  /// the backend sends a real [reservationPendingMessage] when the vendor writes
+  /// one and null otherwise, so [messageStatus] is deliberately not consulted.
+  bool get hasPendingMessage =>
+      reservationPendingMessage?.trim().isNotEmpty ?? false;
+
+  /// Reads the first key holding a boolean, tolerating the numeric (1/0) and
+  /// string ("true"/"false") shapes some endpoints return.
+  static bool? _bool(Map<String, dynamic> json, List<String> keys) {
+    for (final k in keys) {
+      final v = json[k];
+      if (v is bool) return v;
+      if (v is num) return v != 0;
+      if (v is String) {
+        final s = v.trim().toLowerCase();
+        if (s == 'true' || s == '1') return true;
+        if (s == 'false' || s == '0') return false;
+      }
+    }
+    return null;
+  }
 }

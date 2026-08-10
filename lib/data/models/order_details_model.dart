@@ -79,9 +79,25 @@ class OrderDetailsModel {
     );
   }
 
+  /// The booking code the user sees: the last 6 characters of the reservation
+  /// key (`2e0fc698-...-ebbb77ed7370` → `ed7370`). Null when there's no key.
+  static String? _bookingCode(String key) {
+    if (key.isEmpty) return null;
+    return key.length <= 6 ? key : key.substring(key.length - 6);
+  }
+
   /// بيحوّل رد GET /api/Reservations/GetBillDetailsByClient/{id} لشكل الشاشة.
   factory OrderDetailsModel.fromBillJson(Map<String, dynamic> json) {
-    num n(String key) => (json[key] as num?) ?? 0;
+    // Reads the first key that carries a numeric value: the documented bill
+    // field first, then the older names the backend used before.
+    num n(String key, [List<String> fallbacks = const []]) {
+      for (final k in [key, ...fallbacks]) {
+        final v = json[k];
+        if (v is num) return v;
+      }
+      return 0;
+    }
+
     String s(String key) => (json[key]?.toString() ?? '').trim();
 
     final additions = <OrderLineItem>[];
@@ -111,20 +127,23 @@ class OrderDetailsModel {
         ? rawCosts
             .whereType<Map>()
             .map((e) => CostRow.fromJson(Map<String, dynamic>.from(e)))
-            .where((row) => row.value != 0)
             .toList()
         : null;
 
-    // Totals come from the API; remaining is derived (total − paid) only when
+    // Totals come from the API: netBill is the grand total, and the remaining
+    // amount is netAmountDueToOrFromCustomer — derived (net − paid) only when
     // the backend doesn't send it explicitly.
     final totalValue = n('totalCost');
-    final netCost = n('netCost');
+    final netCost = n('netBill', const ['netCost']);
     final paidValue = n('totalAmountReceivedFromCustomer');
-    final remainingValue =
-        (json['remainingAmount'] as num?) ?? (totalValue - paidValue);
+    final remainingValue = (json['netAmountDueToOrFromCustomer'] as num?) ??
+        (json['remainingAmount'] as num?) ??
+        (netCost - paidValue);
 
     return OrderDetailsModel(
-      bookingNumber: (json['reservationId'] as num?)?.toInt().toString() ?? '',
+      // The booking code shown on the badge: the last 6 characters of the
+      // reservation's GUID key — never the raw reservationId.
+      bookingNumber: _bookingCode(s('reservationKey')) ?? '',
       reservationId: (json['reservationId'] as num?)?.toInt(),
       portId: (json['portId'] as num?)?.toInt(),
       customer: OrderCustomer(
@@ -152,24 +171,30 @@ class OrderDetailsModel {
       additions: additions,
       buffet: buffet,
       // Labels/units are translation keys — screens render them with `.tr()`.
-      // Dynamic: prefer the API's cost list; otherwise build from the known
-      // flat fields and show only the non-zero components, so the breakdown
-      // adapts per reservation instead of always listing every row with zeros.
+      // Prefer the API's cost list; otherwise build from the known flat fields.
+      // Every component is listed even when it's 0 or absent from the response,
+      // so the invoice always shows the full breakdown.
       costBreakdown: apiBreakdown ??
           [
             CostRow(
-                label: 'evex commission', value: n('evexCommission').round()),
+              label: 'evex commission',
+              value: n('evexAdditionalCommissionAmount', const [
+                'evexCommission',
+              ]).round(),
+            ),
             CostRow(
                 label: 'administrative fees',
                 value: n('administrativeFees').round()),
-            CostRow(label: 'tax', value: n('tax').round()),
+            CostRow(
+                label: 'tax', value: n('vatValue', const ['tax']).round()),
             CostRow(
                 label: 'insurance amount', value: n('insuranceAmount').round()),
             CostRow(label: 'booking deposit', value: n('deposit').round()),
+            // Cashback comes from the API already converted to money, so it is
+            // shown in pounds — not as a points count.
             CostRow(
               label: 'cashback',
               value: n('cashbackPointsValue').round(),
-              unit: 'point',
             ),
             CostRow(
               label: 'additional discount from vendor',
@@ -189,7 +214,7 @@ class OrderDetailsModel {
               value: n('additionalCostFromEVEX').round(),
               subtitle: json['detailsAdditionalCostFromEVEX']?.toString(),
             ),
-          ].where((row) => row.value != 0).toList(),
+          ],
       totalCost: totalValue.round(),
       netCost: netCost.round(),
       paid: paidValue.round(),

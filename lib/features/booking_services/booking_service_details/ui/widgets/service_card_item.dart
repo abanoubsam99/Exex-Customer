@@ -15,6 +15,10 @@ class ServiceCardItem extends StatefulWidget {
   /// Original price before the discount. When it's higher than [price] the card
   /// shows a discount badge and a struck-through old price.
   final int? priceBeforeDiscount;
+
+  /// Discount percentage straight from the backend. Falls back to deriving it
+  /// from [priceBeforeDiscount] / [price] when it isn't sent.
+  final int? discountPercentage;
   final String subtitle;
 
   /// "20/6/2026 - 20/7/2026" — the special-price period the picked date falls
@@ -38,6 +42,7 @@ class ServiceCardItem extends StatefulWidget {
     required this.title,
     required this.price,
     this.priceBeforeDiscount,
+    this.discountPercentage,
     required this.subtitle,
     this.dateRange = '',
     this.images = const [],
@@ -55,11 +60,14 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
   final PageController _pageController = PageController();
   int _activeImage = 0;
 
-  /// Discount percentage derived from the before/after prices (0 when there is
-  /// no real discount, so the badge stays hidden).
+  /// Discount percentage for the badge: the backend's value when it sent one,
+  /// otherwise derived from the before/after prices (0 when there is no real
+  /// discount, so the badge stays hidden).
   int get _discountPercent {
     final before = widget.priceBeforeDiscount ?? 0;
     if (before <= 0 || before <= widget.price) return 0;
+    final fromApi = widget.discountPercentage ?? 0;
+    if (fromApi > 0) return fromApi;
     return (((before - widget.price) / before) * 100).round();
   }
 
