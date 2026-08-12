@@ -10,6 +10,7 @@ import 'package:evex_user/data/models/occasion.dart';
 import 'package:evex_user/data/models/ports_respond_model.dart';
 import 'package:evex_user/data/repos/confirm_booking_repo.dart';
 import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/edit_occasion_sheet.dart';
+import 'package:evex_user/features/booking_services/booking_service_details/ui/widgets/vendor_approval_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,11 +31,16 @@ class ChangeOccasion extends StatelessWidget {
   final int? selectedOccasionId;
   final ValueChanged<int?>? onOccasionSelected;
 
-  /// Edit mode + the reservation's original date/place. When editing, if the
-  /// user keeps the same date + governorate + city, the only thing occupying
-  /// that slot is the user's own reservation, so it's shown as available for
-  /// instant booking instead of "غير متاح".
+  /// Edit mode + the reservation's original date/place. When editing a
+  /// **confirmed** reservation, if the user keeps the same date + governorate +
+  /// city, the only thing occupying that slot is their own reservation, so no
+  /// availability verdict is shown.
   final bool isEditMode;
+
+  /// True when the edited reservation is a confirmed one; false for a pending
+  /// request. A pending request hasn't taken the slot yet, so it goes through
+  /// the normal availability check and shows the backend's status.
+  final bool editIsConfirmed;
   final DateTime? editOriginalDate;
   final String? editOriginalGovernorate;
   final String? editOriginalCity;
@@ -47,15 +53,17 @@ class ChangeOccasion extends StatelessWidget {
     this.selectedOccasionId,
     this.onOccasionSelected,
     this.isEditMode = false,
+    this.editIsConfirmed = false,
     this.editOriginalDate,
     this.editOriginalGovernorate,
     this.editOriginalCity,
   });
 
-  /// True when editing and the chosen date + place still match the original
-  /// reservation, i.e. the conflicting booking is the user's own one.
+  /// True when editing a confirmed reservation and the chosen date + place still
+  /// match the original one, i.e. the booking occupying that slot is the user's
+  /// own. Never true for a pending request — that one is checked normally.
   bool _isOwnOriginalSlot(DateTime? date, String? gov, String? city) {
-    if (!isEditMode) return false;
+    if (!isEditMode || !editIsConfirmed) return false;
     final orig = editOriginalDate;
     if (date == null || orig == null) return false;
     if (date.year != orig.year ||
@@ -477,6 +485,19 @@ class ChangeOccasion extends StatelessWidget {
             ),
           ),
         ),
+        // ── "يلزم موافقة التاجر" note ──
+        // Sits UNDER the date/location box, but is bound ONLY to the port the
+        // user is currently viewing — never to HomeCubit's `availability`.
+        // That state is shared across screens, so a vendor that requires
+        // approval used to leave the note showing on the next vendor opened
+        // after popping back. Reading the port's own flag keeps it per-vendor.
+        if (port?.confirmationIsRequiredFromVendor == true ||
+            port?.checkReservationResponse?.confirmationIsRequiredFromVendor ==
+                true)
+          Padding(
+            padding: EdgeInsets.only(top: 10.h),
+            child: const VendorApprovalNote(),
+          ),
       ],
       ),
     );

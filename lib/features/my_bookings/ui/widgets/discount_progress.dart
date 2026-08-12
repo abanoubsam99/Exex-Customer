@@ -1,4 +1,5 @@
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/amount_format_helper.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_cubit.dart';
 import 'package:evex_user/data/cubits/my_bookings/my_bookings_state.dart';
@@ -15,8 +16,7 @@ const _green = AppColors.green;
 class DiscountProgress extends StatelessWidget {
   const DiscountProgress({super.key});
 
-  String _n(num v) =>
-      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(2);
+  String _n(num v) => formatAmount(v);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class DiscountProgress extends StatelessWidget {
         final summary = state.pendingDeposit;
         if (summary == null) return const SizedBox.shrink();
         final target = summary.numberOfReservationsAdditionalDiscount;
-        final current = summary.totalRequests;
+        final current = summary.availableCount;
         final percentage = summary.additionalDiscountPercentage;
         final progress = target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
         final achieved = target > 0 && current >= target;

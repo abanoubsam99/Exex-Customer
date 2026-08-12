@@ -161,7 +161,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
                           border: Border.all(color: AppColors.fillGrey2),
                           borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Icon(Icons.arrow_forward_ios,
+                        child: Icon(Icons.arrow_back_ios_new,
                             color: AppColors.black, size: 16.r),
                       ),
                     ),

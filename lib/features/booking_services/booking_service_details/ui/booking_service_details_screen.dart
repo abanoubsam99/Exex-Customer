@@ -111,6 +111,7 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                               p.occasions != c.occasions ||
                               p.selectedOccasionId != c.selectedOccasionId ||
                               p.isEditMode != c.isEditMode ||
+                              p.editIsConfirmed != c.editIsConfirmed ||
                               p.editOriginalDate != c.editOriginalDate ||
                               p.editOriginalGovernorate !=
                                   c.editOriginalGovernorate ||
@@ -121,10 +122,12 @@ class BookingServiceDetailsScreen extends StatelessWidget {
                                 context.read<HomeCubit>().state.bookingDate,
                             occasions: state.occasions,
                             selectedOccasionId: state.selectedOccasionId,
-                            // Edit mode: keeping the original date + place means
-                            // the only conflict is the user's own reservation,
-                            // so the slot is shown as available (instant).
+                            // Editing a CONFIRMED reservation and keeping the
+                            // original date + place means the only conflict is
+                            // the user's own booking, so no verdict is shown.
+                            // A pending request is checked normally.
                             isEditMode: state.isEditMode,
+                            editIsConfirmed: state.editIsConfirmed,
                             editOriginalDate: state.editOriginalDate,
                             editOriginalGovernorate:
                                 state.editOriginalGovernorate,

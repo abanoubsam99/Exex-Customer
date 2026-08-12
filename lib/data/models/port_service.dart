@@ -158,6 +158,20 @@ class PortService {
     }
   }
 
+  /// The raw price (before any discount) that applies for a booking on [date] —
+  /// this is what CalculateNetCost expects as `servicePrice`: the period's own
+  /// raw price inside a special-price period, or [price] outside every period.
+  int? rawPriceFor(DateTime? date) {
+    switch (periodFor(date)) {
+      case 1:
+        return _positive(priceInPeriod1) ?? price;
+      case 2:
+        return _positive(priceInPeriod2) ?? price;
+      default:
+        return price;
+    }
+  }
+
   /// The original (pre-discount) price to strike through next to
   /// [effectivePrice]: the matching period's one, or the regular
   /// [priceBeforDiscount] outside every period.

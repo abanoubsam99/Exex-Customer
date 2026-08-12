@@ -55,12 +55,17 @@ class CompleteBookingCubit extends Cubit<CompleteBookingState> {
   Future<void> getNetCost() async {
     final portId = args.port?.id ?? args.portId;
     if (portId == null) return;
-    // The endpoint expects the service's raw `price` from GetAllServicesByClient
-    // (before any discount or special-price period) — it applies its own
-    // fee/tax/discount rules on top. The discounted figure stays in [totalCost].
+    // The endpoint expects the service's raw price (before any discount) — it
+    // applies its own fee/tax/discount rules on top. Which raw price depends on
+    // the booking date: `priceInPeriod1`/`priceInPeriod2` when it falls inside a
+    // special-price period, otherwise the plain `price`. The discounted figure
+    // stays in [totalCost].
+    final bookingDate = _homeCubit.state.bookingDate ??
+        args.occasionDate ??
+        args.port?.checkReservationResponse?.date;
     final netCost = await _repo.calculateNetCost(
       id: portId,
-      servicePrice: args.service?.price,
+      servicePrice: args.service?.rawPriceFor(bookingDate),
       totalCost: args.totalCost,
       additionalCost: args.additionalCost,
       buffetCost: args.buffetCost,

@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/layout_constants.dart';
+import 'package:evex_user/core/helpers/amount_format_helper.dart';
 import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/helpers/reservation_status_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
@@ -402,8 +403,7 @@ class _PendingDepositFooter extends StatelessWidget {
   final PendingDepositModel summary;
   const _PendingDepositFooter({required this.summary});
 
-  String _n(num v) =>
-      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(2);
+  String _n(num v) => formatAmount(v);
 
   @override
   Widget build(BuildContext context) {

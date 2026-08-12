@@ -1,5 +1,6 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/helpers/amount_format_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
@@ -53,17 +54,28 @@ class ConfirmBookingScreen extends StatelessWidget {
                                 20.verticalSpace,
                                 _timerPill(state),
                                 20.verticalSpace,
-                                Text(
-                                  '${state.depositAmount} جنيه',
-                                  textDirection: TextDirection.ltr,
-                                  // maxLines: 1,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 26.r,
-                                    fontFamily: 'Almarai',
-                                    fontWeight: FontWeight.w800,
+                                // totalDeposit from CalculatePendingDeposit.
+                                if (state.isLoadingDeposit)
+                                  SizedBox(
+                                    height: 34.r,
+                                    width: 34.r,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                else
+                                  Text(
+                                    '${formatAmount(state.depositAmount)} جنيه',
+                                    textDirection: TextDirection.ltr,
+                                    // maxLines: 1,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 26.r,
+                                      fontFamily: 'Almarai',
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
-                                ),
                                 4.verticalSpace,
                                 Text(
                                   'إجمالي مقدم الحجوزات المطلوبة',
@@ -128,7 +140,7 @@ class ConfirmBookingScreen extends StatelessWidget {
                         text: 'تأكيد الدفع',
                         height: 54.h,
                         isLoading: state.isLoading,
-                        isDisabled: !state.termsAccepted,
+                        isDisabled: !state.termsAccepted || state.isLoadingDeposit,
                         onTap: () async {
                           final result = await cubit.confirmCardPayment();
                           if (result != null) {

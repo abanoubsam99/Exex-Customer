@@ -40,9 +40,14 @@ class BookingServiceDetailsState {
   /// title because no full [Item] (with [Item.portName]) is passed when editing.
   final String? editPortName;
 
-  /// Edit mode: the reservation's original date/place. While editing, if the
-  /// user keeps the same date + governorate + city, the conflicting slot is the
-  /// user's own reservation, so we show it as available for instant booking.
+  /// Edit mode: true when editing a confirmed reservation, false for a pending
+  /// request. Only a confirmed reservation already occupies its slot, so only
+  /// then is the availability check skipped for the original date/place.
+  final bool editIsConfirmed;
+
+  /// Edit mode: the reservation's original date/place. While editing a confirmed
+  /// reservation, if the user keeps the same date + governorate + city, the
+  /// conflicting slot is the user's own, so no availability verdict is shown.
   final DateTime? editOriginalDate;
   final String? editOriginalGovernorate;
   final String? editOriginalCity;
@@ -59,6 +64,7 @@ class BookingServiceDetailsState {
     this.portImages = const [],
     this.services = const [],
     this.isEditMode = false,
+    this.editIsConfirmed = false,
     this.editPortName,
     this.editOriginalDate,
     this.editOriginalGovernorate,
@@ -96,6 +102,7 @@ class BookingServiceDetailsState {
     int? selectedOccasionId,
     double? totalCost,
     bool? isEditMode,
+    bool? editIsConfirmed,
     String? editPortName,
     DateTime? editOriginalDate,
     String? editOriginalGovernorate,
@@ -127,6 +134,7 @@ class BookingServiceDetailsState {
       selectedOccasionId: selectedOccasionId ?? this.selectedOccasionId,
       totalCost: totalCost ?? this.totalCost,
       isEditMode: isEditMode ?? this.isEditMode,
+      editIsConfirmed: editIsConfirmed ?? this.editIsConfirmed,
       editPortName: editPortName ?? this.editPortName,
       editOriginalDate: editOriginalDate ?? this.editOriginalDate,
       editOriginalGovernorate:

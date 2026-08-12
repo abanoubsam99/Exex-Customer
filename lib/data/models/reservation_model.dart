@@ -22,13 +22,14 @@ class ReservationModel {
   /// مقدم الحجز.
   final num? deposit;
 
-  /// إجمالي المبلغ المدفوع من العميل (تاب المؤكدة/الملغاه).
+  /// `totalAmountReceivedFromCustomer` — total collected from the customer.
   final num? paid;
 
-  /// المبلغ المتبقي على العميل (تاب المؤكدة).
+  /// `netAmountDueToOrFromCustomer` — signed balance: positive means the
+  /// customer still owes it, negative means it is owed back to them.
   final num? remaining;
 
-  /// المبلغ المسترد للعميل (تاب الملغاه).
+  /// `totalAmountRefundedToCustomer` — total already refunded to the customer.
   final num? refunded;
 
   ReservationModel({
@@ -68,8 +69,7 @@ class ReservationModel {
         apparentPrice = json['apparentPrice'] as num?,
         finalCost = json['theFinalCostBasedOnNumberOfReservations'] as num?,
         deposit = json['deposit'] as num?,
-        paid = (json['totalAmountPaid'] ??
-            json['totalAmountReceivedFromCustomer']) as num?,
-        remaining = json['remainingAmount'] as num?,
+        paid = json['totalAmountReceivedFromCustomer'] as num?,
+        remaining = json['netAmountDueToOrFromCustomer'] as num?,
         refunded = json['totalAmountRefundedToCustomer'] as num?;
 }

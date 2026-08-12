@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:evex_user/core/theme/app_colors.dart';
 
 /// قسم "سياسات التاجر" — بيعرض بيانات GetPortPolicy.
+/// The visual styling here mirrors the vendor app's `PortPolicyView` so both
+/// apps render the merchant policies identically (same sizes, weights, colors).
 class VendorPoliciesSection extends StatelessWidget {
   final PortPolicy? policy;
   final bool accepted;
@@ -16,6 +18,18 @@ class VendorPoliciesSection extends StatelessWidget {
     required this.onTermsChanged,
   });
 
+  /// Muted grey used for the unit suffix and the "last updated" line.
+  static const Color _grey = Color(0xffA2A9B0);
+
+  /// Hairline between policy sections.
+  static const Color _dividerColor = Color(0xffE8EDF1);
+
+  /// Policy body text — darker than [_grey] so it reads clearly like Figma.
+  static const Color _policyText = Color(0xff5A6673);
+
+  /// Card outline.
+  static const Color cardBorder = Color(0xffE6EAEE);
+
   @override
   Widget build(BuildContext context) {
     final lastUpdated = policy?.lastUpdatedLabel;
@@ -26,13 +40,11 @@ class VendorPoliciesSection extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 6.r,
-              height: 18.r,
-              decoration: ShapeDecoration(
+              width: 6.w,
+              height: 22.h,
+              decoration: BoxDecoration(
                 color: AppColors.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.r),
-                ),
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
             8.horizontalSpace,
@@ -41,10 +53,9 @@ class VendorPoliciesSection extends StatelessWidget {
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 15.r,
+                fontSize: 16.sp,
                 fontFamily: 'Almarai',
                 fontWeight: FontWeight.w700,
-                letterSpacing: -0.24,
               ),
             ),
           ],
@@ -54,42 +65,42 @@ class VendorPoliciesSection extends StatelessWidget {
           'جميعها موضوعه من التاجر نفسه , وتخضع لها evex كما هي ..',
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: AppColors.grey,
-            fontSize: 11.r,
+            color: _policyText,
+            fontSize: 12.sp,
             fontFamily: 'Almarai',
-            fontWeight: FontWeight.w400,
-            height: 1.50,
+            fontWeight: FontWeight.w500,
+            height: 1.5,
           ),
         ),
-        if (lastUpdated != null)
+        if (lastUpdated != null) ...[
+          4.verticalSpace,
           Text(
             'اخر تحديث في $lastUpdated',
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: AppColors.grey,
-              fontSize: 11.r,
+              color: _grey,
+              fontSize: 12.sp,
               fontFamily: 'Almarai',
-              fontWeight: FontWeight.w400,
-              height: 1.50,
             ),
           ),
-        12.verticalSpace,
+        ],
+        16.verticalSpace,
         ExpandableContainer(
-          height: 427.h,
+          height: 470.h,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── تعديل الحجز في الخدمات والإضافات ──
               _sectionTitle('تكلفة تعديل الحجز  (في الخدمات والإضافات)'),
-              8.verticalSpace,
+              12.verticalSpace,
               _periodRow(
-                prefix: 'التعديل من الان حتى',
+                prefix: 'التعديل من الان حتى ',
                 period: policy?.periodEditingServices,
-                suffix: 'ايام قبل تاريخ المناسبة',
+                suffix: ' ايام قبل تاريخ المناسبة',
                 value: _num(policy?.costOfModifyingServicesBeforePeriod),
                 unit: 'جنيه',
               ),
-              4.verticalSpace,
+              10.verticalSpace,
               _row(
                 'التعديل بعد ذلك',
                 _num(policy?.costOfModifyingServicesAfterPeriod),
@@ -98,15 +109,15 @@ class VendorPoliciesSection extends StatelessWidget {
               _divider(),
               // ── تعديل الحجز في تاريخ ومكان المناسبة ──
               _sectionTitle('تكلفة تعديل الحجز  (في تاريخ ومكان المناسبة)'),
-              8.verticalSpace,
+              12.verticalSpace,
               _periodRow(
-                prefix: 'التعديل من الان حتى',
+                prefix: 'التعديل من الان حتى ',
                 period: policy?.periodEditingDateAndLocaltion,
-                suffix: 'ايام قبل تاريخ المناسبة',
+                suffix: ' ايام قبل تاريخ المناسبة',
                 value: _num(policy?.costOfModifyingDateAndLocationBeforePeriod),
                 unit: 'جنيه',
               ),
-              4.verticalSpace,
+              10.verticalSpace,
               _row(
                 'التعديل بعد ذلك',
                 _num(policy?.costOfModifyingDateAndLocationAfterPeriod),
@@ -115,15 +126,15 @@ class VendorPoliciesSection extends StatelessWidget {
               _divider(),
               // ── إلغاء الحجز ──
               _sectionTitle('تكلفة إلغاء الحجز'),
-              8.verticalSpace,
+              12.verticalSpace,
               _periodRow(
-                prefix: 'الإلغاء من الان حتى',
+                prefix: 'الإلغاء من الان حتى ',
                 period: policy?.cancellationPeriod,
-                suffix: 'ايام قبل المناسبة',
+                suffix: ' ايام قبل المناسبة',
                 value: '${_num(policy?.costOfCancellationBeforePeriod)}%',
                 unit: 'من العربون',
               ),
-              4.verticalSpace,
+              10.verticalSpace,
               _row(
                 'الإلغاء بعد ذلك',
                 '${_num(policy?.costOfCancellationAfterPeriod)}%',
@@ -131,48 +142,26 @@ class VendorPoliciesSection extends StatelessWidget {
               ),
               _divider(),
               // ── التأمين ──
-              _row(
-                'مبلغ التأمين',
-                _num(policy?.insuranceAmount),
-                'جنيه',
-                boldTitle: true,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: _sectionTitle('مبلغ التأمين')),
+                  8.horizontalSpace,
+                  _valueUnit(_num(policy?.insuranceAmount), 'جنيه'),
+                ],
               ),
-              Text(
-                'يلتزم التاجر برد مبلغ التأمين كاملاً للعميل من خلال evex\nبعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من العميل',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: AppColors.grey,
-                  fontSize: 11.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w300,
-                  height: 1.82,
-                ),
+              8.verticalSpace,
+              _plainLabel(
+                'يلتزم التاجر برد مبلغ التأمين كاملًا للعميل من خلال evex بعد انتهاء المناسبة في حالة عدم حدوث اي مخالفات من العميل',
               ),
               _divider(),
               // ── سياسات أخرى ──
-              Text(
-                'سياسات أخرى',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: AppColors.blacksoft,
-                  fontSize: 12.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w700,
-                  height: 1.50,
-                ),
-              ),
-              Text(
+              _sectionTitle('سياسات أخرى'),
+              8.verticalSpace,
+              _plainLabel(
                 (otherPolicies != null && otherPolicies.isNotEmpty)
                     ? otherPolicies
-                    : 'لا توجد سياسات أخرى',
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: AppColors.grey,
-                  fontSize: 11.r,
-                  fontFamily: 'Almarai',
-                  fontWeight: FontWeight.w300,
-                  height: 1.82,
-                ),
+                    : 'لا توجد سياسات إضافية',
               ),
             ],
           ),
@@ -225,34 +214,37 @@ class VendorPoliciesSection extends StatelessWidget {
       text,
       textAlign: TextAlign.right,
       style: TextStyle(
-        color: AppColors.blacksoft,
-        fontSize: 12.r,
+        color: Colors.black,
+        fontSize: 14.sp,
         fontFamily: 'Almarai',
         fontWeight: FontWeight.w700,
-        height: 1.50,
+        height: 1.4,
+      ),
+    );
+  }
+
+  /// نص السياسة العادي (الوصف / السياسات الأخرى).
+  Widget _plainLabel(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.right,
+      style: TextStyle(
+        color: _policyText,
+        fontSize: 12.sp,
+        fontFamily: 'Almarai',
+        fontWeight: FontWeight.w500,
+        height: 1.6,
       ),
     );
   }
 
   /// صف "عنوان ... قيمة + وحدة". في RTL العنوان على اليمين والقيمة على الشمال.
-  Widget _row(String title, String value, String unit, {bool boldTitle = false}) {
+  Widget _row(String title, String value, String unit) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            title,
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color:
-                  boldTitle ? AppColors.blacksoft : AppColors.grey,
-              fontSize: boldTitle ? 12.r : 11.r,
-              fontFamily: 'Almarai',
-              fontWeight: boldTitle ? FontWeight.w700 : FontWeight.w300,
-              height: 1.50,
-            ),
-          ),
-        ),
-        8.horizontalSpace,
+        Expanded(child: _plainLabel(title)),
+        10.horizontalSpace,
         _valueUnit(value, unit),
       ],
     );
@@ -267,37 +259,36 @@ class VendorPoliciesSection extends StatelessWidget {
     required String value,
     required String unit,
   }) {
-    final greyStyle = TextStyle(
-      color: AppColors.grey,
-      fontSize: 11.r,
+    final labelStyle = TextStyle(
+      color: _policyText,
+      fontSize: 12.sp,
       fontFamily: 'Almarai',
-      fontWeight: FontWeight.w300,
-      height: 1.50,
+      fontWeight: FontWeight.w500,
+      height: 1.6,
     );
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Text.rich(
             TextSpan(
+              style: labelStyle,
               children: [
-                TextSpan(text: '$prefix ', style: greyStyle),
+                TextSpan(text: prefix),
                 TextSpan(
                   text: _num(period),
                   style: TextStyle(
                     color: AppColors.primaryColor,
-                    fontSize: 11.r,
-                    fontFamily: 'Almarai',
                     fontWeight: FontWeight.w700,
-                    height: 1.50,
                   ),
                 ),
-                TextSpan(text: ' $suffix', style: greyStyle),
+                TextSpan(text: suffix),
               ],
             ),
             textAlign: TextAlign.right,
           ),
         ),
-        8.horizontalSpace,
+        10.horizontalSpace,
         _valueUnit(value, unit),
       ],
     );
@@ -307,30 +298,18 @@ class VendorPoliciesSection extends StatelessWidget {
   Widget _valueUnit(String value, String unit) {
     return Text.rich(
       TextSpan(
+        style: TextStyle(fontFamily: 'Almarai', fontSize: 12.sp),
         children: [
           TextSpan(
             text: value,
             style: TextStyle(
               color: AppColors.primaryColor,
-              fontSize: 12.r,
-              fontFamily: 'Almarai',
-              fontWeight: FontWeight.w400,
-              height: 1.50,
+              fontWeight: FontWeight.w700,
             ),
           ),
           TextSpan(
-            text: ' ',
-            style: TextStyle(fontSize: 11.r, fontFamily: 'Almarai'),
-          ),
-          TextSpan(
-            text: unit,
-            style: TextStyle(
-              color: AppColors.unitGrey,
-              fontSize: 11.r,
-              fontFamily: 'Almarai',
-              fontWeight: FontWeight.w400,
-              height: 1.50,
-            ),
+            text: ' $unit',
+            style: const TextStyle(color: _grey),
           ),
         ],
       ),
@@ -339,20 +318,8 @@ class VendorPoliciesSection extends StatelessWidget {
 
   Widget _divider() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.r),
-      child: Container(
-        width: double.infinity,
-        decoration: ShapeDecoration(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.r),
-            side: BorderSide(
-              width: 0.5.r,
-              strokeAlign: BorderSide.strokeAlignCenter,
-              color: AppColors.boarderFillColor,
-            ),
-          ),
-        ),
-      ),
+      padding: EdgeInsets.symmetric(vertical: 14.h),
+      child: const Divider(height: 1, color: _dividerColor),
     );
   }
 
@@ -386,11 +353,10 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
         });
       },
       child: Container(
-        decoration: ShapeDecoration(
-          shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1, color: AppColors.boarderColor),
-            borderRadius: BorderRadius.circular(16.r),
-          ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: VendorPoliciesSection.cardBorder),
+          borderRadius: BorderRadius.circular(18),
         ),
         child: AnimatedSize(
           duration: const Duration(milliseconds: 300),
@@ -401,7 +367,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
                   isExpanded ? double.infinity : widget.height ?? double.infinity,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.r, horizontal: 12.r),
+              padding: EdgeInsets.all(14.r),
               child: Stack(
                 children: [
                   SingleChildScrollView(
@@ -422,7 +388,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.white.withOpacity(0.0),
+                              Colors.white.withValues(alpha: 0.0),
                               Colors.white,
                             ],
                           ),

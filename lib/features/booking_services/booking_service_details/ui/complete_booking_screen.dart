@@ -57,9 +57,12 @@ class CompleteBookingScreen extends StatelessWidget {
                             occasionDate: args.occasionDate,
                             occasions: state.occasions,
                             selectedOccasionId: state.selectedOccasionId,
-                            // Edit mode: the user's own unchanged slot is shown
-                            // as available (same as the service-details screen).
+                            // Edit mode: only a CONFIRMED reservation's own
+                            // unchanged slot skips the verdict (same as the
+                            // service-details screen); a pending request shows
+                            // the backend's status.
                             isEditMode: args.isEditMode,
+                            editIsConfirmed: args.editArgs?.isConfirmed == true,
                             editOriginalDate: args.editOriginalDate,
                             editOriginalGovernorate: args.editOriginalGovernorate,
                             editOriginalCity: args.editOriginalCity,

@@ -41,7 +41,22 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
       remainingSeconds: countdownSeconds,
     ));
     _startTimer();
+    _loadPendingDeposit();
     // _loadNetCost();
+  }
+
+  /// Loads the deposit shown on the screen — and paid to the gateway — from
+  /// CalculatePendingDeposit (totalDeposit). It's the authoritative amount, so
+  /// the value passed in from the previous screen is only kept as a fallback
+  /// when the request fails or reports nothing.
+  Future<void> _loadPendingDeposit() async {
+    emit(state.copyWith(isLoadingDeposit: true));
+    final summary = await _repo.calculatePendingDeposit();
+    final total = summary?.totalDeposit ?? 0;
+    emit(state.copyWith(
+      isLoadingDeposit: false,
+      depositAmount: total > 0 ? total : state.depositAmount,
+    ));
   }
 
   /// The request ids to confirm: the multi-id list when present, otherwise the
@@ -114,6 +129,11 @@ class ConfirmBookingCubit extends Cubit<ConfirmBookingState> {
     final ids = _idsToConfirm();
     if (ids.isEmpty) {
       ToastManager.showError('رقم طلب الحجز غير صالح');
+      return null;
+    }
+    // Never start a payment with a zero deposit (CalculatePendingDeposit failed).
+    if (state.depositAmount <= 0) {
+      ToastManager.showError('تعذّر حساب مقدم الحجز، حاول مرة أخرى');
       return null;
     }
     emit(state.copyWith(isLoading: true));

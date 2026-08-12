@@ -24,7 +24,11 @@ class ConfirmBookingState {
   final num totalAmount;
 
   /// المبلغ اللي هيتبعت لـ ConfirmClientReservation_2 (مقدم الحجز).
+  /// Authoritative source: totalDeposit from CalculatePendingDeposit.
   final num depositAmount;
+
+  /// True while CalculatePendingDeposit is in flight.
+  final bool isLoadingDeposit;
 
   /// رقم طلب الحجز اللي رجع من AddClientReservation.
   final int reservationRequestId;
@@ -46,6 +50,7 @@ class ConfirmBookingState {
     this.termsAccepted = false,
     this.totalAmount = 0,
     this.depositAmount = 0,
+    this.isLoadingDeposit = false,
     this.reservationRequestId = 0,
     this.reservationRequestIds = const [],
     this.walletBalance = 0,
@@ -68,6 +73,7 @@ class ConfirmBookingState {
     bool? termsAccepted,
     num? totalAmount,
     num? depositAmount,
+    bool? isLoadingDeposit,
     int? reservationRequestId,
     List<int>? reservationRequestIds,
     num? walletBalance,
@@ -83,6 +89,7 @@ class ConfirmBookingState {
       termsAccepted: termsAccepted ?? this.termsAccepted,
       totalAmount: totalAmount ?? this.totalAmount,
       depositAmount: depositAmount ?? this.depositAmount,
+      isLoadingDeposit: isLoadingDeposit ?? this.isLoadingDeposit,
       reservationRequestId: reservationRequestId ?? this.reservationRequestId,
       reservationRequestIds:
           reservationRequestIds ?? this.reservationRequestIds,

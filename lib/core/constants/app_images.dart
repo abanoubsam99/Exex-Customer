@@ -152,6 +152,9 @@ class AppImages {
   /// Assets for iconsUser
   /// assets/icons/user.svg
   static const String iconsUser = "assets/icons/user.svg";
+  /// Assets for iconsVendorApproval
+  /// assets/icons/vendor_approval.svg
+  static const String iconsVendorApproval = "assets/icons/vendor_approval.svg";
   /// Assets for iconsWallet
   /// assets/icons/wallet.svg
   static const String iconsWallet = "assets/icons/wallet.svg";

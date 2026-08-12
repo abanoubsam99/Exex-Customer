@@ -59,6 +59,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         super(BookingServiceDetailsState(
           port: port,
           isEditMode: editArgs != null,
+          editIsConfirmed: editArgs?.isConfirmed == true,
           // Seed the header title/date/place from the list item right away, so
           // the screen isn't blank while the port + bill load (and stays filled
           // for a pending request whose bill 404s).
@@ -252,10 +253,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
     }
 
     // Seed the original date + place onto HomeCubit so the header shows the
-    // reservation's own date/governorate/city. We deliberately DON'T call
-    // checkAvailability here: this is the user's own slot, so ChangeOccasion
-    // shows it as available directly (see _isOwnOriginalSlot). Availability is
-    // only re-checked from the edit sheet when the user changes the date/place.
+    // reservation's own date/governorate/city.
     final date = _parseBillDate(bill?.occasionDate) ?? args.occasionDate;
     final gov = bill?.governorate ?? args.governorate;
     final city = bill?.city ?? args.city;
@@ -266,6 +264,27 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       // "own original slot" comparison below and leave the badge stuck on
       // "جاري التحقق".
       _homeCubit.setEventLocation(gov ?? '', city ?? '');
+    }
+
+    // A CONFIRMED reservation already occupies its slot, so we deliberately
+    // DON'T call checkAvailability for it: the only booking in the way is the
+    // user's own, and ChangeOccasion hides the verdict (see _isOwnOriginalSlot).
+    // A PENDING request hasn't taken the slot yet, so it's checked normally and
+    // the backend's status is shown — the date may well have gone since.
+    // Either way, changing the date/place from the edit sheet re-checks.
+    if (!args.isConfirmed && date != null) {
+      final portId = _portId;
+      if (portId > 0) {
+        _homeCubit.setAvailabilityChecking();
+        _homeCubit.setAvailability(
+          await _confirmRepo.checkAvailability(
+            portId: portId,
+            date: date,
+            governorate: gov,
+            city: city,
+          ),
+        );
+      }
     }
 
     // Pre-select the booked base service so its price seeds the total. The bill

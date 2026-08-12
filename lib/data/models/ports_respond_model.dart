@@ -73,6 +73,7 @@ class Item {
     required this.theMainImageFileName,
     required this.goolgeDriveLink,
     this.displayPrice = false,
+    this.confirmationIsRequiredFromVendor,
   });
 
   final int? cheapestServicePrice;
@@ -125,6 +126,11 @@ class Item {
   /// the details screen (services, additions, buffets, total) is hidden and the
   /// "إضافة لحجوزاتي" button is not shown.
   final bool displayPrice;
+
+  /// True when this vendor must approve the booking before it can be confirmed
+  /// (and paid). Port-level flag, so it's known without picking a date — the
+  /// same flag also comes back per-date on [CheckReservationResponse].
+  final bool? confirmationIsRequiredFromVendor;
 
   Item.fromJson(Map<String, dynamic> json)
       : cheapestServicePrice =
@@ -183,7 +189,9 @@ class Item {
         portImages = json['portImages'],
         theMainImageFileName = json['theMainImageFileName'] as String?,
         goolgeDriveLink = json['goolgeDriveLink'] as String?,
-        displayPrice = json['displayPrice'] as bool? ?? false;
+        displayPrice = json['displayPrice'] as bool? ?? false,
+        confirmationIsRequiredFromVendor =
+            json['confirmationIsRequiredFromVendor'] as bool?;
 }
 
 class CheckReservationResponse {

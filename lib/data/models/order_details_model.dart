@@ -130,15 +130,14 @@ class OrderDetailsModel {
             .toList()
         : null;
 
-    // Totals come from the API: netBill is the grand total, and the remaining
-    // amount is netAmountDueToOrFromCustomer — derived (net − paid) only when
-    // the backend doesn't send it explicitly.
+    // Money figures come straight from the API — never derived locally:
+    // netBill is the grand total, totalAmountReceivedFromCustomer is what the
+    // customer actually paid, and netAmountDueToOrFromCustomer is the signed
+    // balance (positive = still owed by the customer, negative = owed back).
     final totalValue = n('totalCost');
     final netCost = n('netBill', const ['netCost']);
     final paidValue = n('totalAmountReceivedFromCustomer');
-    final remainingValue = (json['netAmountDueToOrFromCustomer'] as num?) ??
-        (json['remainingAmount'] as num?) ??
-        (netCost - paidValue);
+    final remainingValue = n('netAmountDueToOrFromCustomer');
 
     return OrderDetailsModel(
       // The booking code shown on the badge: the last 6 characters of the
@@ -165,7 +164,8 @@ class OrderDetailsModel {
           DateFormatHelper.arabicDateWithComa(s('occasionDate'), fallback: ''),
       basicService: OrderLineItem(
         name: s('serviceName'),
-        price: n('servicePrice').round(),
+        price: n('TheFinalServiceCostBasedOnNumberOfReservations').round(),
+        // price: n('servicePrice').round(),
         description: serviceDetails.isEmpty ? null : serviceDetails,
       ),
       additions: additions,
