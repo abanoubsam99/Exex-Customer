@@ -141,7 +141,7 @@ class _RequestsTab extends StatelessWidget {
                   // Requests: مقدم الحجز + الإجمالي (with the struck price).
                   primaryAmountLabel: 'مقدم الحجز',
                   primaryAmountValue: r.deposit ?? 0,
-                  secondaryAmountLabel: 'الإجمالي',
+                  secondaryAmountLabel: 'سعر الخدمة',
                   secondaryAmountValue: r.finalCost ?? r.apparentPrice ?? 0,
                   secondaryShowStrikethrough: true,
                   // Tapping a request → edit it (not the invoice screen).

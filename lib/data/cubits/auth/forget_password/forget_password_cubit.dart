@@ -44,6 +44,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   Timer? _timer;
   int _seconds = 60;
   bool _otpValid = false;
+  bool _resending = false;
 
   /// Seeds this cubit's fields from the args passed by the previous screen,
   /// so the phone / country code / OTP code survive across the flow.
@@ -54,7 +55,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
     if (args.code.isNotEmpty) {
       codeController.text = args.code;
       _otpCode = args.code;
-      _otpValid = args.code.length == 4;
+      _otpValid = args.code.length == 6;
     }
   }
 
@@ -65,7 +66,9 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
       phoneNumber: phoneController.text.trim(),
       countryCode: countryCodeController.text.trim(),
     );
-    if (response != null) {
+    // A 2xx can still be a business failure (`isSuccess: false`); the backend
+    // message is already on screen via the interceptor.
+    if (response != null && response.isSuccess != false) {
       final phone =
           countryCodeController.text.trim() +
           phoneController.text.substring(1).trim();
@@ -98,17 +101,53 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_seconds > 0) {
         _seconds--;
-        emit(OtpForgetTimerTick(seconds: _seconds, isValid: _otpValid));
+        _emitTick();
       } else {
         _timer?.cancel();
       }
     });
   }
 
+  void _emitTick() => emit(
+    OtpForgetTimerTick(
+      seconds: _seconds,
+      isValid: _otpValid,
+      isResending: _resending,
+    ),
+  );
+
   void onOtpChanged(String value) {
-    _otpValid = value.length == 4;
+    _otpValid = value.length == 6;
     _otpCode = value;
-    emit(OtpForgetTimerTick(seconds: _seconds, isValid: _otpValid));
+    _emitTick();
+  }
+
+  /// Re-runs ForgetPassword so a fresh code is sent, restarting the countdown
+  /// only once the backend confirms it went out.
+  Future<void> resendCode() async {
+    if (_resending) return;
+    final phone = phoneController.text.trim();
+    if (phone.isEmpty) {
+      ToastManager.showError('رقم الهاتف غير متاح، ارجع وأدخله مرة أخرى');
+      return;
+    }
+    _resending = true;
+    _emitTick();
+
+    final response = await _repo.forgetPassword(
+      phoneNumber: phone,
+      countryCode: countryCodeController.text.trim(),
+    );
+    _resending = false;
+
+    if (response != null && response.isSuccess != false) {
+      _seconds = 60;
+      _startTimer();
+    } else {
+      // Only a fallback — a backend `message` is already shown by the interceptor.
+      ToastManager.showError('تعذّر إعادة إرسال الكود، حاول مرة أخرى');
+    }
+    _emitTick();
   }
 
   void confirmOtp() {

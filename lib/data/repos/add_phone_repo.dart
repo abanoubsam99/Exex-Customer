@@ -12,9 +12,6 @@ class AddPhoneRepo {
     required String countryCode,
   }) async {
     try {
-      print("phoneNumberphoneNumber ${phoneNumber}");
-      print("countryCode ${countryCode}");
-
       final response = await DioHelper.postData(
         url: AppEndpoints.addPhone,
         data: FormData.fromMap({
@@ -23,7 +20,7 @@ class AddPhoneRepo {
         }),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return response.data['message'] as String?;
+        return _messageOrNull(response.data);
       }
       return null;
     } catch (_) {
@@ -41,11 +38,22 @@ class AddPhoneRepo {
         }),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return response.data['message'] as String?;
+        return _messageOrNull(response.data);
       }
       return null;
     } catch (_) {
       return null;
     }
+  }
+
+  /// A 2xx response can still carry a business failure (`isSuccess: false`) —
+  /// a wrong or expired code comes back that way. Returns `null` for those so
+  /// the caller treats it as a failure; the backend `message` itself is already
+  /// surfaced to the user by the Dio interceptor.
+  String? _messageOrNull(dynamic data) {
+    if (data is! Map) return '';
+    if (data['isSuccess'] == false || data['IsSuccess'] == false) return null;
+    final message = data['message'] ?? data['Message'];
+    return message is String ? message : '';
   }
 }

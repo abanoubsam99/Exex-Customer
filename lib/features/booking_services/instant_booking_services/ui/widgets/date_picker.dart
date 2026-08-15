@@ -34,6 +34,18 @@ class DatePicker extends StatefulWidget {
 
 class _DatePickerState extends State<DatePicker> {
   DateTime? selectedDate;
+
+  @override
+  void didUpdateWidget(covariant DatePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The session date is the source of truth. When it changes from somewhere
+    // else — e.g. the user edited the date inside a service and came back — the
+    // local pick is stale and must not keep shadowing it.
+    if (widget.initialDate != oldWidget.initialDate) {
+      selectedDate = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Local pick wins; otherwise fall back to the session date passed in.
