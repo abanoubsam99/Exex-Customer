@@ -39,12 +39,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if (!isOnboardingCompleted) {
         NavigationHelper.pushNamedAndRemoveUntil(Routes.onboardingScreen);
+        // A launch link stays held: onboarding ends with its own
+        // pushNamedAndRemoveUntil, which would wipe anything opened now. The
+        // onboarding screen marks the service ready when it finishes.
       } else {
         NavigationHelper.pushNamedAndRemoveUntil(
           AppRouter.getInitialRoute(userService),
         );
-        // Open a link the app was launched from, now the initial route exists.
-        deepLinkService.flushPending();
+        // Startup has settled — open a link the app was launched from. Nothing
+        // clears the stack after this point, so the screen stays put.
+        deepLinkService.markReady();
       }
     });
   }

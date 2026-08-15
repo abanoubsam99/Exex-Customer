@@ -5,8 +5,6 @@ import 'package:evex_user/features/home/ui/widgets/home_header.dart';
 import 'package:evex_user/features/home/ui/widgets/join_us_section.dart';
 import 'package:evex_user/features/home/ui/widgets/new_suggestion_section.dart';
 // import 'package:evex_user/features/home/ui/widgets/other_services_section.dart';
-import 'dart:io';
-
 import 'package:evex_user/core/helpers/app_upgrader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,9 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return UpgradeAlert(
       upgrader: appUpgrader,
-      dialogStyle: Platform.isIOS
-          ? UpgradeDialogStyle.cupertino
-          : UpgradeDialogStyle.material,
+      // Cupertino style on every platform (Android included) — the iOS dialog
+      // look is the one we want for the mandatory update prompt.
+      dialogStyle: UpgradeDialogStyle.cupertino,
       showIgnore: false,
       showLater: false,
       barrierDismissible: false,

@@ -18,13 +18,6 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules">
-        <!-- Deep links are handled by the app_links package (see
-             DeepLinkService), so disable Flutter's built-in deep linking.
-             Otherwise Flutter treats the incoming URL path (e.g. /port/26) as a
-             route name, which the router doesn't know → "Route not found". -->
-        <meta-data
-            android:name="flutter_deeplinking_enabled"
-            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -34,6 +27,18 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+            <!-- Deep links are handled by the app_links package (see
+                 DeepLinkService), so Flutter's built-in deep linking is turned
+                 off. Otherwise Flutter also feeds the incoming URL path
+                 (e.g. /port/26) to the Navigator as a route name, which the
+                 router doesn't know → "Route not found".
+                 This MUST live inside <activity>: FlutterActivity reads it from
+                 the activity's own meta-data, and Android does not inherit
+                 <application> meta-data into activities. Since Flutter 3.27 the
+                 default is true, so a misplaced tag silently enables it. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false" />
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues

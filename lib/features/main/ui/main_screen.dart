@@ -17,7 +17,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+
+import '../../../core/helpers/app_upgrader.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -88,112 +91,121 @@ class _MainScreenState extends State<MainScreen> {
         );
         if (shouldExit) SystemNavigator.pop();
       },
-      child: Scaffold(
-      body: Stack(
-        children: [
-          // Pages fill the full height; each scrollable page reserves
-          // kFloatingNavBarSpace at its bottom so content clears the floating
-          // bar without leaving a dead white band behind it.
-          // IndexedStack (not PageView) so the shown page always matches the
-          // selected tab — index-based, no controller-timing races on rebuild.
-          BlocBuilder<MainCubit, MainState>(
-            buildWhen: (p, c) => p.currentPage != c.currentPage,
-            builder: (context, state) {
-              _visited.add(state.currentPage);
-              return IndexedStack(
-                index: state.currentPage,
-                children: List.generate(
-                  _pages.length,
-                  (i) =>
-                      _visited.contains(i) ? _pages[i] : const SizedBox.shrink(),
-                ),
-              );
-            },
-          ),
-          // Pill-shaped frosted layer sitting BEHIND the floating nav bar (a
-          // separate layer, not part of the bar). It mirrors the bar's rounded
-          // shape but is inflated a bit on every side so the blur peeks out
-          // around the opaque white pill as a soft frosted halo — matching the
-          // Figma "Background blur" on the nav bar rectangle.
-          Positioned(
-            bottom: systemNavInset + kNavBarMargin.r - _kNavBarBlurInflate*5,
-            left:0,
-            right: 0,
-            height: kNavBarHeight.r + _kNavBarBlurInflate * 4,
-            child: IgnorePointer(
-              child: ClipRRect(
-                // borderRadius: BorderRadius.circular(45 + _kNavBarBlurInflate),
-                child: BackdropFilter(
-                  // Slightly lighter frost than before (was 8) — the blur is
-                  // still clearly there, just a touch softer.
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                  child: const SizedBox.expand(),
+      child: UpgradeAlert(
+        upgrader: appUpgrader,
+        // Cupertino style on every platform (Android included) — the iOS dialog
+        // look is the one we want for the mandatory update prompt.
+        dialogStyle: UpgradeDialogStyle.cupertino,
+        showIgnore: false,
+        showLater: false,
+        barrierDismissible: false,
+        child: Scaffold(
+        body: Stack(
+          children: [
+            // Pages fill the full height; each scrollable page reserves
+            // kFloatingNavBarSpace at its bottom so content clears the floating
+            // bar without leaving a dead white band behind it.
+            // IndexedStack (not PageView) so the shown page always matches the
+            // selected tab — index-based, no controller-timing races on rebuild.
+            BlocBuilder<MainCubit, MainState>(
+              buildWhen: (p, c) => p.currentPage != c.currentPage,
+              builder: (context, state) {
+                _visited.add(state.currentPage);
+                return IndexedStack(
+                  index: state.currentPage,
+                  children: List.generate(
+                    _pages.length,
+                    (i) =>
+                        _visited.contains(i) ? _pages[i] : const SizedBox.shrink(),
+                  ),
+                );
+              },
+            ),
+            // Pill-shaped frosted layer sitting BEHIND the floating nav bar (a
+            // separate layer, not part of the bar). It mirrors the bar's rounded
+            // shape but is inflated a bit on every side so the blur peeks out
+            // around the opaque white pill as a soft frosted halo — matching the
+            // Figma "Background blur" on the nav bar rectangle.
+            Positioned(
+              bottom: systemNavInset + kNavBarMargin.r - _kNavBarBlurInflate*5,
+              left:0,
+              right: 0,
+              height: kNavBarHeight.r + _kNavBarBlurInflate * 4,
+              child: IgnorePointer(
+                child: ClipRRect(
+                  // borderRadius: BorderRadius.circular(45 + _kNavBarBlurInflate),
+                  child: BackdropFilter(
+                    // Slightly lighter frost than before (was 8) — the blur is
+                    // still clearly there, just a touch softer.
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: const SizedBox.expand(),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: systemNavInset,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: kNavBarHeight.r,
-              margin: EdgeInsets.all(kNavBarMargin.r),
-              padding: EdgeInsets.symmetric(horizontal: 35.r, vertical: 12.r),
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(45),
-                ),
-                shadows: const [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    blurRadius: 22,
-                    offset: Offset(0, 4),
-                    spreadRadius: 2,
+            Positioned(
+              bottom: systemNavInset,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: kNavBarHeight.r,
+                margin: EdgeInsets.all(kNavBarMargin.r),
+                padding: EdgeInsets.symmetric(horizontal: 35.r, vertical: 12.r),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(45),
                   ),
-                ],
-              ),
-              child: BlocBuilder<MainCubit, MainState>(
-                builder: (context, state) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _NavItem(
-                      icon: AppImages.iconsHouse,
-                      label: 'الرئيسيه',
-                      page: 0,
-                      currentPage: state.currentPage,
-                      onTap: () => cubit.goToTab(0),
-                    ),
-                    _NavItem(
-                      // materialIcon: Icons.shopping_cart_outlined,
-                      icon: AppImages.iconsCart,
-                      label: 'حجوزاتى',
-                      page: 1,
-                      currentPage: state.currentPage,
-                      onTap: () => _selectTab(context, cubit, 1),
-                    ),
-                    _NavItem(
-                      icon: AppImages.iconsWallet,
-                      label: 'المحفظه',
-                      page: 2,
-                      currentPage: state.currentPage,
-                      onTap: () => _selectTab(context, cubit, 2),
-                    ),
-                    _NavItem(
-                      icon: AppImages.iconsMenu,
-                      label: 'المزيد',
-                      page: 3,
-                      currentPage: state.currentPage,
-                      onTap: () => cubit.goToTab(3),
+                  shadows: const [
+                    BoxShadow(
+                      color: AppColors.shadow,
+                      blurRadius: 22,
+                      offset: Offset(0, 4),
+                      spreadRadius: 2,
                     ),
                   ],
                 ),
+                child: BlocBuilder<MainCubit, MainState>(
+                  builder: (context, state) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _NavItem(
+                        icon: AppImages.iconsHouse,
+                        label: 'الرئيسيه',
+                        page: 0,
+                        currentPage: state.currentPage,
+                        onTap: () => cubit.goToTab(0),
+                      ),
+                      _NavItem(
+                        // materialIcon: Icons.shopping_cart_outlined,
+                        icon: AppImages.iconsCart,
+                        label: 'حجوزاتى',
+                        page: 1,
+                        currentPage: state.currentPage,
+                        onTap: () => _selectTab(context, cubit, 1),
+                      ),
+                      _NavItem(
+                        icon: AppImages.iconsWallet,
+                        label: 'المحفظه',
+                        page: 2,
+                        currentPage: state.currentPage,
+                        onTap: () => _selectTab(context, cubit, 2),
+                      ),
+                      _NavItem(
+                        icon: AppImages.iconsMenu,
+                        label: 'المزيد',
+                        page: 3,
+                        currentPage: state.currentPage,
+                        onTap: () => cubit.goToTab(3),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+        ),
       ),
     );
   }

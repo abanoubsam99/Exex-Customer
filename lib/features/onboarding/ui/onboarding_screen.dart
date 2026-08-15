@@ -1,5 +1,6 @@
 import 'package:evex_user/core/helpers/extensions.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/deep_link_service.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_cubit.dart';
 import 'package:evex_user/data/cubits/onboarding/onboarding_location_state.dart';
 import 'package:evex_user/features/onboarding/ui/widgets/onboard_first_page.dart';
@@ -51,9 +52,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // is only enabled once a city is selected, so the pair is always complete.
     final locationCubit = context.read<OnboardingLocationCubit>();
     final cache = context.read<CacheHelper>();
+    final deepLinkService = context.read<DeepLinkService>();
     await locationCubit.persist();
     cache.saveData(key: 'onboardingCompleted', value: true);
     NavigationHelper.pushNamedAndRemoveUntil(Routes.loginScreen);
+    // Onboarding owns the last stack-clearing navigation on a first install, so
+    // this is where a link the app was launched from becomes safe to open.
+    deepLinkService.markReady();
   }
 
   @override

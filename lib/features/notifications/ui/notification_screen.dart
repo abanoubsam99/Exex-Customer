@@ -57,7 +57,7 @@ class NotificationScreen extends StatelessWidget {
                         context.read<NotificationsCubit>().loadMore(),
                     child: ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
                       children: [
                         if (recent.isNotEmpty) ...[
                           // _sectionLabel('مؤخراً'),
@@ -135,37 +135,44 @@ class _NotificationTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.title,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 14.r,
-                    fontFamily: 'Almarai',
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: AppColors.black,
+                          fontSize: 14.r,
+                          fontFamily: 'Almarai',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    8.horizontalSpace,
+                    Text(
+                      item.time,
+                      style: TextStyle(
+                        color: AppColors.grey,
+                        fontSize: 11.r,
+                        fontFamily: 'Almarai',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
                 4.verticalSpace,
                 Text(
+                  // Wraps over as many lines as the message needs — a one-line
+                  // clamp cut every body off mid-sentence with an ellipsis.
                   item.body,
                   textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.font12greyRegular,
                 ),
               ],
             ),
           ),
-          8.horizontalSpace,
-          Text(
-            item.time,
-            style: TextStyle(
-              color: AppColors.grey,
-              fontSize: 11.r,
-              fontFamily: 'Almarai',
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+
         ],
       ),
     );

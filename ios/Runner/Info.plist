@@ -70,6 +70,13 @@
 	<!-- google_sign_in: iOS client id + reversed-client-id URL scheme. -->
 	<key>GIDClientID</key>
 	<string>588244655147-2cl52q5u5q9u5f5d3tv4nt8spa2r9f5e.apps.googleusercontent.com</string>
+	<!-- Universal Links are handled by the app_links package (see
+	     DeepLinkService), so Flutter's built-in deep linking is turned off.
+	     Otherwise Flutter also feeds the incoming URL path (e.g. /port/26) to
+	     the Navigator as a route name → "Route not found". Since Flutter 3.27
+	     this defaults to true, so it has to be set explicitly. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

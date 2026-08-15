@@ -2,8 +2,6 @@ import 'package:evex_user/core/ui/widgets/top_backround.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_body_widget.dart';
 import 'package:evex_user/features/auth/login/ui/widgets/login_top_part.dart';
-import 'dart:io';
-
 import 'package:evex_user/core/helpers/app_upgrader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,9 +20,9 @@ class LoginScreen extends StatelessWidget {
     // afterwards scaled with the wrong design height (squished UI until restart).
     return UpgradeAlert(
       upgrader: appUpgrader,
-      dialogStyle: Platform.isIOS
-          ? UpgradeDialogStyle.cupertino
-          : UpgradeDialogStyle.material,
+      // Cupertino style on every platform (Android included) — the iOS dialog
+      // look is the one we want for the mandatory update prompt.
+      dialogStyle: UpgradeDialogStyle.cupertino,
       showIgnore: false,
       showLater: false,
       barrierDismissible: false,
