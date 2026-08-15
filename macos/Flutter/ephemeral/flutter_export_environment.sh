@@ -2,10 +2,11 @@
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=/Users/abanoubmac/develop/flutter"
 export "FLUTTER_APPLICATION_PATH=/Volumes/MacHardSSD/MyProjects/Exex-Customer"
+export "FLUTTER_FRAMEWORK_SWIFT_PACKAGE_PATH=/Volumes/MacHardSSD/MyProjects/Exex-Customer/macos/Flutter/ephemeral/Packages/.packages/FlutterFramework"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
-export "FLUTTER_BUILD_NAME=1.0.2"
-export "FLUTTER_BUILD_NUMBER=11"
+export "FLUTTER_BUILD_NAME=1.0.6"
+export "FLUTTER_BUILD_NUMBER=15"
 export "DART_OBFUSCATION=false"
 export "TRACK_WIDGET_CREATION=true"
 export "TREE_SHAKE_ICONS=false"
