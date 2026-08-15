@@ -2,30 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<<<<<<< HEAD
-=======
-	<!-- Universal Links: must match the host that serves
-	     /.well-known/apple-app-site-association -->
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:evexnow.com</string>
-	</array>
-	<!--
->>>>>>> ae864dd (last)
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>
 	</array>
-<<<<<<< HEAD
-<<<<<<< HEAD
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:backend.evexnow.com</string>
 	</array>
-=======
->>>>>>> 6b40f4b (ios)
-=======
-	-->
->>>>>>> ae864dd (last)
 </dict>
 </plist>
