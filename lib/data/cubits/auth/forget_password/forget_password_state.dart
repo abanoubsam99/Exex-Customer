@@ -17,7 +17,16 @@ class ForgetPasswordError extends ForgetPasswordState {
 class OtpForgetTimerTick extends ForgetPasswordState {
   final int seconds;
   final bool isValid;
-  OtpForgetTimerTick({required this.seconds, required this.isValid});
+
+  /// True while a "resend code" request is in flight, so the resend button can
+  /// show progress and reject a second tap.
+  final bool isResending;
+
+  OtpForgetTimerTick({
+    required this.seconds,
+    required this.isValid,
+    this.isResending = false,
+  });
 }
 
 class ResetPasswordLoading extends ForgetPasswordState {}

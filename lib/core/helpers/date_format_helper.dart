@@ -85,6 +85,14 @@ class DateFormatHelper {
     return '${date.year}$separator${two(date.month)}$separator${two(date.day)}';
   }
 
+  /// Whether two dates fall on the same calendar day, ignoring any time part.
+  /// Use this to compare booking dates: the same day can arrive with different
+  /// times depending on where it was picked, and `==` would call those different.
+  static bool isSameDay(DateTime? a, DateTime? b) {
+    if (a == null || b == null) return a == b;
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
   /// "20/6/2026" (d/M/yyyy, no leading zeros) — or [fallback] when invalid
   /// (covers the .NET default 0001-01-01, empty and null).
   static String numericDate(String? value, {String fallback = ''}) {

@@ -18,7 +18,16 @@ class AddPhoneError extends AddPhoneState {
 class OtpTimerTick extends AddPhoneState {
   final int seconds;
   final bool isValid;
-  OtpTimerTick({required this.seconds, required this.isValid});
+
+  /// True while a "resend code" request is in flight, so the resend button can
+  /// show progress and reject a second tap.
+  final bool isResending;
+
+  OtpTimerTick({
+    required this.seconds,
+    required this.isValid,
+    this.isResending = false,
+  });
 }
 
 class OtpConfirmLoading extends AddPhoneState {}

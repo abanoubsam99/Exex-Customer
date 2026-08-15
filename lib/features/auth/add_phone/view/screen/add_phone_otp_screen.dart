@@ -23,8 +23,12 @@ class _AddPhoneOtpScreenState extends State<AddPhoneOtpScreen> {
     super.didChangeDependencies();
     if (_initialized) return;
     _initialized = true;
-    _phone = ModalRoute.of(context)?.settings.arguments as String? ?? '';
-    context.read<AddPhoneCubit>().initOtpScreen(_phone);
+    // Null when the user came straight from login with an unverified phone —
+    // the cubit then falls back to the number saved on the account.
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final cubit = context.read<AddPhoneCubit>();
+    cubit.initOtpScreen(args is AddPhoneOtpArgs ? args : null);
+    _phone = cubit.displayPhone;
   }
 
   @override

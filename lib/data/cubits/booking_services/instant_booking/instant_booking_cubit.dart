@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:evex_user/core/helpers/date_format_helper.dart';
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/data/cubits/home/home_cubit.dart';
 import 'package:evex_user/data/cubits/ports_filter/ports_filter_cubit.dart';
@@ -16,13 +19,32 @@ class InstantBookingCubit extends Cubit<InstantBookingState> {
   final LocationService _locationService;
   final PortsFilterCubit _filterCubit;
 
+  /// Keeps تاريخ المناسبة in sync with the inner service screen: the date can
+  /// also be changed there (edit-occasion sheet → HomeCubit), and this list must
+  /// come back showing — and filtered by — that new date.
+  StreamSubscription? _homeSub;
+
   InstantBookingCubit(
     this._repo,
     this._homeRepo,
     this._homeCubit,
     this._locationService,
     this._filterCubit,
-  ) : super(const InstantBookingState());
+  ) : super(const InstantBookingState()) {
+    _homeSub = _homeCubit.stream.listen((s) {
+      // Guarded so our own setDate → HomeCubit write doesn't re-fetch twice.
+      if (!DateFormatHelper.isSameDay(s.bookingDate, _request.date)) {
+        _request.date = s.bookingDate;
+        _fetchPorts();
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _homeSub?.cancel();
+    return super.close();
+  }
 
   GetPortsRequest _request = GetPortsRequest();
 
