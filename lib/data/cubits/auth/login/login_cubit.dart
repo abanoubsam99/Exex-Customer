@@ -1,5 +1,7 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
+import 'package:evex_user/core/services/apple_auth_service.dart';
+import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -15,10 +17,14 @@ class LoginCubit extends Cubit<LoginState> {
   final LoginRepo _loginRepo;
   final UserService _userService;
   final LocalAuthService _localAuthService;
+  final GoogleAuthService _googleAuthService;
+  final AppleAuthService _appleAuthService;
   LoginCubit(
     this._loginRepo,
     this._userService,
     this._localAuthService,
+    this._googleAuthService,
+    this._appleAuthService,
   ) : super(LoginInitial());
 
   final formKey = GlobalKey<FormState>();
@@ -76,20 +82,21 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   // ─────────────────────────── Social sign-in ───────────────────────────
-  // Google + Apple are enabled. Facebook is kept commented (disabled).
+  // Google (Android) + Apple (iOS). Both hand their token to /ExternalLogin and
+  // then go through the same post-login routing as an email/password login.
+  // Facebook is kept commented (disabled).
 
   /// Sign in with Google, then exchange the idToken via /ExternalLogin.
   Future<void> loginWithGoogle() async {
     GoogleAuthResult? google;
     try {
       google = await _googleAuthService.signIn();
-    } catch (e, s)  {
-      // signIn threw (e.g. ApiException 10 / DEVELOPER_ERROR) — don't die
-      // silently after the user picked an account.
-      // ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+    } catch (e, s) {
+      // signIn threw (e.g. DEVELOPER_ERROR from a SHA-1 / client-id mismatch) —
+      // don't die silently after the user picked an account.
       debugPrint('Google Sign In Error: $e');
       debugPrintStack(stackTrace: s);
-      ToastManager.showError(e.toString());
+      ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
       return;
     }
     if (google == null) return; // user cancelled the picker
@@ -111,6 +118,39 @@ class LoginCubit extends Cubit<LoginState> {
     } else {
       emit(LoginError('فشل تسجيل الدخول بجوجل'));
       ToastManager.showError('تعذّر تسجيل الدخول بجوجل، حاول مرة أخرى');
+    }
+  }
+
+  /// Sign in with Apple, then exchange the identityToken via /ExternalLogin.
+  /// Apple only returns the email/name on the FIRST authorization, so later
+  /// sign-ins send the token alone and the backend matches on it.
+  Future<void> loginWithApple() async {
+    AppleAuthResult? apple;
+    try {
+      apple = await _appleAuthService.signIn();
+    } catch (e, s) {
+      debugPrint('Apple Sign In Error: $e');
+      debugPrintStack(stackTrace: s);
+      ToastManager.showError('تعذّر تسجيل الدخول بأبل، حاول مرة أخرى');
+      return;
+    }
+    if (apple == null) return; // user cancelled the sheet
+    if ((apple.identityToken ?? '').isEmpty) {
+      ToastManager.showError('تعذّر إكمال تسجيل الدخول بأبل، حاول مرة أخرى');
+      return;
+    }
+    emit(LoginLoading());
+    final user = await _loginRepo.externalLogin(
+      provider: 'apple',
+      token: apple.identityToken!,
+      email: apple.email,
+      name: apple.name,
+    );
+    if (user != null) {
+      await _onLoggedIn(user);
+    } else {
+      emit(LoginError('فشل تسجيل الدخول بأبل'));
+      ToastManager.showError('تعذّر تسجيل الدخول بأبل، حاول مرة أخرى');
     }
   }
 

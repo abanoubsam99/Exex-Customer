@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:evex_user/core/constants/app_images.dart';
+import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Quick-login row for fingerprint/biometric authentication.
+/// Quick-login row: biometrics, plus the social provider that belongs to the
+/// platform — Google on Android, Sign in with Apple on iOS.
 class AllSocalMediaWidget extends StatelessWidget {
   const AllSocalMediaWidget({super.key});
 
@@ -24,21 +28,24 @@ class AllSocalMediaWidget extends StatelessWidget {
             width: 28.r,
           ),
         ),
-        // 14.horizontalSpace,
-        // _SocialButton(
-        //   onTap: () => cubit.loginWithGoogle(),
-        //   child: CustomImageHandler(
-        //     AppImages.iconsGoogel,
-        //     height: 28.r,
-        //     width: 28.r,
-        //   ),
-        // ),
-        // 14.horizontalSpace,
-        // if (Platform.isIOS)
-        //   _SocialButton(
-        //     onTap: () => cubit.loginWithApple(),
-        //     child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
-        //   ),
+        if (Platform.isAndroid) ...[
+          14.horizontalSpace,
+          _SocialButton(
+            onTap: () => cubit.loginWithGoogle(),
+            child: CustomImageHandler(
+              AppImages.iconsGoogel,
+              height: 28.r,
+              width: 28.r,
+            ),
+          ),
+        ],
+        if (Platform.isIOS) ...[
+          14.horizontalSpace,
+          _SocialButton(
+            onTap: () => cubit.loginWithApple(),
+            child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
+          ),
+        ],
       ],
     );
   }
