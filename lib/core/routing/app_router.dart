@@ -1,6 +1,6 @@
 import 'package:evex_user/core/routing/routes.dart';
-import 'package:evex_user/core/services/apple_auth_service.dart';
-import 'package:evex_user/core/services/google_auth_service.dart';
+// import 'package:evex_user/core/services/apple_auth_service.dart';
+// import 'package:evex_user/core/services/google_auth_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/location_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
@@ -134,10 +134,8 @@ class AppRouter {
               context.read<LoginRepo>(),
               context.read<UserService>(),
               context.read<LocalAuthService>(),
-              // Social services (Facebook stays disabled):
-              GoogleAuthService(),
-              // FacebookAuthService(),
-              AppleAuthService(),
+              // GoogleAuthService(),
+              // AppleAuthService(),
             ),
             child: const LoginScreen(),
           ),

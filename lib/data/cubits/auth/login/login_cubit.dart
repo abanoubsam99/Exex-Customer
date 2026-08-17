@@ -1,9 +1,5 @@
 import 'package:evex_user/app/helpers/navigation_helper.dart';
 import 'package:evex_user/core/routing/routes.dart';
-// Social sign-in services. Google + Apple enabled; Facebook stays disabled.
-import 'package:evex_user/core/services/google_auth_service.dart';
-// import 'package:evex_user/core/services/facebook_auth_service.dart';
-import 'package:evex_user/core/services/apple_auth_service.dart';
 import 'package:evex_user/core/services/local_auth_service.dart';
 import 'package:evex_user/core/services/user_service.dart';
 import 'package:evex_user/core/ui/helpers/toast_manager.dart';
@@ -19,18 +15,10 @@ class LoginCubit extends Cubit<LoginState> {
   final LoginRepo _loginRepo;
   final UserService _userService;
   final LocalAuthService _localAuthService;
-  // Social services. Facebook stays disabled.
-  final GoogleAuthService _googleAuthService;
-  // final FacebookAuthService _facebookAuthService;
-  final AppleAuthService _appleAuthService;
-
   LoginCubit(
     this._loginRepo,
     this._userService,
     this._localAuthService,
-    this._googleAuthService,
-    // this._facebookAuthService,
-    this._appleAuthService,
   ) : super(LoginInitial());
 
   final formKey = GlobalKey<FormState>();
@@ -144,25 +132,6 @@ class LoginCubit extends Cubit<LoginState> {
   //     ToastManager.showError('تعذّر تسجيل الدخول بفيسبوك، حاول مرة أخرى');
   //   }
   // }
-
-  /// Sign in with Apple, then exchange the identityToken via /ExternalLogin.
-  Future<void> loginWithApple() async {
-    final apple = await _appleAuthService.signIn();
-    if (apple == null || (apple.identityToken ?? '').isEmpty) return; // cancelled
-    emit(LoginLoading());
-    final user = await _loginRepo.externalLogin(
-      provider: 'apple',
-      token: apple.identityToken!,
-      email: apple.email,
-      name: apple.name,
-    );
-    if (user != null) {
-      await _onLoggedIn(user);
-    } else {
-      emit(LoginError('فشل تسجيل الدخول بأبل'));
-      ToastManager.showError('تعذّر تسجيل الدخول بأبل، حاول مرة أخرى');
-    }
-  }
 
   /// Shared post-login handling: persist the user and route to the right
   /// screen depending on the account completion state.

@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:evex_user/core/constants/app_images.dart';
-import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_image_handler.dart';
 import 'package:evex_user/data/cubits/auth/login/login_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Quick-login row: Google, Apple and the fingerprint/biometric button.
-/// Facebook is fully prepared but kept commented out (disabled).
+/// Quick-login row for fingerprint/biometric authentication.
 class AllSocalMediaWidget extends StatelessWidget {
   const AllSocalMediaWidget({super.key});
 
@@ -28,35 +24,21 @@ class AllSocalMediaWidget extends StatelessWidget {
             width: 28.r,
           ),
         ),
-        14.horizontalSpace,
-        // ── Google ──
-        _SocialButton(
-          onTap: () => cubit.loginWithGoogle(),
-          child: CustomImageHandler(
-            AppImages.iconsGoogel,
-            height: 28.r,
-            width: 28.r,
-          ),
-        ),
-        14.horizontalSpace,
-        // ── Facebook (prepared — disabled) ──
+        // 14.horizontalSpace,
         // _SocialButton(
-        //   onTap: () => cubit.loginWithFacebook(),
+        //   onTap: () => cubit.loginWithGoogle(),
         //   child: CustomImageHandler(
-        //     AppImages.iconsSocialFacebook,
+        //     AppImages.iconsGoogel,
         //     height: 28.r,
         //     width: 28.r,
         //   ),
         // ),
         // 14.horizontalSpace,
-        // ── Apple (iOS only) ──
-        // Apple sign-in only works natively on iOS; on Android the native
-        // sheet isn't available, so the button is hidden there.
-        if (Platform.isIOS)
-          _SocialButton(
-            onTap: () => cubit.loginWithApple(),
-            child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
-          ),
+        // if (Platform.isIOS)
+        //   _SocialButton(
+        //     onTap: () => cubit.loginWithApple(),
+        //     child: Icon(Icons.apple, size: 30.r, color: AppColors.blacksoft),
+        //   ),
       ],
     );
   }
