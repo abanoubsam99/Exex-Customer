@@ -135,7 +135,7 @@ class _RequestsTab extends StatelessWidget {
                       : (available ? _green : _red),
                   serviceName: r.serviceName ?? '',
                   location: _location(r.governorate, r.city),
-                  dateText: DateFormatHelper.arabicDate(r.occasionDate),
+                  dateText: DateFormatHelper.numericDate(r.occasionDate, fallback: '—'),
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   // Requests: مقدم الحجز + الإجمالي (with the struck price).
@@ -264,8 +264,9 @@ class _ReservationsTab extends StatelessWidget {
                   statusColor: _green,
                   serviceName: r.serviceName ?? '',
                   location: _location(r.governorate, r.city),
-                  dateText: DateFormatHelper.arabicDate(r.occasionDate),
+                  dateText: DateFormatHelper.numericDate(r.occasionDate, fallback: '—'),
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
+                  // finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   // Confirmed: المبلغ المدفوع + المتبقي.
                   primaryAmountLabel: 'المبلغ المدفوع',
@@ -327,7 +328,7 @@ class _CancelledTab extends StatelessWidget {
                   statusColor: _red,
                   serviceName: r.serviceName ?? '',
                   location: _location(r.governorate, r.city),
-                  dateText: DateFormatHelper.arabicDate(r.occasionDate),
+                  dateText: DateFormatHelper.numericDate(r.occasionDate, fallback: '—'),
                   finalCost: r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   // Cancelled: المبلغ المسترد + المدفوع.

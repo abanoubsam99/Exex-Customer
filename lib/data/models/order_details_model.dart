@@ -153,19 +153,21 @@ class OrderDetailsModel {
       ),
       // Raw status — screens localize it via ReservationStatusHelper.label().
       status: s('reservationStatus'),
-      createdDate:
-          DateFormatHelper.arabicDate(s('reservationDate'), fallback: ''),
+      createdDate: DateFormatHelper.numericDate(s('reservationDate')),
       createdTime: DateFormatHelper.arabicTime(s('reservationDate')),
       hallName: s('portName'),
       eventType: s('occasionType'),
       venueLocation: venue,
       eventDay: DateFormatHelper.arabicWeekday(s('occasionDate')),
-      eventDate:
-          DateFormatHelper.arabicDateWithComa(s('occasionDate'), fallback: ''),
+      eventDate: DateFormatHelper.numericDate(s('occasionDate')), 
       basicService: OrderLineItem(
         name: s('serviceName'),
-        price: n('TheFinalServiceCostBasedOnNumberOfReservations').round(),
-        // price: n('servicePrice').round(),
+        // JSON keys are case-sensitive: the API sends this camelCased, so the
+        // capitalised spelling read 0. `servicePrice` stays as a fallback.
+        price: n('theFinalServiceCostBasedOnNumberOfReservations', const [
+          'TheFinalServiceCostBasedOnNumberOfReservations',
+          'servicePrice',
+        ]).round(),
         description: serviceDetails.isEmpty ? null : serviceDetails,
       ),
       additions: additions,
@@ -190,11 +192,12 @@ class OrderDetailsModel {
             CostRow(
                 label: 'insurance amount', value: n('insuranceAmount').round()),
             CostRow(label: 'booking deposit', value: n('deposit').round()),
-            // Cashback comes from the API already converted to money, so it is
-            // shown in pounds — not as a points count.
+            // Cashback is a points count, not money — shown with the "نقطة"
+            // unit so it never reads as pounds.
             CostRow(
               label: 'cashback',
               value: n('cashbackPointsValue').round(),
+              unit: 'point',
             ),
             CostRow(
               label: 'additional discount from vendor',
@@ -293,10 +296,18 @@ class CostRow {
   /// Tolerant of the common field-name variants a backend might use for a
   /// dynamic cost-components list (label/name/title, value/amount, ...).
   factory CostRow.fromJson(Map<String, dynamic> json) {
+    final label =
+        (json['label'] ?? json['name'] ?? json['title'] ?? '').toString();
+    // Cashback is counted in points; everything else in pounds unless the API
+    // says otherwise.
+    final defaultUnit =
+        label.toLowerCase().contains('cashback') || label.contains('كاش باك')
+            ? 'point'
+            : 'pound';
     return CostRow(
-      label: (json['label'] ?? json['name'] ?? json['title'] ?? '').toString(),
+      label: label,
       value: ((json['value'] ?? json['amount'] ?? 0) as num).round(),
-      unit: (json['unit'] ?? 'pound').toString(),
+      unit: (json['unit'] ?? defaultUnit).toString(),
       subtitle: (json['subtitle'] ?? json['details'])?.toString(),
     );
   }

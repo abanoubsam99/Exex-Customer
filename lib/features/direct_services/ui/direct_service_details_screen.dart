@@ -86,7 +86,7 @@ class DirectServiceDetailsScreen extends StatelessWidget {
             16.verticalSpace,
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: _HelpRow(port: port),
+              child: const _HelpRow(),
             ),
             22.verticalSpace,
             const SectionSeperator(),
@@ -658,8 +658,7 @@ class _HowToUseSectionState extends State<_HowToUseSection> {
 
 // ─────────────────────────── Help row ───────────────────────────
 class _HelpRow extends StatelessWidget {
-  final Item? port;
-  const _HelpRow({this.port});
+  const _HelpRow();
 
   @override
   Widget build(BuildContext context) {
@@ -676,11 +675,9 @@ class _HelpRow extends StatelessWidget {
         ),
         6.horizontalSpace,
         GestureDetector(
-          // Opens the vendor's contact info (معلومات التواصل للتاجر).
-          onTap: () => NavigationHelper.pushNamed(
-            Routes.contactInfoScreen,
-            arguments: port,
-          ),
+          // Opens EVEX's own Contact Us screen (the one under "More"),
+          // not the vendor's contact info.
+          onTap: () => NavigationHelper.pushNamed(Routes.contactUsScreen),
           child: Text(
             'اتصل بنا',
             style: TextStyle(

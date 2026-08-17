@@ -46,6 +46,11 @@ class HomeState {
   /// show a retry on failure instead of spinning forever (see [AvailabilityStatus]).
   final AvailabilityStatus availabilityStatus;
 
+  /// The port [availability] belongs to. This state is app-wide, so screens must
+  /// check the id matches the port they show before trusting the result —
+  /// otherwise a previous vendor's answer leaks onto the next one opened.
+  final int? availabilityPortId;
+
   /// Unread notifications count, shown as a badge on the home bell icon.
   final int unreadNotifications;
 
@@ -70,6 +75,7 @@ class HomeState {
     this.occasionId,
     this.availability,
     this.availabilityStatus = AvailabilityStatus.idle,
+    this.availabilityPortId,
     this.unreadNotifications = 0,
     this.currentUser,
     this.errorMessage,
@@ -91,6 +97,7 @@ class HomeState {
     Object? occasionId = _unsetOccasion,
     CheckReservationResponse? availability,
     AvailabilityStatus? availabilityStatus,
+    int? availabilityPortId,
     bool clearAvailability = false,
     // Clear a whole section's selection (category + type). Used to keep the
     // instant-booking and direct-services sections mutually exclusive.
@@ -133,6 +140,9 @@ class HomeState {
       availabilityStatus: clearAvailability
           ? AvailabilityStatus.idle
           : (availabilityStatus ?? this.availabilityStatus),
+      availabilityPortId: clearAvailability
+          ? null
+          : (availabilityPortId ?? this.availabilityPortId),
       unreadNotifications: unreadNotifications ?? this.unreadNotifications,
       currentUser: currentUser ?? this.currentUser,
       errorMessage: errorMessage ?? this.errorMessage,

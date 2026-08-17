@@ -262,7 +262,7 @@ class _ServiceCardItemState extends State<ServiceCardItem> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppColors.descriptionText,
-                        fontSize: 12.r,
+                        fontSize: 11.r,
                         fontFamily: 'Almarai',
                         fontWeight: FontWeight.w700,
                         height: 1.40,

@@ -252,7 +252,7 @@ class _EditOccasionSheetState extends State<EditOccasionSheet> {
                     8.horizontalSpace,
                     Text(
                       _date != null
-                          ? DateFormatHelper.arabicDate(_date!.toIso8601String())
+                          ? DateFormatHelper.numericDateOf(_date)
                           : 'حدد تاريخ المناسبة',
                       textAlign: TextAlign.right,
                       style: TextStyle(

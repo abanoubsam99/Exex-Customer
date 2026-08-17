@@ -283,6 +283,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
             governorate: gov,
             city: city,
           ),
+          portId: portId,
         );
       }
     }
@@ -454,6 +455,7 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
         governorate: gov,
         city: city,
       ),
+      portId: portId,
     );
   }
 

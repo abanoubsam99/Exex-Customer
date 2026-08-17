@@ -72,8 +72,8 @@ class EditReservationScreen extends StatelessWidget {
                                 10.horizontalSpace,
                                 Text(
                                   state.occasionDate != null
-                                      ? DateFormatHelper.arabicDate(
-                                          state.occasionDate!.toIso8601String())
+                                      ? DateFormatHelper.numericDateOf(
+                                          state.occasionDate)
                                       : 'حدد التاريخ',
                                   style: TextStyle(
                                     color: AppColors.blacksoft,

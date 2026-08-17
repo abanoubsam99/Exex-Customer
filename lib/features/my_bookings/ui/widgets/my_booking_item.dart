@@ -156,21 +156,21 @@ class MyBookingItem extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          if (hasDiscount)
-                            Text(
-                              _money(apparentPrice),
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(
-                                color: AppColors.salmon,
-                                fontSize: 12.r,
-                                fontFamily: 'Almarai',
-                                fontWeight: FontWeight.w400,
-                                height: 1.2,
-                                letterSpacing: -0.24,
-                                decoration: TextDecoration.lineThrough,
-                                decorationColor: AppColors.salmon,
-                              ),
-                            ),
+                          // if (hasDiscount)
+                            // Text(
+                            //   _money(apparentPrice),
+                            //   textDirection: TextDirection.ltr,
+                            //   style: TextStyle(
+                            //     color: AppColors.salmon,
+                            //     fontSize: 12.r,
+                            //     fontFamily: 'Almarai',
+                            //     fontWeight: FontWeight.w400,
+                            //     height: 1.2,
+                            //     letterSpacing: -0.24,
+                            //     decoration: TextDecoration.lineThrough,
+                            //     decorationColor: AppColors.salmon,
+                            //   ),
+                            // ),
                           Text(
                             _money(finalCost),
                             textDirection: TextDirection.ltr,

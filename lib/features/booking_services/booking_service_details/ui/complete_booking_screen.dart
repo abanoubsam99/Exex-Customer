@@ -69,6 +69,10 @@ class CompleteBookingScreen extends StatelessWidget {
                             onOccasionSelected: (id) {
                               if (id != null) cubit.selectOccasion(id);
                             },
+                            // Display only here: the date / place / occasion
+                            // were picked on the previous screen, so this block
+                            // just shows them — no edit pencil, no tap.
+                            readOnly: true,
                           ),
                         ),
                         16.verticalSpace,

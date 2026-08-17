@@ -4,21 +4,6 @@
 class DateFormatHelper {
   DateFormatHelper._();
 
-  static const _months = [
-    'يناير',
-    'فبراير',
-    'مارس',
-    'ابريل',
-    'مايو',
-    'يونيو',
-    'يوليو',
-    'اغسطس',
-    'سبتمبر',
-    'اكتوبر',
-    'نوفمبر',
-    'ديسمبر',
-  ];
-
   // DateTime.weekday: Monday = 1 .. Sunday = 7
   static const _weekdays = [
     'الاثنين',
@@ -64,18 +49,6 @@ class DateFormatHelper {
     return null;
   }
 
-  /// "14 يونيو 2026" — or [fallback] when the date is invalid.
-  static String arabicDate(String? value, {String fallback = '—'}) {
-    final d = parse(value);
-    if (d == null) return fallback;
-    return '${d.day} ${_months[d.month - 1]} ${d.year}';
-  }
-  /// "14 يونيو 2026" — or [fallback] when the date is invalid.
-  static String arabicDateWithComa(String? value, {String fallback = '—'}) {
-    final d = parse(value);
-    if (d == null) return fallback;
-    return '${d.day} , ${_months[d.month - 1]} , ${d.year}';
-  }
   /// Canonical date the backend expects in requests: zero-padded `yyyy{sep}MM{sep}dd`
   /// with no time part. Use `separator: '-'` for ISO (`2026-08-31`) or `'/'` for
   /// the slash form (`2026/08/31`). Keep every outgoing API date going through
@@ -93,16 +66,22 @@ class DateFormatHelper {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  /// "20/6/2026" (d/M/yyyy, no leading zeros) — or [fallback] when invalid
-  /// (covers the .NET default 0001-01-01, empty and null).
+  /// "20/06/2026" (dd/MM/yyyy) — or [fallback] when invalid (covers the .NET
+  /// default 0001-01-01, empty and null). This is the only date format the UI
+  /// shows: month names are never rendered anywhere in the app.
   static String numericDate(String? value, {String fallback = ''}) {
-    final d = parse(value);
-    if (d == null) return fallback;
-    return '${d.day}/${d.month}/${d.year}';
+    return numericDateOf(parse(value), fallback: fallback);
   }
 
-  /// "20/6/2026 - 20/7/2026" — a start→end range in d/M/yyyy. Returns an empty
-  /// string when either end is invalid (so the caller can hide the whole row).
+  /// Same as [numericDate] but for a [DateTime] already in hand.
+  static String numericDateOf(DateTime? date, {String fallback = ''}) {
+    if (date == null) return fallback;
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(date.day)}/${two(date.month)}/${date.year}';
+  }
+
+  /// "20/06/2026 - 20/07/2026" — a start→end range in dd/MM/yyyy. Returns an
+  /// empty string when either end is invalid (so the caller can hide the row).
   static String numericRange(String? start, String? end) {
     final from = numericDate(start);
     final to = numericDate(end);
@@ -130,7 +109,7 @@ class DateFormatHelper {
 
   /// Relative Arabic label for how long ago [date] was: "الان" for the last
   /// minute, "منذ 5 دقيقة" / "منذ 3 ساعات" within the last day, otherwise the
-  /// full date ("6 اكتوبر 2026"). Returns [fallback] when [date] is null.
+  /// full date ("6/10/2026"). Returns [fallback] when [date] is null.
   static String relativeArabic(DateTime? date, {String fallback = ''}) {
     if (date == null) return fallback;
     final diff = DateTime.now().difference(date);
@@ -140,7 +119,7 @@ class DateFormatHelper {
       final h = diff.inHours;
       return h <= 10 ? 'منذ $h ساعات' : 'منذ $h ساعة';
     }
-    return '${date.day} ${_months[date.month - 1]} ${date.year}';
+    return numericDateOf(date);
   }
 
   /// "مساءا 9:27" — period word followed by h:mm (empty when invalid).

@@ -10,7 +10,7 @@ class TransactionModel {
   final String paymentMethod;
   final String paymentReasson;
 
-  /// Pre-formatted Arabic date/time line (e.g. "26 مايو 2026  -  مساءا 9:27").
+  /// Pre-formatted date/time line (e.g. "26/5/2026  -  مساءا 9:27").
   final String dateText;
 
   TransactionModel({
@@ -34,7 +34,7 @@ class TransactionModel {
       paymentMethod: json['paymentMethod']?.toString() ?? '',
       paymentReasson: details.isNotEmpty ? details : _reasonFor(operationType),
       dateText:
-          '${DateFormatHelper.arabicDate(date, fallback: '')}  -  ${DateFormatHelper.arabicClock(date)}',
+          '${DateFormatHelper.numericDate(date)}  -  ${DateFormatHelper.arabicClock(date)}',
     );
   }
 

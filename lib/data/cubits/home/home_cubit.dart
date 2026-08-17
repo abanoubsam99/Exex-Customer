@@ -247,9 +247,13 @@ class HomeCubit extends Cubit<HomeState> {
   /// Stores the availability result for the selected port + date. A null result
   /// means the check failed (network/timeout) — recorded as [AvailabilityStatus.failed]
   /// so the badge can offer a retry instead of spinning forever.
-  void setAvailability(CheckReservationResponse? availability) =>
+  ///
+  /// [portId] is the port the result belongs to; screens compare it with the
+  /// port they show so one vendor's answer never leaks onto another's.
+  void setAvailability(CheckReservationResponse? availability, {int? portId}) =>
       emit(state.copyWith(
         availability: availability,
+        availabilityPortId: portId,
         availabilityStatus: availability == null
             ? AvailabilityStatus.failed
             : AvailabilityStatus.done,

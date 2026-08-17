@@ -45,6 +45,11 @@ class ChangeOccasion extends StatelessWidget {
   final String? editOriginalGovernorate;
   final String? editOriginalCity;
 
+  /// Display-only mode: the date / location / occasion block is shown but can't
+  /// be changed — no edit pencil and the box isn't tappable. Used on the
+  /// complete-booking screen, where the slot was already picked earlier.
+  final bool readOnly;
+
   const ChangeOccasion({
     super.key,
     this.port,
@@ -57,6 +62,7 @@ class ChangeOccasion extends StatelessWidget {
     this.editOriginalDate,
     this.editOriginalGovernorate,
     this.editOriginalCity,
+    this.readOnly = false,
   });
 
   /// True when editing a confirmed reservation and the chosen date + place still
@@ -141,6 +147,7 @@ class ChangeOccasion extends StatelessWidget {
                 governorate: gov,
                 city: city,
               ),
+              portId: portId,
             );
           }
         },
@@ -167,6 +174,7 @@ class ChangeOccasion extends StatelessWidget {
         governorate: st.eventGovernorate,
         city: st.eventCity,
       ),
+      portId: portId,
     );
   }
 
@@ -352,16 +360,19 @@ class ChangeOccasion extends StatelessWidget {
                     ),
                   ),
                 ),
-                8.horizontalSpace,
-                GestureDetector(
-                  onTap: () => _openEditSheet(context),
-                  child: CustomImageHandler(
-                    AppImages.iconsEdit,
-                    width: 18.r,
-                    height: 18.r,
-                    color: AppColors.primaryColor,
+                // Edit pencil — hidden in display-only mode.
+                if (!readOnly) ...[
+                  8.horizontalSpace,
+                  GestureDetector(
+                    onTap: () => _openEditSheet(context),
+                    child: CustomImageHandler(
+                      AppImages.iconsEdit,
+                      width: 18.r,
+                      height: 18.r,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
-                ),
+                ],
                 // Refresh affordance so a failed check reads as retryable.
                 if (view.isRetry) ...[
                   6.horizontalSpace,
@@ -384,14 +395,17 @@ class ChangeOccasion extends StatelessWidget {
           },
         ),
         // ── Date / location / occasion box (outlined, like the design) ──
-        // The whole box is tappable, not just the edit icon.
+        // The whole box is tappable, not just the edit icon — unless the host
+        // screen asked for display-only.
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () {
-            // Editing the occasion date/location is a logged-in-only action.
-            if (!AuthGuard.requireLogin(context)) return;
-            _openEditSheet(context);
-          },
+          onTap: readOnly
+              ? null
+              : () {
+                  // Editing the occasion date/location is a logged-in-only action.
+                  if (!AuthGuard.requireLogin(context)) return;
+                  _openEditSheet(context);
+                },
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
@@ -421,7 +435,7 @@ class ChangeOccasion extends StatelessWidget {
                         d != null && (isEditMode || !d.isBefore(earliest));
                     return Text(
                       valid
-                          ? 'في ${DateFormatHelper.arabicDate(d.toIso8601String())}'
+                          ? 'في ${DateFormatHelper.numericDateOf(d)}'
                           : 'حدد التاريخ',
                       textAlign: TextAlign.right,
                       style: TextStyle(
@@ -486,18 +500,35 @@ class ChangeOccasion extends StatelessWidget {
           ),
         ),
         // ── "يلزم موافقة التاجر" note ──
-        // Sits UNDER the date/location box, but is bound ONLY to the port the
-        // user is currently viewing — never to HomeCubit's `availability`.
-        // That state is shared across screens, so a vendor that requires
-        // approval used to leave the note showing on the next vendor opened
-        // after popping back. Reading the port's own flag keeps it per-vendor.
-        if (port?.confirmationIsRequiredFromVendor == true ||
-            port?.checkReservationResponse?.confirmationIsRequiredFromVendor ==
-                true)
-          Padding(
-            padding: EdgeInsets.only(top: 10.h),
-            child: const VendorApprovalNote(),
-          ),
+        // Shown whenever `confirmationIsRequiredFromVendor` is true, from any
+        // source: the port's own check (only present when the port was listed
+        // with a date) or the live availability check. The port is reloaded
+        // without a date on this screen — that response carries no
+        // checkReservationResponse — so relying on the port alone made the note
+        // flash and vanish. HomeCubit's availability is app-wide, hence the
+        // port-id guard: another vendor's answer must never show here.
+        BlocBuilder<HomeCubit, HomeState>(
+          buildWhen: (p, c) =>
+              p.availability != c.availability ||
+              p.availabilityPortId != c.availabilityPortId,
+          builder: (context, state) {
+            final liveCheck =
+                (port?.id != null && state.availabilityPortId == port?.id)
+                    ? state.availability
+                    : null;
+            final required =
+                port?.confirmationIsRequiredFromVendor == true ||
+                    port?.checkReservationResponse
+                            ?.confirmationIsRequiredFromVendor ==
+                        true ||
+                    liveCheck?.confirmationIsRequiredFromVendor == true;
+            if (!required) return const SizedBox.shrink();
+            return Padding(
+              padding: EdgeInsets.only(top: 10.h),
+              child: const VendorApprovalNote(),
+            );
+          },
+        ),
       ],
       ),
     );
