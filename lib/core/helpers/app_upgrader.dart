@@ -29,10 +29,17 @@ class _ForceUpgrader extends Upgrader {
   bool blocked() => isUpdateAvailable();
 }
 
-/// Single shared upgrader instance used by every screen that wraps its body in
-/// an [UpgradeAlert] (home + login). Keeping one instance means the store
-/// lookup, messages and debug flags stay identical across the app instead of
-/// being redefined per screen.
+/// Single shared upgrader instance used by the two screens the app can land on
+/// after the splash — the tab shell ([MainScreen]) and [LoginScreen] — so the
+/// store lookup, messages and debug flags stay identical instead of being
+/// redefined per screen.
+///
+/// Only ONE live [UpgradeAlert] may wrap a given screen tree: with
+/// [durationUntilAlertAgain] at zero nothing throttles a second wrapper, so two
+/// of them (e.g. the shell plus a tab inside it) each push their own dialog and
+/// the user ends up with two identical prompts stacked on top of each other.
+/// That's why the tabs themselves are not wrapped — the shell already covers
+/// them.
 ///
 /// Why the dialog may NOT appear even when a newer version exists:
 ///  1. Store lookup: upgrader reads the *published* store listing (Play Store
@@ -44,6 +51,13 @@ class _ForceUpgrader extends Upgrader {
 ///     what is published.
 ///  3. iOS country: the App Store lookup defaults to the US listing; set
 ///     [countryCode] if the app is only published in another country.
+///  4. Android version parsing: upgrader scrapes the Play Store HTML, and the
+///     Egyptian listing keeps the version in a different JSON key than the
+///     default one (upgrader 11 read the app category — "Lifestyle" — there and
+///     gave up with `FormatException: Not a properly formatted version string`,
+///     leaving `appStoreVersion: null`). The regional fallback that reads the
+///     right key landed in upgrader 12.2, so the package must stay on >= 12.2
+///     (pubspec pins ^13.6.0) for the Android check to work at all.
 ///
 /// [debugLogging] prints the store version, the installed version and the
 /// comparison result to the console, so the exact reason is always visible.

@@ -160,6 +160,9 @@ class AddPhoneCubit extends Cubit<AddPhoneState> {
   }
 
   Future<void> confirmCode() async {
+    // Auto-check fires this as soon as the boxes fill up, so a tap on "تأكيد"
+    // (or a re-fill) must not start a second request.
+    if (state is OtpConfirmLoading) return;
     emit(OtpConfirmLoading());
     final result = await _addPhoneRepo.confirmPhone(
       code: codeController.text.trim(),
