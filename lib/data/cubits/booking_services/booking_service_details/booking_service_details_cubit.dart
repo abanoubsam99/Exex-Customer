@@ -241,9 +241,11 @@ class BookingServiceDetailsCubit extends Cubit<BookingServiceDetailsState> {
       emit(state.copyWith(selectedOccasionId: bill.occasionId));
     }
 
-    // Remember existing addition row ids for the diff on save.
+    // Remember existing addition row ids for the diff on save. bill.additions
+    // holds the rows the client picked (the package's gift rows are excluded and
+    // duplicates are merged), so each addition maps to the paid row's id.
     if (bill != null) {
-      for (final a in bill.oldAdditions) {
+      for (final a in bill.additions) {
         final additionId = (a['additionId'] as num?)?.toInt() ?? 0;
         final rowId = (a['id'] as num?)?.toInt() ?? 0;
         if (additionId > 0 && rowId > 0) {

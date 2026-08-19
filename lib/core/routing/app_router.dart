@@ -520,6 +520,13 @@ class AppRouter {
             create: (context) => ContactInfoCubit(
               context.read<PortServicesRepo>(),
               portId: port?.id ?? 0,
+              isBookingService: isBookingService,
+              // Direct services read the numbers off the port itself;
+              // GetPortContactInfo is reserved for booking services.
+              portPhones: [
+                if (port?.phoneNumber1 != null) port!.phoneNumber1!,
+                if (port?.phoneNumber2 != null) port!.phoneNumber2!,
+              ].map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
             ),
             child: ContactInfoScreen(
               port: port,

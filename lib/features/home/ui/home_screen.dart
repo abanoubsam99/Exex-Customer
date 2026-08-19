@@ -5,11 +5,9 @@ import 'package:evex_user/features/home/ui/widgets/home_header.dart';
 import 'package:evex_user/features/home/ui/widgets/join_us_section.dart';
 import 'package:evex_user/features/home/ui/widgets/new_suggestion_section.dart';
 // import 'package:evex_user/features/home/ui/widgets/other_services_section.dart';
-import 'package:evex_user/core/helpers/app_upgrader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:upgrader/upgrader.dart';
 
 import 'widgets/Instant_booking_services_section.dart';
 import 'widgets/instant_payment_services.dart';
@@ -33,58 +31,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return UpgradeAlert(
-      upgrader: appUpgrader,
-      // Cupertino style on every platform (Android included) — the iOS dialog
-      // look is the one we want for the mandatory update prompt.
-      dialogStyle: UpgradeDialogStyle.cupertino,
-      showIgnore: false,
-      showLater: false,
-      barrierDismissible: false,
-      child: Scaffold(
-        body: SafeArea(
-          top: false,
-          child: RefreshIndicator(
-            onRefresh: () => context.read<HomeCubit>().init(),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  const HomeHeader(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      children: [
-                        const InstantBookingServicesSection(),
-                        16.verticalSpace,
-                        const InstantPaymentServices(),
-                        // const OtherServicesSection(),
-                        // 16.verticalSpace,
-                      ],
-                    ),
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        child: RefreshIndicator(
+          onRefresh: () => context.read<HomeCubit>().init(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                const HomeHeader(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      const InstantBookingServicesSection(),
+                      16.verticalSpace,
+                      const InstantPaymentServices(),
+                      // const OtherServicesSection(),
+                      // 16.verticalSpace,
+                    ],
                   ),
-                  // Figma divider between الخدمات المباشرة and عروض مميزه.
-                  26.verticalSpace,
-                  const SectionSeperator(),
-                  16.verticalSpace,
-                  const SpecialOffersSection(),
-                  26.verticalSpace,
-                  const SectionSeperator(),
-                  16.verticalSpace,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      children: [
-                        const JoinUsSection(),
-                        16.verticalSpace,
-                        const NewSuggestionSection(),
-                      ],
-                    ),
+                ),
+                // Figma divider between الخدمات المباشرة and عروض مميزه.
+                26.verticalSpace,
+                const SectionSeperator(),
+                16.verticalSpace,
+                const SpecialOffersSection(),
+                26.verticalSpace,
+                const SectionSeperator(),
+                16.verticalSpace,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      const JoinUsSection(),
+                      16.verticalSpace,
+                      const NewSuggestionSection(),
+                    ],
                   ),
-                  // Clear the floating nav bar at the end of the scroll.
-                  SizedBox(height: navBarBottomReserve(context)),
-                ],
-              ),
+                ),
+                // Clear the floating nav bar at the end of the scroll.
+                SizedBox(height: navBarBottomReserve(context)),
+              ],
             ),
           ),
         ),

@@ -50,8 +50,10 @@ class ReservationUpdateModel {
   /// Editable — client notes.
   String userNotes;
 
-  /// Editable — the desired additions (id/number/additionId). oldAdditions
-  /// stays as originally loaded so the backend can diff against it.
+  /// Editable — the desired additions the client picked (id/number/additionId),
+  /// without the package's free gift rows (see [_clientAdditions]). oldAdditions
+  /// stays as originally loaded — gift rows included — so the backend can diff
+  /// against it.
   List<Map<String, dynamic>> additions;
   final List<Map<String, dynamic>> oldAdditions;
 
@@ -109,10 +111,16 @@ class ReservationUpdateModel {
     // A request carries `reservationId: 0`, so only a positive value is a bill.
     final isBillShape = ((json['reservationId'] as num?)?.toInt() ?? 0) > 0;
 
+    // The saved addition rows. GetRequestReservation answers with
+    // `additions: null` and carries the saved rows in `oldAdditions` instead, so
+    // fall back to it — otherwise the edit screen opens with every addition at 0
+    // and the total drops to the bare service price.
     final rawAdds = (json['additions'] ??
             json['reservation_Additions'] ??
             json['reservationAdditions']) as List? ??
         const [];
+    final rawOld = json['oldAdditions'] as List? ?? const [];
+    final rows = rawAdds.isNotEmpty ? rawAdds : rawOld;
     return ReservationUpdateModel(
       id: isBillShape ? i('reservationId') : i('id'),
       reservationKey: s('reservationKey'),
@@ -143,17 +151,44 @@ class ReservationUpdateModel {
       billId: isBillShape ? i('id') : i('billId'),
       nationalId: i('nationalId'),
       userNotes: s('userNotes') ?? s('clientNotes') ?? '',
-      additions: rawAdds
-          .map<Map<String, dynamic>>((a) => {
-                'id': (a['id'] as num?)?.toInt() ?? 0,
-                'number': (a['number'] as num?)?.toInt() ?? 0,
-                'additionId': (a['additionId'] as num?)?.toInt() ?? 0,
-              })
-          .toList(),
-      oldAdditions: rawAdds
-          .map<Map<String, dynamic>>((a) => Map<String, dynamic>.from(a as Map))
+      additions: _clientAdditions(rows),
+      oldAdditions: rows
+          .whereType<Map>()
+          .map<Map<String, dynamic>>((a) => Map<String, dynamic>.from(a))
           .toList(),
     );
+  }
+
+  /// Normalizes the saved addition rows into the additions the client actually
+  /// picked (id/number/additionId), so the edit screen can restore its counters.
+  ///
+  /// The backend splits one addition into the package's free gift row (`isGift`
+  /// with a zero charge) and the row the client paid for on top — both can come
+  /// back for the same `additionId`. Only the paid rows are the client's own
+  /// choice: the gift rows are granted by the package itself and are already
+  /// shown as the "N ×" prefix on the item, so counting them would double the
+  /// additions and inflate the total.
+  static List<Map<String, dynamic>> _clientAdditions(List rows) {
+    final numbers = <int, int>{};
+    final rowIds = <int, int>{};
+    for (final r in rows) {
+      if (r is! Map) continue;
+      final additionId = (r['additionId'] as num?)?.toInt() ?? 0;
+      final number = (r['number'] as num?)?.toInt() ?? 0;
+      final rowId = (r['id'] as num?)?.toInt() ?? 0;
+      final charged = (r['additionTotalPrice'] as num?) ?? 0;
+      final isPackageGift = r['isGift'] == true && charged == 0;
+      if (additionId <= 0 || number <= 0 || isPackageGift) continue;
+      numbers[additionId] = (numbers[additionId] ?? 0) + number;
+      if (rowId > 0) rowIds[additionId] = rowId;
+    }
+    return numbers.entries
+        .map<Map<String, dynamic>>((e) => {
+              'id': rowIds[e.key] ?? 0,
+              'number': e.value,
+              'additionId': e.key,
+            })
+        .toList();
   }
 
   /// The bill returns reservationDate as a non-ISO US string

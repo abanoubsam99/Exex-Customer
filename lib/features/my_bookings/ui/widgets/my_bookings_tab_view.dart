@@ -265,8 +265,10 @@ class _ReservationsTab extends StatelessWidget {
                   serviceName: r.serviceName ?? '',
                   location: _location(r.governorate, r.city),
                   dateText: DateFormatHelper.numericDate(r.occasionDate, fallback: '—'),
-                  finalCost: r.finalCost ?? r.apparentPrice ?? 0,
-                  // finalCost: r.finalCost ?? r.apparentPrice ?? 0,
+                  // Header amount = netBill (the invoice grand total), not the
+                  // bare service cost. Falls back to the old fields only when
+                  // the API doesn't send it.
+                  finalCost: r.netBill ?? r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   // Confirmed: المبلغ المدفوع + المتبقي.
                   primaryAmountLabel: 'المبلغ المدفوع',
@@ -329,7 +331,9 @@ class _CancelledTab extends StatelessWidget {
                   serviceName: r.serviceName ?? '',
                   location: _location(r.governorate, r.city),
                   dateText: DateFormatHelper.numericDate(r.occasionDate, fallback: '—'),
-                  finalCost: r.finalCost ?? r.apparentPrice ?? 0,
+                  // Header amount = netBill (the invoice grand total), same as
+                  // the confirmed tab.
+                  finalCost: r.netBill ?? r.finalCost ?? r.apparentPrice ?? 0,
                   apparentPrice: r.apparentPrice ?? 0,
                   // Cancelled: المبلغ المسترد + المدفوع.
                   primaryAmountLabel: 'المبلغ المسترد',

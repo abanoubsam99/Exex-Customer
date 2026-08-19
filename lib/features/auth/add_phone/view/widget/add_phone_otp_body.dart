@@ -1,12 +1,13 @@
 import 'package:evex_user/core/theme/app_colors.dart';
 import 'package:evex_user/core/ui/widgets/custom_button.dart';
+import 'package:evex_user/core/ui/widgets/otp_code_field.dart';
 import 'package:evex_user/core/ui/widgets/otp_resend_row.dart';
 import 'package:evex_user/data/cubits/auth/add_phone/add_phone_cubit.dart';
 import 'package:evex_user/data/cubits/auth/add_phone/add_phone_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+
 
 class AddPhoneOtpBody extends StatelessWidget {
   const AddPhoneOtpBody({super.key});
@@ -31,42 +32,12 @@ class AddPhoneOtpBody extends StatelessWidget {
             ),
           ),
           24.verticalSpace,
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: PinCodeTextField(
-              appContext: context,
-              autoDisposeControllers: false,
-              controller: cubit.codeController,
-              length: 6,
-              obscureText: false,
-              autoFocus: true,
-              animationType: AnimationType.scale,
-              animationDuration: const Duration(milliseconds: 300),
-              keyboardType: TextInputType.number,
-              enableActiveFill: true,
-              cursorHeight: 20,
-              errorTextSpace: 5,
-              autovalidateMode: AutovalidateMode.always,
-              textStyle: Theme.of(context).textTheme.headlineMedium,
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(12.r),
-                fieldHeight: 54.r,
-                fieldWidth: 42.r,
-                errorBorderColor: AppColors.redAlertColor,
-                errorBorderWidth: 1,
-                activeColor: AppColors.blackColor,
-                activeFillColor: Colors.white,
-                activeBorderWidth: 1,
-                selectedColor: AppColors.primaryColor,
-                selectedFillColor: Colors.white,
-                inactiveFillColor: AppColors.boarderFillColor,
-                inactiveColor: AppColors.blueGreyBg,
-                inactiveBorderWidth: 1,
-              ),
-              onChanged: cubit.onOtpChanged,
-              beforeTextPaste: (_) => true,
-            ),
+          OtpCodeField(
+            controller: cubit.codeController,
+            onChanged: cubit.onOtpChanged,
+            // Auto-check: the code is submitted the moment the boxes fill up,
+            // whether it was typed or autofilled from the SMS.
+            onCompleted: (_) => cubit.confirmCode(),
           ),
           18.verticalSpace,
           BlocBuilder<AddPhoneCubit, AddPhoneState>(

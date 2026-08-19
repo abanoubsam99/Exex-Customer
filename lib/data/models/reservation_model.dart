@@ -32,6 +32,10 @@ class ReservationModel {
   /// `totalAmountRefundedToCustomer` — total already refunded to the customer.
   final num? refunded;
 
+  /// `netBill` — the invoice grand total (service + additions + fees/taxes
+  /// after discounts). This is the amount shown on the card header.
+  final num? netBill;
+
   ReservationModel({
     this.id,
     this.portId,
@@ -51,6 +55,7 @@ class ReservationModel {
     this.paid,
     this.remaining,
     this.refunded,
+    this.netBill,
   });
 
   ReservationModel.fromJson(Map<String, dynamic> json)
@@ -71,5 +76,6 @@ class ReservationModel {
         deposit = json['deposit'] as num?,
         paid = json['totalAmountReceivedFromCustomer'] as num?,
         remaining = json['netAmountDueToOrFromCustomer'] as num?,
-        refunded = json['totalAmountRefundedToCustomer'] as num?;
+        refunded = json['totalAmountRefundedToCustomer'] as num?,
+        netBill = (json['netBill'] ?? json['netCost']) as num?;
 }
